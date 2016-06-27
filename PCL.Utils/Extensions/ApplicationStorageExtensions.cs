@@ -51,7 +51,9 @@ namespace PCL.Utils
 			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo ().GetDeclaredMethod ("GetCallingAssembly").Invoke (null, new object[0]);
 			var text = StoredText (resourceName, assembly);
 			if (!string.IsNullOrEmpty (text)) {
-				TType result = JsonConvert.DeserializeObject<TType>(text);
+				TType result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings {
+					TypeNameHandling = TypeNameHandling.Auto
+				} );
 				return result;
 			}
 			return defaultValue;

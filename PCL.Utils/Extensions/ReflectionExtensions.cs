@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PCL.Utils
 {
@@ -100,6 +101,21 @@ namespace PCL.Utils
 			if (methodInfo == null) 
 				throw new ArgumentOutOfRangeException("methodName", $"Coundn't find method {methodName} in type {obj.GetType().FullName}");
 			return methodInfo.Invoke (obj, parameters);
+		}
+
+		public static string CallerMemberName([System.Runtime.CompilerServices.CallerMemberName] string callerName = null) 
+		{
+			return callerName;
+		}
+
+		public static string CallerFilePath([System.Runtime.CompilerServices.CallerFilePath] string callerPath = null)
+		{
+			return callerPath;
+		}
+
+		public static int CallerLineNumber([System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+		{
+			return lineNumber;
 		}
 
 	}
