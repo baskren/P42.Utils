@@ -10,7 +10,7 @@
     <AssemblyName>PCL.Utils</AssemblyName>
     <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.9.12.3</ReleaseVersion>
+    <ReleaseVersion>0.9.4</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +38,7 @@
     <Compile Include="Interfaces\IFileInfo.cs" />
     <Compile Include="Interfaces\IFileSystemInfo.cs" />
     <Compile Include="Extensions\ApplicationStorageExtensions.cs" />
+    <Compile Include="Timer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
