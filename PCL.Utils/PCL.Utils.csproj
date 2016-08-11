@@ -10,7 +10,6 @@
     <AssemblyName>PCL.Utils</AssemblyName>
     <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.9.4</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +39,9 @@
     <Compile Include="Extensions\ApplicationStorageExtensions.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Interfaces\IAppDomain.cs" />
+    <Compile Include="WeakEvents\WeakEventManager.cs" />
+    <Compile Include="WeakEvents\IWeakEventManager.cs" />
+    <Compile Include="WeakEvents\EventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -59,5 +61,6 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="WeakEvents\" />
   </ItemGroup>
 </Project>
