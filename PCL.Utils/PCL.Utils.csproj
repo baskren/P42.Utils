@@ -39,9 +39,9 @@
     <Compile Include="Extensions\ApplicationStorageExtensions.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Interfaces\IAppDomain.cs" />
-    <Compile Include="WeakEvents\WeakEventManager.cs" />
     <Compile Include="WeakEvents\IWeakEventManager.cs" />
     <Compile Include="WeakEvents\EventArgs.cs" />
+    <Compile Include="WeakEvents\WeakEventManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
