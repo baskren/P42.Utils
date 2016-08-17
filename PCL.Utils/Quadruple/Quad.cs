@@ -2068,6 +2068,7 @@ namespace PCL.Utils
         #endregion
 
         #region Casts
+		/*
         public static explicit operator Quad(System.Numerics.BigInteger value)
         {
             bool positive = value.Sign >= 0;
@@ -2126,6 +2127,7 @@ namespace PCL.Utils
             else
                 return (new System.Numerics.BigInteger(value.SignificandBits | highestBit) << (int)value.Exponent);
         }
+        */
 
         public static explicit operator ulong(Quad value)
         {
