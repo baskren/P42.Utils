@@ -9,7 +9,7 @@
     <RootNamespace>PCL.Utils.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>PCL.Utils.iOS</AssemblyName>
-    <ReleaseVersion>0.9.4</ReleaseVersion>
+    <ReleaseVersion>0.9.13.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
