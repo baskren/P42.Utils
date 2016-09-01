@@ -52,7 +52,7 @@ namespace PCL.Utils
 			BuildEventHandler(eventName, value.Target, value.GetMethodInfo());
 		}
 
-		private void BuildEventHandler(string eventName, object handlerTarget, MethodInfo methodInfo)
+		void BuildEventHandler(string eventName, object handlerTarget, MethodInfo methodInfo)
 		{
 			lock (_syncObj)
 			{
@@ -62,9 +62,14 @@ namespace PCL.Utils
 					target = new List<Tuple<WeakReference, MethodInfo>>();
 					_eventHandlers.Add(eventName, target);
 				}
-
 				target.Add(Tuple.Create(new WeakReference(handlerTarget), methodInfo));
 			}
+		}
+
+		public bool EventExists(string eventName)
+		{
+			List<Tuple<WeakReference, MethodInfo>> target;
+			return _eventHandlers.TryGetValue(eventName, out target);
 		}
 
 		public void RaiseEvent(object sender, object args, string eventName)
@@ -73,18 +78,23 @@ namespace PCL.Utils
 
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo>> target;
-				if (_eventHandlers.TryGetValue(eventName, out target))
+				List<Tuple<WeakReference, MethodInfo>> targets;
+				if (_eventHandlers.TryGetValue(eventName, out targets))
 				{
-					foreach (var tuple in target.ToList())
+					foreach (var tuple in targets.ToList())
 					{
 						var o = tuple.Item1.Target;
 
 						if (o == null)
-							target.Remove(tuple);
+							targets.Remove(tuple);
 						else
 							toRaise.Add(Tuple.Create(o, tuple.Item2));
 					}
+				}
+				if (targets != null && targets.Count == 0)
+				{
+					// remove event
+					_eventHandlers.Remove(eventName);
 				}
 			}
 
