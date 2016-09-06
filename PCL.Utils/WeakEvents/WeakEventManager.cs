@@ -35,7 +35,7 @@ namespace PCL.Utils
 		}
 
 		readonly object _syncObj = new object();
-		readonly Dictionary<string, List<Tuple<WeakReference, MethodInfo, bool>>> _eventHandlers = new Dictionary<string, List<Tuple<WeakReference, MethodInfo, bool>>>();
+		readonly Dictionary<string, List<Tuple<WeakReference, MethodInfo>>> _eventHandlers = new Dictionary<string, List<Tuple<WeakReference, MethodInfo>>>();
 
 		private WeakEventManager()
 		{
@@ -56,41 +56,42 @@ namespace PCL.Utils
 		{
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo, bool>> target;
+				List<Tuple<WeakReference, MethodInfo>> target;
 				if (!_eventHandlers.TryGetValue(eventName, out target))
 				{
-					target = new List<Tuple<WeakReference, MethodInfo, bool>>();
+					target = new List<Tuple<WeakReference, MethodInfo>>();
 					_eventHandlers.Add(eventName, target);
 				}
 				var weakRef = new WeakReference(handlerTarget);
-				var tuple = Tuple.Create(weakRef, methodInfo, handlerTarget==null);
+				var tuple = Tuple.Create(weakRef, methodInfo);
+				System.Diagnostics.Debug.WriteLine("Adding ["+eventName+","+handlerTarget+","+methodInfo+",]");
 				target.Add(tuple);
 			}
 		}
 
 		public bool EventExists(string eventName)
 		{
-			List<Tuple<WeakReference, MethodInfo, bool>> target;
+			List<Tuple<WeakReference, MethodInfo>> target;
 			return _eventHandlers.TryGetValue(eventName, out target);
 		}
 
 		public void RaiseEvent(object sender, object args, string eventName)
 		{
-			var toRaise = new List<Tuple<object, MethodInfo, bool>>();
+			var toRaise = new List<Tuple<object, MethodInfo>>();
 
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo, bool>> targets;
+				List<Tuple<WeakReference, MethodInfo>> targets;
 				if (_eventHandlers.TryGetValue(eventName, out targets))
 				{
 					foreach (var tuple in targets.ToList())
 					{
 						var o = tuple.Item1.Target;
 
-						if (o == null && !tuple.Item3)
+						if (o == null && ((MethodInfo)tuple.Item2).GetCustomAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()==null)
 							targets.Remove(tuple);
-						else
-							toRaise.Add(Tuple.Create(o, tuple.Item2, tuple.Item3));
+						else						
+							toRaise.Add(Tuple.Create(o, tuple.Item2));
 					}
 				}
 				if (targets != null && targets.Count == 0)
@@ -119,13 +120,12 @@ namespace PCL.Utils
 		{
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo, bool>> target;
+				List<Tuple<WeakReference, MethodInfo>> target;
 				if (_eventHandlers.TryGetValue(eventName, out target))
 				{
 					foreach (var tuple in target.Where(
 						t => t.Item1.Target == handlerTarget &&
-						t.Item2.Name == methodInfo.Name &&
-						t.Item3 == (handlerTarget==null)
+						t.Item2.Name == methodInfo.Name
 					).ToList())
 						target.Remove(tuple);
 				}
