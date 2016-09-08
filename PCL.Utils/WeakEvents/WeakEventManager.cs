@@ -88,7 +88,7 @@ namespace PCL.Utils
 					{
 						var o = tuple.Item1.Target;
 
-						if (o == null && ((MethodInfo)tuple.Item2).GetCustomAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()==null)
+						if (o == null && !tuple.Item2.Name.Contains("<"))
 							targets.Remove(tuple);
 						else						
 							toRaise.Add(Tuple.Create(o, tuple.Item2));
