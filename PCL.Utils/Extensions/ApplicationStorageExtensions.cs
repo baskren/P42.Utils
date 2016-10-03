@@ -83,7 +83,11 @@ namespace PCL.Utils
 		{
 			if (resourceName != null)
 			{
-				string textToStore = JsonConvert.SerializeObject(obj, Formatting.Indented);
+				var jsonSerializationSetings = new JsonSerializerSettings { 
+					TypeNameHandling = TypeNameHandling.All, 
+					Formatting = Formatting.Indented
+				};
+				string textToStore = JsonConvert.SerializeObject(obj, jsonSerializationSetings);
 				if (string.IsNullOrEmpty(textToStore))
 					throw new InvalidDataContractException("Could not serialize object [" + obj + "]");
 				StoreText(textToStore,resourceName);
