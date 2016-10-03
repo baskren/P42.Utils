@@ -64,7 +64,6 @@ namespace PCL.Utils
 				}
 				var weakRef = new WeakReference(handlerTarget);
 				var tuple = Tuple.Create(weakRef, methodInfo);
-				System.Diagnostics.Debug.WriteLine("Adding ["+eventName+","+handlerTarget+","+methodInfo+",]");
 				target.Add(tuple);
 			}
 		}

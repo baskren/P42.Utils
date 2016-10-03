@@ -2,12 +2,13 @@
 using System.Reflection;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace PCL.Utils
 {
 	public static class ReflectionExtensions
 	{
-
 		public static PropertyInfo GetPropertyInfo(this Type type, string propertyName)
 		{
 			if (string.IsNullOrEmpty (propertyName))
