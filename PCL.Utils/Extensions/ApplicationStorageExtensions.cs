@@ -31,22 +31,24 @@ namespace PCL.Utils
 			return contents;
 		}
 
-		public static string LoadLocalText(string fileName)
+		public static string LoadBundleText(string fileName)
 		{
 			var folder = FileSystem.Current.LocalStorage;
+			System.Diagnostics.Debug.WriteLine("LocalFolder=" + folder?.Path);
 			return folder == null ? null : JsonFromStoredFolder(fileName, folder);
 		}
 
-		public static string LoadRoamingStorageText(string fileName)
+		public static string LoadLocalStorageText(string fileName)
 		{
 			var folder = FileSystem.Current.RoamingStorage;
+			System.Diagnostics.Debug.WriteLine("RoamingFolder="+folder?.Path);
 			return folder == null ? null : JsonFromStoredFolder(fileName, folder);
 		}
 
 		public static string LoadText(string fileName, Assembly assembly = null)
 		{
-			var result = LoadRoamingStorageText(fileName);
-			result = result ?? LoadLocalText(fileName);
+			var result = LoadLocalStorageText(fileName);
+			result = result ?? LoadBundleText(fileName);
 			if (result == null)
 			{
 				assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
@@ -61,7 +63,8 @@ namespace PCL.Utils
 			if (folder == null)
 				throw new InvalidDataContractException("Hey, there should be a LocalStorage folder!");
 			IFile file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
-			file.WriteAllText(text);
+			//file.WriteAllText(text);
+			file.WriteAllTextAsync(text);
 		}
 
 		public static TType LoadSerializedResource<TType>(string resourceName, Assembly assembly = null, TType defaultValue = default(TType))
@@ -85,7 +88,10 @@ namespace PCL.Utils
 			{
 				var jsonSerializationSetings = new JsonSerializerSettings { 
 					TypeNameHandling = TypeNameHandling.All, 
-					Formatting = Formatting.Indented
+					Formatting = Formatting.Indented,
+					//PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+					//ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+					ReferenceLoopHandling = ReferenceLoopHandling.Serialize
 				};
 				string textToStore = JsonConvert.SerializeObject(obj, jsonSerializationSetings);
 				if (string.IsNullOrEmpty(textToStore))
