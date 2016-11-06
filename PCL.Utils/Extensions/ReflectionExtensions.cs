@@ -15,14 +15,9 @@ namespace PCL.Utils
 				return null;
 			PropertyInfo propInfo;
 			do {
-				//propInfo = type.GetRuntimeProperty(propertyName);
 				var properties = type.GetRuntimeProperties();
 				propInfo = properties.FirstOrDefault(arg => arg.Name == propertyName);
-				//var props = type.GetRuntimeProperties();
-				//propInfo = type.GetProperty(propertyName,
-				//	BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 				type = type.GetTypeInfo().BaseType;
-				//type = type.BaseType;
 			} while (propInfo == null && type != null);
 			return propInfo;
 		}
@@ -50,6 +45,22 @@ namespace PCL.Utils
 			} while (methodInfo == null && type != null);
 			return methodInfo;
 		}
+
+		/* Never tested
+		public static string GetPropertyNameForValue(this object instance, object propertyValue)
+		{
+			var type = instance.GetType();
+			//PropertyInfo propInfo;
+			var properties = type.GetRuntimeProperties();
+			foreach (var propInfo in properties)
+			{
+				var value = propInfo.GetValue(instance, null);
+				if (value == propertyValue)
+					return propInfo.Name;
+			}
+			return null;
+		}
+		*/
 
 		public static object GetPropertyValue(this object obj, string propertyName) {
 			if (obj == null)
