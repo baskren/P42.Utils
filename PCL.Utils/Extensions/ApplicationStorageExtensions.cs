@@ -10,12 +10,15 @@ namespace PCL.Utils
 	{
 		public static string EmbeddedStoredText(string resourceName, Assembly assembly = null)
 		{
-			string contents;
+			string contents=null;
 			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
 			using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-			using (var reader = new StreamReader(stream))
 			{
-				contents = reader.ReadToEnd();
+				if (stream != null)
+				using (var reader = new StreamReader(stream))
+				{
+					contents = reader.ReadToEnd();
+				}
 			}
 			return contents;
 		}

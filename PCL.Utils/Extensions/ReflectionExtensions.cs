@@ -62,6 +62,15 @@ namespace PCL.Utils
 		}
 		*/
 
+		public static bool PropertyExists(this object obj, string propertyName)
+		{
+			if (obj == null)
+				return false;
+			Type objType = obj.GetType();
+			PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+			return propInfo == null;
+		}
+
 		public static object GetPropertyValue(this object obj, string propertyName) {
 			if (obj == null)
 				throw new ArgumentNullException("obj");
