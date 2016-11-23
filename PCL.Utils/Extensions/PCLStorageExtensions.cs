@@ -29,7 +29,8 @@ namespace PCL.Utils
 		}
 
 		public static void Delete(this IFolder folder) {
-			Task.Run (() => folder.DeleteAsync ());
+			var task = Task.Run (() => folder.DeleteAsync ());
+			task.Wait();
 			return;
 		}
 
@@ -72,12 +73,14 @@ namespace PCL.Utils
 
 		#region IFile extensions
 		public static void Delete (this IFile file) {
-			Task.Run (() => file.DeleteAsync ());
+			var task = Task.Run (() => file.DeleteAsync ());
+			task.Wait();
 			return;
 		}
 
 		public static void Move (this IFile file, string newPath, NameCollisionOption collisionOption = NameCollisionOption.ReplaceExisting) {
-			Task.Run (() => file.MoveAsync (newPath, collisionOption));
+			var task = Task.Run (() => file.MoveAsync (newPath, collisionOption));
+			task.Wait();
 			return;
 		}
 
@@ -87,7 +90,8 @@ namespace PCL.Utils
 		}
 
 		public static void Rename(this IFile file, string newName, NameCollisionOption collisionOption = NameCollisionOption.FailIfExists) {
-			Task.Run (() => file.RenameAsync (newName, collisionOption));
+			var task = Task.Run (() => file.RenameAsync (newName, collisionOption));
+			task.Wait();
 			return;
 		}
 		#endregion
@@ -99,7 +103,8 @@ namespace PCL.Utils
 		}
 
 		public static void WriteAllText (this IFile file, string contents) {
-			Task.Run (() => file.WriteAllTextAsync (contents));
+			var task = Task.Run (() => file.WriteAllTextAsync (contents));
+			task.Wait();
 			return;
 		}
 		#endregion
