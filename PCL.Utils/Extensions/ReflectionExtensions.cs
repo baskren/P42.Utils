@@ -139,6 +139,11 @@ namespace PCL.Utils
 			return lineNumber;
 		}
 
+		public static Assembly CallerAssembly()
+		{
+			var result = (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+			return result;
+		}
 	}
 }
 
