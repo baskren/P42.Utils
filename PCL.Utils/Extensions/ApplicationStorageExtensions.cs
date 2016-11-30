@@ -34,14 +34,14 @@ namespace PCL.Utils
 			return contents;
 		}
 
-		public static string LoadBundleText(string fileName)
+		public static string LoadLocalStorageText(string fileName)
 		{
 			var folder = FileSystem.Current.LocalStorage;
 			System.Diagnostics.Debug.WriteLine("LocalFolder=" + folder?.Path);
 			return folder == null ? null : JsonFromStoredFolder(fileName, folder);
 		}
 
-		public static string LoadLocalStorageText(string fileName)
+		public static string LoadRoamingStorageText(string fileName)
 		{
 			var folder = FileSystem.Current.RoamingStorage;
 			System.Diagnostics.Debug.WriteLine("RoamingFolder="+folder?.Path);
@@ -50,8 +50,8 @@ namespace PCL.Utils
 
 		public static string LoadText(string fileName, Assembly assembly = null)
 		{
-			var result = LoadLocalStorageText(fileName);
-			result = result ?? LoadBundleText(fileName);
+			var result = LoadRoamingStorageText(fileName);
+			result = result ?? LoadLocalStorageText(fileName);
 			if (result == null)
 			{
 				assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
@@ -84,6 +84,22 @@ namespace PCL.Utils
 			}
 			return defaultValue;
 		}
+
+		public static TType LoadSerializedEmbeddedResource<TType>(string resourceName, Assembly assembly = null, TType defaultValue = default(TType))
+		{
+			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+			var text = EmbeddedStoredText(resourceName, assembly);
+			if (!string.IsNullOrEmpty(text))
+			{
+				TType result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
+				{
+					TypeNameHandling = TypeNameHandling.Auto
+				});
+				return result;
+			}
+			return defaultValue;
+		}
+
 
 		public static void StoreSerializedResource<TType>(TType obj, string resourceName)
 		{
