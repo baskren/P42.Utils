@@ -37,14 +37,14 @@ namespace PCL.Utils
 		public static string LoadLocalStorageText(string fileName)
 		{
 			var folder = FileSystem.Current.LocalStorage;
-			System.Diagnostics.Debug.WriteLine("LocalFolder=" + folder?.Path);
+			//System.Diagnostics.Debug.WriteLine("LocalFolder=" + folder?.Path);
 			return folder == null ? null : JsonFromStoredFolder(fileName, folder);
 		}
 
 		public static string LoadRoamingStorageText(string fileName)
 		{
 			var folder = FileSystem.Current.RoamingStorage;
-			System.Diagnostics.Debug.WriteLine("RoamingFolder="+folder?.Path);
+			//System.Diagnostics.Debug.WriteLine("RoamingFolder="+folder?.Path);
 			return folder == null ? null : JsonFromStoredFolder(fileName, folder);
 		}
 
