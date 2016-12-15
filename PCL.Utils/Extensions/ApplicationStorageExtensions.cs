@@ -118,6 +118,51 @@ namespace PCL.Utils
 				StoreText(textToStore,resourceName);
 			}
 		}
+
+		public static StreamReader ResourceStreamReader(string resourceName, Assembly assembly = null)
+		{
+			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+			var streamReader = RoamingStreamReader(resourceName);
+			if (streamReader == null)
+				streamReader = LocalStreamReader(resourceName);
+			if (streamReader == null)
+				streamReader = EmbeddedResourceStreamReader(resourceName, assembly);
+			return streamReader;
+		}
+
+		public static StreamReader EmbeddedResourceStreamReader(string resourceName, Assembly assembly = null)
+		{
+			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+			var stream = assembly.GetManifestResourceStream(resourceName);
+			var streamReader = new StreamReader(stream);
+			return streamReader;
+		}
+
+		public static StreamReader RoamingStreamReader(string fileName)
+		{
+			var folder = FileSystem.Current.RoamingStorage;
+			return folder == null ? null : StreamReaderFromStoredFolder(fileName, folder);
+		}
+
+		public static StreamReader LocalStreamReader(string fileName)
+		{
+			var folder = FileSystem.Current.LocalStorage;
+			return folder == null ? null : StreamReaderFromStoredFolder(fileName, folder);
+		}
+
+		public static StreamReader StreamReaderFromStoredFolder(string fileName, IFolder folder)
+		{
+			StreamReader streamReader = null;
+			var path = folder.Path + fileName;
+			if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
+			{
+				var file = folder.GetFile(fileName);
+				var stream = file.Open(FileAccess.Read);
+				streamReader = new StreamReader(stream);
+			}	
+			return streamReader;
+		}
+
 	}
 }
 

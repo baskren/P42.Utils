@@ -44,6 +44,8 @@
     <Compile Include="WeakEvents\IWeakEventManager.cs" />
     <Compile Include="WeakEvents\EventArgs.cs" />
     <Compile Include="WeakEvents\WeakEventManager.cs" />
+    <Compile Include="Json\IJsonReadable.cs" />
+    <Compile Include="Json\JsonExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -64,5 +66,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Interfaces\" />
     <Folder Include="WeakEvents\" />
+    <Folder Include="Json\" />
   </ItemGroup>
 </Project>
