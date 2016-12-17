@@ -35,7 +35,7 @@ namespace PCL.Utils
 			return result;
 		}
 
-		public static List<T> ReadJsonSimpleList<T>(this JsonReader reader)
+		public static List<T> ReadSimpleList<T>(this JsonReader reader)
 		{
 			var result = new List<T>();
 			T value;
@@ -46,7 +46,7 @@ namespace PCL.Utils
 			reader.Read();
 			while (reader.TokenType != JsonToken.EndArray)
 			{
-				value = reader.ParseJsonSimple<T>();
+				value = reader.ParseSimple<T>();
 				result.Add(value);
 				reader.Read();
 			}
@@ -87,46 +87,46 @@ namespace PCL.Utils
 		}
 		*/
 
-		public static string ReadJsonString(this JsonReader reader)
+		public static string ReadString(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonString();
+			return reader.ParseString();
 		}
 
-		public static string ParseJsonString(this JsonReader reader)
+		public static string ParseString(this JsonReader reader)
 		{
 			return (string)reader.Value;
 		}
 
-		public static int ReadJsonInt(this JsonReader reader)
+		public static int ReadInt(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonInt();
+			return reader.ParseInt();
 		}
 
-		public static int ParseJsonInt(this JsonReader reader)
+		public static int ParseInt(this JsonReader reader)
 		{
 			return (int)((long)reader.Value);
 		}
 
-		public static bool ReadJsonBool(this JsonReader reader)
+		public static bool ReadBool(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonBool();
+			return reader.ParseBool();
 		}
 
-		public static bool ParseJsonBool(this JsonReader reader)
+		public static bool ParseBool(this JsonReader reader)
 		{
 			return (bool)reader.Value;
 		}
 
-		public static double ReadJsonDouble(this JsonReader reader)
+		public static double ReadDouble(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonDouble();
+			return reader.ParseDouble();
 		}
 
-		public static double ParseJsonDouble(this JsonReader reader)
+		public static double ParseDouble(this JsonReader reader)
 		{
 			double result;
 			switch (reader.TokenType)
@@ -159,13 +159,13 @@ namespace PCL.Utils
 			return result;
 		}
 
-		public static T ReadJsonSimple<T>(this JsonReader reader)
+		public static T ReadSimple<T>(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonSimple<T>();
+			return reader.ParseSimple<T>();
 		}
 
-		public static T ParseJsonSimple<T>(this JsonReader reader) 
+		public static T ParseSimple<T>(this JsonReader reader) 
 		{
 			T result;
 			var typeT = typeof(T);
@@ -175,7 +175,7 @@ namespace PCL.Utils
 			}
 			else if (typeT.GetTypeInfo().IsEnum)
 			{
-				return reader.ParseJsonEnum<T>();
+				return reader.ParseEnum<T>();
 			}
 			else if (typeT == typeof(string))
 			{
@@ -188,7 +188,7 @@ namespace PCL.Utils
 			}
 			else if (typeT == typeof(double))
 			{
-				double val = reader.ParseJsonDouble();
+				double val = reader.ParseDouble();
 				result = (T)((object)val);
 			}
 			else
@@ -198,13 +198,13 @@ namespace PCL.Utils
 
 
 
-		public static T ReadJsonEnum<T>(this JsonReader reader)
+		public static T ReadEnum<T>(this JsonReader reader)
 		{
 			reader.Read();
-			return reader.ParseJsonEnum<T>();
+			return reader.ParseEnum<T>();
 		}
 
-		public static T ParseJsonEnum<T>(this JsonReader reader)
+		public static T ParseEnum<T>(this JsonReader reader)
 		{
 			T result;
 			if (reader.TokenType == JsonToken.Integer)
@@ -230,5 +230,63 @@ namespace PCL.Utils
 			return result;
 		}
 
+
+		public static void WritePvPair(this JsonWriter writer, string name, string value)
+		{
+			if (!string.IsNullOrEmpty(value))
+			{
+				writer.WritePropertyName(name);
+				writer.WriteValue(value);
+			}
+		}
+
+		public static void WritePvPair(this JsonWriter writer, string name, bool value)
+		{
+			if (value)
+			{
+				writer.WritePropertyName(name);
+				writer.WriteValue(value);
+			}
+		}
+
+		public static void WritePvPair(this JsonWriter writer, string name, int value)
+		{
+			writer.WritePropertyName(name);
+			writer.WriteValue(value);
+		}
+
+		public static void WritePvPair(this JsonWriter writer, string name, double value)
+		{
+			writer.WritePropertyName(name);
+			writer.WriteValue(value);
+		}
+
+
+
+		public static void WritePvPair(this JsonWriter writer, string name, IJsonWriteable value)
+		{
+			if (value != null)
+			{
+				writer.WritePropertyName(name);
+				writer.WriteValue(value);
+			}
+		}
+
+		public static void WriteList<T>(this JsonWriter writer, IEnumerable<T> list)
+		{
+			writer.WriteStartArray();
+			foreach (T item in list)
+				writer.WriteValue(item);
+			writer.WriteEndArray();
+		}
+
+		public static void WritePvPair<T>(this JsonWriter writer, string name, IEnumerable<T> list)
+		{
+			if (list != null)
+			{
+				writer.WritePropertyName(name);
+				writer.WriteList(list);
+			}
+		}
 	}
 }

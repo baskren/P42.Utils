@@ -163,6 +163,41 @@ namespace PCL.Utils
 			return streamReader;
 		}
 
+
+		public static StreamWriter ResourceStreamWriter(string resourceName)
+		{
+			var streamReader = RoamingStreamWriter(resourceName);
+			if (streamReader == null)
+				streamReader = LocalStreamWriter(resourceName);
+			return streamReader;
+		}
+
+		public static StreamWriter RoamingStreamWriter(string fileName)
+		{
+			var folder = FileSystem.Current.RoamingStorage;
+			return folder == null ? null : StreamWriterFromStoredFolder(fileName, folder);
+		}
+
+		public static StreamWriter LocalStreamWriter(string fileName)
+		{
+			var folder = FileSystem.Current.LocalStorage;
+			return folder == null ? null : StreamWriterFromStoredFolder(fileName, folder);
+		}
+
+		public static StreamWriter StreamWriterFromStoredFolder(string fileName, IFolder folder)
+		{
+			StreamWriter streamReader = null;
+			var path = folder.Path + fileName;
+			if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
+			{
+				var file = folder.GetFile(fileName);
+				var stream = file.Open(FileAccess.ReadAndWrite);
+				streamReader = new StreamWriter(stream);
+			}
+			return streamReader;
+		}
+
+
 	}
 }
 
