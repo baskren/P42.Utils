@@ -15,12 +15,7 @@ namespace PCL.Utils
 			return info.IsPrimitive || info.IsEnum || type.Equals(typeof(string)) || type.Equals(typeof(decimal));
 		}
 
-		public static bool IsIJsonReadable(this Type type)
-		{
-			return typeof(IJsonReadable).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo());
-		}
-
-		public static List<T> ReadIJsonList<T>(this JsonReader reader) where T : IJsonReadable
+		public static List<T> ReadIJsonReadableList<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
 		{
 			var result = new List<T>();
 			T value;
@@ -31,7 +26,8 @@ namespace PCL.Utils
 			reader.Read();
 			while (reader.TokenType != JsonToken.EndArray)
 			{
-				value = Activator.CreateInstance<T>();
+				//value = Activator.CreateInstance<T>();
+				value = new T();
 				value.ValueFrom(reader);
 				result.Add(value);
 				reader.Read();
@@ -46,16 +42,18 @@ namespace PCL.Utils
 			reader.Read();
 			if (reader.TokenType != JsonToken.StartArray)
 				throw new InvalidDataContractException("For the time being, all lists are assumed to be within square brackets");
+
 			reader.Read();
 			while (reader.TokenType != JsonToken.EndArray)
 			{
-				value = (T)reader.Value;
+				value = reader.ParseJsonSimple<T>();
 				result.Add(value);
 				reader.Read();
 			}
 			return result;
 		}
 
+		/*
 		public static List<T> ReadJsonList<T>(this JsonReader reader)
 		{
 			bool isIJsonReadable = typeof(T).IsIJsonReadable();
@@ -87,29 +85,50 @@ namespace PCL.Utils
 			}
 			return result;
 		}
+		*/
 
 		public static string ReadJsonString(this JsonReader reader)
 		{
 			reader.Read();
+			return reader.ParseJsonString();
+		}
+
+		public static string ParseJsonString(this JsonReader reader)
+		{
 			return (string)reader.Value;
 		}
 
 		public static int ReadJsonInt(this JsonReader reader)
 		{
 			reader.Read();
+			return reader.ParseJsonInt();
+		}
+
+		public static int ParseJsonInt(this JsonReader reader)
+		{
 			return (int)((long)reader.Value);
 		}
 
 		public static bool ReadJsonBool(this JsonReader reader)
 		{
 			reader.Read();
+			return reader.ParseJsonBool();
+		}
+
+		public static bool ParseJsonBool(this JsonReader reader)
+		{
 			return (bool)reader.Value;
 		}
 
 		public static double ReadJsonDouble(this JsonReader reader)
 		{
-			double result;
 			reader.Read();
+			return reader.ParseJsonDouble();
+		}
+
+		public static double ParseJsonDouble(this JsonReader reader)
+		{
+			double result;
 			switch (reader.TokenType)
 			{
 				case JsonToken.Boolean:
@@ -140,53 +159,53 @@ namespace PCL.Utils
 			return result;
 		}
 
-		public static T ReadIJson<T>(this JsonReader reader) 
+		public static T ReadJsonSimple<T>(this JsonReader reader)
 		{
-			var result = Activator.CreateInstance<T>();
 			reader.Read();
-			((IJsonReadable)result).ValueFrom(reader);
-			return result;
+			return reader.ParseJsonSimple<T>();
 		}
 
-		public static T ReadJsonSimple<T>(this JsonReader reader) 
+		public static T ParseJsonSimple<T>(this JsonReader reader) 
 		{
 			T result;
 			var typeT = typeof(T);
-			if (typeT.IsIJsonReadable())
-				result = reader.ReadIJson<T>();
-			else if (typeT == typeof(bool))
+			if (typeT == typeof(bool))
 			{
-				reader.Read();
 				result = (T)((object)((bool)reader.Value));
 			}
 			else if (typeT.GetTypeInfo().IsEnum)
 			{
-				return reader.ReadEnum<T>();
+				return reader.ParseJsonEnum<T>();
 			}
 			else if (typeT == typeof(string))
 			{
-				reader.Read();
 				result = (T)reader.Value;
 			}
 			else if (typeT == typeof(int))
 			{
-				reader.Read();
 				var obj = (object)Convert.ToInt32(reader.Value);
 				result = (T)obj;
 			}
 			else if (typeT == typeof(double))
 			{
-				double val = reader.ReadJsonDouble();
+				double val = reader.ParseJsonDouble();
 				result = (T)((object)val);
 			}
 			else
-				throw new InvalidDataContractException("Type [" + typeT + "] is not supported by ParseValueProperty [" + reader.ValueType + "] [" + reader.Value + "]");
+				throw new InvalidDataContractException("Type [" + typeT + "] is not supported by ReadJsonSimple [" + reader.ValueType + "] [" + reader.Value + "]");
 			return result;
 		}
 
-		public static T ReadEnum<T>(this JsonReader reader)
+
+
+		public static T ReadJsonEnum<T>(this JsonReader reader)
 		{
 			reader.Read();
+			return reader.ParseJsonEnum<T>();
+		}
+
+		public static T ParseJsonEnum<T>(this JsonReader reader)
+		{
 			T result;
 			if (reader.TokenType == JsonToken.Integer)
 				result = (T)Enum.ToObject(typeof(T), reader.Value);
@@ -197,5 +216,19 @@ namespace PCL.Utils
 			}
 			return result;
 		}
+
+		public static T ReadIJsonReadable<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
+		{
+			reader.Read();
+			return reader.ParseIJsonReadable<T>();
+		}
+
+		public static T ParseIJsonReadable<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
+		{
+			var result = new T();
+			result.ValueFrom(reader);
+			return result;
+		}
+
 	}
 }

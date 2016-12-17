@@ -47,6 +47,8 @@
     <Compile Include="Interfaces\IJsonReadable.cs" />
     <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="Interfaces\IJsonWriteable.cs" />
+    <Compile Include="Interfaces\ICopiable.cs" />
+    <Compile Include="Extensions\CopyingExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
