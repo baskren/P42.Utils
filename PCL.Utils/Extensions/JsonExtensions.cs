@@ -268,7 +268,7 @@ namespace PCL.Utils
 			if (value != null)
 			{
 				writer.WritePropertyName(name);
-				writer.WriteValue(value);
+				value.WriteValue(writer);
 			}
 		}
 
@@ -276,16 +276,24 @@ namespace PCL.Utils
 		{
 			writer.WriteStartArray();
 			foreach (T item in list)
-				writer.WriteValue(item);
-			writer.WriteEndArray();
+				if (typeof(IJsonWriteable).GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
+					//writer.WriteValue((IJsonWriteable)item);
+					((IJsonWriteable)item).WriteValue(writer);
+				else
+					writer.WriteValue(item);
+			writer.WriteEnd();
+			//writer.WriteEndArray();
 		}
 
-		public static void WritePvPair<T>(this JsonWriter writer, string name, IEnumerable<T> list)
+		public static void WritePvPair<T>(this JsonWriter writer, string name, IEnumerable<T> enumerable)
 		{
-			if (list != null)
+			if (enumerable != null)
 			{
+				var collection = enumerable as ICollection<T>;
+				if (collection != null && collection.Count == 0)
+					return;
 				writer.WritePropertyName(name);
-				writer.WriteList(list);
+				writer.WriteList(enumerable);
 			}
 		}
 	}

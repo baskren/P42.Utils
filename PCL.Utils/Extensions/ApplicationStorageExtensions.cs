@@ -153,7 +153,7 @@ namespace PCL.Utils
 		public static StreamReader StreamReaderFromStoredFolder(string fileName, IFolder folder)
 		{
 			StreamReader streamReader = null;
-			var path = folder.Path + fileName;
+			//System.Diagnostics.Debug.WriteLine("Reading from ["+folder.Path+"]["+fileName+"]");
 			if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
 			{
 				var file = folder.GetFile(fileName);
@@ -163,13 +163,12 @@ namespace PCL.Utils
 			return streamReader;
 		}
 
-
 		public static StreamWriter ResourceStreamWriter(string resourceName)
 		{
-			var streamReader = RoamingStreamWriter(resourceName);
-			if (streamReader == null)
-				streamReader = LocalStreamWriter(resourceName);
-			return streamReader;
+			var streamWriter = RoamingStreamWriter(resourceName);
+			if (streamWriter == null)
+				streamWriter = LocalStreamWriter(resourceName);
+			return streamWriter;
 		}
 
 		public static StreamWriter RoamingStreamWriter(string fileName)
@@ -186,15 +185,11 @@ namespace PCL.Utils
 
 		public static StreamWriter StreamWriterFromStoredFolder(string fileName, IFolder folder)
 		{
-			StreamWriter streamReader = null;
-			var path = folder.Path + fileName;
-			if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
-			{
-				var file = folder.GetFile(fileName);
-				var stream = file.Open(FileAccess.ReadAndWrite);
-				streamReader = new StreamWriter(stream);
-			}
-			return streamReader;
+			System.Diagnostics.Debug.WriteLine("Writing to [" + folder.Path + "][" + fileName + "]");
+			var file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
+			var stream = file.Open(FileAccess.ReadAndWrite);
+			var streamWriter = new StreamWriter(stream);
+			return streamWriter;
 		}
 
 
