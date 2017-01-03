@@ -14,6 +14,7 @@
     <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
     <AssemblyName>PCL.Utils.Droid</AssemblyName>
     <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
+    <ReleaseVersion>0.9.13.3</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,13 +43,13 @@
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Forms9Patch\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage">
-      <HintPath>..\..\Forms9Patch\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.dll</HintPath>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\..\Forms9Patch\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.Abstractions.dll</HintPath>
+      <HintPath>..\..\..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage">
+      <HintPath>..\..\..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -59,13 +60,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\PCL.Utils\PCL.Utils.csproj">
       <Project>{CAD932A9-5E8D-415C-8DC2-CE8E553FA6D3}</Project>
       <Name>PCL.Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
