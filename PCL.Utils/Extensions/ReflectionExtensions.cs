@@ -144,6 +144,11 @@ namespace PCL.Utils
 			var result = (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
 			return result;
 		}
+
+		public static string CallerString([System.Runtime.CompilerServices.CallerMemberName] string callerName = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+		{
+			return callerName + ":" + lineNumber;
+		}
 	}
 }
 
