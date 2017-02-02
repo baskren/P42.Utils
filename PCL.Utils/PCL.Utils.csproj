@@ -49,12 +49,14 @@
     <Compile Include="Interfaces\IJsonWriteable.cs" />
     <Compile Include="Interfaces\ICopiable.cs" />
     <Compile Include="Extensions\CopyingExtensions.cs" />
+    <Compile Include="Enums\StreamSource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Interfaces\" />
     <Folder Include="WeakEvents\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

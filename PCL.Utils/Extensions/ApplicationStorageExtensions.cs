@@ -119,15 +119,19 @@ namespace PCL.Utils
 			}
 		}
 
-		public static StreamReader ResourceStreamReader(string resourceName, Assembly assembly = null)
+		public static StreamReader ResourceStreamReader(string resourceName, Assembly assembly = null, StreamSource source=StreamSource.Default)
 		{
-			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
-			var streamReader = RoamingStreamReader(resourceName);
-			if (streamReader == null)
-				streamReader = LocalStreamReader(resourceName);
-			if (streamReader == null)
-				streamReader = EmbeddedResourceStreamReader(resourceName, assembly);
-			return streamReader;
+			StreamReader reader = null;
+			if (source == StreamSource.Default || source == StreamSource.Roaming)
+				reader = RoamingStreamReader(resourceName);
+			if (reader == null && (source == StreamSource.Default || source == StreamSource.Local))
+				reader = LocalStreamReader(resourceName);
+			if (reader == null && (source == StreamSource.Default || source == StreamSource.EmbeddedResource))
+			{
+				assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+				reader = EmbeddedResourceStreamReader(resourceName, assembly);
+			}
+			return reader;
 		}
 
 		public static StreamReader EmbeddedResourceStreamReader(string resourceName, Assembly assembly = null)

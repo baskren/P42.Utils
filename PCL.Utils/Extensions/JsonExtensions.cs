@@ -28,7 +28,7 @@ namespace PCL.Utils
 			{
 				//value = Activator.CreateInstance<T>();
 				value = new T();
-				value.ValueFrom(reader);
+				value.PropertiesFrom(reader);
 				result.Add(value);
 				reader.Read();
 			}
@@ -226,7 +226,7 @@ namespace PCL.Utils
 		public static T ParseIJsonReadable<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
 		{
 			var result = new T();
-			result.ValueFrom(reader);
+			result.PropertiesFrom(reader);
 			return result;
 		}
 

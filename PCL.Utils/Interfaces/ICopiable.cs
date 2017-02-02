@@ -3,6 +3,6 @@ namespace PCL.Utils
 {
 	public interface ICopiable<T>
 	{
-		void ValueFrom(T other);
+		void PropertiesFrom(T other);
 	}
 }

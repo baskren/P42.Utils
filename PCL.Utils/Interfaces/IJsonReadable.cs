@@ -3,7 +3,7 @@ namespace PCL.Utils
 {
 	public interface IJsonReadable
 	{
-		void ValueFrom(JsonReader reader);
+		void PropertiesFrom(JsonReader reader);
 	}
 
 	public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>

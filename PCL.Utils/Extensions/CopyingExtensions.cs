@@ -33,7 +33,7 @@ namespace PCL.Utils
 			//	return source;
 			//return (T)Activator.CreateInstance(typeof(T), new object[] { source });
 			var result = new T();
-			result.ValueFrom(source);
+			result.PropertiesFrom(source);
 			return result;
 		}
 	}
