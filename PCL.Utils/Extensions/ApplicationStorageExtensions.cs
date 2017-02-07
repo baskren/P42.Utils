@@ -138,8 +138,12 @@ namespace PCL.Utils
 		{
 			assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
 			var stream = assembly.GetManifestResourceStream(resourceName);
-			var streamReader = new StreamReader(stream);
-			return streamReader;
+			if (stream != null)
+			{
+				var streamReader = new StreamReader(stream);
+				return streamReader;
+			}
+			return null;
 		}
 
 		public static StreamReader RoamingStreamReader(string fileName)
