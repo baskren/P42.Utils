@@ -3,6 +3,7 @@ using System.IO;
 using PCLStorage;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace PCL.Utils
 {
@@ -200,7 +201,28 @@ namespace PCL.Utils
 			return streamWriter;
 		}
 
-
+		public static List<string> ListResources(StreamSource source, Assembly assembly = null)
+		{
+			if (source == StreamSource.Default)
+				throw new InvalidDataException("StreamSource.Default is too ambiguous");
+			var result = new List<string>();
+			if (source == StreamSource.Roaming || source == StreamSource.Local)
+			{
+				
+				var files = PCLStorageExtensions.GetFiles(source == StreamSource.Roaming ? FileSystem.Current.RoamingStorage : FileSystem.Current.LocalStorage);
+				if (files != null && files.Count > 0)
+					foreach (var file in files)
+						result.Add(file.Name);
+			}
+			else if (source == StreamSource.EmbeddedResource)
+			{
+				assembly = assembly ?? (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly").Invoke(null, new object[0]);
+				var resourceNames = assembly.GetManifestResourceNames();
+				foreach (string resourceName in resourceNames)
+					result.Add(resourceName);
+			}
+			return result;
+		}
 	}
 }
 
