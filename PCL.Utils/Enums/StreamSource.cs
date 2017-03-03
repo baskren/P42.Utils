@@ -7,5 +7,6 @@ namespace PCL.Utils
 		EmbeddedResource,
 		Local,
 		Roaming,
+		None,
 	}
 }
