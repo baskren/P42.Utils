@@ -159,6 +159,14 @@ namespace PCL.Utils
 			return result;
 		}
 
+		public static DateTime ReadDateTime(this JsonReader reader)
+		{
+			var nullDateTime = reader.ReadAsDateTime();
+			if (nullDateTime == null)
+				throw new InvalidDataContractException("Unable to reader DateTime from ["+reader.Value+"]");
+			return nullDateTime.Value;
+		}
+
 		public static T ReadSimple<T>(this JsonReader reader)
 		{
 			reader.Read();
@@ -261,6 +269,11 @@ namespace PCL.Utils
 			writer.WriteValue(value);
 		}
 
+		public static void WritePvPair(this JsonWriter writer, string name, DateTime value)
+		{
+			writer.WritePropertyName(name);
+			writer.WriteValue(value);
+		}
 
 
 		public static void WritePvPair(this JsonWriter writer, string name, IJsonWriteable value)
