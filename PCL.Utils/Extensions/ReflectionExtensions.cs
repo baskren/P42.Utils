@@ -62,6 +62,16 @@ namespace PCL.Utils
 		}
 		*/
 
+		public static List<string> PropertyNames(this object obj)
+		{
+			Type objecType = obj.GetType();
+			var properties = objecType.GetRuntimeProperties();
+			var result = new List<string>();
+			foreach (var property in properties)
+				result.Add(property.Name);
+			return result;
+		}
+
 		public static bool PropertyExists(this object obj, string propertyName)
 		{
 			if (obj == null)
