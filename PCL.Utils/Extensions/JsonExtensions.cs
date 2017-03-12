@@ -161,10 +161,21 @@ namespace PCL.Utils
 
 		public static DateTime ReadDateTime(this JsonReader reader)
 		{
+			reader.Read();
+			return reader.ParseDateTime();
+		}
+
+		public static DateTime ParseDateTime(this JsonReader reader)
+		{
+			/*
 			var nullDateTime = reader.ReadAsDateTime();
 			if (nullDateTime == null)
-				throw new InvalidDataContractException("Unable to reader DateTime from ["+reader.Value+"]");
+				throw new InvalidDataContractException("Unable to reader DateTime from [" + reader.Value + "]");
 			return nullDateTime.Value;
+			*/
+			if (reader.TokenType != JsonToken.Date)
+				throw new InvalidDataContractException("Expecting JsonToken.Date but found ["+reader.TokenType+"]");
+			return (DateTime)reader.Value;
 		}
 
 		public static T ReadSimple<T>(this JsonReader reader)
@@ -196,7 +207,12 @@ namespace PCL.Utils
 			}
 			else if (typeT == typeof(double))
 			{
-				double val = reader.ParseDouble();
+				var val = reader.ParseDouble();
+				result = (T)((object)val);
+			}
+			else if (typeT == typeof(DateTime))
+			{
+				var val = reader.ParseDateTime();
 				result = (T)((object)val);
 			}
 			else
