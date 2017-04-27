@@ -174,7 +174,7 @@ namespace PCL.Utils
 			return nullDateTime.Value;
 			*/
 			if (reader.TokenType != JsonToken.Date)
-				throw new InvalidDataContractException("Expecting JsonToken.Date but found ["+reader.TokenType+"]");
+				throw new InvalidDataContractException("Expecting JsonToken.Date but found [" + reader.TokenType + "]");
 			return (DateTime)reader.Value;
 		}
 
@@ -184,7 +184,7 @@ namespace PCL.Utils
 			return reader.ParseSimple<T>();
 		}
 
-		public static T ParseSimple<T>(this JsonReader reader) 
+		public static T ParseSimple<T>(this JsonReader reader)
 		{
 			T result;
 			var typeT = typeof(T);
