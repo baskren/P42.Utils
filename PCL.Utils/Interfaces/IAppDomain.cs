@@ -5,26 +5,38 @@
 //  *******************************************************************/
 using System.Collections.Generic;
 using System.Reflection;
+using System;
 
 namespace PCL.Utils
 {
-	public interface IAppDomain
-	{
-		IList<IAssembly> GetAssemblies();
+    public interface IAppDomain
+    {
+        IList<Assembly> GetAssemblies();
 
-		Assembly GetAssemblyByName(string name);
-	}
+        Assembly GetAssemblyByName(string name);
 
-	public interface IAssembly
-	{
-		string Name { get; }
-		Assembly Assembly { get; }
-	}
+        IEnumerable<Type> GetChildClassesOf(Type parentType);
+    }
 
 
-	public class AppDomainWrapper
-	{
-		public static IAppDomain Instance { get; set; }
-	}
+    public class AppDomainWrapper
+    {
+        public static IAppDomain Instance { get; set; }
+
+        public static IList<Assembly> GetAssemblies()
+        {
+            return Instance?.GetAssemblies();
+        }
+
+        public static Assembly GetAssemblyByName(string name)
+        {
+            return Instance?.GetAssemblyByName(name);
+        }
+
+        public static IEnumerable<Type> GetChildClassesOf(Type parentType)
+        {
+            return Instance?.GetChildClassesOf(parentType);
+        }
+    }
 }
 

@@ -17,34 +17,56 @@ namespace PCL.Utils
 #endif
 //namespace PCL.Utils.iOS
 {
-	public class AppDomainWrapperInstance : IAppDomain
-	{
-		IList<IAssembly> IAppDomain.GetAssemblies()
-		{
-			return GetAssemblies();
-		}
+    public class AppDomainWrapperInstance : IAppDomain
+    {
+        IList<Assembly> IAppDomain.GetAssemblies()
+        {
+            return GetAssemblies();
+        }
 
-		IList<IAssembly> GetAssemblies()
-		{
-			var result = new List<IAssembly>();
-			foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
-				result.Add(new AssemblyWrapper(assembly));
-			return result;
-		}
+        IList<Assembly> GetAssemblies()
+        {
+            /*
+            var result = new List<Assembly>();
+            foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+                //result.Add(new AssemblyWrapper(assembly));
+                result.Add(assembly);
+            return result;
+            */
+            return AppDomain.CurrentDomain.GetAssemblies();
+        }
 
-		Assembly IAppDomain.GetAssemblyByName(string name)
-		{
-			return GetAssemblyByName(name);
-		}
 
-		Assembly GetAssemblyByName(string name)
-		{
-			return AppDomain.CurrentDomain.GetAssemblies().
-				   SingleOrDefault(assembly => assembly.GetName().Name == name);
-		}
 
-	}
+        Assembly IAppDomain.GetAssemblyByName(string name)
+        {
+            return GetAssemblyByName(name);
+        }
 
+        Assembly GetAssemblyByName(string name)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().
+                   SingleOrDefault(assembly => assembly.GetName().Name == name);
+        }
+
+
+
+        IEnumerable<Type> IAppDomain.GetChildClassesOf(Type parentType)
+        {
+            return GetChildClassesOf(parentType);
+        }
+
+        IEnumerable<Type> GetChildClassesOf(Type parentType)
+        {
+            foreach (var asm in GetAssemblies())
+                foreach (var type in asm.GetTypes())
+                    if (type.IsSubclassOf(parentType))
+                        yield return type;
+        }
+
+    }
+
+    /*
 	public class AssemblyWrapper : IAssembly
 	{
 		readonly Assembly _Assembly;
@@ -58,6 +80,7 @@ namespace PCL.Utils
 		public Assembly Assembly { get { return _Assembly; } }
 
 	}
+	*/
 
 }
 
