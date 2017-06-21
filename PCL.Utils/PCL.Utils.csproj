@@ -47,7 +47,6 @@
 		<Compile Include="Interfaces\IFileSystemInfo.cs" />
 		<Compile Include="Extensions\ApplicationStorageExtensions.cs" />
 		<Compile Include="Timer.cs" />
-		<Compile Include="Interfaces\IAppDomain.cs" />
 		<Compile Include="WeakEvents\IWeakEventManager.cs" />
 		<Compile Include="WeakEvents\EventArgs.cs" />
 		<Compile Include="WeakEvents\WeakEventManager.cs" />
@@ -66,14 +65,14 @@
 		<Folder Include="Enums\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>$(NUGET_PACKAGES)\Newtonsoft.Json.10.0.2\lib\portable-net45+win8+wpa81+wp8\Newtonsoft.Json.dll</HintPath>
-		</Reference>
 		<Reference Include="PCLStorage.Abstractions">
 			<HintPath>$(NUGET_PACKAGES)\PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
 		</Reference>
 		<Reference Include="PCLStorage">
 			<HintPath>$(NUGET_PACKAGES)\PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>$(NUGET_PACKAGES)\Newtonsoft.Json.10.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>

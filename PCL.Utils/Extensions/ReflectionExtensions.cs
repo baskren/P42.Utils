@@ -172,13 +172,36 @@ namespace PCL.Utils
             return callerName + ":" + lineNumber;
         }
 
-        public static Assembly ExecutingAssembly()
+        public static Assembly GetApplicationAssembly()
         {
-            var result = (Assembly)typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetApplicationAssembly").Invoke(null, new object[0]);
+            var asmType = typeof(Assembly).GetTypeInfo();
+            var getAppAsmMethod = asmType.GetDeclaredMethod("GetEntryAssembly");
+            var result = (Assembly)getAppAsmMethod.Invoke(null, new object[0]);
             if (result == null)
                 throw new Exception("PCL.Utils: Could not get Executing Assembly");
             return result;
+        }
 
+        public static List<Assembly> GetAssemblies()
+        {
+            var appDomain = typeof(string).GetTypeInfo().Assembly.GetType("System.AppDomain");
+            var currentDomainProperty = appDomain.GetRuntimeProperty("CurrentDomain");
+            var currentdomainMethod = currentDomainProperty.GetMethod;//.Invoke(null, new object[] { });
+            var currentdomain = currentdomainMethod.Invoke(null, null);
+            var getassemblies = currentdomain.GetType().GetRuntimeMethod("GetAssemblies", new Type[] { });
+            var assemblies = getassemblies.Invoke(currentdomain, new object[] { }) as Assembly[];
+            return assemblies.ToList();
+        }
+
+        public static Assembly GetAssemblyByName(string name)
+        {
+            var asms = GetAssemblies();
+            foreach (var asm in asms)
+            {
+                if (asm.GetName().Name == name)
+                    return asm;
+            }
+            return null;
         }
     }
 }
