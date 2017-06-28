@@ -203,6 +203,15 @@ namespace PCL.Utils
             }
             return null;
         }
+
+        public static IEnumerable<Type> GetChildClassesOf(Type parentType)
+        {
+            foreach (var asm in GetAssemblies())
+                foreach (var type in asm.DefinedTypes)
+                    if (type.IsSubclassOf(parentType))
+                        yield return type.AsType();
+        }
+
     }
 }
 
