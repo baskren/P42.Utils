@@ -57,6 +57,7 @@
 		<Compile Include="Interfaces\ICopiable.cs" />
 		<Compile Include="Extensions\CopyingExtensions.cs" />
 		<Compile Include="Enums\StreamSource.cs" />
+		<Compile Include="AsyncAwaitForSet.cs" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 	<ItemGroup>
