@@ -15,8 +15,10 @@ namespace PCL.Utils
         #region Async Constructor / Presenter / Result
         volatile TaskCompletionSource<T> m_tcs = new TaskCompletionSource<T>();
 
-        AsyncAwaitForSet<T> CurrentInstance;
+        AsyncAwaitForSet<T> _currentInstance;
         Func<T, bool> _onSetAction;
+
+        public AsyncAwaitForSet<T> CurrentInstance { get => _currentInstance; }
 
         public Task<T> Result()
         {
@@ -29,7 +31,7 @@ namespace PCL.Utils
             if (_onSetAction != null && !_onSetAction.Invoke(result))
                 return;
             m_tcs.TrySetResult(result);
-            CurrentInstance = null;
+            _currentInstance = null;
         }
 
         public void Reset()

@@ -58,6 +58,9 @@
 		<Compile Include="Extensions\CopyingExtensions.cs" />
 		<Compile Include="Enums\StreamSource.cs" />
 		<Compile Include="AsyncAwaitForSet.cs" />
+		<Compile Include="ObservableKeyedCollection.cs" />
+		<Compile Include="Extensions\ICollectionExtensions.cs" />
+		<Compile Include="Extensions\DictionaryExtensions.cs" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 	<ItemGroup>
