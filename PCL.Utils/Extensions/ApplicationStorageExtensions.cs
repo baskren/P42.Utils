@@ -29,9 +29,9 @@ namespace PCL.Utils
             string contents = null;
             if (uid != null)
             {
-                if (folder.CheckExists(uid) != ExistenceCheckResult.FolderExists)
-                    folder.CreateFolder(uid, CreationCollisionOption.FailIfExists);
-                folder = folder.GetFolder(uid);
+                if (folder.CheckExists("uid-" + uid) != ExistenceCheckResult.FolderExists)
+                    folder.CreateFolder("uid-" + uid, CreationCollisionOption.FailIfExists);
+                folder = folder.GetFolder("uid-" + uid);
             }
             if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
             {
@@ -74,9 +74,9 @@ namespace PCL.Utils
                 throw new InvalidDataContractException("Hey, there should be a LocalStorage folder!");
             if (uid != null)
             {
-                if (folder.CheckExists(uid) != ExistenceCheckResult.FolderExists)
-                    folder.CreateFolder(uid, CreationCollisionOption.FailIfExists);
-                folder = folder.GetFolder(uid);
+                if (folder.CheckExists("uid-" + uid) != ExistenceCheckResult.FolderExists)
+                    folder.CreateFolder("uid-" + uid, CreationCollisionOption.FailIfExists);
+                folder = folder.GetFolder("uid-" + uid);
             }
             IFile file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
             //file.WriteAllText(text);
@@ -177,9 +177,9 @@ namespace PCL.Utils
             StreamReader streamReader = null;
             if (uid != null)
             {
-                if (folder.CheckExists(uid) != ExistenceCheckResult.FolderExists)
-                    folder.CreateFolder(uid, CreationCollisionOption.FailIfExists);
-                folder = folder.GetFolder(uid);
+                if (folder.CheckExists("uid-" + uid) != ExistenceCheckResult.FolderExists)
+                    folder.CreateFolder("uid-" + uid, CreationCollisionOption.FailIfExists);
+                folder = folder.GetFolder("uid-" + uid);
             }
             //System.Diagnostics.Debug.WriteLine("Reading from ["+folder.Path+"]["+fileName+"]");
             if (folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
@@ -215,9 +215,9 @@ namespace PCL.Utils
         {
             if (uid != null)
             {
-                if (folder.CheckExists(uid) != ExistenceCheckResult.FolderExists)
-                    folder.CreateFolder(uid, CreationCollisionOption.FailIfExists);
-                folder = folder.GetFolder(uid);
+                if (folder.CheckExists("uid-" + uid) != ExistenceCheckResult.FolderExists)
+                    folder.CreateFolder("uid-" + uid, CreationCollisionOption.FailIfExists);
+                folder = folder.GetFolder("uid-" + uid);
             }
             System.Diagnostics.Debug.WriteLine("Writing to [" + folder.Path + "][" + fileName + "]");
             var file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
