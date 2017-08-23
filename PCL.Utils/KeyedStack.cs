@@ -24,5 +24,12 @@ namespace PCL.Utils
                 return stack.Pop();
             return null;
         }
+
+        public new int Count(K key)
+        {
+            if (!ContainsKey(key))
+                return 0;
+            return this[key].Count;
+        }
     }
 }
