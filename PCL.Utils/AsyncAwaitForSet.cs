@@ -18,7 +18,7 @@ namespace PCL.Utils
         AsyncAwaitForSet<T> _currentInstance;
         Func<T, bool> _onSetAction;
 
-        public AsyncAwaitForSet<T> CurrentInstance { get => _currentInstance; }
+        public AsyncAwaitForSet<T> CurrentInstance { get { return _currentInstance; } }
 
         public Task<T> Result()
         {
