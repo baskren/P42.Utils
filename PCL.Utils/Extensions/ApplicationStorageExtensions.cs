@@ -4,6 +4,7 @@ using PCLStorage;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PCL.Utils
 {
@@ -235,7 +236,7 @@ namespace PCL.Utils
             {
 
                 var files = PCLStorageExtensions.GetFiles(source == StreamSource.Roaming ? FileSystem.Current.RoamingStorage : FileSystem.Current.LocalStorage);
-                if (files != null && files.Count > 0)
+                if (files != null && files.Any())
                     foreach (var file in files)
                         result.Add(file.Name);
             }

@@ -64,6 +64,10 @@
 		<Compile Include="Interfaces\ICollapsable.cs" />
 		<Compile Include="Interfaces\IHideable.cs" />
 		<Compile Include="KeyedStack.cs" />
+		<Compile Include="Analytics\LogEventParameterValue.cs" />
+		<Compile Include="Analytics\EventLogEntry.cs" />
+		<Compile Include="Analytics\AnalyticsStringExtensions.cs" />
+		<Compile Include="Extensions\StringExtensions.cs" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 	<ItemGroup>
@@ -71,6 +75,7 @@
 		<Folder Include="Interfaces\" />
 		<Folder Include="WeakEvents\" />
 		<Folder Include="Enums\" />
+		<Folder Include="Analytics\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="PCLStorage.Abstractions">
