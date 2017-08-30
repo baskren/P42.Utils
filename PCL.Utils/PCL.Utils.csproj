@@ -68,6 +68,8 @@
 		<Compile Include="Analytics\EventLogEntry.cs" />
 		<Compile Include="Analytics\AnalyticsStringExtensions.cs" />
 		<Compile Include="Extensions\StringExtensions.cs" />
+		<Compile Include="FileCache.cs" />
+		<Compile Include="MD5.cs" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 	<ItemGroup>
