@@ -12,24 +12,17 @@ namespace PCL.Utils
     public static class FileCache
     {
         static IFolder _folder;
+        static IFolder Folder
+        {
+            get
+            {
+                _folder = _folder ?? FileSystem.Current.LocalStorage.CreateFolder("Cache", CreationCollisionOption.OpenIfExists);
+                return _folder;
+            }
+        }
         static object _locker = new object();
         static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
         static MD5 _md5 = MD5.Create();
-
-        static FileCache()
-        {
-            Init();
-        }
-
-        static async void Init()
-        {
-            IFolder rootFolder = FileSystem.Current.LocalStorage;
-            await rootFolder.CreateFolderAsync("Cache", CreationCollisionOption.OpenIfExists).ContinueWith(createFolderTask =>
-            {
-                createFolderTask.Wait();
-                _folder = createFolderTask.Result;
-            });
-        }
 
         public static async Task<string> Download(string url)
         {
@@ -51,8 +44,8 @@ namespace PCL.Utils
         {
             try
             {
-                var path = Path.Combine(_folder.Path, fileName);
-                var exists = await _folder.CheckExistsAsync(fileName);
+                var path = Path.Combine(Folder.Path, fileName);
+                var exists = await Folder.CheckExistsAsync(fileName);
                 if (exists == ExistenceCheckResult.FileExists && !_downloadTasks.ContainsKey(path))
                 {
                     System.Diagnostics.Debug.WriteLine("FileCache: [" + url + "] exists as [" + fileName + "]");
