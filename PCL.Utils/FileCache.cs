@@ -66,6 +66,8 @@ namespace PCL.Utils
         {
             lock (_locker)
             {
+                //Task<bool> task = null;
+                //if (_downloadTasks.TryGetValue(fileName, out task))
                 if (_downloadTasks.TryGetValue(fileName, out Task<bool> task))
                     return task;
 
