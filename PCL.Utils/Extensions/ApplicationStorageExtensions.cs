@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace PCL.Utils
 {
@@ -79,9 +81,17 @@ namespace PCL.Utils
                     folder.CreateFolder("uid-" + uid, CreationCollisionOption.FailIfExists);
                 folder = folder.GetFolder("uid-" + uid);
             }
-            IFile file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
+            var tempFileName = Guid.NewGuid().ToString();
+
+            //IFile file = folder.CreateFile(fileName, CreationCollisionOption.ReplaceExisting);
             //file.WriteAllText(text);
-            file.WriteAllTextAsync(text);
+            Task.Run(async () =>
+            {
+                IFile file = folder.CreateFile(tempFileName, CreationCollisionOption.ReplaceExisting);
+                await file.WriteAllTextAsync(text);
+                file.Rename(fileName, NameCollisionOption.ReplaceExisting);
+            });
+
         }
 
         public static TType LoadSerializedResource<TType>(string uid, string resourceName, Assembly assembly = null, TType defaultValue = default(TType))
