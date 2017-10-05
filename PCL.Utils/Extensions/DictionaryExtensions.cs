@@ -38,5 +38,19 @@ namespace PCL.Utils
                 return result;
             return null;
         }
+
+        public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, out TKey key)
+        {
+            foreach (var kvp in dictionary)
+            {
+                if (Equals(value, kvp.Value))
+                {
+                    key = kvp.Key;
+                    return true;
+                }
+            }
+            key = default(TKey);
+            return false;
+        }
     }
 }

@@ -70,6 +70,8 @@
 		<Compile Include="Extensions\StringExtensions.cs" />
 		<Compile Include="FileCache.cs" />
 		<Compile Include="MD5.cs" />
+		<Compile Include="Extensions\HttpClientExtensions.cs" />
+		<Compile Include="Interfaces\IJsonReadWriteable.cs" />
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 	<ItemGroup>
