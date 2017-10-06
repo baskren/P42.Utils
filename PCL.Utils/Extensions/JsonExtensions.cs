@@ -274,7 +274,7 @@ namespace PCL.Utils
         }
 
 
-
+        /*
         public static void WritePvPair(this JsonWriter writer, string name, bool value)
         {
             if (value)
@@ -310,9 +310,10 @@ namespace PCL.Utils
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
+        */
 
 
-        /*
+
         public static void WritePvPair(this JsonWriter writer, string name, BigInteger value)
         {
             writer.WriteSafePropertyName(name);
@@ -546,7 +547,7 @@ namespace PCL.Utils
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
-        */
+
 
         public static void WritePvPair(this JsonWriter writer, string name, IJsonWriteable value)
         {
