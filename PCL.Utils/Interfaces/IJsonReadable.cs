@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 namespace PCL.Utils
 {
-	public interface IJsonReadable
-	{
-		void PropertiesFrom(JsonReader reader);
-	}
+    public interface IJsonReadable
+    {
+        void PropertiesFrom(JsonReader reader);
+    }
 
-	public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>
-	{
-	}
+    public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>
+    {
+    }
 
 }

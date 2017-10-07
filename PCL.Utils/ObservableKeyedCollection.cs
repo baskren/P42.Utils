@@ -59,6 +59,10 @@ namespace System.Collections
             throw new NotImplementedException();
         }
 
+        public virtual bool ContainsKey(TKey key)
+        {
+            return Dictionary.ContainsKey(key);
+        }
     }
 
 }
