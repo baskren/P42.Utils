@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <AssemblyName>P42.Utils</AssemblyName>
+    <RootNamespace>P42.Utils</RootNamespace>
+    <PackageId>P42.Utils</PackageId>
+    <Authors>Ben Askren</Authors>
+    <Company>42nd Parallel</Company>
+    <Product>P42.Utils</Product>
+    <Copyright>2017 42nd Parallel</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;NETSTANDARD;DEBUG;NETSTANDARD1_3;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <DefineConstants>TRACE;NETSTANDARD;RELEASE;NETSTANDARD1_3</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+</Project>
