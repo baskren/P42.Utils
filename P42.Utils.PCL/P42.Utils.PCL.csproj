@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{CAD932A9-5E8D-415C-8DC2-CE8E553FA6D3}</ProjectGuid>
+    <ProjectGuid>{043A7C06-6B2C-42E0-BE23-9B8ADE9F4748}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>P42.Utils</RootNamespace>
     <AssemblyName>P42.Utils</AssemblyName>
