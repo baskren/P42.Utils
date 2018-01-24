@@ -52,9 +52,9 @@
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\P42.Utils.NetStandard\P42.Utils.NetStandard.csproj">
-      <Project>{cad932a9-5e8d-415c-8dc2-ce8e553fa6d3}</Project>
-      <Name>P42.Utils.NetStandard</Name>
+    <ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
+      <Project>{CAD932A9-5E8D-415C-8DC2-CE8E553FA6D3}</Project>
+      <Name>P42.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
