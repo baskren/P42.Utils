@@ -86,6 +86,7 @@ namespace P42.Utils
 
         public static Action PlatformPathLoader;
 
+        /*
         static string _documentsPath;
         public static string DocumentsPath
         {
@@ -100,6 +101,7 @@ namespace P42.Utils
                 _documentsPath = value;
             }
         }
+        */
 
         static string _applicationDataPath;
         public static string ApplicationDataPath
