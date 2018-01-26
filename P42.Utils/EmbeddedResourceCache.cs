@@ -22,7 +22,7 @@ namespace P42.Utils
         {
             get
             {
-                if (_folderPath==null)
+                if (_folderPath == null)
                 {
                     //_folderPath = Path.Combine(P42.Utils.Environment.ApplicationDataPath, LocalStorageFolderName);
                     _folderPath = P42.Utils.Environment.ApplicationDataPath;
@@ -31,7 +31,7 @@ namespace P42.Utils
                 }
                 return _folderPath;
             }
-        }            
+        }
 #else
         static IFolder _folder;
         static IFolder Folder
@@ -63,6 +63,12 @@ namespace P42.Utils
 
 
 
+        public static System.IO.Stream GetStream(string resourceId, Assembly assembly)
+        {
+            var task = Task.Run(() => GetStreamAsync(resourceId, assembly));
+            return task.Result;
+        }
+
         public static async Task<System.IO.Stream> GetStreamAsync(string resourceId, Assembly assembly = null)
         {
             assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
@@ -71,20 +77,19 @@ namespace P42.Utils
             var fileName = await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly);
             if (fileName == null)
                 return null;
-            var result = System.IO.File.Open(Path.Combine(FolderPath,fileName), FileMode.Open);
+            var result = System.IO.File.Open(Path.Combine(FolderPath, fileName), FileMode.Open);
             return result;
         }
 
 
 
-        public static string LocalStorageSubPathForEmbeddedResource(string resourceId, Assembly assembly=null)
+        public static string LocalStorageSubPathForEmbeddedResource(string resourceId, Assembly assembly = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             var task = Task.Run(() => LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly));
             return task.Result;
         }
 
-        public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly=null)
+        public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly = null)
         {
             assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(assembly.GetName().Name + ";" + resourceId.Trim()));
@@ -153,10 +158,10 @@ namespace P42.Utils
                             stream.Seek(0, SeekOrigin.Begin);
                             stream.CopyTo(fileStream);
                             fileStream.Flush(true);
-                           
+
 
                             var length = fileStream.Length;
-                            System.Diagnostics.Debug.WriteLine("DownloadTask: file written [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "] length=["+length+"] name=["+fileStream.Name+"] pos=["+fileStream.Position+"]");
+                            System.Diagnostics.Debug.WriteLine("DownloadTask: file written [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "] length=[" + length + "] name=[" + fileStream.Name + "] pos=[" + fileStream.Position + "]");
                         }
                         return true;
                     }
