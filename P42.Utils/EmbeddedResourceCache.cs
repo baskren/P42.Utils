@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 #if NETSTANDARD
@@ -62,14 +61,32 @@ namespace P42.Utils
         static Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
         //static MD5 _md5 = MD5.Create();
 
-        public static string LocalStorageSubPathForEmbeddedResource(string resourceId, Assembly assembly)
+
+
+        public static async Task<System.IO.Stream> GetStreamAsync(string resourceId, Assembly assembly = null)
         {
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            if (assembly == null)
+                return null;
+            var fileName = await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly);
+            if (fileName == null)
+                return null;
+            var result = System.IO.File.Open(Path.Combine(FolderPath,fileName), FileMode.Open);
+            return result;
+        }
+
+
+
+        public static string LocalStorageSubPathForEmbeddedResource(string resourceId, Assembly assembly=null)
+        {
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             var task = Task.Run(() => LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly));
             return task.Result;
         }
 
-        public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly)
+        public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly=null)
         {
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(assembly.GetName().Name + ";" + resourceId.Trim()));
             //var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
             var fileName = resourceId;

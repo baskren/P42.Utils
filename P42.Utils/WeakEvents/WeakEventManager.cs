@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace P42.Utils
@@ -14,18 +13,18 @@ namespace P42.Utils
 		{
 			lock (SyncObj)
 			{
-				foreach (var kvp in WeakEventManagers.ToList())
+                var keys = WeakEventManagers.Keys;
+				foreach (var key in keys)
 				{
-					object target;
 
-					if (kvp.Key.TryGetTarget(out target))
-					{
-						if (ReferenceEquals(target, source))
-							return kvp.Value;
-					}
-					else
-						WeakEventManagers.Remove(kvp.Key);
-				}
+                    if (key.TryGetTarget(out object target))
+                    {
+                        if (ReferenceEquals(target, source))
+                            return WeakEventManagers[key];
+                    }
+                    else
+                        WeakEventManagers.Remove(key);
+                }
 
 				var manager = new WeakEventManager();
 				WeakEventManagers.Add(new WeakReference<object>(source), manager);
@@ -83,7 +82,7 @@ namespace P42.Utils
 				List<Tuple<WeakReference, MethodInfo>> targets;
 				if (_eventHandlers.TryGetValue(eventName, out targets))
 				{
-					foreach (var tuple in targets.ToList())
+					foreach (var tuple in targets)
 					{
 						var o = tuple.Item1.Target;
 
@@ -119,14 +118,24 @@ namespace P42.Utils
 		{
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo>> target;
-				if (_eventHandlers.TryGetValue(eventName, out target))
+				List<Tuple<WeakReference, MethodInfo>> targets;
+				if (_eventHandlers.TryGetValue(eventName, out targets))
 				{
-					foreach (var tuple in target.Where(
+                    for (int i= 0; i < targets.Count;)
+                    {
+                        var target = targets[i];
+                        if (target.Item1.Target == handlerTarget && target.Item2.Name == methodInfo.Name)
+                            targets.RemoveAt(i);
+                        else
+                            i++;
+                    }
+                    /*
+					foreach (var tuple in targets.Where(
 						t => t.Item1.Target == handlerTarget &&
 						t.Item2.Name == methodInfo.Name
 					).ToList())
-						target.Remove(tuple);
+						targets.Remove(tuple);
+                        */
 				}
 			}
 		}

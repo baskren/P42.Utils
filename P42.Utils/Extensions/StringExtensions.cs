@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace P42.Utils
 {
     public static class StringExtensions
     {
+        static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        internal static string ToMd5HashString(this string source)
+        {
+            var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(source));
+            StringBuilder sBuilder = new StringBuilder();
+
+            for (int i = 0; i < hash.Length; i++)
+                sBuilder.Append(hash[i].ToString("x2"));
+            return sBuilder.ToString();
+        }
+
         public static bool IsNumeric(this string s)
         {
             foreach (var c in s)

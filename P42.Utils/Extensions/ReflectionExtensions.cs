@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,11 +12,15 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(propertyName))
                 return null;
-            PropertyInfo propInfo;
+            PropertyInfo propInfo=null;
             do
             {
                 var properties = type.GetRuntimeProperties();
-                propInfo = properties.FirstOrDefault(arg => arg.Name == propertyName);
+                //propInfo = properties.FirstOrDefault(arg => arg.Name == propertyName);
+                if (properties != null)
+                    foreach (var property in properties)
+                        if (property.Name == propertyName)
+                            propInfo = property;
                 type = type.GetTypeInfo().BaseType;
             } while (propInfo == null && type != null);
             return propInfo;
@@ -27,11 +30,15 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(fieldName))
                 return null;
-            FieldInfo fieldInfo;
+            FieldInfo fieldInfo=null;
             do
             {
                 var fields = type.GetRuntimeFields();
-                fieldInfo = fields.FirstOrDefault(arg => arg.Name == fieldName);
+                //fieldInfo = fields.FirstOrDefault(arg => arg.Name == fieldName);
+                if (fields != null)
+                    foreach (var field in fields)
+                        if (field.Name == fieldName)
+                            fieldInfo = field;
                 type = type.GetTypeInfo().BaseType;
             } while (fieldInfo == null && type != null);
             return fieldInfo;
@@ -41,11 +48,15 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(methodName))
                 return null;
-            MethodInfo methodInfo;
+            MethodInfo methodInfo=null;
             do
             {
                 var methods = type.GetRuntimeMethods();
-                methodInfo = methods.FirstOrDefault(arg => arg.Name == methodName);
+                //methodInfo = methods.FirstOrDefault(arg => arg.Name == methodName);
+                if (methods != null)
+                    foreach (var method in methods)
+                        if (method.Name == methodName)
+                            methodInfo = method;
                 type = type.GetTypeInfo().BaseType;
             } while (methodInfo == null && type != null);
             return methodInfo;
@@ -213,7 +224,8 @@ namespace P42.Utils
             var currentdomain = currentdomainMethod.Invoke(null, null);
             var getassemblies = currentdomain.GetType().GetRuntimeMethod("GetAssemblies", new Type[] { });
             var assemblies = getassemblies.Invoke(currentdomain, new object[] { }) as Assembly[];
-            return assemblies.ToList();
+            var result = new List<Assembly>(assemblies);
+            return result;
         }
 
         public static Assembly GetAssemblyByName(string name)
@@ -270,7 +282,7 @@ namespace P42.Utils
             {
                 var genericParameters = type.GenericTypeArguments;
                 result += "[";
-                for(int i=0;i<genericParameters.Count();i++)
+                for(int i=0;i<genericParameters.Length;i++)
                 {
                     var parameter = genericParameters[i];
                     if (i > 0)

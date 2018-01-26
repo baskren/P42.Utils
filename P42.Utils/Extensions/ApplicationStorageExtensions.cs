@@ -7,7 +7,6 @@ using PCLStorage;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 using System.Threading.Tasks;
 
@@ -347,7 +346,7 @@ namespace P42.Utils
             {
 #if NETSTANDARD
                 var fileNames = Directory.GetFiles(FolderPath);// Storage.GetFileNames();
-                if (fileNames != null && fileNames.Any())
+                if (fileNames != null && fileNames.Length > 0)
                     foreach (var fileName in fileNames)
                         result.Add(fileName);
 #else

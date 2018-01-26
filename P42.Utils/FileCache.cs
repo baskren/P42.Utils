@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 #if NETSTANDARD
@@ -46,7 +44,6 @@ namespace P42.Utils
 #endif
         static object _locker = new object();
         static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
-        static MD5 _md5 = MD5.Create();
 
 #if NETSTANDARD
 
@@ -58,8 +55,9 @@ namespace P42.Utils
 
         public static async Task<string> CacheAsync(string sourceFilePath)
         {
-            var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(sourceFilePath.Trim()));
-            var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
+            //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(sourceFilePath.Trim()));
+            //var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
+            var fileName = sourceFilePath.Trim().ToMd5HashString();
 
             return await CacheAsync(sourceFilePath, fileName);
         }

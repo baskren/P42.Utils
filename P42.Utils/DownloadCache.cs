@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using PCLStorage;
 #endif
 using System.Text;
-using System.Linq;
 using System.IO;
 using System.Diagnostics;
 
@@ -46,7 +45,7 @@ namespace P42.Utils
 #endif
         static object _locker = new object();
         static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
-        static MD5 _md5 = MD5.Create();
+        static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
         public static string Download(string url)
         {
@@ -54,18 +53,19 @@ namespace P42.Utils
             return task.Result;
         }
 
+        
+
         public static async Task<string> DownloadAsync(string url)
         {
-            var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(url.Trim()));
-            var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
-
+            var fileName = url.Trim().ToMd5HashString();
             return await DownloadAsync(url, fileName);
         }
 
         public static bool IsCached(string url)
         {
-            var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(url.Trim()));
-            var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
+            //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(url.Trim()));
+            //var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
+            var fileName = url.Trim().ToMd5HashString();
             var path = Path.Combine(FolderPath, fileName);
 #if NETSTANDARD
             return System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);

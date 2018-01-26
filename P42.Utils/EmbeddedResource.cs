@@ -4,15 +4,17 @@ using System.Reflection;
 
 namespace P42.Utils
 {
-    public static class EmbeddedResource
+    // DO NOT MAKE PUBLIC.  THIS RUNS VERY SLOWLY ON UWP .NET TOOL CHAIN.  USE EmbeddedResourceCache.GetStreamAsync instead.
+    internal static class EmbeddedResource
     {
         public static System.IO.Stream GetStream(string resourceId, Assembly assembly = null)
         {
             assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             if (assembly == null)
                 return null;
-            if (!Available(resourceId, assembly))
-                return null;
+            // the following is very bad for UWP?
+            //if (!Available(resourceId, assembly))
+            //    return null;
             return assembly.GetManifestResourceStream(resourceId);
         }
 
