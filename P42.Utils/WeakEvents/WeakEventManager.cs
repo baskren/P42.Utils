@@ -13,10 +13,9 @@ namespace P42.Utils
 		{
 			lock (SyncObj)
 			{
-                var keys = WeakEventManagers.Keys;
+                var keys = new List<WeakReference<object>>(WeakEventManagers.Keys);
 				foreach (var key in keys)
 				{
-
                     if (key.TryGetTarget(out object target))
                     {
                         if (ReferenceEquals(target, source))
