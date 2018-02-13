@@ -12,7 +12,7 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(propertyName))
                 return null;
-            PropertyInfo propInfo=null;
+            PropertyInfo propInfo = null;
             do
             {
                 var properties = type.GetRuntimeProperties();
@@ -30,7 +30,7 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(fieldName))
                 return null;
-            FieldInfo fieldInfo=null;
+            FieldInfo fieldInfo = null;
             do
             {
                 var fields = type.GetRuntimeFields();
@@ -48,7 +48,7 @@ namespace P42.Utils
         {
             if (string.IsNullOrEmpty(methodName))
                 return null;
-            MethodInfo methodInfo=null;
+            MethodInfo methodInfo = null;
             do
             {
                 var methods = type.GetRuntimeMethods();
@@ -254,10 +254,12 @@ namespace P42.Utils
 
         public static string SimpleQualifiedTypeName(this Type type)
         {
+            /*
             System.Diagnostics.Debug.WriteLine("=================================================================");
             System.Diagnostics.Debug.WriteLine("type.ToString()="+type.ToString());
             System.Diagnostics.Debug.WriteLine("type.NameSpace="+type.Namespace);
             System.Diagnostics.Debug.WriteLine("type.Name="+type.Name);
+            */
             /*
             System.Diagnostics.Debug.WriteLine("type.FullName="+type.FullName);
             System.Diagnostics.Debug.WriteLine("type.AssemblyQualifiedName"+type.AssemblyQualifiedName);
@@ -282,7 +284,7 @@ namespace P42.Utils
             {
                 var genericParameters = type.GenericTypeArguments;
                 result += "[";
-                for(int i=0;i<genericParameters.Length;i++)
+                for (int i = 0; i < genericParameters.Length; i++)
                 {
                     var parameter = genericParameters[i];
                     if (i > 0)
