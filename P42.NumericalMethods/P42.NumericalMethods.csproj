@@ -12,7 +12,7 @@
     <DefineConstants>TRACE;NETSTANDARD;DEBUG;NETSTANDARD1_3;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
+    <DebugType>full</DebugType>
     <DefineConstants>TRACE;NETSTANDARD;RELEASE;NETSTANDARD1_3</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

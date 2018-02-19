@@ -13,87 +13,85 @@ namespace P42.Utils
 {
     public static class DownloadCache
     {
-        const string DownloadStorageFolderName = "DownloadCache";
+        const string DownloadStorageFolderName = "P42.Utils.DownloadCache";
 
-#if NETSTANDARD
-        static string _folderPath;
-        static string FolderPath
+        static string FolderPath(string folderName)
         {
-            get
-            {
-                if (_folderPath == null)
-                {
-                    _folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, DownloadStorageFolderName);
-                    if (!Directory.Exists(_folderPath))
-                        Directory.CreateDirectory(_folderPath);
-                }
-                return _folderPath;
-            }
-        }
-#else
-        static IFolder _folder;
-        static IFolder Folder
-        {
-            get
-            {
-                _folder = _folder ?? FileSystem.Current.LocalStorage.CreateFolder(DownloadStorageFolderName, CreationCollisionOption.OpenIfExists);
-                return _folder;
-            }
+            if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
+                Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
+            folderName = folderName ?? DownloadStorageFolderName;
+            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            return folderPath;
         }
 
-        static string FolderPath => Folder.Path;
-#endif
         static object _locker = new object();
         static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
         static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
-        public static string Download(string url)
+        public static string Download(string url, string folderName=null)
         {
-            var task = Task.Run(() => DownloadAsync(url));
+            var task = Task.Run(() => DownloadAsync(url, folderName));
             return task.Result;
         }
 
         
-
-        public static async Task<string> DownloadAsync(string url)
+        public static async Task<string> DownloadAsync(string url, string folderName=null)
         {
-            var fileName = url.Trim().ToMd5HashString();
-            return await DownloadAsync(url, fileName);
+            return await GetDownloadAsync(url, folderName);
         }
 
-        public static bool IsCached(string url)
+        static string CachedPath(string url, string folderName=null)
         {
-            //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(url.Trim()));
-            //var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
             var fileName = url.Trim().ToMd5HashString();
-            var path = Path.Combine(FolderPath, fileName);
-#if NETSTANDARD
-            return System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);
-#else
-            var exists = Folder.CheckExists(fileName);
-            return (exists == ExistenceCheckResult.FileExists && !_downloadTasks.ContainsKey(path));
-#endif
+            string path = Path.Combine(FolderPath(folderName), fileName); ;
+            return System.IO.File.Exists(path) ? path : null;
         }
 
-        public static async Task<string> DownloadAsync(string url, string fileName)
+        public static bool IsCached(string url, string folderName = null)
+        {
+            var path = CachedPath(url, folderName);
+            return path!=null &&  System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);
+        }
+
+        public static bool Clear(string url=null, string folderName=null)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                // complete clear
+                var folderPath = FolderPath(folderName);
+                if (System.IO.Directory.Exists(folderPath))
+                {
+                    var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    foreach (var file in files)
+                        System.IO.File.Delete(file);
+                    System.IO.Directory.Delete(folderPath);
+                    return true;
+                }
+                return false;
+            }
+            var path = CachedPath(url, folderName);
+            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+                return true;
+            }
+            return false;
+        }
+
+        static async Task<string> GetDownloadAsync(string url, string folderName=null)
         {
             try
             {
-                var path = Path.Combine(FolderPath, fileName);
-#if NETSTANDARD
+                string path = CachedPath(url, folderName);
+                if (string.IsNullOrWhiteSpace(path))
+                    return null;
                 if (System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path))
                 {
                     System.Diagnostics.Debug.WriteLine("DownloadCache: [" + url + "] exists as [" + path + "]");
                     return path;
                 }
-#else
-                var exists = await Folder.CheckExistsAsync(fileName);
-                if (exists == ExistenceCheckResult.FileExists && !_downloadTasks.ContainsKey(path))
-                {
-                    System.Diagnostics.Debug.WriteLine("DownloadCache: [" + url + "] exists as [" + path + "]");
-                    return path;
-                }
-#endif
 
                 var success = await GetDownload(url, path);
                 return success ? path : null;
@@ -119,7 +117,6 @@ namespace P42.Utils
             }
         }
 
-#if NETSTANDARD
         static async Task<bool> DownloadTask(string url, string path)
         {
 
@@ -147,36 +144,5 @@ namespace P42.Utils
                 System.IO.File.Delete(path);
             return false;
         }
-#else
-        static async Task<bool> DownloadTask(string url, string fileName)
-        {
-            IFile file = null;
-            try
-            {
-                var client = new System.Net.Http.HttpClient();
-                var data = await client.GetByteArrayAsync(url);
-                System.Diagnostics.Debug.WriteLine("DownloadTask: byte array downloaded for [" + url + "]");
-                var fileNamePaths = fileName.Split('\\');
-                fileName = fileNamePaths[fileNamePaths.Length - 1];
-                if (Folder.CheckExists(fileName) == ExistenceCheckResult.FileExists)
-                    System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + fileName + "] [" + url + "]");
-                file = await Folder.CreateFileAsync(fileName,
-                    CreationCollisionOption.ReplaceExisting);
-                using (var fileStream = await file.OpenAsync(FileAccess.ReadAndWrite))
-                {
-                    fileStream.Write(data, 0, data.Length);
-                    System.Diagnostics.Debug.WriteLine("DownloadTask: file written [" + fileName + "] [" + url + "]");
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            if (file != null)
-                await file.DeleteAsync();
-            return false;
-        }
-#endif
     }
-    }
+}
