@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-#if NETSTANDARD
-#else
-using PCLStorage;
-#endif
 using System.Text;
 using System.IO;
 using System.Diagnostics;

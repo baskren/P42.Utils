@@ -55,7 +55,6 @@ namespace P42.Utils
         static public Func<string, Assembly> EmbeddedResourceAssemblyResolver;
 
 
-#if NETSTANDARD
         public static string GetOperatingSystem()
         {
             string windir = System.Environment.GetEnvironmentVariable("windir");
@@ -153,8 +152,6 @@ namespace P42.Utils
                     Directory.CreateDirectory(value);
             }
         }
-
-#endif
     }
 
     public class UnsupportedPlatformException : Exception

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-#if NETSTANDARD
-#else
-using PCLStorage;
-#endif
 
 namespace P42.Utils
 {
@@ -60,7 +56,6 @@ namespace P42.Utils
         }
 
 
-#if NETSTANDARD
         public static string FontFamily(string fontFilePath)
         {
             String result = null;
@@ -70,13 +65,6 @@ namespace P42.Utils
             }
             return result;
         }
-#else
-        public static string FontFamily(IFile fontFile)
-        {
-            using(var stream = fontFile.Open(FileAccess.Read))
-                return FontFamily(stream);
-        }
-#endif
 
         public static string FontFamily(Stream fontFileStream)
         {
@@ -208,19 +196,11 @@ namespace P42.Utils
         }
 
 
-#if NETSTANDARD
         public static string FontAttributes(string fontFilePath)
         {
             using (var stream = System.IO.File.Open(fontFilePath, FileMode.Open))
                 return FontAttributes(stream);
         }
-#else
-        public static string FontAttributes(IFile fontFile)
-        {
-            using(var stream = fontFile.Open(FileAccess.Read))
-            return FontAttributes(stream);
-        }
-#endif
 
         public static string FontAttributes(Stream stream)
         {
