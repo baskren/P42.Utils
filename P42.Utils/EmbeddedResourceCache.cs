@@ -12,12 +12,13 @@ namespace P42.Utils
     {
         const string LocalStorageFolderName = "P42.Utils.EmbeddedResourceCache";
 
-        static string FolderPath(string folderName=null)
+        // DO NOT CHANGE Environment.ApplicationDataPath to another path.  This is used to pass EmbeddedResource Fonts to UWP Text elements and there is zero flexibility here.
+        public static string FolderPath(string folderName = null)
         {
-            if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
+            if (!Directory.Exists(P42.Utils.Environment.ApplicationDataPath))
+                Directory.CreateDirectory(P42.Utils.Environment.ApplicationDataPath);
             folderName = folderName ?? LocalStorageFolderName;
-            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
+            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationDataPath, folderName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
             return folderPath;
@@ -27,7 +28,7 @@ namespace P42.Utils
         static Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
 
 
-        public static System.IO.Stream GetStream(string resourceId, Assembly assembly, string folderName=null)
+        public static System.IO.Stream GetStream(string resourceId, Assembly assembly, string folderName = null)
         {
             var task = Task.Run(() => GetStreamAsync(resourceId, assembly, folderName));
             return task.Result;
@@ -46,6 +47,12 @@ namespace P42.Utils
         }
 
 
+        public static string ApplicationUri(string resourceId, Assembly assembly = null, string folderName = null)
+        {
+            var localStorageFileName = LocalStorageSubPathForEmbeddedResource(resourceId, assembly, folderName);
+            var uriString = "ms-appdata:///local/" + LocalStorageFolderName + "/" + localStorageFileName.Replace('\\', '/');
+            return uriString;
+        }
 
         public static string LocalStorageSubPathForEmbeddedResource(string resourceId, Assembly assembly = null, string folderName = null)
         {
@@ -94,7 +101,6 @@ namespace P42.Utils
                     System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
                     return fileName;
                 }
-
                 var success = await CacheEmbeddedResource(resourceId, assembly, path);
                 return success ? fileName : null;
             }
