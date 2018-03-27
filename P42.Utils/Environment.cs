@@ -11,34 +11,36 @@ namespace P42.Utils
         static Environment()
         {
 #if NETSTANDARD2_0
-            DocumentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
-                    switch (GetOperatingSystem().ToLower())
-                    {
-                        case "Apple":
-                            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
-                            path = path.Remove(path.IndexOf("Caches"));
-                            path = path + "ApplicationData";
-                            ApplicationDataPath = path;
-                            break;
-                        case "Linux":
-                            ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData, System.Environment.SpecialFolderOption.Create);
-                            break;
-                        default:
-                            ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData, System.Environment.SpecialFolderOption.Create);
-                            break;
-                    }
-                switch (GetOperatingSystem().ToLower())
-                {
-                    case "Linux":
-                        var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal, System.Environment.SpecialFolderOption.Create);
-                        path = System.IO.Path.Combine(path, ".cache");
-                        ApplicationCachePath = path;
-                        break;
-                    default:
-                        ApplicationCachePath =  System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
-                        break;
-                }
-            
+            //DocumentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
+            switch (GetOperatingSystem().ToLower())
+            {
+                /*
+                case "apple":
+                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
+                    path = path.Remove(path.IndexOf("Caches"));
+                    path = path + "ApplicationData";
+                    ApplicationDataPath = path;
+                    break;
+                    */
+                case "linux":
+                    ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData, System.Environment.SpecialFolderOption.Create);
+                    break;
+                default:
+                    ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData, System.Environment.SpecialFolderOption.Create);
+                    break;
+            }
+            switch (GetOperatingSystem().ToLower())
+            {
+                case "linux":
+                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal, System.Environment.SpecialFolderOption.Create);
+                    path = System.IO.Path.Combine(path, ".cache");
+                    ApplicationCachePath = path;
+                    break;
+                default:
+                    ApplicationCachePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
+                    break;
+            }
+
             TemporaryStoragePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
 #endif
         }
