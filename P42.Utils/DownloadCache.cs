@@ -26,32 +26,33 @@ namespace P42.Utils
         static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
         static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
-        public static string Download(string url, string folderName=null)
+        public static string Download(string url, string folderName = null)
         {
             var task = Task.Run(() => DownloadAsync(url, folderName));
             return task.Result;
         }
 
-        
-        public static async Task<string> DownloadAsync(string url, string folderName=null)
+
+        public static async Task<string> DownloadAsync(string url, string folderName = null)
         {
             return await GetDownloadAsync(url, folderName);
         }
 
-        static string CachedPath(string url, string folderName=null)
+        static string CachedPath(string url, string folderName = null)
         {
             var fileName = url.Trim().ToMd5HashString();
             string path = Path.Combine(FolderPath(folderName), fileName); ;
-            return System.IO.File.Exists(path) ? path : null;
+            //return System.IO.File.Exists(path) ? path : null;
+            return path;
         }
 
         public static bool IsCached(string url, string folderName = null)
         {
             var path = CachedPath(url, folderName);
-            return path!=null &&  System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);
+            return path != null && System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);
         }
 
-        public static bool Clear(string url=null, string folderName=null)
+        public static bool Clear(string url = null, string folderName = null)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -76,7 +77,7 @@ namespace P42.Utils
             return false;
         }
 
-        static async Task<string> GetDownloadAsync(string url, string folderName=null)
+        static async Task<string> GetDownloadAsync(string url, string folderName = null)
         {
             try
             {
