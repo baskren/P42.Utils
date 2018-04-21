@@ -18,7 +18,7 @@ namespace P42.Utils
         AsyncAwaitForSet<T> _currentInstance;
         Func<T, bool> _onSetAction;
 
-        public AsyncAwaitForSet<T> CurrentInstance { get { return _currentInstance; } }
+        public AsyncAwaitForSet<T> CurrentInstance => _currentInstance; 
 
         public Task<T> Result()
         {
