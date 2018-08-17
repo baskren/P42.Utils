@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
-      <Project>{5BA65231-CA2A-4713-92D7-F88DDF66978B}</Project>
+      <Project>{CAD932A9-5E8D-415C-8DC2-CE8E553FA6D3}</Project>
       <Name>P42.Utils</Name>
     </ProjectReference>
   </ItemGroup>
