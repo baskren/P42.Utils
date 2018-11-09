@@ -125,7 +125,7 @@ namespace P42.Utils
 				var data = await client.GetByteArrayAsync(url);
 				System.Diagnostics.Debug.WriteLine("DownloadTask: byte array downloaded for [" + url + "]");
 				var fileNamePaths = path.Split('\\');
-				path = fileNamePaths[fileNamePaths.Length - 1];
+				//path = fileNamePaths[fileNamePaths.Length - 1];
 				if (System.IO.File.Exists(path))
 					System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + url + "]");
 				using (var stream = new FileStream(path, FileMode.Create))
