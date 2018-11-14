@@ -50,7 +50,7 @@ namespace P42.Utils
             MainThreadId = System.Environment.CurrentManagedThreadId;
         }
 
-        static public int MainThreadId { get; private set; }
+        static public int MainThreadId { get; set; }
 
         public static bool IsOnMainThread => System.Environment.CurrentManagedThreadId == MainThreadId;
 
