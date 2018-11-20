@@ -1,8 +1,10 @@
 ﻿using System;
 namespace P42.Utils
 {
+    /*
     public static class AnalyticsStringExtensions
     {
+
         public static string ToAnalyticsEventOrParameter(this string s)
         {
             if (!char.IsLetterOrDigit(s, 0))
@@ -17,12 +19,10 @@ namespace P42.Utils
             return s;
         }
 
-        public static string ParameterPrepend(this string s, string p)
-        {
-            if (p != null)
-                return p + "ᆞ" + s;
-            return s;
-        }
+
+        public static string ParameterPrepend(this string s, string p) => p != null ? p + "ᆞ" + s : s;
+
 
     }
+*/
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 namespace P42.Utils
 {
+    /*
     public class LogEventParameterValue
     {
         internal Type _type;
@@ -157,4 +158,5 @@ namespace P42.Utils
         }
 
     }
+    */
 }

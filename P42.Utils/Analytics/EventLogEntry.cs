@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 namespace P42.Utils
 {
+    /*
     public class EventLogEntry
     {
         public string EntryType;
@@ -23,4 +24,5 @@ namespace P42.Utils
 
 
     }
+    */
 }

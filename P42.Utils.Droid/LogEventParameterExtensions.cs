@@ -5,6 +5,7 @@ using P42.Utils;
 
 namespace P42.Utils
 {
+    /*
     public static class LogEventParameterExtensions
     {
         public static void Add(this Bundle bundle, string parameterName, LogEventParameterValue value)
@@ -32,6 +33,6 @@ namespace P42.Utils
                 bundle.Add(pair.Key.ToAnalyticsEventOrParameter(), pair.Value);
             return bundle;
         }
-
     }
+    */
 }

@@ -3,6 +3,7 @@ using Foundation;
 using System.Collections.Generic;
 namespace P42.Utils
 {
+    /*
     public static class LogEventParameterExtensions
     {
         public static NSObject ToNSObject(this LogEventParameterValue value)
@@ -35,4 +36,5 @@ namespace P42.Utils
             return result;
         }
     }
+    */
 }
