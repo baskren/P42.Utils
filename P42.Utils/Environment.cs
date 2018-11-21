@@ -50,13 +50,30 @@ namespace P42.Utils
             MainThreadId = System.Environment.CurrentManagedThreadId;
         }
 
+        /// <summary>
+        /// Gets or sets the main thread identifier.
+        /// </summary>
+        /// <value>The main thread identifier.</value>
         static public int MainThreadId { get; set; }
 
-        public static bool IsOnMainThread => System.Environment.CurrentManagedThreadId == MainThreadId;
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is headless test (and thus the MainThreadId is questionable).
+        /// </summary>
+        /// <value><c>true</c> if is headless test; otherwise, <c>false</c>.</value>
+        static public bool IsHeadlessTest { get; set; } = false;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is on main thread.
+        /// </summary>
+        /// <value><c>true</c> if is on main thread; otherwise, <c>false</c>.</value>
+        public static bool IsOnMainThread => IsHeadlessTest || System.Environment.CurrentManagedThreadId == MainThreadId;
 
         static public Func<string, Assembly> EmbeddedResourceAssemblyResolver;
 
-
+        /// <summary>
+        /// Gets the operating system.
+        /// </summary>
+        /// <returns>The operating system.</returns>
         public static string GetOperatingSystem()
         {
             string windir = System.Environment.GetEnvironmentVariable("windir");
