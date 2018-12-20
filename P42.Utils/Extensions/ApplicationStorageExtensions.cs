@@ -82,6 +82,7 @@ namespace P42.Utils
                     Directory.CreateDirectory("uid-" + uid);
                 path = Path.Combine("uid-" + uid, fileName);
             }
+            System.Diagnostics.Debug.WriteLine("StoreText: " + path);
             File.WriteAllText(path, text);
         }
 

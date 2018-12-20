@@ -240,12 +240,13 @@ namespace P42.Utils
             }
             return result;
         }
-
+        /*
         public static T ReadIJsonReadable<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
         {
             reader.Read();
             return reader.ParseIJsonReadable<T>();
         }
+        */
 
         public static T ParseIJsonReadable<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
         {
