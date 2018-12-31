@@ -178,28 +178,17 @@ namespace P42.Utils
             return (DateTime)reader.Value;
         }
 
-        public static T ReadSimple<T>(this JsonReader reader)
-        {
-            reader.Read();
-            return reader.ParseSimple<T>();
-        }
-
         public static T ParseSimple<T>(this JsonReader reader)
         {
             T result;
             var typeT = typeof(T);
+
             if (typeT == typeof(bool))
-            {
                 result = (T)((object)((bool)reader.Value));
-            }
             else if (typeT.GetTypeInfo().IsEnum)
-            {
                 return reader.ParseEnum<T>();
-            }
             else if (typeT == typeof(string))
-            {
                 result = (T)reader.Value;
-            }
             else if (typeT == typeof(int))
             {
                 var obj = (object)Convert.ToInt32(reader.Value);
