@@ -185,6 +185,7 @@ namespace P42.Utils
             }
             if (!File.Exists(path))
                 return null;
+            System.Diagnostics.Debug.WriteLine("LocalStreamReader: Path=[" + path + "]");
             return new StreamReader(new FileStream(path, FileMode.Open));
         }
 

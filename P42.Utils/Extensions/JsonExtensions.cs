@@ -249,13 +249,13 @@ namespace P42.Utils
             writer.WritePropertyName(name.ReplaceIllegalCharacters());
         }
 
-        public static void WriteList<T>(this JsonWriter writer, IEnumerable<T> list)
+        public static void WriteList<T>(this JsonWriter writer, IEnumerable<T> list, bool justValues = false)
         {
             writer.WriteStartArray();
             foreach (T item in list)
                 if (typeof(IJsonWriteable).GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
                     //writer.WriteValue((IJsonWriteable)item);
-                    ((IJsonWriteable)item).WriteValue(writer);
+                    ((IJsonWriteable)item).WriteValue(writer, justValues);
                 else
                     writer.WriteValue(item);
             writer.WriteEnd();
@@ -303,251 +303,251 @@ namespace P42.Utils
 
 
 
-        public static void WritePvPair(this JsonWriter writer, string name, BigInteger value)
+        public static void WritePvPair(this JsonWriter writer, string name, BigInteger value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, BigInteger? value)
+        public static void WritePvPair(this JsonWriter writer, string name, BigInteger? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, bool value)
+        public static void WritePvPair(this JsonWriter writer, string name, bool value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, bool? value)
+        public static void WritePvPair(this JsonWriter writer, string name, bool? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, byte value)
+        public static void WritePvPair(this JsonWriter writer, string name, byte value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, byte? value)
+        public static void WritePvPair(this JsonWriter writer, string name, byte? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, byte[] value)
+        public static void WritePvPair(this JsonWriter writer, string name, byte[] value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, char value)
+        public static void WritePvPair(this JsonWriter writer, string name, char value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, char? value)
+        public static void WritePvPair(this JsonWriter writer, string name, char? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, DateTime value)
+        public static void WritePvPair(this JsonWriter writer, string name, DateTime value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, DateTime? value)
+        public static void WritePvPair(this JsonWriter writer, string name, DateTime? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, DateTimeOffset value)
+        public static void WritePvPair(this JsonWriter writer, string name, DateTimeOffset value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, DateTimeOffset? value)
+        public static void WritePvPair(this JsonWriter writer, string name, DateTimeOffset? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, decimal value)
+        public static void WritePvPair(this JsonWriter writer, string name, decimal value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, decimal? value)
+        public static void WritePvPair(this JsonWriter writer, string name, decimal? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, double value)
+        public static void WritePvPair(this JsonWriter writer, string name, double value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, double? value)
+        public static void WritePvPair(this JsonWriter writer, string name, double? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, float value)
+        public static void WritePvPair(this JsonWriter writer, string name, float value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, float? value)
+        public static void WritePvPair(this JsonWriter writer, string name, float? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, Guid value)
+        public static void WritePvPair(this JsonWriter writer, string name, Guid value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, Guid? value)
+        public static void WritePvPair(this JsonWriter writer, string name, Guid? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, int value)
+        public static void WritePvPair(this JsonWriter writer, string name, int value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, int? value)
+        public static void WritePvPair(this JsonWriter writer, string name, int? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, long value)
+        public static void WritePvPair(this JsonWriter writer, string name, long value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, long? value)
+        public static void WritePvPair(this JsonWriter writer, string name, long? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, sbyte value)
+        public static void WritePvPair(this JsonWriter writer, string name, sbyte value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, sbyte? value)
+        public static void WritePvPair(this JsonWriter writer, string name, sbyte? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, short value)
+        public static void WritePvPair(this JsonWriter writer, string name, short value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, short? value)
+        public static void WritePvPair(this JsonWriter writer, string name, short? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, string value)
+        public static void WritePvPair(this JsonWriter writer, string name, string value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, TimeSpan value)
+        public static void WritePvPair(this JsonWriter writer, string name, TimeSpan value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, TimeSpan? value)
+        public static void WritePvPair(this JsonWriter writer, string name, TimeSpan? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, ushort value)
+        public static void WritePvPair(this JsonWriter writer, string name, ushort value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, ushort? value)
+        public static void WritePvPair(this JsonWriter writer, string name, ushort? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, uint value)
+        public static void WritePvPair(this JsonWriter writer, string name, uint value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, uint? value)
+        public static void WritePvPair(this JsonWriter writer, string name, uint? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, ulong value)
+        public static void WritePvPair(this JsonWriter writer, string name, ulong value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, ulong? value)
+        public static void WritePvPair(this JsonWriter writer, string name, ulong? value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
-        public static void WritePvPair(this JsonWriter writer, string name, Uri value)
+        public static void WritePvPair(this JsonWriter writer, string name, Uri value, bool justValues = false)
         {
             writer.WriteSafePropertyName(name);
             writer.WriteValue(value);
         }
 
 
-        public static void WritePvPair(this JsonWriter writer, string name, IJsonWriteable value)
+        public static void WritePvPair(this JsonWriter writer, string name, IJsonWriteable value, bool justValues = false)
         {
             if (value != null)
             {
                 writer.WriteSafePropertyName(name);
-                value.WriteValue(writer);
+                value.WriteValue(writer, justValues);
             }
         }
 
-        public static void WritePvPair<T>(this JsonWriter writer, string name, IEnumerable<T> enumerable)
+        public static void WritePvPair<T>(this JsonWriter writer, string name, IEnumerable<T> enumerable, bool justValues = false)
         {
             if (enumerable != null)
             {
@@ -555,7 +555,7 @@ namespace P42.Utils
                 if (collection != null && collection.Count == 0)
                     return;
                 writer.WriteSafePropertyName(name);
-                writer.WriteList(enumerable);
+                writer.WriteList(enumerable, justValues);
             }
         }
     }
