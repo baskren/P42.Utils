@@ -145,7 +145,7 @@ namespace P42.Utils
         public static StreamReader ResourceStreamReader(string uid, string resourceName, Assembly assembly = null, StreamSource source = StreamSource.Default)
         {
             StreamReader reader = null;
-            if (reader == null && (source == StreamSource.Default || source == StreamSource.Local))
+            if (source == StreamSource.Default || source == StreamSource.Local)
                 reader = LocalStreamReader(uid, resourceName);
             if (reader == null && (source == StreamSource.Default || source == StreamSource.EmbeddedResource))
                 reader = EmbeddedResourceStreamReader(resourceName, assembly);

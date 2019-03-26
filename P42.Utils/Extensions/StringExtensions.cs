@@ -34,9 +34,9 @@ namespace P42.Utils
 
         public static string SubstringLast(this string s, int count = 1)
         {
-            if (s.Length <= count)
+            if (s.Length <= count || count < 0)
                 return s;
-            var result = s.Substring(s.Length - 40);
+            var result = s.Substring(s.Length - count);
             System.Diagnostics.Debug.WriteLine("WARNING!!! HAD TO IMPLEMENT SubstringLast on [" + s + "]");
             return result;
         }
