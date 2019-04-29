@@ -10,5 +10,11 @@ namespace P42.Utils
             return collection == null || collection.Count == 0;
         }
 
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)
+        {
+            if (range != null && collection != null)
+                foreach (var item in range)
+                    collection.Add(item);
+        }
     }
 }
