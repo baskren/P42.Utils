@@ -17,7 +17,7 @@ namespace P42.Utils
 {
     public static class ApplicationStorageExtensions
     {
-        static string ApplicationStorageFolderName = "ApplicationStorage";
+        static readonly string ApplicationStorageFolderName = "ApplicationStorage";
 
         static string FolderPath
         {
@@ -86,7 +86,7 @@ namespace P42.Utils
             File.WriteAllText(path, text);
         }
 
-        public static TType LoadSerializedResource<TType>(string uid, string resourceName, Assembly assembly = null, TType defaultValue = default(TType))
+        public static TType LoadSerializedResource<TType>(string uid, string resourceName, Assembly assembly = null, TType defaultValue = default)
         {
             var text = LoadText(uid, resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
@@ -100,7 +100,7 @@ namespace P42.Utils
             return defaultValue;
         }
 
-        public static TType LoadSerializedEmbeddedResource<TType>(string resourceName, Assembly assembly = null, TType defaultValue = default(TType))
+        public static TType LoadSerializedEmbeddedResource<TType>(string resourceName, Assembly assembly = null, TType defaultValue = default)
         {
             var text = EmbeddedStoredText(resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
