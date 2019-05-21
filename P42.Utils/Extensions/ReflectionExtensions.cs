@@ -80,7 +80,7 @@ namespace P42.Utils
 
         public static IEnumerable<PropertyInfo> GetProperties(this object obj)
         {
-            Type objecType = obj.GetType();
+            var objecType = obj.GetType();
             var properties = objecType.GetRuntimeProperties();
             return properties;
         }
@@ -89,14 +89,14 @@ namespace P42.Utils
         {
             if (obj == null || string.IsNullOrWhiteSpace(propertyName))
                 return null;
-            Type objType = obj.GetType();
-            PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+            var objType = obj.GetType();
+            var propInfo = GetPropertyInfo(objType, propertyName);
             return propInfo;
         }
 
         public static List<string> PropertyNames(this object obj)
         {
-            Type objecType = obj.GetType();
+            var objecType = obj.GetType();
             var properties = objecType.GetRuntimeProperties();
             var result = new List<string>();
             foreach (var property in properties)
@@ -108,8 +108,8 @@ namespace P42.Utils
         {
             if (obj == null || string.IsNullOrWhiteSpace(propertyName))
                 return false;
-            Type objType = obj.GetType();
-            PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+            var objType = obj.GetType();
+            var propInfo = GetPropertyInfo(objType, propertyName);
             return propInfo == null;
         }
 
@@ -121,60 +121,60 @@ namespace P42.Utils
         public static object GetPropertyValue(this object obj, string propertyName)
         {
             if (obj == null || string.IsNullOrWhiteSpace(propertyName))
-                throw new ArgumentNullException("obj");
-            Type objType = obj.GetType();
-            PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+                throw new ArgumentNullException(nameof(obj));
+            var objType = obj.GetType();
+            var propInfo = GetPropertyInfo(objType, propertyName);
             return propInfo == null ? null : propInfo.GetValue(obj, null);
         }
 
         public static void SetPropertyValue(this object obj, string propertyName, object val)
         {
             if (obj == null || string.IsNullOrWhiteSpace(propertyName))
-                throw new ArgumentNullException("obj");
-            Type objType = obj.GetType();
-            PropertyInfo propInfo = GetPropertyInfo(objType, propertyName);
+                throw new ArgumentNullException(nameof(obj));
+            var objType = obj.GetType();
+            var propInfo = GetPropertyInfo(objType, propertyName);
             if (propInfo == null)
-                throw new ArgumentOutOfRangeException("propertyName", string.Format("Couldn't find property {0} in type {1}", propertyName, objType.FullName));
+                throw new ArgumentOutOfRangeException(nameof(propertyName), string.Format("Couldn't find property {0} in type {1}", propertyName, objType.FullName));
             propInfo.SetValue(obj, val, null);
         }
 
         public static object GetFieldValue(this object obj, string fieldName)
         {
             if (obj == null || string.IsNullOrWhiteSpace(fieldName))
-                throw new ArgumentNullException("obj");
-            Type objType = obj.GetType();
-            FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
+                throw new ArgumentNullException(nameof(obj));
+            var objType = obj.GetType();
+            var fieldInfo = GetFieldInfo(objType, fieldName);
             return fieldInfo == null ? null : fieldInfo.GetValue(obj);
         }
 
         public static void SetFieldValue(this object obj, string fieldName, object val)
         {
             if (obj == null || string.IsNullOrWhiteSpace(fieldName))
-                throw new ArgumentNullException("obj");
-            Type objType = obj.GetType();
-            FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
+                throw new ArgumentNullException(nameof(obj));
+            var objType = obj.GetType();
+            var fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
-                throw new ArgumentOutOfRangeException("fieldName", string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                throw new ArgumentOutOfRangeException(nameof(fieldName), string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
             fieldInfo.SetValue(obj, val);
         }
 
         public static object GetFieldValue(this Type type, string fieldName)
         {
-            FieldInfo fieldInfo = GetFieldInfo(type, fieldName);
+            var fieldInfo = GetFieldInfo(type, fieldName);
             return fieldInfo == null ? null : fieldInfo.GetValue(null);
         }
 
         public static object GetPropertyValue(this Type type, string fieldName)
         {
-            PropertyInfo propertyInfo = GetPropertyInfo(type, fieldName);
+            var propertyInfo = GetPropertyInfo(type, fieldName);
             return propertyInfo == null ? null : propertyInfo.GetValue(null);
         }
 
         public static object CallMethod(this object obj, string methodName, object[] parameters)
         {
-            MethodInfo methodInfo = GetMethodInfo(obj.GetType(), methodName);
+            var methodInfo = GetMethodInfo(obj.GetType(), methodName);
             if (methodInfo == null)
-                throw new ArgumentOutOfRangeException("methodName", $"Couldn't find method {methodName} in type {obj.GetType().FullName}");
+                throw new ArgumentOutOfRangeException(nameof(methodName), $"Couldn't find method {methodName} in type {obj.GetType().FullName}");
             return methodInfo.Invoke(obj, parameters);
         }
 
@@ -222,7 +222,7 @@ namespace P42.Utils
             var currentDomainProperty = appDomain.GetRuntimeProperty("CurrentDomain");
             var currentdomainMethod = currentDomainProperty.GetMethod;//.Invoke(null, new object[] { });
             var currentdomain = currentdomainMethod.Invoke(null, null);
-            var getassemblies = currentdomain.GetType().GetRuntimeMethod("GetAssemblies", new Type[] { });
+            var getassemblies = currentdomain.GetType().GetRuntimeMethod(nameof(GetAssemblies), new Type[] { });
             var assemblies = getassemblies.Invoke(currentdomain, new object[] { }) as Assembly[];
             var result = new List<Assembly>(assemblies);
             return result;

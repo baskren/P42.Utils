@@ -41,7 +41,7 @@ namespace P42.Utils
         static string CachedPath(string url, string folderName = null)
         {
             var fileName = url.Trim().ToMd5HashString();
-            string path = Path.Combine(FolderPath(folderName), fileName); ;
+            var path = Path.Combine(FolderPath(folderName), fileName); ;
             //return System.IO.File.Exists(path) ? path : null;
             return path;
         }
@@ -83,7 +83,7 @@ namespace P42.Utils
             {
                 if (string.IsNullOrWhiteSpace(url))
                     return null;
-                string path = CachedPath(url, folderName);
+                var path = CachedPath(url, folderName);
                 if (string.IsNullOrWhiteSpace(path))
                     return null;
                 if (System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path))

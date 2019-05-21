@@ -33,7 +33,7 @@ namespace P42.Utils
             if (string.IsNullOrWhiteSpace(key))
                 return;
 
-            string path = CachedPath(key, folderName);
+            var path = CachedPath(key, folderName);
 
             if (string.IsNullOrWhiteSpace(path))
                 return;
@@ -58,7 +58,7 @@ namespace P42.Utils
                 if (string.IsNullOrWhiteSpace(key))
                     return null;
 
-                string path = CachedPath(key, folderName);
+                var path = CachedPath(key, folderName);
 
                 if (string.IsNullOrWhiteSpace(path))
                     return null;

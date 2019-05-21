@@ -37,7 +37,7 @@ namespace System.Collections
 
         protected override void RemoveItem(int index)
         {
-            TItem item = this[index];
+            var item = this[index];
             base.RemoveItem(index);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
         }

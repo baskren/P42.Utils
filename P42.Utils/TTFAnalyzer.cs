@@ -22,17 +22,17 @@ namespace P42.Utils
 
         int ReadWord()
         {
-            int b1 = ReadByte();
-            int b2 = ReadByte();
+            var b1 = ReadByte();
+            var b2 = ReadByte();
             return b1 << 8 | b2;
         }
 
         int ReadDword()
         {
-            int b1 = ReadByte();
-            int b2 = ReadByte();
-            int b3 = ReadByte();
-            int b4 = ReadByte();
+            var b1 = ReadByte();
+            var b2 = ReadByte();
+            var b3 = ReadByte();
+            var b4 = ReadByte();
             return b1 << 24 | b2 << 16 | b3 << 8 | b4;
         }
 
@@ -45,8 +45,8 @@ namespace P42.Utils
         // Helper
         int GetWord(byte[] array, int offset)
         {
-            int b1 = array[offset] & 0xFF;
-            int b2 = array[offset + 1] & 0xFF;
+            var b1 = array[offset] & 0xFF;
+            var b2 = array[offset + 1] & 0xFF;
             return b1 << 8 | b2;
         }
         
@@ -70,22 +70,24 @@ namespace P42.Utils
         {
             try
             {
-                var analyzer = new TTFAnalyzer();
+                var analyzer = new TTFAnalyzer
+                {
 
-                // Parses the TTF file format.
-                // See http://developer.apple.com/fonts/ttrefman/rm06/Chap6.html
-                //_stream = new RandomAccessFile(fontFilename, "r");
-                analyzer._stream = fontFileStream;
+                    // Parses the TTF file format.
+                    // See http://developer.apple.com/fonts/ttrefman/rm06/Chap6.html
+                    //_stream = new RandomAccessFile(fontFilename, "r");
+                    _stream = fontFileStream
+                };
 
                 // Read the version first
-                int version = analyzer.ReadDword();
+                var version = analyzer.ReadDword();
 
                 // The version must be either 'true' (0x74727565) or 0x00010000 or 'OTTO' (0x4f54544f) for CFF style fonts.
                 if (version != 0x74727565 && version != 0x00010000 && version != 0x4f54544f)
                     return null;
 
                 // The TTF file consist of several sections called "tables", and we need to know how many of them are there.
-                int numTables = analyzer.ReadWord();
+                var numTables = analyzer.ReadWord();
 
                 // Skip the rest in the header
                 analyzer.ReadWord(); // skip searchRange
@@ -96,10 +98,10 @@ namespace P42.Utils
                 for (int i = 0; i < numTables; i++)
                 {
                     // Read the table entry
-                    int tag = analyzer.ReadDword();
+                    var tag = analyzer.ReadDword();
                     analyzer.ReadDword(); // skip checksum
-                    int offset = analyzer.ReadDword();
-                    int length = analyzer.ReadDword();
+                    var offset = analyzer.ReadDword();
+                    var length = analyzer.ReadDword();
 
                     // Now here' the trick. 'name' field actually contains the textual string name.
                     // So the 'name' string in characters equals to 0x6E616D65
@@ -114,8 +116,8 @@ namespace P42.Utils
                         // This is also a table. See http://developer.apple.com/fonts/ttrefman/rm06/Chap6name.html
                         // According to Table 36, the total number of table records is stored in the second word, at the offset 2.
                         // Getting the count and string offset - remembering it's big endian.
-                        int count = analyzer.GetWord(table, 2);
-                        int string_offset = analyzer.GetWord(table, 4);
+                        var count = analyzer.GetWord(table, 2);
+                        var string_offset = analyzer.GetWord(table, 4);
 
                         //List<string> names = new List<string>();
 
@@ -124,9 +126,9 @@ namespace P42.Utils
                         {
                             // Table 37 tells us that each record is 6 words -> 12 bytes, and that the nameID is 4th word so its offset is 6.
                             // We also need to account for the first 6 bytes of the header above (Table 36), so...
-                            int nameid_offset = record * 12 + 6;
-                            int platformID = analyzer.GetWord(table, nameid_offset);
-                            int nameid_value = analyzer.GetWord(table, nameid_offset + 6);
+                            var nameid_offset = record * 12 + 6;
+                            var platformID = analyzer.GetWord(table, nameid_offset);
+                            var nameid_value = analyzer.GetWord(table, nameid_offset + 6);
 
 
                             // Table 42 lists the valid name Identifiers. We're interested in 1 (Font Family Name) but not in Unicode encoding (for simplicity).
@@ -134,8 +136,8 @@ namespace P42.Utils
                             if (nameid_value == 1) // && platformID == 1)
                             {
                                 // We need the string offset and length, which are the word 6 and 5 respectively
-                                int name_length = analyzer.GetWord(table, nameid_offset + 8);
-                                int name_offset = analyzer.GetWord(table, nameid_offset + 10);
+                                var name_length = analyzer.GetWord(table, nameid_offset + 8);
+                                var name_offset = analyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
                                 name_offset = name_offset + string_offset;
@@ -153,24 +155,18 @@ namespace P42.Utils
 										chars [nameI] = (char)table [name_offset + nameI];
 									}
 									*/
-                                    byte[] chars = new byte[name_length];
+                                    var chars = new byte[name_length];
                                     System.Buffer.BlockCopy(table, name_offset, chars, 0, name_length);
                                     //var str = new string(chars);
                                     //var str = System.Text.Encoding.Default.GetString(chars);
                                     if (platformID == 1)
-                                    { 
-                                        var str = System.Text.Encoding.UTF8.GetString(chars, 0, name_length);
-                                        return str;
-                                    }
+                                        return System.Text.Encoding.UTF8.GetString(chars, 0, name_length);
                                     else if (platformID == 2)
                                     {
 
                                     }
                                     else if (platformID == 3)
-                                    {
-                                        var str = System.Text.Encoding.BigEndianUnicode.GetString(chars, 0, name_length);
-                                        return str;
-                                    }
+                                        return System.Text.Encoding.BigEndianUnicode.GetString(chars, 0, name_length);
                                 }
                             }
                         }
@@ -206,22 +202,24 @@ namespace P42.Utils
         {
             try
             {
-                var analyzer = new TTFAnalyzer();
+                var analyzer = new TTFAnalyzer
+                {
 
-                // Parses the TTF file format.
-                // See http://developer.apple.com/fonts/ttrefman/rm06/Chap6.html
-                //_stream = new RandomAccessFile(fontFilename, "r");
-                analyzer._stream = stream;
+                    // Parses the TTF file format.
+                    // See http://developer.apple.com/fonts/ttrefman/rm06/Chap6.html
+                    //_stream = new RandomAccessFile(fontFilename, "r");
+                    _stream = stream
+                };
 
                 // Read the version first
-                int version = analyzer.ReadDword();
+                var version = analyzer.ReadDword();
 
                 // The version must be either 'true' (0x74727565) or 0x00010000 or 'OTTO' (0x4f54544f) for CFF style fonts.
                 if (version != 0x74727565 && version != 0x00010000 && version != 0x4f54544f)
                     return null;
 
                 // The TTF file consist of several sections called "tables", and we need to know how many of them are there.
-                int numTables = analyzer.ReadWord();
+                var numTables = analyzer.ReadWord();
 
                 // Skip the rest in the header
                 analyzer.ReadWord(); // skip searchRange
@@ -232,10 +230,10 @@ namespace P42.Utils
                 for (int i = 0; i < numTables; i++)
                 {
                     // Read the table entry
-                    int tag = analyzer.ReadDword();
+                    var tag = analyzer.ReadDword();
                     analyzer.ReadDword(); // skip checksum
-                    int offset = analyzer.ReadDword();
-                    int length = analyzer.ReadDword();
+                    var offset = analyzer.ReadDword();
+                    var length = analyzer.ReadDword();
 
                     // Now here' the trick. 'name' field actually contains the textual string name.
                     // So the 'name' string in characters equals to 0x6E616D65
@@ -251,25 +249,25 @@ namespace P42.Utils
                         // This is also a table. See http://developer.apple.com/fonts/ttrefman/rm06/Chap6name.html
                         // According to Table 36, the total number of table records is stored in the second word, at the offset 2.
                         // Getting the count and string offset - remembering it's big endian.
-                        int count = analyzer.GetWord(table, 2);
-                        int string_offset = analyzer.GetWord(table, 4);
+                        var count = analyzer.GetWord(table, 2);
+                        var string_offset = analyzer.GetWord(table, 4);
 
                         // Record starts from offset 6
                         for (int record = 0; record < count; record++)
                         {
                             // Table 37 tells us that each record is 6 words -> 12 bytes, and that the nameID is 4th word so its offset is 6.
                             // We also need to account for the first 6 bytes of the header above (Table 36), so...
-                            int nameid_offset = record * 12 + 6;
-                            int platformID = analyzer.GetWord(table, nameid_offset);
-                            int nameid_value = analyzer.GetWord(table, nameid_offset + 6);
+                            var nameid_offset = record * 12 + 6;
+                            var platformID = analyzer.GetWord(table, nameid_offset);
+                            var nameid_value = analyzer.GetWord(table, nameid_offset + 6);
 
                             // Table 42 lists the valid name Identifiers. We're interested in 1 (Font Subfamily Name) but not in Unicode encoding (for simplicity).
                             // The encoding is stored as PlatformID and we're interested in Mac encoding
                             if (nameid_value == 2 && platformID == 1)
                             {
                                 // We need the string offset and length, which are the word 6 and 5 respectively
-                                int name_length = analyzer.GetWord(table, nameid_offset + 8);
-                                int name_offset = analyzer.GetWord(table, nameid_offset + 10);
+                                var name_length = analyzer.GetWord(table, nameid_offset + 8);
+                                var name_offset = analyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
                                 name_offset = name_offset + string_offset;
@@ -287,7 +285,7 @@ namespace P42.Utils
 										chars [nameI] = (char)table [name_offset + nameI];
 									}
 									*/
-                                    byte[] chars = new byte[name_length];
+                                    var chars = new byte[name_length];
                                     System.Buffer.BlockCopy(table, name_offset, chars, 0, name_length);
                                     //var str = new string(chars);
                                     //var str = System.Text.Encoding.Default.GetString(chars);

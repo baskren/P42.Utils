@@ -76,12 +76,12 @@ namespace P42.Utils
         /// <returns>The operating system.</returns>
         public static string GetOperatingSystem()
         {
-            string windir = System.Environment.GetEnvironmentVariable("windir");
+            var windir = System.Environment.GetEnvironmentVariable("windir");
             if (!string.IsNullOrEmpty(windir) && windir.Contains(@"\") && System.IO.Directory.Exists(windir))
                 return "Windows";
             else if (System.IO.File.Exists(@"/proc/sys/kernel/ostype"))
             {
-                string osType = System.IO.File.ReadAllText(@"/proc/sys/kernel/ostype");
+                var osType = System.IO.File.ReadAllText(@"/proc/sys/kernel/ostype");
                 if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase))
                     // Note: Android gets here too
                     return "Linux";

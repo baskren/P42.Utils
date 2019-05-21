@@ -35,11 +35,10 @@ namespace P42.NumericalMethods
 			out double errorEstimate
 		)
 		{
-			if (tolerance <= 0.0)
-			{
-				string msg = string.Format("Tolerance must be positive. Recieved {0}.", tolerance);
-				throw new ArgumentOutOfRangeException(msg);
-			}
+            if (f == null)
+                throw new ArgumentOutOfRangeException("f must be non-null delegate");
+            if (tolerance <= 0.0)
+				throw new ArgumentOutOfRangeException($"Tolerance must be positive. Recieved {tolerance}.");
 
 			iterationsUsed = 0;
 			errorEstimate = double.MaxValue;
@@ -49,18 +48,18 @@ namespace P42.NumericalMethods
 			Func<double, double> g = delegate (double x) { return f(x) - target; };
 
 
-			double g_left = g(left);  // evaluation of f at left end of interval
-			double g_right = g(right);
+			var g_left = g(left);  // evaluation of f at left end of interval
+			var g_right = g(right);
 			double mid;
 			double g_mid;
 			if (g_left * g_right >= 0.0)
 			{
-				string str = "Invalid starting bracket. Function must be above target on one end and below target on other end.";
-				string msg = string.Format("{0} Target: {1}. f(left) = {2}. f(right) = {3}", str, g_left + target, g_right + target);
-				throw new ArgumentException(msg);
+				var str = "Invalid starting bracket. Function must be above target on one end and below target on other end.";
+				//string msg = string.Format("{0} Target: {1}. f(left) = {2}. f(right) = {3}", str, g_left + target, g_right + target);
+				throw new ArgumentException(str);
 			}
 
-			double intervalWidth = right - left;
+			var intervalWidth = right - left;
 
 			for
 			(
@@ -114,12 +113,12 @@ namespace P42.NumericalMethods
 		)
 		{
 			if (tolerance <= 0.0)
-			{
-				string msg = string.Format("Tolerance must be positive. Recieved {0}.", tolerance);
-				throw new ArgumentOutOfRangeException(msg);
-			}
+				throw new ArgumentOutOfRangeException($"Tolerance must be positive. Recieved {tolerance}.");
+            if (g==null)
+                throw new ArgumentOutOfRangeException("Function g must be non-null delegate");
 
-			errorEstimate = double.MaxValue;
+
+            errorEstimate = double.MaxValue;
 
 			// Standardize the problem.  To solve g(x) = target,
 			// solve f(x) = 0 where f(x) = g(x) - target.
@@ -132,18 +131,14 @@ namespace P42.NumericalMethods
 			double c, d, e, fa, fb, fc, tol, m, p, q, r, s;
 
 			// set up aliases to match Brent's notation
-			double a = left; double b = right; double t = tolerance;
+			var a = left; var b = right; var t = tolerance;
 			iterationsUsed = 0;
 
 			fa = f(a);
 			fb = f(b);
 
 			if (fa * fb > 0.0)
-			{
-				string str = "Invalid starting bracket. Function must be above target on one end and below target on other end.";
-				string msg = string.Format("{0} Target: {1}. f(left) = {2}. f(right) = {3}", str, target, fa + target, fb + target);
-				throw new ArgumentException(msg);
-			}
+				throw new ArgumentException($"Invalid starting bracket. Function must be above target on one end and below target on other end. Target: {target}. f(left) = {fa + target}. f(right) = {fb + target}");
 
 		label_int:
 			c = a; fc = fa; d = e = b - a;
@@ -237,11 +232,13 @@ namespace P42.NumericalMethods
 			out double errorEstimate
 		)
 		{
-			if (tolerance <= 0)
-			{
-				string msg = string.Format("Tolerance must be positive. Recieved {0}.", tolerance);
-				throw new ArgumentOutOfRangeException(msg);
-			}
+            if (f == null)
+                throw new ArgumentOutOfRangeException("f must be non-null delegate");
+            if (fprime == null)
+                throw new ArgumentOutOfRangeException("fprime must be non-null delegate");
+
+            if (tolerance <= 0)
+				throw new ArgumentOutOfRangeException($"Tolerance must be positive. Recieved {tolerance}.");
 
 			iterationsUsed = 0;
 			errorEstimate = double.MaxValue;
@@ -260,9 +257,9 @@ namespace P42.NumericalMethods
 			)
 			{
 				oldX = newX;
-				double gx = g(oldX);
-				double gprimex = fprime(oldX);
-				double absgprimex = Math.Abs(gprimex);
+                var gx = g(oldX);
+                var gprimex = fprime(oldX);
+                var absgprimex = Math.Abs(gprimex);
 				if (absgprimex > 1.0 || Math.Abs(gx) < double.MaxValue * absgprimex)
 				{
 					// The division will not overflow

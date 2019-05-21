@@ -91,7 +91,7 @@ namespace P42.Utils
             var text = LoadText(uid, resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
             {
-                TType result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
+                var result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto
                 });
@@ -105,7 +105,7 @@ namespace P42.Utils
             var text = EmbeddedStoredText(resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
             {
-                TType result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
+                var result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto
                 });
@@ -125,7 +125,7 @@ namespace P42.Utils
                     Formatting = Formatting.Indented,
                     ReferenceLoopHandling = ReferenceLoopHandling.Serialize
                 };
-                string textToStore = JsonConvert.SerializeObject(obj, jsonSerializationSetings);
+                var textToStore = JsonConvert.SerializeObject(obj, jsonSerializationSetings);
                 if (string.IsNullOrEmpty(textToStore))
                     throw new InvalidDataContractException("Could not serialize object [" + obj + "]");
                 StoreText(uid, textToStore, resourceName);
@@ -134,7 +134,7 @@ namespace P42.Utils
 
         public static bool ResourceAvailable(string uid, string resourceName, Assembly assembly = null, StreamSource source = StreamSource.Default)
         {
-            bool result = false;
+            var result = false;
             if (!result && (source == StreamSource.Default || source == StreamSource.Local))
                 result = LocalResourceAvailable(uid, resourceName);
             if (!result && (source == StreamSource.Default || source == StreamSource.EmbeddedResource))

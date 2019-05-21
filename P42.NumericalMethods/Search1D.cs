@@ -21,7 +21,10 @@ namespace P42.NumericalMethods
 		public static void BracketMin(ref double ax, ref double bx, out double cx, out double fa, out double fb, out double fc, Func<double,double> func) {
 			double ulim, u, r, q, fu, dum=0;
 
-			fa = func (ax);
+            if (func == null)
+                throw new ArgumentOutOfRangeException("func must be non-null delegate");
+
+            fa = func (ax);
 			fb = func (bx);
 			if (fb > fa) {
 				SHFT (ref dum, ref ax, ref bx, dum);
@@ -72,7 +75,11 @@ namespace P42.NumericalMethods
 
 		public static double GoldenMin(double ax, double bx, double cx, Func<double,double> func, double tol, out double xmin, int maxIter=-1) {
 			double f0=0, f1, f2, f3=0, x0, x1, x2, x3;
-			x0 = ax;
+
+            if (func == null)
+                throw new ArgumentOutOfRangeException("func must be non-null delegate");
+
+            x0 = ax;
 			x3 = cx;
 			if (Math.Abs (cx - bx) > Math.Abs (bx - ax)) {
 				x1 = bx;
@@ -83,7 +90,7 @@ namespace P42.NumericalMethods
 			}
 			f1 = func (x1);
 			f2 = func (x2);
-			int iter=0;
+			var iter=0;
 			while (Math.Abs (x3 - x0) > tol * (Math.Abs (x1) + Math.Abs (x2))) {
 			//while (Math.Abs (x3 - x0) > tol ) {
 				if (f2 < f1) {
@@ -113,9 +120,12 @@ namespace P42.NumericalMethods
 		public static double BrentMin(double ax, double bx, double cx, Func<double,double> func, double tol, out double xmin) {
 			int iter;
 			double a, b, d=0, etemp, fu, fv, fw, fx, p, q, r, tol1, tol2, u, v, w, x, xm;
-			double e = 0.0;
+			var e = 0.0;
 
-			a = ((ax < cx) ? ax : cx);
+            if (func==null)
+                throw new ArgumentOutOfRangeException("func must be non-null delegate");
+
+            a = ((ax < cx) ? ax : cx);
 			b = ((ax > cx) ? ax : cx);
 			w = v = x = bx;
 			fw = fv = fx = func (x);

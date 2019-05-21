@@ -10,7 +10,7 @@ namespace P42.Utils
         internal static string ToMd5HashString(this string source)
         {
             var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(source));
-            StringBuilder sBuilder = new StringBuilder();
+            var sBuilder = new StringBuilder();
 
             for (int i = 0; i < hash.Length; i++)
                 sBuilder.Append(hash[i].ToString("x2"));
