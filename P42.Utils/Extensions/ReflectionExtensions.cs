@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace P42.Utils
 {
@@ -278,20 +279,20 @@ namespace P42.Utils
             System.Diagnostics.Debug.WriteLine("type.GetTypeInfo().Namespace=" + type.GetTypeInfo().Namespace);
             System.Diagnostics.Debug.WriteLine("type.GetTypeInfo().ToString()=" + type.GetTypeInfo().ToString());
             */
-            var result = type.Namespace + "." + type.Name;
+            var result = new StringBuilder( type.Namespace + "." + type.Name);
 
             if (type.GetTypeInfo().IsGenericType)
             {
                 var genericParameters = type.GenericTypeArguments;
-                result += "[";
+                result.Append("[");
                 for (int i = 0; i < genericParameters.Length; i++)
                 {
                     var parameter = genericParameters[i];
                     if (i > 0)
-                        result += ",";
-                    result += "[" + SimpleQualifiedTypeName(parameter) + "]";
+                        result.Append(",");
+                    result.Append("[" + SimpleQualifiedTypeName(parameter) + "]");
                 }
-                result += "]";
+                result.Append("]");
             }
             /*
             var asmFullName = type.GetAssembly().GetName().Name;
@@ -305,8 +306,8 @@ namespace P42.Utils
             System.Diagnostics.Debug.WriteLine(" type.GetAssembly().GetName().FullName=" + type.GetAssembly().GetName().FullName);
             */
 
-            result += "," + type.GetAssembly().GetName().Name;
-            return result;
+            result.Append("," + type.GetAssembly().GetName().Name);
+            return result.ToString();
         }
     }
 }

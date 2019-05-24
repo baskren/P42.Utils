@@ -86,10 +86,12 @@ namespace P42.Utils
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="requestUri"/> was null.</exception>
         public static Task<HttpResponseMessage> PatchAsync(this HttpClient client, Uri requestUri, HttpContent content, CancellationToken cancellationToken)
         {
+#pragma warning disable CC0022 // Should dispose object
             return client.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), requestUri)
             {
                 Content = content
             }, cancellationToken);
+#pragma warning restore CC0022 // Should dispose object
         }
 
         private static Uri CreateUri(string uri)

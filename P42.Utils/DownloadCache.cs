@@ -92,7 +92,7 @@ namespace P42.Utils
                     return path;
                 }
 
-                var success = await GetDownload(url, path);
+                var success = await GetDownloadCoreAsync(url, path);
                 return success ? path : null;
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace P42.Utils
             }
         }
 
-        static Task<bool> GetDownload(string url, string fileName)
+        static Task<bool> GetDownloadCoreAsync(string url, string fileName)
         {
             lock (_locker)
             {
@@ -111,26 +111,28 @@ namespace P42.Utils
                 if (_downloadTasks.TryGetValue(fileName, out Task<bool> task))
                     return task;
 
-                _downloadTasks.Add(fileName, task = DownloadTask(url, fileName));
+                _downloadTasks.Add(fileName, task = DownloadTaskAsync(url, fileName));
                 return task;
             }
         }
 
-        static async Task<bool> DownloadTask(string url, string path)
+        static async Task<bool> DownloadTaskAsync(string url, string path)
         {
 
             try
             {
-                var client = new System.Net.Http.HttpClient();
-                var data = await client.GetByteArrayAsync(url);
-                System.Diagnostics.Debug.WriteLine("DownloadTask: byte array downloaded for [" + url + "]");
-                var fileNamePaths = path.Split('\\');
-                if (System.IO.File.Exists(path))
-                    System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + url + "]");
-                using (var stream = new FileStream(path, FileMode.Create))
-                //using (var stream = new IsolatedStorageFileStream(path, FileMode.Create, Storage))
+                using (var client = new System.Net.Http.HttpClient())
                 {
-                    stream.Write(data, 0, data.Length);
+                    var data = await client.GetByteArrayAsync(url);
+                    System.Diagnostics.Debug.WriteLine("DownloadTask: byte array downloaded for [" + url + "]");
+                    var fileNamePaths = path.Split('\\');
+                    if (System.IO.File.Exists(path))
+                        System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + url + "]");
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    //using (var stream = new IsolatedStorageFileStream(path, FileMode.Create, Storage))
+                    {
+                        stream.Write(data, 0, data.Length);
+                    }
                 }
                 return true;
             }

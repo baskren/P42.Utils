@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Numerics;
 
+#pragma warning disable CC0057 // Unused parameters
 namespace P42.Utils
 {
     public static class JsonExtensions
@@ -560,3 +561,4 @@ namespace P42.Utils
         }
     }
 }
+#pragma warning restore CC0057 // Unused parameters

@@ -43,7 +43,7 @@ namespace P42.Utils
         }
 
         // Helper
-        int GetWord(byte[] array, int offset)
+        static int GetWord(byte[] array, int offset)
         {
             var b1 = array[offset] & 0xFF;
             var b2 = array[offset + 1] & 0xFF;
@@ -116,8 +116,8 @@ namespace P42.Utils
                         // This is also a table. See http://developer.apple.com/fonts/ttrefman/rm06/Chap6name.html
                         // According to Table 36, the total number of table records is stored in the second word, at the offset 2.
                         // Getting the count and string offset - remembering it's big endian.
-                        var count = analyzer.GetWord(table, 2);
-                        var string_offset = analyzer.GetWord(table, 4);
+                        var count = TTFAnalyzer.GetWord(table, 2);
+                        var string_offset = TTFAnalyzer.GetWord(table, 4);
 
                         //List<string> names = new List<string>();
 
@@ -127,8 +127,8 @@ namespace P42.Utils
                             // Table 37 tells us that each record is 6 words -> 12 bytes, and that the nameID is 4th word so its offset is 6.
                             // We also need to account for the first 6 bytes of the header above (Table 36), so...
                             var nameid_offset = record * 12 + 6;
-                            var platformID = analyzer.GetWord(table, nameid_offset);
-                            var nameid_value = analyzer.GetWord(table, nameid_offset + 6);
+                            var platformID = TTFAnalyzer.GetWord(table, nameid_offset);
+                            var nameid_value = TTFAnalyzer.GetWord(table, nameid_offset + 6);
 
 
                             // Table 42 lists the valid name Identifiers. We're interested in 1 (Font Family Name) but not in Unicode encoding (for simplicity).
@@ -136,8 +136,8 @@ namespace P42.Utils
                             if (nameid_value == 1) // && platformID == 1)
                             {
                                 // We need the string offset and length, which are the word 6 and 5 respectively
-                                var name_length = analyzer.GetWord(table, nameid_offset + 8);
-                                var name_offset = analyzer.GetWord(table, nameid_offset + 10);
+                                var name_length = TTFAnalyzer.GetWord(table, nameid_offset + 8);
+                                var name_offset = TTFAnalyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
                                 name_offset = name_offset + string_offset;
@@ -249,8 +249,8 @@ namespace P42.Utils
                         // This is also a table. See http://developer.apple.com/fonts/ttrefman/rm06/Chap6name.html
                         // According to Table 36, the total number of table records is stored in the second word, at the offset 2.
                         // Getting the count and string offset - remembering it's big endian.
-                        var count = analyzer.GetWord(table, 2);
-                        var string_offset = analyzer.GetWord(table, 4);
+                        var count = TTFAnalyzer.GetWord(table, 2);
+                        var string_offset = TTFAnalyzer.GetWord(table, 4);
 
                         // Record starts from offset 6
                         for (int record = 0; record < count; record++)
@@ -258,16 +258,16 @@ namespace P42.Utils
                             // Table 37 tells us that each record is 6 words -> 12 bytes, and that the nameID is 4th word so its offset is 6.
                             // We also need to account for the first 6 bytes of the header above (Table 36), so...
                             var nameid_offset = record * 12 + 6;
-                            var platformID = analyzer.GetWord(table, nameid_offset);
-                            var nameid_value = analyzer.GetWord(table, nameid_offset + 6);
+                            var platformID = TTFAnalyzer.GetWord(table, nameid_offset);
+                            var nameid_value = TTFAnalyzer.GetWord(table, nameid_offset + 6);
 
                             // Table 42 lists the valid name Identifiers. We're interested in 1 (Font Subfamily Name) but not in Unicode encoding (for simplicity).
                             // The encoding is stored as PlatformID and we're interested in Mac encoding
                             if (nameid_value == 2 && platformID == 1)
                             {
                                 // We need the string offset and length, which are the word 6 and 5 respectively
-                                var name_length = analyzer.GetWord(table, nameid_offset + 8);
-                                var name_offset = analyzer.GetWord(table, nameid_offset + 10);
+                                var name_length = TTFAnalyzer.GetWord(table, nameid_offset + 8);
+                                var name_offset = TTFAnalyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
                                 name_offset = name_offset + string_offset;
