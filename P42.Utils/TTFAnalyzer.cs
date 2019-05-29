@@ -145,28 +145,19 @@ namespace P42.Utils
                                 // Make sure it is inside the array
                                 if (name_offset >= 0 && name_offset + name_length < table.Length)
                                 {
-                                    //return new String( table, name_offset, name_length );
-                                    //char[] chars = new char[name_length];
-                                    /*
-									System.Buffer.BlockCopy(table, name_offset, chars, 0, name_length);
-									*/
-                                    /*
-									for(int nameI=0;nameI<name_length;nameI++) {
-										chars [nameI] = (char)table [name_offset + nameI];
-									}
-									*/
                                     var chars = new byte[name_length];
                                     System.Buffer.BlockCopy(table, name_offset, chars, 0, name_length);
-                                    //var str = new string(chars);
-                                    //var str = System.Text.Encoding.Default.GetString(chars);
-                                    if (platformID == 1)
-                                        return System.Text.Encoding.UTF8.GetString(chars, 0, name_length);
-                                    else if (platformID == 2)
+                                    switch (platformID)
                                     {
-
+                                        case 1:
+                                            return System.Text.Encoding.UTF8.GetString(chars, 0, name_length);
+                                        case 2:
+                                            break;
+                                        case 3:
+                                            return System.Text.Encoding.BigEndianUnicode.GetString(chars, 0, name_length);
+                                        default:
+                                            break;
                                     }
-                                    else if (platformID == 3)
-                                        return System.Text.Encoding.BigEndianUnicode.GetString(chars, 0, name_length);
                                 }
                             }
                         }

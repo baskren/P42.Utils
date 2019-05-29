@@ -43,11 +43,8 @@ namespace System.Collections
         }
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            if (CollectionChanged != null)
-                CollectionChanged(this, e);
-        }
-
+            => CollectionChanged?.Invoke(this, e);
+        
         #region INotifyCollectionChanged Members
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;

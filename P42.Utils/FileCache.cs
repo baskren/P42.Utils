@@ -22,11 +22,11 @@ namespace P42.Utils
 			return folderPath;
 		}
 
-		static object _locker = new object();
-		static Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
+		static readonly object _locker = new object();
+        static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
 
 
-		public static string Cache(string sourceFilePath, string folderName = null)
+        public static string Cache(string sourceFilePath, string folderName = null)
 		{
 			var task = Task.Run(() => CacheAsync(sourceFilePath, folderName));
 			return task.Result;
