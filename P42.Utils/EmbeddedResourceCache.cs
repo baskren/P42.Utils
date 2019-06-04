@@ -122,7 +122,7 @@ namespace P42.Utils
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
                 return null;
             }
         }
@@ -165,7 +165,7 @@ namespace P42.Utils
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                System.Diagnostics.Debug.WriteLine(ex);
             }
             if (File.Exists(path))
                 System.IO.File.Delete(path);
