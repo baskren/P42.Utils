@@ -22,9 +22,9 @@ namespace P42.Utils
             return folderPath;
         }
 
-        static readonly object _locker = new object();
-        static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
-        static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        //static readonly object _locker = new object();
+        //static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
+        //static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
 
 

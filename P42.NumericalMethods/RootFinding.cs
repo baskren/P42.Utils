@@ -17,12 +17,12 @@ namespace P42.NumericalMethods
 			double target = 0.0
 		)
 		{
-			// extra info that callers may not always want
-			int iterationsUsed;
-			double errorEstimate;
+            // extra info that callers may not always want
 
-			return Bisect(f, left, right, tolerance, target, out iterationsUsed, out errorEstimate);
-		}
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            return Bisect(f, left, right, tolerance, target, out int iterationsUsed, out double errorEstimate);
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+        }
 
 		public static double Bisect
 		(
@@ -40,15 +40,17 @@ namespace P42.NumericalMethods
             if (tolerance <= 0.0)
 				throw new ArgumentOutOfRangeException($"Tolerance must be positive. Recieved {tolerance}.");
 
-			iterationsUsed = 0;
-			errorEstimate = double.MaxValue;
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            iterationsUsed = 0;
+            errorEstimate = double.MaxValue;
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
 
-			// Standardize the problem.  To solve f(x) = target,
-			// solve g(x) = 0 where g(x) = f(x) - target.
-			Func<double, double> g = delegate (double x) { return f(x) - target; };
+            // Standardize the problem.  To solve f(x) = target,
+            // solve g(x) = 0 where g(x) = f(x) - target.
+            double g(double x) { return f(x) - target; }
 
 
-			var g_left = g(left);  // evaluation of f at left end of interval
+            var g_left = g(left);  // evaluation of f at left end of interval
 			var g_right = g(right);
 			double mid;
 			double g_mid;
@@ -77,8 +79,10 @@ namespace P42.NumericalMethods
 					return mid;
 				}
 				if (g_left * g_mid < 0.0)           // g changes sign in (left, mid)    
-					g_right = g(right = mid);
-				else                            // g changes sign in (mid, right)
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+                    g_right = g(right = mid);
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+                else                            // g changes sign in (mid, right)
 					g_left = g(left = mid);
 			}
 			errorEstimate = right - left;
@@ -94,12 +98,12 @@ namespace P42.NumericalMethods
 			double target = 0.0
 		)
 		{
-			// extra info that callers may not always want
-			int iterationsUsed;
-			double errorEstimate;
+            // extra info that callers may not always want
 
-			return Brent(f, left, right, tolerance, target, out iterationsUsed, out errorEstimate);
-		}
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            return Brent(f, left, right, tolerance, target, out int iterationsUsed, out double errorEstimate);
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+        }
 
 		public static double Brent
 		(
@@ -118,17 +122,19 @@ namespace P42.NumericalMethods
                 throw new ArgumentOutOfRangeException("Function g must be non-null delegate");
 
 
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
             errorEstimate = double.MaxValue;
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
 
-			// Standardize the problem.  To solve g(x) = target,
-			// solve f(x) = 0 where f(x) = g(x) - target.
-			Func<double, double> f = delegate (double x) { return g(x) - target; };
+            // Standardize the problem.  To solve g(x) = target,
+            // solve f(x) = 0 where f(x) = g(x) - target.
+            double f(double x) { return g(x) - target; }
 
-			// Implementation and notation based on Chapter 4 in
-			// "Algorithms for Minimization without Derivatives"
-			// by Richard Brent.
+            // Implementation and notation based on Chapter 4 in
+            // "Algorithms for Minimization without Derivatives"
+            // by Richard Brent.
 
-			double c, d, e, fa, fb, fc, tol, m, p, q, r, s;
+            double c, d, e, fa, fb, fc, tol, m, p, q, r, s;
 
 			// set up aliases to match Brent's notation
 			var a = left; var b = right; var t = tolerance;
@@ -214,12 +220,12 @@ namespace P42.NumericalMethods
 			double target = 0.0
 		)
 		{
-			// extra info that callers may not always want
-			int iterationsUsed;
-			double errorEstimate;
+            // extra info that callers may not always want
 
-			return Newton(f, fprime, guess, tolerance, target, out iterationsUsed, out errorEstimate);
-		}
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            return Newton(f, fprime, guess, tolerance, target, out int iterationsUsed, out double errorEstimate);
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+        }
 
 		public static double Newton
 		(
@@ -240,15 +246,17 @@ namespace P42.NumericalMethods
             if (tolerance <= 0)
 				throw new ArgumentOutOfRangeException($"Tolerance must be positive. Recieved {tolerance}.");
 
-			iterationsUsed = 0;
-			errorEstimate = double.MaxValue;
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            iterationsUsed = 0;
+            errorEstimate = double.MaxValue;
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
 
-			// Standardize the problem.  To solve f(x) = target,
-			// solve g(x) = 0 where g(x) = f(x) - target.
-			// Note that f(x) and g(x) have the same derivative.
-			Func<double, double> g = delegate (double x) { return f(x) - target; };
+            // Standardize the problem.  To solve f(x) = target,
+            // solve g(x) = 0 where g(x) = f(x) - target.
+            // Note that f(x) and g(x) have the same derivative.
+            double g(double x) { return f(x) - target; }
 
-			double oldX, newX = guess;
+            double oldX, newX = guess;
 			for
 			(
 				iterationsUsed = 0;

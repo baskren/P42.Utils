@@ -18,16 +18,16 @@ namespace P42.Utils
             return assembly.GetManifestResourceStream(resourceId);
         }
 
-        static Dictionary<Assembly, List<string>> Resources = new Dictionary<Assembly, List<string>>();
+        static readonly Dictionary<Assembly, List<string>> _resources = new Dictionary<Assembly, List<string>>();
 
         public static bool Available(string resourceId, Assembly assembly=null)
         {
             assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             if (assembly == null)
                 return false;
-            if (!Resources.ContainsKey(assembly))
-                Resources[assembly] = new List<string>(assembly.GetManifestResourceNames());
-            return Resources[assembly].Contains(resourceId);
+            if (!_resources.ContainsKey(assembly))
+                _resources[assembly] = new List<string>(assembly.GetManifestResourceNames());
+            return _resources[assembly].Contains(resourceId);
         }
     }
 }

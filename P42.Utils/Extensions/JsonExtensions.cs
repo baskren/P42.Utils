@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Numerics;
 
 #pragma warning disable CC0057 // Unused parameters
+#pragma warning disable IDE0060 // Remove unused parameter
 namespace P42.Utils
 {
     public static class JsonExtensions
@@ -262,6 +263,7 @@ namespace P42.Utils
             writer.WriteEnd();
             //writer.WriteEndArray();
         }
+
 
 
         /*
@@ -552,8 +554,7 @@ namespace P42.Utils
         {
             if (enumerable != null)
             {
-                var collection = enumerable as ICollection<T>;
-                if (collection != null && collection.Count == 0)
+                if (enumerable is ICollection<T> collection && collection.Count == 0)
                     return;
                 writer.WriteSafePropertyName(name);
                 writer.WriteList(enumerable, justValues);
@@ -561,4 +562,5 @@ namespace P42.Utils
         }
     }
 }
+#pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CC0057 // Unused parameters

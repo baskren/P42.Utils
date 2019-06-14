@@ -125,7 +125,7 @@ namespace P42.Utils
                 throw new ArgumentNullException(nameof(obj));
             var objType = obj.GetType();
             var propInfo = GetPropertyInfo(objType, propertyName);
-            return propInfo == null ? null : propInfo.GetValue(obj, null);
+            return propInfo?.GetValue(obj, null);
         }
 
         public static void SetPropertyValue(this object obj, string propertyName, object val)
@@ -145,7 +145,7 @@ namespace P42.Utils
                 throw new ArgumentNullException(nameof(obj));
             var objType = obj.GetType();
             var fieldInfo = GetFieldInfo(objType, fieldName);
-            return fieldInfo == null ? null : fieldInfo.GetValue(obj);
+            return fieldInfo?.GetValue(obj);
         }
 
         public static void SetFieldValue(this object obj, string fieldName, object val)
@@ -162,13 +162,13 @@ namespace P42.Utils
         public static object GetFieldValue(this Type type, string fieldName)
         {
             var fieldInfo = GetFieldInfo(type, fieldName);
-            return fieldInfo == null ? null : fieldInfo.GetValue(null);
+            return fieldInfo?.GetValue(null);
         }
 
         public static object GetPropertyValue(this Type type, string fieldName)
         {
             var propertyInfo = GetPropertyInfo(type, fieldName);
-            return propertyInfo == null ? null : propertyInfo.GetValue(null);
+            return propertyInfo?.GetValue(null);
         }
 
         public static object CallMethod(this object obj, string methodName, object[] parameters)

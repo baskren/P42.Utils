@@ -140,7 +140,7 @@ namespace P42.Utils
                                 var name_offset = TTFAnalyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
-                                name_offset = name_offset + string_offset;
+                                name_offset += string_offset;
 
                                 // Make sure it is inside the array
                                 if (name_offset >= 0 && name_offset + name_length < table.Length)
@@ -174,7 +174,7 @@ namespace P42.Utils
                 return null;
             }
 #pragma warning disable 0168
-            catch (IOException e)
+            catch (IOException)
 #pragma warning restore 0168
             {
                 // Most likely a corrupted font file
@@ -261,7 +261,7 @@ namespace P42.Utils
                                 var name_offset = TTFAnalyzer.GetWord(table, nameid_offset + 10);
 
                                 // The real name string offset is calculated by adding the string_offset
-                                name_offset = name_offset + string_offset;
+                                name_offset += string_offset;
 
                                 // Make sure it is inside the array
                                 if (name_offset >= 0 && name_offset + name_length < table.Length)
@@ -298,7 +298,7 @@ namespace P42.Utils
                 return null;
             }
 #pragma warning disable 0168
-            catch (IOException e)
+            catch (IOException)
 #pragma warning restore 0168
             {
                 // Most likely a corrupted font file

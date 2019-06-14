@@ -6,7 +6,7 @@ namespace P42.Utils
 {
     public static class StringExtensions
     {
-        static System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
         internal static string ToMd5HashString(this string source)
         {
             var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(source));

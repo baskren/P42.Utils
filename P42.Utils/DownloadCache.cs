@@ -24,7 +24,7 @@ namespace P42.Utils
 
         static readonly object _locker = new object();
         static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
-        static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        //static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
         public static string Download(string url, string folderName = null)
         {

@@ -16,7 +16,7 @@ namespace P42.Utils
 		TimeSpan _dueTime;
 		TimeSpan _period;
 		readonly TimeSpan _infinite = new TimeSpan (0, 0, Timeout.Infinite);
-		int _id;
+		readonly int _id;
 		#endregion
 
 		#region Constructors

@@ -54,13 +54,12 @@ namespace P42.Utils
 		{
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo>> target;
-				if (!_eventHandlers.TryGetValue(eventName, out target))
-				{
-					target = new List<Tuple<WeakReference, MethodInfo>>();
-					_eventHandlers.Add(eventName, target);
-				}
-				var weakRef = new WeakReference(handlerTarget);
+                if (!_eventHandlers.TryGetValue(eventName, out List<Tuple<WeakReference, MethodInfo>> target))
+                {
+                    target = new List<Tuple<WeakReference, MethodInfo>>();
+                    _eventHandlers.Add(eventName, target);
+                }
+                var weakRef = new WeakReference(handlerTarget);
 				var tuple = Tuple.Create(weakRef, methodInfo);
 				target.Add(tuple);
 			}
@@ -68,9 +67,10 @@ namespace P42.Utils
 
 		public bool EventExists(string eventName)
 		{
-			List<Tuple<WeakReference, MethodInfo>> target;
-			return _eventHandlers.TryGetValue(eventName, out target);
-		}
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+            return _eventHandlers.TryGetValue(eventName, out List<Tuple<WeakReference, MethodInfo>> target);
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+        }
 
 		public void RaiseEvent(object sender, object args, string eventName)
 		{
@@ -78,20 +78,19 @@ namespace P42.Utils
 
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo>> targets;
-				if (_eventHandlers.TryGetValue(eventName, out targets))
-				{
-					foreach (var tuple in targets)
-					{
-						var o = tuple.Item1.Target;
+                if (_eventHandlers.TryGetValue(eventName, out List<Tuple<WeakReference, MethodInfo>> targets))
+                {
+                    foreach (var tuple in targets)
+                    {
+                        var o = tuple.Item1.Target;
 
-						if (o == null && !tuple.Item2.Name.Contains("<"))
-							targets.Remove(tuple);
-						else						
-							toRaise.Add(Tuple.Create(o, tuple.Item2));
-					}
-				}
-				if (targets != null && targets.Count == 0)
+                        if (o == null && !tuple.Item2.Name.Contains("<"))
+                            targets.Remove(tuple);
+                        else
+                            toRaise.Add(Tuple.Create(o, tuple.Item2));
+                    }
+                }
+                if (targets != null && targets.Count == 0)
 				{
 					// remove event
 					_eventHandlers.Remove(eventName);
@@ -117,10 +116,9 @@ namespace P42.Utils
 		{
 			lock (_syncObj)
 			{
-				List<Tuple<WeakReference, MethodInfo>> targets;
-				if (_eventHandlers.TryGetValue(eventName, out targets))
-				{
-                    for (int i= 0; i < targets.Count;)
+                if (_eventHandlers.TryGetValue(eventName, out List<Tuple<WeakReference, MethodInfo>> targets))
+                {
+                    for (int i = 0; i < targets.Count;)
                     {
                         var target = targets[i];
                         if (target.Item1.Target == handlerTarget && target.Item2.Name == methodInfo.Name)
@@ -135,8 +133,8 @@ namespace P42.Utils
 					).ToList())
 						targets.Remove(tuple);
                         */
-				}
-			}
+                }
+            }
 		}
 	}
 }

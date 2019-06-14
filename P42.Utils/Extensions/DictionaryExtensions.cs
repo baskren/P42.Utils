@@ -49,7 +49,7 @@ namespace P42.Utils
                     return true;
                 }
             }
-            key = default(TKey);
+            key = default;
             return false;
         }
     }

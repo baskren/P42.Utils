@@ -16,7 +16,7 @@ namespace P42.Utils
         volatile TaskCompletionSource<T> m_tcs = new TaskCompletionSource<T>();
 
         AsyncAwaitForSet<T> _currentInstance;
-        Func<T, bool> _onSetAction;
+        readonly Func<T, bool> _onSetAction;
 
         public AsyncAwaitForSet<T> CurrentInstance => _currentInstance; 
 
