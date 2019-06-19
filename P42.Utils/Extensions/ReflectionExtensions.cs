@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace P42.Utils
 {
@@ -209,23 +210,30 @@ namespace P42.Utils
 
         public static Assembly GetApplicationAssembly()
         {
+            return Assembly.GetEntryAssembly();
+            /*
             var asmType = typeof(Assembly).GetTypeInfo();
             var getAppAsmMethod = asmType.GetDeclaredMethod("GetEntryAssembly");
             var result = (Assembly)getAppAsmMethod.Invoke(null, new object[0]);
             if (result == null)
                 throw new Exception("P42.Utils: Could not get Executing Assembly");
             return result;
+            */
         }
 
         public static List<Assembly> GetAssemblies()
         {
+            /*
             var appDomain = typeof(string).GetTypeInfo().Assembly.GetType("System.AppDomain");
             var currentDomainProperty = appDomain.GetRuntimeProperty("CurrentDomain");
             var currentdomainMethod = currentDomainProperty.GetMethod;//.Invoke(null, new object[] { });
             var currentdomain = currentdomainMethod.Invoke(null, null);
             var getassemblies = currentdomain.GetType().GetRuntimeMethod(nameof(GetAssemblies), new Type[] { });
             var assemblies = getassemblies.Invoke(currentdomain, new object[] { }) as Assembly[];
-            var result = new List<Assembly>(assemblies);
+            */
+            var currentDomain = System.AppDomain.CurrentDomain;
+            var assemblies = currentDomain.GetAssemblies();
+            var result = assemblies?.ToList(); //new List<Assembly>(assemblies);
             return result;
         }
 
