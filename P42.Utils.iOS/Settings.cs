@@ -39,7 +39,7 @@ namespace P42.Utils.iOS
             P42.Utils.Environment.TemporaryStoragePath = tmpDirPath;
 
 
-            var current = NSFileManager.DefaultManager.CurrentDirectory;
+            //var current = NSFileManager.DefaultManager.CurrentDirectory;
         }
 
         [System.Runtime.InteropServices.DllImport(ObjCRuntime.Constants.FoundationLibrary)]
