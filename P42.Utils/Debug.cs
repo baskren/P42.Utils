@@ -16,29 +16,33 @@ namespace P42.Utils
         public static void Message(object obj, string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
             if (ConditionFunc?.Invoke(obj) ?? false)
-            {
-                var callingClass = NameOfCallingClass();
+                Message(message);
+        }
 
-                System.Diagnostics.Debug.IndentSize = 4;
-                if (message?.Contains("ENTER") ?? false)
-                {
-                    if (System.Diagnostics.Debug.IndentLevel == 0)
-                        System.Diagnostics.Debug.WriteLine("=========================================================");
-                }
-                if (message?.Contains("EXIT") ?? false)
-                {
-                    System.Diagnostics.Debug.Unindent();
-                }
-                System.Diagnostics.Debug.WriteLine(callingClass + "." + callingMethod + ": " + message);
-                if (message?.Contains("ENTER") ?? false)
-                    System.Diagnostics.Debug.Indent();
-                if (message?.Contains("EXIT") ?? false)
-                {
-                    if (System.Diagnostics.Debug.IndentLevel == 0)
-                        System.Diagnostics.Debug.WriteLine("=========================================================");
-                }
+        public static void Message(string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
+        {
+            var callingClass = NameOfCallingClass();
+
+            System.Diagnostics.Debug.IndentSize = 4;
+            if (message?.Contains("ENTER") ?? false)
+            {
+                if (System.Diagnostics.Debug.IndentLevel == 0)
+                    System.Diagnostics.Debug.WriteLine("=========================================================");
+            }
+            if (message?.Contains("EXIT") ?? false)
+            {
+                System.Diagnostics.Debug.Unindent();
+            }
+            System.Diagnostics.Debug.WriteLine(callingClass + "." + callingMethod + ": " + message);
+            if (message?.Contains("ENTER") ?? false)
+                System.Diagnostics.Debug.Indent();
+            if (message?.Contains("EXIT") ?? false)
+            {
+                if (System.Diagnostics.Debug.IndentLevel == 0)
+                    System.Diagnostics.Debug.WriteLine("=========================================================");
             }
         }
+
 
         static string NameOfCallingClass()
         {
