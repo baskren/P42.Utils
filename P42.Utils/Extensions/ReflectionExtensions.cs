@@ -112,7 +112,7 @@ namespace P42.Utils
                 return false;
             var objType = obj.GetType();
             var propInfo = GetPropertyInfo(objType, propertyName);
-            return propInfo == null;
+            return propInfo != null;
         }
 
         public static bool HasProperty(this object obj, string propertyName)
@@ -287,7 +287,7 @@ namespace P42.Utils
             System.Diagnostics.Debug.WriteLine("type.GetTypeInfo().Namespace=" + type.GetTypeInfo().Namespace);
             System.Diagnostics.Debug.WriteLine("type.GetTypeInfo().ToString()=" + type.GetTypeInfo().ToString());
             */
-            var result = new StringBuilder( type.Namespace + "." + type.Name);
+            var result = new StringBuilder(type.Namespace + "." + type.Name);
 
             if (type.GetTypeInfo().IsGenericType)
             {
