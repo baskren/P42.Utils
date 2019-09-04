@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 
 namespace P42.Utils
 {
@@ -26,6 +27,14 @@ namespace P42.Utils
 
         static readonly object _locker = new object();
         static readonly Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
+
+        public static List<string> List(string folderName)
+        {
+            var folderPath = FolderPath(folderName);
+            var files = System.IO.Directory.EnumerateFiles(folderPath);
+            return files.ToList();
+        }
+
 
 
         public static System.IO.Stream GetStream(string resourceId, Assembly assembly, string folderName = null)
@@ -72,9 +81,13 @@ namespace P42.Utils
             return task.Result;
         }
 
-
-
         public static bool Clear(string resourceId = null, string folderName = null)
+            => Clear(DateTime.MinValue, resourceId, folderName);
+
+        public static bool Clear(TimeSpan timeSpan, string resourceId = null, string folderName = null)
+            => Clear(DateTime.Now - timeSpan, resourceId, folderName);
+
+        public static bool Clear(DateTime dateTime, string resourceId = null, string folderName = null)
         {
             if (string.IsNullOrWhiteSpace(resourceId))
             {
@@ -83,9 +96,19 @@ namespace P42.Utils
                 if (System.IO.Directory.Exists(folderPath))
                 {
                     var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    bool filesRemaining = false;
                     foreach (var file in files)
-                        System.IO.File.Delete(file);
-                    System.IO.Directory.Delete(folderPath);
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
+                                System.IO.File.Delete(file);
+                            else
+                                filesRemaining = true;
+                        }
+                    }
+                    if (!filesRemaining)
+                        System.IO.Directory.Delete(folderPath);
                     return true;
                 }
                 return false;
@@ -93,8 +116,11 @@ namespace P42.Utils
             var path = Path.Combine(FolderPath(folderName), resourceId);
             if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
             {
-                System.IO.File.Delete(path);
-                return true;
+                if (System.IO.File.GetLastWriteTime(path) < dateTime)
+                {
+                    System.IO.File.Delete(path);
+                    return true;
+                }
             }
             return false;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +26,13 @@ namespace P42.Utils
         static readonly object _locker = new object();
         static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
 
+        public static List<string> List(string folderName)
+        {
+            var folderPath = FolderPath(folderName);
+            var files = System.IO.Directory.EnumerateFiles(folderPath);
+            return files.ToList();
+        }
+
 
         public static string Cache(string sourceFilePath, string folderName = null)
         {
@@ -32,12 +40,17 @@ namespace P42.Utils
             return task.Result;
         }
 
+        static string CachedPath(string sourceFilePath, string folderName = null)
+        {
+            var fileName = sourceFilePath.Trim().ToMd5HashString();
+            return Path.Combine(FolderPath(folderName), fileName);
+        }
+
         public static async Task<string> CacheAsync(string sourceFilePath, string folderName = null)
         {
             //var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(sourceFilePath.Trim()));
             //var fileName = string.Join("", hash.Select(x => x.ToString("x2")));
-            var fileName = sourceFilePath.Trim().ToMd5HashString();
-
+            var fileName = CachedPath(sourceFilePath, folderName);
             return await GetCacheAsync(sourceFilePath, fileName, folderName);
         }
 
@@ -78,7 +91,6 @@ namespace P42.Utils
             }
         }
 
-
         static async Task<bool> CopyTask(string sourcePath, string destPath)
         {
             try
@@ -98,5 +110,51 @@ namespace P42.Utils
                 System.IO.File.Delete(destPath);
             return false;
         }
+
+
+        public static bool Clear(string sourceFilePath = null, string folderName = null)
+            => Clear(DateTime.MinValue, sourceFilePath, folderName);
+
+        public static bool Clear(TimeSpan timeSpan, string sourceFilePath = null, string folderName = null)
+            => Clear(DateTime.Now - timeSpan, sourceFilePath, folderName);
+
+        public static bool Clear(DateTime dateTime, string sourceFilePath = null, string folderName = null)
+        {
+            if (string.IsNullOrWhiteSpace(sourceFilePath))
+            {
+                // complete clear
+                var folderPath = FolderPath(folderName);
+                if (System.IO.Directory.Exists(folderPath))
+                {
+                    var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    bool filesRemaining = false;
+                    foreach (var file in files)
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
+                                System.IO.File.Delete(file);
+                            else
+                                filesRemaining = true;
+                        }
+                    }
+                    if (!filesRemaining)
+                        System.IO.Directory.Delete(folderPath);
+                    return true;
+                }
+                return false;
+            }
+            var path = CachedPath(sourceFilePath, folderName);
+            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            {
+                if (System.IO.File.GetLastWriteTime(path) < dateTime)
+                {
+                    System.IO.File.Delete(path);
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

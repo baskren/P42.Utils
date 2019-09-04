@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +28,12 @@ namespace P42.Utils
         //static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
         //static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
 
-
+        public static List<string> List(string folderName)
+        {
+            var folderPath = FolderPath(folderName);
+            var files = System.IO.Directory.EnumerateFiles(folderPath);
+            return files.ToList();
+        }
 
         public static void Store(string text, string key, string folderName = null)
         {
@@ -76,7 +83,7 @@ namespace P42.Utils
         static string CachedPath(string key, string folderName = null)
         {
             var fileName = key.Trim().ToMd5HashString();
-            return Path.Combine(FolderPath(folderName), fileName); ;
+            return Path.Combine(FolderPath(folderName), fileName);
         }
 
         public static bool IsCached(string key, string folderName = null)
@@ -86,6 +93,12 @@ namespace P42.Utils
         }
 
         public static bool Clear(string key = null, string folderName = null)
+            => Clear(DateTime.MinValue, key, folderName);
+
+        public static bool Clear(TimeSpan timeSpan, string key = null, string folderName = null)
+            => Clear(DateTime.Now - timeSpan, key, folderName);
+
+        public static bool Clear(DateTime dateTime, string key = null, string folderName = null)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -94,9 +107,19 @@ namespace P42.Utils
                 if (System.IO.Directory.Exists(folderPath))
                 {
                     var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    bool filesRemaining = false;
                     foreach (var file in files)
-                        System.IO.File.Delete(file);
-                    System.IO.Directory.Delete(folderPath);
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
+                                System.IO.File.Delete(file);
+                            else
+                                filesRemaining = true;
+                        }
+                    }
+                    if (!filesRemaining)
+                        System.IO.Directory.Delete(folderPath);
                     return true;
                 }
                 return false;
@@ -104,8 +127,11 @@ namespace P42.Utils
             var path = CachedPath(key, folderName);
             if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
             {
-                System.IO.File.Delete(path);
-                return true;
+                if (System.IO.File.GetLastWriteTime(path) < dateTime)
+                {
+                    System.IO.File.Delete(path);
+                    return true;
+                }
             }
             return false;
         }
