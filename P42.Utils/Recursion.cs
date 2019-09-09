@@ -9,6 +9,28 @@ namespace P42.Utils
 
     public static class Recursion
     {
+
+        const string RecursionFolderName = "P42.Utils.RecursionStackTraces";
+
+        static string _folderPath;
+        static string FolderPath
+        {
+            get
+            {
+                if (_folderPath == null)
+                {
+                    if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
+                        Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
+                    var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, RecursionFolderName);
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+                    _folderPath = folderPath;
+                }
+                return _folderPath;
+            }
+        }
+
+
         static bool _enabled;
         public static bool IsEnabled
         {
@@ -33,6 +55,9 @@ namespace P42.Utils
         const int _recursionLimit = 100;
         static readonly Dictionary<string, int> _recursionCount = new Dictionary<string, int>();
 
+        public static void Enter(Type type, object instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
+            => Enter(type?.ToString(), instanceId?.ToString(), method, path);
+
         public static void Enter(string className, string instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
         {
 
@@ -42,20 +67,17 @@ namespace P42.Utils
                 _recursionCount[name] = _recursionCount.ContainsKey(name) ? _recursionCount[name] + 1 : 1;
                 if (_recursionCount[name] > _recursionLimit)
                 {
-                    if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                        Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
-                    var folderName = "RecursionStackTraces";
-                    var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
-                    if (!Directory.Exists(folderPath))
-                        Directory.CreateDirectory(folderPath);
                     var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss.txt");
-                    var filePath = Path.Combine(folderPath, fileName);
+                    var filePath = Path.Combine(FolderPath, fileName);
                     var stackTrace = System.Environment.StackTrace;
                     System.IO.File.WriteAllText(filePath, stackTrace);
                     RecursionDetected?.Invoke(System.Environment.StackTrace, EventArgs.Empty);
                 }
             }
         }
+
+        public static void Exit(Type type, object instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
+            => Exit(type?.ToString(), instanceId?.ToString(), method, path);
 
         public static void Exit(string className, string instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
         {
@@ -70,6 +92,51 @@ namespace P42.Utils
                 }
             }
         }
+
+        public static string[] List()
+        {
+            try
+            {
+                var files = Directory.GetFiles(FolderPath);
+                Array.Sort(files);
+                return files;
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
+
+
+        public static bool Clear()
+            => Clear(DateTime.MinValue);
+
+        public static bool Clear(TimeSpan timeSpan)
+            => Clear(DateTime.Now - timeSpan);
+
+        public static bool Clear(DateTime dateTime)
+        {
+            // complete clear
+            if (System.IO.Directory.Exists(FolderPath))
+            {
+                var files = System.IO.Directory.EnumerateFiles(FolderPath);
+                bool filesRemaining = false;
+                foreach (var file in files)
+                {
+                    if (System.IO.File.Exists(file))
+                    {
+                        if (System.IO.File.GetLastWriteTime(file) < dateTime)
+                            System.IO.File.Delete(file);
+                        else
+                            filesRemaining = true;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
 
 
         public static void Test()

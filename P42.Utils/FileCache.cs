@@ -138,7 +138,7 @@ namespace P42.Utils
                                 filesRemaining = true;
                         }
                     }
-                    if (!filesRemaining)
+                    if (!filesRemaining && folderPath != FolderPath(null))
                         System.IO.Directory.Delete(folderPath);
                     return true;
                 }
