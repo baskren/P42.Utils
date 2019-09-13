@@ -47,23 +47,15 @@ namespace P42.Utils
 
         public static string JsonFromStorage(string uid, string fileName)
         {
-            var path = Path.Combine(FolderPath, fileName);
-            if (uid != null)
-            {
-                if (!Directory.Exists("uid-" + uid))
-                    return null;
-                path = Path.Combine("uid-" + uid, fileName);
-            }
-            if (!File.Exists(path))
-                return null;
-            var contents = File.ReadAllText(path);
-            return contents;
+            var path = LocalPath(uid, fileName);
+            if (File.Exists(path))
+                return File.ReadAllText(path);
+            return null;
         }
 
         public static string LoadLocalStorageText(string uid, string fileName)
-        {
-            return JsonFromStorage(uid, fileName);
-        }
+            => JsonFromStorage(uid, fileName);
+        
 
         public static string LoadText(string uid, string fileName, Assembly assembly = null)
         {
@@ -75,13 +67,7 @@ namespace P42.Utils
 
         public static void StoreText(string uid, string text, string fileName)
         {
-            var path = Path.Combine(FolderPath, fileName);
-            if (uid != null)
-            {
-                if (!Directory.Exists("uid-" + uid))
-                    Directory.CreateDirectory("uid-" + uid);
-                path = Path.Combine("uid-" + uid, fileName);
-            }
+            var path = LocalPath(uid, fileName);
             System.Diagnostics.Debug.WriteLine("StoreText: " + path);
             File.WriteAllText(path, text);
         }
@@ -153,40 +139,38 @@ namespace P42.Utils
         }
 
         public static bool EmbeddedResourceAvailable(string resourceId, Assembly assembly = null)
-        {
-            return EmbeddedResource.Available(resourceId, assembly);
-        }
+            => EmbeddedResource.Available(resourceId, assembly);
+        
 
         public static StreamReader EmbeddedResourceStreamReader(string resourceId, Assembly assembly = null)
         {
-            var stream = EmbeddedResource.GetStream(resourceId, assembly);
-            if (stream == null)
-                return null;
-            return new StreamReader(stream);
+            if (EmbeddedResource.GetStream(resourceId, assembly) is Stream stream)
+                return new StreamReader(stream);
+            return null;
         }
 
         public static bool LocalResourceAvailable(string uid, string fileName)
-        {
-            var path = Path.Combine(FolderPath, fileName);
-            if (uid != null)
-                path = Path.Combine("uid-" + uid, fileName);
-            return File.Exists(path);
-        }
+            => File.Exists(LocalPath(uid, fileName));
 
 
         public static StreamReader LocalStreamReader(string uid, string fileName)
+        {
+            var path = LocalPath(uid, fileName);
+            if (File.Exists(path))
+                return new StreamReader(new FileStream(path, FileMode.Open));
+            return null;
+        }
+
+        public static string LocalPath(string uid, string fileName)
         {
             var path = Path.Combine(FolderPath, fileName);
             if (uid != null)
             {
                 if (!Directory.Exists("uid-" + uid))
-                    return null;
+                    Directory.CreateDirectory("uid-" + uid);
                 path = Path.Combine("uid-" + uid, fileName);
             }
-            if (!File.Exists(path))
-                return null;
-            System.Diagnostics.Debug.WriteLine("LocalStreamReader: Path=[" + path + "]");
-            return new StreamReader(new FileStream(path, FileMode.Open));
+            return path;
         }
 
         public static StreamWriter ResourceStreamWriter(string uid, string resourceName)
@@ -196,16 +180,8 @@ namespace P42.Utils
         }
 
         public static StreamWriter LocalStreamWriter(string uid, string fileName)
-        {
-            var path = Path.Combine(FolderPath, fileName);
-            if (uid != null)
-            {
-                if (!Directory.Exists("uid-" + uid))
-                    Directory.CreateDirectory("uid-" + uid);
-                path = Path.Combine("uid-" + uid, fileName);
-            }
-            return new StreamWriter(new FileStream(path, FileMode.Create));
-        }
+            => new StreamWriter(new FileStream(LocalPath(uid,fileName), FileMode.Create));
+        
 
         public static List<string> ListResources(StreamSource source, Assembly assembly = null)
         {

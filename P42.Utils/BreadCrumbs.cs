@@ -55,19 +55,22 @@ namespace P42.Utils
             }
         }
 
+        public static Action<string, string, string, int, string> DelegateAction;
+
         static StreamWriter _streamWriter;
 
 
-        public static void Add(Type type, object crumb, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
-            => Add(type?.ToString(), crumb?.ToString(), method, path);
+        public static void Add(Type type, object crumb, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
+            => Add(type?.ToString(), crumb?.ToString(), method, lineNumber, path);
 
-        public static void Add(string className, string crumb, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
+        public static void Add(string className, string crumb, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
         {
             if (IsEnabled)
             {
-                _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + "] [" + crumb + "] ");
+                _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + ":"+lineNumber+"] [" + crumb + "] ");
                 _streamWriter.Flush();
             }
+            DelegateAction?.Invoke(className, crumb, method, lineNumber, path);
         }
 
         public static string[] List()
