@@ -111,7 +111,7 @@ namespace P42.Utils
                             filesRemaining = true;
                     }
                 }
-                return true;
+                return filesRemaining;
             }
             return false;
         }
