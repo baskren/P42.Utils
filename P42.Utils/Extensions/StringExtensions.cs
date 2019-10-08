@@ -120,5 +120,29 @@ namespace P42.Utils
             return new string(result);
         }
 
+        public static uint ToHex(char c)
+        {
+            ushort num = c;
+            if (num >= 48 && num <= 57)
+            {
+                return (uint)(num - 48);
+            }
+            num = (ushort)(num | 0x20);
+            if (num >= 97 && num <= 102)
+            {
+                return (uint)(num - 97 + 10);
+            }
+            return 0u;
+        }
+
+        public static uint ToHex(string str)
+        {
+            var s = str;
+            uint result=0;
+            foreach (var c in s)
+                result = (result << 4) + ToHex(c);
+            return result;
+        }
+
     }
 }
