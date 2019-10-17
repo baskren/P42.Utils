@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace P42.Utils
@@ -63,6 +65,34 @@ namespace P42.Utils
             while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
 
             return fullName;
+        }
+
+
+        public static Dictionary<Type, long> Census = new Dictionary<Type, long>();
+
+
+        public static void AddToCensus(this object obj)
+        {
+            var type = obj.GetType();
+            if (Census.TryGetValue(type, out long count))
+                Census[type] = count + 1;
+            else
+                Census[type] = 1;
+        }
+
+        public static void RemoveFromCensus(this object obj)
+        {
+            var type = obj.GetType();
+            Census[type] = Census[type] - 1;
+        }
+
+        public static long CensusActiveCount
+        {
+            get
+            {
+                var actives = Census.Values.ToArray();
+                return actives.Sum();
+            }
         }
     }
 }
