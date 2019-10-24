@@ -15,14 +15,21 @@ namespace P42.Utils
 
         public static Func<object, bool> ConditionFunc;
 
+        public static bool IsMessagesEnabled = true;
+
+        public static bool IsCensusEnabled = true;
+
         public static void Message(object obj, string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
-            if (ConditionFunc?.Invoke(obj) ?? false)
+            if (IsMessagesEnabled && (ConditionFunc?.Invoke(obj) ?? false))
                 Message(message);
         }
 
         public static void Message(string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
+            if (!IsMessagesEnabled)
+                return;
+
             var callingClass = NameOfCallingClass();
 
             System.Diagnostics.Debug.IndentSize = 4;
@@ -73,17 +80,23 @@ namespace P42.Utils
 
         public static void AddToCensus(this object obj)
         {
-            var type = obj.GetType();
-            if (Census.TryGetValue(type, out long count))
-                Census[type] = count + 1;
-            else
-                Census[type] = 1;
+            if (IsCensusEnabled)
+            {
+                var type = obj.GetType();
+                if (Census.TryGetValue(type, out long count))
+                    Census[type] = count + 1;
+                else
+                    Census[type] = 1;
+            }
         }
 
         public static void RemoveFromCensus(this object obj)
         {
-            var type = obj.GetType();
-            Census[type] = Census[type] - 1;
+            if (IsCensusEnabled)
+            {
+                var type = obj.GetType();
+                Census[type] = Census[type] - 1;
+            }
         }
 
         public static long CensusActiveCount
