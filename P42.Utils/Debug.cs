@@ -77,7 +77,6 @@ namespace P42.Utils
 
         public static Dictionary<Type, long> Census = new Dictionary<Type, long>();
 
-
         public static void AddToCensus(this object obj)
         {
             if (IsCensusEnabled)
@@ -95,7 +94,12 @@ namespace P42.Utils
             if (IsCensusEnabled)
             {
                 var type = obj.GetType();
-                Census[type] = Census[type] - 1;
+                if (Census.Contains(type))
+                {
+                    Census[type] = Census[type] - 1;
+                    if (Census[type] < 0)
+                        Census[type] = 0;
+                }
             }
         }
 
