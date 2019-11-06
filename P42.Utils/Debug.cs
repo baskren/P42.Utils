@@ -15,9 +15,9 @@ namespace P42.Utils
 
         public static Func<object, bool> ConditionFunc;
 
-        public static bool IsMessagesEnabled = true;
+        public static bool IsMessagesEnabled = false;
 
-        public static bool IsCensusEnabled = true;
+        public static bool IsCensusEnabled = false;
 
         public static void Message(object obj, string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
@@ -75,7 +75,7 @@ namespace P42.Utils
         }
 
 
-        public static Dictionary<Type, long> Census = new Dictionary<Type, long>();
+        public static System.Collections.Concurrent.ConcurrentDictionary<Type, long> Census = new System.Collections.Concurrent.ConcurrentDictionary<Type, long>();
 
         public static void AddToCensus(this object obj)
         {
