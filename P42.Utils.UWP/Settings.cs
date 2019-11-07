@@ -6,20 +6,21 @@ using System.Threading.Tasks;
 
 namespace P42.Utils.UWP
 {
-    public class Settings
-    {
-        public static Windows.UI.Xaml.Application Application { get; private set; }
+	public class Settings
+	{
+		public static Windows.UI.Xaml.Application Application { get; private set; }
 
-        public static void Init(Windows.UI.Xaml.Application application)
-        {
-            Application = application;
-            P42.Utils.Environment.Init();
-            P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
-        }
+		public static void Init(Windows.UI.Xaml.Application application)
+		{
+			Application = application;
+			P42.Utils.Environment.Init();
+			P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
+			P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
+		}
 
-        static void PlatformPathLoader()
-        {
-            /*
+		static void PlatformPathLoader()
+		{
+			/*
             //var envVars = System.Environment.GetEnvironmentVariables();
 
             try
@@ -32,9 +33,9 @@ namespace P42.Utils.UWP
                 // we don't have access.  Oh well.
             }
             */
-            P42.Utils.Environment.ApplicationDataPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-            P42.Utils.Environment.ApplicationCachePath = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
-            P42.Utils.Environment.TemporaryStoragePath = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
-        }
-    }
+			P42.Utils.Environment.ApplicationDataPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+			P42.Utils.Environment.ApplicationCachePath = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
+			P42.Utils.Environment.TemporaryStoragePath = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
+		}
+	}
 }

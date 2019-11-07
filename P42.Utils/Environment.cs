@@ -171,6 +171,7 @@ namespace P42.Utils
                     Directory.CreateDirectory(value);
             }
         }
+
     }
 
     public class UnsupportedPlatformException : Exception

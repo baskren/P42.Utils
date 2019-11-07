@@ -11,6 +11,7 @@ namespace P42.Utils.Droid
             Context = context;
             P42.Utils.Environment.Init();
             P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
+            P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
         }
 
         static void PlatformPathLoader()
