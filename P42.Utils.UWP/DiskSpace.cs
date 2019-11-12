@@ -37,7 +37,7 @@ namespace P42.Utils.UWP
             }
         }
 
-        async Task<UInt64> Get(string property)
+        static async Task<UInt64> GetAppFolderProperty(string property)
         {
             StorageFolder local = ApplicationData.Current.LocalFolder;
             var task = local.Properties.RetrievePropertiesAsync(new string[] { property });
@@ -46,10 +46,10 @@ namespace P42.Utils.UWP
         }
 
         async Task<UInt64> GetFreeSpace()
-            => await Get("System.FreeSpace").ConfigureAwait(false);
+            => await GetAppFolderProperty("System.FreeSpace").ConfigureAwait(false);
 
         async Task<UInt64> GetCapacity()
-            => await Get("System.Capacity").ConfigureAwait(false);
+            => await GetAppFolderProperty("System.Capacity").ConfigureAwait(false);
 
 
 

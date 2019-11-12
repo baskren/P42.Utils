@@ -26,8 +26,10 @@ namespace P42.Utils.Droid
             using (StatFs statFs = new StatFs(path))
             {
                 if (Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.JellyBeanMr2) //Build.VERSION_CODES.JellyBeanMr2)
-                    //noinspection deprecation
+                                                                                      //noinspection deprecation
+#pragma warning disable CS0618 // Type or member is obsolete
                     return (ulong)(statFs.BlockCount * statFs.BlockSize);
+#pragma warning restore CS0618 // Type or member is obsolete
                 return (ulong)(statFs.BlockCountLong * statFs.BlockSizeLong);
             }
         }
@@ -40,7 +42,9 @@ namespace P42.Utils.Droid
             {
                 if (Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.JellyBeanMr2) //Build.VERSION_CODES.JellyBeanMr2)
                     //noinspection deprecation
+#pragma warning disable CS0618 // Type or member is obsolete
                     return (ulong)(statFs.AvailableBlocks * statFs.BlockSize);
+#pragma warning restore CS0618 // Type or member is obsolete
                 return (ulong)(statFs.AvailableBlocksLong * statFs.BlockSizeLong);
             }
         }

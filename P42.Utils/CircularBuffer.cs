@@ -14,8 +14,8 @@ namespace P42.Utils
 
         readonly public int Capacity;
 
-        T[] _buffer;
-        object _lock = new object();
+        readonly T[] _buffer;
+        readonly object _lock = new object();
 
         public CircularBuffer(int capacity)
         {

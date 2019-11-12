@@ -4,7 +4,7 @@ namespace P42.NumericalMethods
 {
 	public delegate double FunctionOfOneVariable(double x);
 
-	public class RootFinding
+	public static class RootFinding
 	{
 		const int maxIterations = 50;
 

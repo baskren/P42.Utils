@@ -6,7 +6,7 @@ namespace P42.Utils
 {
     public delegate bool TimerCallback(object state);
 
-    sealed public class Timer : CancellationTokenSource, IDisposable
+    sealed public class Timer : CancellationTokenSource
     {
         #region Private Fields
         static int Count;

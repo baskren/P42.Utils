@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P42.Utils.UWP
 {
-	public class Settings
+	public static class Settings
 	{
 		public static Windows.UI.Xaml.Application Application { get; private set; }
 

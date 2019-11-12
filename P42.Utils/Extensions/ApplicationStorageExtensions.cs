@@ -17,7 +17,7 @@ namespace P42.Utils
 {
     public static class ApplicationStorageExtensions
     {
-        static readonly string ApplicationStorageFolderName = "ApplicationStorage";
+        const string ApplicationStorageFolderName = "ApplicationStorage";
 
         static string FolderPath
         {

@@ -8,21 +8,11 @@ namespace P42.Utils.iOS
 {
     public class DiskSpace : IDiskSpace
     {
-        [DllImport(Constants.FoundationLibrary)]
-        public static extern IntPtr NSHomeDirectory();
-
-        public static string NSHomeDir
-        {
-            get
-            {
-                return ((NSString)Runtime.GetNSObject(NSHomeDirectory())).ToString();
-            }
-        }
         public ulong Free
         {
             get
             {
-                var attributes = NSFileManager.DefaultManager.GetFileSystemAttributes(NSHomeDir);
+                var attributes = NSFileManager.DefaultManager.GetFileSystemAttributes(Settings.AppDirectory);
                 var freeSpace = attributes.FreeSize; //attributes[NSFileManager.SystemFreeSize] as Int64;
                 return freeSpace;
             }
@@ -32,7 +22,7 @@ namespace P42.Utils.iOS
         {
             get
             {
-                var attributes = NSFileManager.DefaultManager.GetFileSystemAttributes(NSHomeDir);
+                var attributes = NSFileManager.DefaultManager.GetFileSystemAttributes(Settings.AppDirectory);
                 var size = attributes.Size; //attributes[NSFileManager.SystemFreeSize] as Int64;
                 return size;
             }

@@ -19,12 +19,14 @@ namespace P42.Utils
 
         public static bool IsCensusEnabled = false;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public static void Message(object obj, string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
             if (IsMessagesEnabled && (ConditionFunc?.Invoke(obj) ?? false))
                 Message(message);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public static void Message(string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
         {
             if (!IsMessagesEnabled)

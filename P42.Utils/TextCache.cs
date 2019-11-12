@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace P42.Utils
 {
-    public class TextCache
+    public static class TextCache
     {
         const string DownloadStorageFolderName = "P42.Utils.TextCache";
 

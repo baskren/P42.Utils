@@ -14,14 +14,13 @@ namespace P42.Utils.iOS
 
         static void PlatformPathLoader()
         {
-            var nsError = new NSError();
             //var documentsDir = NSFileManager.DefaultManager.GetUrl(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomain.User, null, true, out nsError);
             //if (nsError == null && !string.IsNullOrWhiteSpace(documentsDir?.Path))
             //    P42.Utils.Environment.DocumentsPath = documentsDir.Path;
             //else
             //    throw new Exception("Could not get iOS Documents Directory");
 
-            var appSupportDir = NSFileManager.DefaultManager.GetUrl(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomain.User, null, true, out nsError);
+            var appSupportDir = NSFileManager.DefaultManager.GetUrl(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomain.User, null, true, out NSError nsError);
             if (nsError == null && !string.IsNullOrWhiteSpace(appSupportDir?.Path))
                 P42.Utils.Environment.ApplicationDataPath = System.IO.Path.Combine(appSupportDir.Path, NSBundle.MainBundle.BundleIdentifier);
             else
@@ -41,9 +40,12 @@ namespace P42.Utils.iOS
 
 
             //var current = NSFileManager.DefaultManager.CurrentDirectory;
+
+            nsError?.Dispose();
         }
 
         [System.Runtime.InteropServices.DllImport(ObjCRuntime.Constants.FoundationLibrary)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1401:P/Invokes should not be visible", Justification = "<Pending>")]
         public static extern IntPtr NSHomeDirectory();
 
         static string _appDirectory;
