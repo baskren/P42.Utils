@@ -47,7 +47,7 @@ namespace P42.Utils
                     }
                     else
                     {
-                        var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss.txt");
+                        var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss") + ".txt";
                         var filePath = Path.Combine(FolderPath, fileName);
                         _streamWriter = File.CreateText(filePath);
                     }
@@ -67,7 +67,7 @@ namespace P42.Utils
         {
             if (IsEnabled)
             {
-                _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + ":"+lineNumber+"] [" + crumb + "] ");
+                _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + ":" + lineNumber + "] [" + crumb + "] ");
                 _streamWriter.Flush();
             }
             DelegateAction?.Invoke(className, crumb, method, lineNumber, path);

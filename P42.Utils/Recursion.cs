@@ -67,7 +67,7 @@ namespace P42.Utils
                 _recursionCount[name] = _recursionCount.ContainsKey(name) ? _recursionCount[name] + 1 : 1;
                 if (_recursionCount[name] > _recursionLimit)
                 {
-                    var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss.txt");
+                    var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss") + ".txt"; ;
                     var filePath = Path.Combine(FolderPath, fileName);
                     var stackTrace = System.Environment.StackTrace;
                     System.IO.File.WriteAllText(filePath, stackTrace);
