@@ -18,7 +18,7 @@ namespace P42.Utils
         {
             var root = P42.Utils.Environment.ApplicationDataPath;
             if (assembly != null)
-                root = Path.Combine(P42.Utils.Environment.ApplicationDataPath, assembly.GetName().FullName);
+                root = Path.Combine(P42.Utils.Environment.ApplicationDataPath, assembly.GetName().Name);
 
             if (!Directory.Exists(root))
                 Directory.CreateDirectory(root);
@@ -64,7 +64,7 @@ namespace P42.Utils
         public static string ApplicationUri(string resourceId, Assembly assembly = null, string folderName = null)
         {
             var localStorageFileName = LocalStorageSubPathForEmbeddedResource(resourceId, assembly, folderName);
-            var uriString = "ms-appdata:///local/" + LocalStorageFolderName + "/" + localStorageFileName.Replace('\\', '/');
+            var uriString = "ms-appdata:///local/" + assembly.GetName().Name + "/" + LocalStorageFolderName + "/" + localStorageFileName.Replace('\\', '/');
             return uriString;
         }
 
