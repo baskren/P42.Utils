@@ -20,20 +20,27 @@ namespace P42.Utils
         public static bool IsCensusEnabled = false;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static void Message(object obj, string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
+        public static void Message(object obj, string message)
         {
             if (IsMessagesEnabled && (ConditionFunc?.Invoke(obj) ?? false))
-                Message(message);
+            {
+                var method = new StackTrace().GetFrame(1).GetMethod();
+                //var className = callingMethod.ReflectedType.Name;
+                Message(message, method.ReflectedType + "." + method.Name);
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static void Message(string message, [System.Runtime.CompilerServices.CallerMemberName] string callingMethod = null)
+        public static void Message(string message, string callingMethod = null)
         {
             if (!IsMessagesEnabled)
                 return;
 
-            var callingClass = NameOfCallingClass();
-
+            if (string.IsNullOrWhiteSpace(callingMethod))
+            {
+                var method = new StackTrace().GetFrame(1).GetMethod();
+                callingMethod = method.ReflectedType + "." + method.Name;
+            }
             System.Diagnostics.Debug.IndentSize = 4;
             if (message?.Contains("ENTER") ?? false)
             {
@@ -44,7 +51,7 @@ namespace P42.Utils
             {
                 System.Diagnostics.Debug.Unindent();
             }
-            System.Diagnostics.Debug.WriteLine(callingClass + "." + callingMethod + ": " + message);
+            System.Diagnostics.Debug.WriteLine(callingMethod + ": " + message);
             if (message?.Contains("ENTER") ?? false)
                 System.Diagnostics.Debug.Indent();
             if (message?.Contains("EXIT") ?? false)
