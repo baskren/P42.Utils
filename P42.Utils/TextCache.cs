@@ -15,14 +15,25 @@ namespace P42.Utils
 
         static string FolderPath(string folderName)
         {
-            if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
-            folderName = folderName ?? DownloadStorageFolderName;
-            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
+            DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
+            var root = Path.Combine(Environment.ApplicationCachePath, DownloadStorageFolderName);
+            DirectoryExtensions.AssureExists(root);
+
+            if (string.IsNullOrWhiteSpace(folderName))
+                return root;
+
+            var folderPath = Path.Combine(root, folderName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
+
             return folderPath;
         }
+
+        static TextCache()
+        {
+            // can be used for caching text between session.  
+        }
+
 
         //static readonly object _locker = new object();
         //static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();

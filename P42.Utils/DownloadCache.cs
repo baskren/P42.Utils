@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using System.IO;
-using System.Diagnostics;
 using System.Linq;
 
 namespace P42.Utils
@@ -14,14 +12,26 @@ namespace P42.Utils
 
         static string FolderPath(string folderName)
         {
-            if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
-            folderName = folderName ?? DownloadStorageFolderName;
-            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
+            DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
+            var root = Path.Combine(Environment.ApplicationCachePath, DownloadStorageFolderName);
+            DirectoryExtensions.AssureExists(root);
+
+            if (string.IsNullOrWhiteSpace(folderName))
+                return root;
+
+            var folderPath = Path.Combine(root, folderName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
+
             return folderPath;
         }
+        /* Maybe?  Would rather have logic that checks the age of the download before deciding to re-download it into the cache.
+        static DownloadCache()
+        {
+            var path = FolderPath(null);
+            Directory.Delete(path, true);
+        }
+        */
 
         static readonly object _locker = new object();
         static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
@@ -35,10 +45,9 @@ namespace P42.Utils
         public static List<string> List(string folderName)
         {
             var folderPath = FolderPath(folderName);
-            var files = System.IO.Directory.EnumerateFiles(folderPath);
+            var files = Directory.EnumerateFiles(folderPath);
             return files.ToList();
         }
-
 
 
         public static async Task<string> DownloadAsync(string url, string folderName = null)
@@ -49,15 +58,15 @@ namespace P42.Utils
         static string CachedPath(string url, string folderName = null)
         {
             var fileName = url.Trim().ToMd5HashString();
-            var path = Path.Combine(FolderPath(folderName), fileName); ;
-            //return System.IO.File.Exists(path) ? path : null;
+            var path = Path.Combine(FolderPath(folderName), fileName);
+            //return File.Exists(path) ? path : null;
             return path;
         }
 
         public static bool IsCached(string url, string folderName = null)
         {
             var path = CachedPath(url, folderName);
-            return path != null && System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path);
+            return path != null && File.Exists(path) && !_downloadTasks.ContainsKey(path);
         }
 
         public static bool Clear(string url = null, string folderName = null)
@@ -72,32 +81,32 @@ namespace P42.Utils
             {
                 // complete clear
                 var folderPath = FolderPath(folderName);
-                if (System.IO.Directory.Exists(folderPath))
+                if (Directory.Exists(folderPath))
                 {
-                    var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    var files = Directory.EnumerateFiles(folderPath);
                     bool filesRemaining = false;
                     foreach (var file in files)
                     {
-                        if (System.IO.File.Exists(file))
+                        if (File.Exists(file))
                         {
-                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
-                                System.IO.File.Delete(file);
+                            if (File.GetLastWriteTime(file) < dateTime)
+                                File.Delete(file);
                             else
                                 filesRemaining = true;
                         }
                         if (!filesRemaining && folderPath != FolderPath(null))
-                            System.IO.Directory.Delete(folderPath);
+                            Directory.Delete(folderPath);
                         return true;
                     }
                 }
                 return false;
             }
             var path = CachedPath(url, folderName);
-            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
-                if (System.IO.File.GetLastWriteTime(path) < dateTime)
+                if (File.GetLastWriteTime(path) < dateTime)
                 {
-                    System.IO.File.Delete(path);
+                    File.Delete(path);
                     return true;
                 }
             }
@@ -113,7 +122,7 @@ namespace P42.Utils
                 var path = CachedPath(url, folderName);
                 if (string.IsNullOrWhiteSpace(path))
                     return null;
-                if (System.IO.File.Exists(path) && !_downloadTasks.ContainsKey(path))
+                if (File.Exists(path) && !_downloadTasks.ContainsKey(path))
                 {
                     System.Diagnostics.Debug.WriteLine("DownloadCache: [" + url + "] exists as [" + path + "]");
                     return path;
@@ -153,7 +162,7 @@ namespace P42.Utils
                     var data = await client.GetByteArrayAsync(url);
                     System.Diagnostics.Debug.WriteLine("DownloadTask: byte array downloaded for [" + url + "]");
                     var fileNamePaths = path.Split('\\');
-                    if (System.IO.File.Exists(path))
+                    if (File.Exists(path))
                         System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + url + "]");
                     using (var stream = new FileStream(path, FileMode.Create))
                     //using (var stream = new IsolatedStorageFileStream(path, FileMode.Create, Storage))
@@ -167,8 +176,8 @@ namespace P42.Utils
             {
                 System.Diagnostics.Debug.WriteLine(ex);
             }
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
+            if (File.Exists(path))
+                File.Delete(path);
             return false;
         }
     }

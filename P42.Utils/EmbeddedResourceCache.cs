@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Linq;
@@ -16,18 +14,29 @@ namespace P42.Utils
         // DO NOT CHANGE Environment.ApplicationDataPath to another path.  This is used to pass EmbeddedResource Fonts to UWP Text elements and there is zero flexibility here.
         public static string FolderPath(Assembly assembly, string folderName = null)
         {
-            var root = P42.Utils.Environment.ApplicationDataPath;
+            DirectoryExtensions.AssureExists(Environment.ApplicationDataPath);
+            var root = Path.Combine(Environment.ApplicationDataPath, LocalStorageFolderName);
+            DirectoryExtensions.AssureExists(root);
             if (assembly != null)
-                root = Path.Combine(P42.Utils.Environment.ApplicationDataPath, assembly.GetName().Name);
+            {
+                root = Path.Combine(root, assembly.GetName().Name);
+                DirectoryExtensions.AssureExists(root);
+            }
 
-            if (!Directory.Exists(root))
-                Directory.CreateDirectory(root);
-            folderName = folderName ?? LocalStorageFolderName;
+            if (string.IsNullOrWhiteSpace(folderName))
+                return root;
+
             var folderPath = Path.Combine(root, folderName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
             return folderPath;
+        }
+
+        static EmbeddedResourceCache()
+        {
+            var path = FolderPath(null);
+            Directory.Delete(path, true);
         }
 
         static readonly object _locker = new object();
@@ -36,19 +45,19 @@ namespace P42.Utils
         public static List<string> List(Assembly assembly, string folderName)
         {
             var folderPath = FolderPath(assembly, folderName);
-            var files = System.IO.Directory.EnumerateFiles(folderPath);
+            var files = Directory.EnumerateFiles(folderPath);
             return files.ToList();
         }
 
 
 
-        public static System.IO.Stream GetStream(string resourceId, Assembly assembly, string folderName = null)
+        public static Stream GetStream(string resourceId, Assembly assembly, string folderName = null)
         {
             var task = Task.Run(() => GetStreamAsync(resourceId, assembly, folderName));
             return task.Result;
         }
 
-        public static async Task<System.IO.Stream> GetStreamAsync(string resourceId, Assembly assembly = null, string folderName = null)
+        public static async Task<Stream> GetStreamAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
             assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
             if (assembly == null)
@@ -56,7 +65,7 @@ namespace P42.Utils
             var fileName = await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName);
             if (fileName == null)
                 return null;
-            var result = System.IO.File.Open(Path.Combine(FolderPath(assembly, folderName), fileName), FileMode.Open);
+            var result = File.Open(Path.Combine(FolderPath(assembly, folderName), fileName), FileMode.Open);
             return result;
         }
 
@@ -104,22 +113,22 @@ namespace P42.Utils
             {
                 // complete clear
                 var folderPath = FolderPath(assembly, folderName);
-                if (System.IO.Directory.Exists(folderPath))
+                if (Directory.Exists(folderPath))
                 {
-                    var files = System.IO.Directory.EnumerateFiles(folderPath);
+                    var files = Directory.EnumerateFiles(folderPath);
                     bool filesRemaining = false;
                     foreach (var file in files)
                     {
-                        if (System.IO.File.Exists(file))
+                        if (File.Exists(file))
                         {
-                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
-                                System.IO.File.Delete(file);
+                            if (File.GetLastWriteTime(file) < dateTime)
+                                File.Delete(file);
                             else
                                 filesRemaining = true;
                         }
                     }
                     if (!filesRemaining && folderPath != FolderPath(null))
-                        System.IO.Directory.Delete(folderPath);
+                        Directory.Delete(folderPath);
                     return true;
                 }
                 return false;
@@ -130,11 +139,11 @@ namespace P42.Utils
                 return false;
 
             var path = Path.Combine(FolderPath(assembly, folderName), resourceId);
-            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
-                if (System.IO.File.GetLastWriteTime(path) < dateTime)
+                if (File.GetLastWriteTime(path) < dateTime)
                 {
-                    System.IO.File.Delete(path);
+                    File.Delete(path);
                     return true;
                 }
             }
@@ -160,7 +169,7 @@ namespace P42.Utils
             {
                 var path = Path.Combine(FolderPath(assembly, folderName), fileName);
                 System.Diagnostics.Debug.WriteLine("PATH=[" + path + "]");
-                if (System.IO.File.Exists(path) && !_cacheTasks.ContainsKey(path))
+                if (File.Exists(path) && !_cacheTasks.ContainsKey(path))
                 {
                     System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
                     return fileName;
@@ -196,7 +205,7 @@ namespace P42.Utils
                 {
                     if (stream != null)
                     {
-                        if (System.IO.File.Exists(path))
+                        if (File.Exists(path))
                             System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "]");
 
                         using (var fileStream = new FileStream(path, FileMode.Create))
@@ -216,7 +225,7 @@ namespace P42.Utils
                 System.Diagnostics.Debug.WriteLine(ex);
             }
             if (File.Exists(path))
-                System.IO.File.Delete(path);
+                File.Delete(path);
             return false;
         }
     }

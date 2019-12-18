@@ -14,12 +14,17 @@ namespace P42.Utils
 
         static string FolderPath(string folderName = null)
         {
-            if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
-            folderName = folderName ?? FileCacheFolderName;
-            var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, folderName);
+            DirectoryExtensions.AssureExists(Environment.ApplicationDataPath);
+            var root = Path.Combine(Environment.ApplicationDataPath, FileCacheFolderName);
+            DirectoryExtensions.AssureExists(root);
+
+            if (string.IsNullOrWhiteSpace(folderName))
+                return root;
+
+            var folderPath = Path.Combine(root, folderName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
+
             return folderPath;
         }
 
