@@ -96,9 +96,12 @@ namespace P42.Utils
 
         public static async Task<string> LocalStorageFullPathForEmbeddedResourceAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
-            var subPath = await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName);
-            var path = Path.Combine(FolderPath(assembly, folderName), subPath);
-            return path;
+            if (await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName) is string subPath)
+            {
+                var path = Path.Combine(FolderPath(assembly, folderName), subPath);
+                return path;
+            }
+            return null;
         }
 
         public static bool Clear(string resourceId = null, Assembly assembly = null, string folderName = null)
@@ -158,24 +161,41 @@ namespace P42.Utils
                 return null;
 
             var fileName = resourceId;
-
             if (string.IsNullOrWhiteSpace(fileName))
                 return null;
+
+            var isZip = fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase);
 
             if (fileName.StartsWith(folderName + ".", StringComparison.Ordinal))
                 fileName = fileName.Substring((folderName + ".").Length);
 
             try
             {
-                var path = Path.Combine(FolderPath(assembly, folderName), fileName);
+                var path = isZip
+                    ? Path.Combine(FolderPath(assembly), resourceId)
+                    : Path.Combine(FolderPath(assembly, folderName), fileName);
                 System.Diagnostics.Debug.WriteLine("PATH=[" + path + "]");
-                if (File.Exists(path) && !_cacheTasks.ContainsKey(path))
+
+                //var exists = (isZip && Directory.Exists(path)) || (!isZip && File.Exists(path));
+
+                if (!_cacheTasks.ContainsKey(path) && File.Exists(path))
                 {
                     System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
+                    if (isZip)
+                        return FolderPath(assembly, folderName);
                     return fileName;
                 }
-                var success = await CacheEmbeddedResource(resourceId, assembly, path);
-                return success ? fileName : null;
+
+                if (await CacheEmbeddedResource(resourceId, assembly, path))
+                {
+                    if (isZip)
+                    {
+                        System.IO.Compression.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
+                        return FolderPath(assembly, folderName);
+                    }
+                    return fileName;
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -203,7 +223,14 @@ namespace P42.Utils
             {
                 using (var stream = EmbeddedResource.GetStream(resourceId, assembly))
                 {
-                    if (stream != null)
+                    if (stream is null)
+                    {
+                        Console.WriteLine("Cannot find EmbeddedResource [" + resourceId + "] in assembly [" + assembly.FullName + "].   Here are the ResourceIds in that assembly:");
+                        foreach (var id in assembly.GetManifestResourceNames())
+                            Console.WriteLine("\t" + id);
+                        Console.WriteLine("");
+                    }
+                    else
                     {
                         if (File.Exists(path))
                             System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "]");
