@@ -1,11 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace P42.Utils
 {
     public static class StringExtensions
     {
+
+        public static string UnicodeToHtmlEscapes(this string text)
+        {
+            char[] chars = text.ToCharArray();
+            var result = new System.Text.StringBuilder(text.Length + (int)(text.Length * 0.1));
+
+            foreach (char c in chars)
+            {
+                int value = Convert.ToInt32(c);
+                if (value > 127)
+                    result.AppendFormat("&#{0};", value);
+                else
+                    result.Append(c);
+            }
+            return result.ToString();
+        }
+
+
+        public static string RemoveWhitespace(this string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
         static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
         internal static string ToMd5HashString(this string source)
         {

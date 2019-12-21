@@ -73,7 +73,9 @@ namespace P42.Utils
         public static string ApplicationUri(string resourceId, Assembly assembly = null, string folderName = null)
         {
             var localStorageFileName = LocalStorageSubPathForEmbeddedResource(resourceId, assembly, folderName);
-            var uriString = "ms-appdata:///local/" + assembly.GetName().Name + "/" + LocalStorageFolderName + "/" + localStorageFileName.Replace('\\', '/');
+            var asmName = assembly?.GetName().Name;
+            var updatedLocalStorageFileName = localStorageFileName.Replace('\\', '/');
+            var uriString = "ms-appdata:///local/" + LocalStorageFolderName + "/" + (asmName is null ? "" : asmName + "/") + updatedLocalStorageFileName;
             return uriString;
         }
 
@@ -178,7 +180,7 @@ namespace P42.Utils
 
                 //var exists = (isZip && Directory.Exists(path)) || (!isZip && File.Exists(path));
 
-                if (!_cacheTasks.ContainsKey(path) && File.Exists(path))
+                if (!_cacheTasks.ContainsKey(path) && ( File.Exists(path) || Directory.Exists(path)) )
                 {
                     System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
                     if (isZip)
@@ -186,14 +188,20 @@ namespace P42.Utils
                     return fileName;
                 }
 
-                if (await CacheEmbeddedResource(resourceId, assembly, path))
+                if (CacheEmbeddedResource(resourceId, assembly, path) is Task<bool> task)
                 {
-                    if (isZip)
+                    if (await task)
                     {
-                        System.IO.Compression.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
-                        return FolderPath(assembly, folderName);
+                        if (isZip)
+                        {
+                            System.IO.Compression.ZipFile.ExtractToDirectory(path, FolderPath(assembly, folderName));
+                            _cacheTasks.Remove(path);
+                            return FolderPath(assembly, folderName);
+                        }
+                        _cacheTasks.Remove(path);
+                        return fileName;
                     }
-                    return fileName;
+                    _cacheTasks.Remove(path);
                 }
                 return null;
             }
