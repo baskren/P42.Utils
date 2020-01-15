@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 #pragma warning disable CC0057 // Unused parameters
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -11,17 +12,34 @@ namespace P42.Utils
 {
     public static class JsonExtensions
     {
+        public static T Instantiate<T>(this JsonReader reader) where T : IJsonReadable, new()
+        {
+            if (reader.TokenType == JsonToken.None)
+                reader.Read();
+
+            if (reader.TokenType == JsonToken.Null)
+                return default;
+
+            T result = new T();
+            result.PropertiesFrom(reader);
+            return result;
+        }
+
         public static bool IsSimple(this Type type)
         {
             var info = type.GetTypeInfo();
             return info.IsPrimitive || info.IsEnum || type.Equals(typeof(string)) || type.Equals(typeof(decimal));
         }
 
-        public static List<T> ReadIJsonReadableList<T>(this JsonReader reader) where T : IJsonReadable<T>, new()
+        public static List<T> ReadIJsonReadableList<T>(this JsonReader reader) where T : IJsonReadable, new()
         {
             var result = new List<T>();
             T value;
             reader.Read();
+
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
             if (reader.TokenType != JsonToken.StartArray)
                 throw new InvalidDataContractException("For the time being, all lists are assumed to be within square brackets");
 
@@ -42,6 +60,10 @@ namespace P42.Utils
             var result = new List<T>();
             T value;
             reader.Read();
+
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
             if (reader.TokenType != JsonToken.StartArray)
                 throw new InvalidDataContractException("For the time being, all lists are assumed to be within square brackets");
 
@@ -111,6 +133,17 @@ namespace P42.Utils
             return (int)((long)reader.Value);
         }
 
+        public static long ReadLong(this JsonReader reader)
+        {
+            reader.Read();
+            return reader.ParseLong();
+        }
+
+        public static long ParseLong(this JsonReader reader)
+        {
+            return (long)reader.Value;
+        }
+
         public static bool ReadBool(this JsonReader reader)
         {
             reader.Read();
@@ -127,6 +160,7 @@ namespace P42.Utils
             reader.Read();
             return reader.ParseDouble();
         }
+
 
         public static double ParseDouble(this JsonReader reader)
         {
@@ -161,10 +195,27 @@ namespace P42.Utils
             return result;
         }
 
-        public static DateTime ReadDateTime(this JsonReader reader)
+        public static double? ReadNullableDouble(this JsonReader reader)
         {
             reader.Read();
-            return reader.ParseDateTime();
+            return reader.ParseNullableDouble();
+        }
+
+        public static double? ParseNullableDouble(this JsonReader reader)
+        {
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+            return ParseDouble(reader);
+        }
+
+        public static DateTime ReadDateTime(this JsonReader reader)
+        {
+            //reader.Read();
+            //return reader.ParseDateTime();
+            var nullDateTime = reader.ReadAsDateTime();
+            if (nullDateTime == null)
+                throw new InvalidDataContractException("Unable to reader DateTime from [" + reader.Value + "]");
+            return nullDateTime.Value;
         }
 
         public static DateTime ParseDateTime(this JsonReader reader)
@@ -195,6 +246,11 @@ namespace P42.Utils
             {
                 var obj = (object)Convert.ToInt32(reader.Value);
                 result = (T)obj;
+            }
+            else if (typeT == typeof(long))
+            {
+                var val = reader.ParseLong();
+                result = (T)((object)val);
             }
             else if (typeT == typeof(double))
             {

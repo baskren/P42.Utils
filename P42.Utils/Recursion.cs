@@ -55,6 +55,8 @@ namespace P42.Utils
         const int _recursionLimit = 100;
         static readonly Dictionary<string, int> _recursionCount = new Dictionary<string, int>();
 
+        static readonly Dictionary<string, DateTime> _recursionTime = new Dictionary<string, DateTime>();
+
         public static void Enter(Type type, object instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
             => Enter(type?.ToString(), instanceId?.ToString(), method, path);
 
@@ -64,6 +66,8 @@ namespace P42.Utils
             if (Recursion.IsEnabled)
             {
                 var name = className + "." + method + " : " + path + ":" + instanceId;
+                if (!_recursionTime.ContainsKey(name))
+                    _recursionTime[name] = DateTime.Now;
                 _recursionCount[name] = _recursionCount.ContainsKey(name) ? _recursionCount[name] + 1 : 1;
                 if (_recursionCount[name] > _recursionLimit)
                 {
@@ -89,7 +93,14 @@ namespace P42.Utils
                     _recursionCount[name] = _recursionCount[name] - 1;
                     if (_recursionCount[name] < 0)
                         _recursionCount[name] = 0;
+                    if (_recursionCount[name] == 0 && _recursionTime.ContainsKey(name))
+                    {
+                        var delta = DateTime.Now - _recursionTime[name];
+                        _recursionTime.Remove(name);
+                        Console.WriteLine("RecursionTime: " + name + " [" + delta.TotalMilliseconds + "ms]");
+                    }
                 }
+
             }
         }
 

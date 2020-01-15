@@ -91,6 +91,28 @@ namespace P42.Utils
             }
         }
 
+        public static StreamReader GetStreamReader(string key, string folderName = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                    return null;
+
+                var path = CachedPath(key, folderName);
+
+                if (string.IsNullOrWhiteSpace(path))
+                    return null;
+                if (System.IO.File.Exists(path))
+                    return new StreamReader(path);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
         static string CachedPath(string key, string folderName = null)
         {
             var fileName = key.Trim().ToMd5HashString();
