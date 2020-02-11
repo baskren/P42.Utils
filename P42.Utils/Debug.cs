@@ -103,12 +103,10 @@ namespace P42.Utils
             if (IsCensusEnabled)
             {
                 var type = obj.GetType();
-                if (Census.Contains(type))
-                {
-                    Census[type] = Census[type] - 1;
-                    if (Census[type] < 0)
-                        Census[type] = 0;
-                }
+                if (Census.TryGetValue(type, out long count))
+                    Census[type] = count - 1;
+                else
+                    System.Diagnostics.Debug.WriteLine("Debug." + P42.Utils.ReflectionExtensions.CallerString() + ":" + "TYPE NOT FOUND!!!! [" + type + "]");
             }
         }
 
