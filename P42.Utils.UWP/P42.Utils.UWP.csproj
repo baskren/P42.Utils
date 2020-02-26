@@ -106,7 +106,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Process.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="DiskSpace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\P42.Utils.UWP.rd.xml" />
   </ItemGroup>
@@ -120,9 +122,6 @@
       <Project>{cad932a9-5e8d-415c-8dc2-ce8e553fa6d3}</Project>
       <Name>P42.Utils</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DiskSpace.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

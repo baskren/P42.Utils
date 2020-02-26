@@ -16,6 +16,7 @@ namespace P42.Utils.UWP
 			P42.Utils.Environment.Init();
 			P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
 			P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
+			P42.Utils.Process.PlatformProcess = new P42.Utils.UWP.Process();
 		}
 
 		static void PlatformPathLoader()
