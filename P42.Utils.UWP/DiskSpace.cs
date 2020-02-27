@@ -41,15 +41,15 @@ namespace P42.Utils.UWP
         {
             StorageFolder local = ApplicationData.Current.LocalFolder;
             var task = local.Properties.RetrievePropertiesAsync(new string[] { property });
-            var retrivedProperties = await task.AsTask().ConfigureAwait(false);
+            var retrivedProperties = await task.AsTask();
             return (UInt64)retrivedProperties[property];
         }
 
         async Task<UInt64> GetFreeSpace()
-            => await GetAppFolderProperty("System.FreeSpace").ConfigureAwait(false);
+            => await GetAppFolderProperty("System.FreeSpace");
 
         async Task<UInt64> GetCapacity()
-            => await GetAppFolderProperty("System.Capacity").ConfigureAwait(false);
+            => await GetAppFolderProperty("System.Capacity");
 
 
 

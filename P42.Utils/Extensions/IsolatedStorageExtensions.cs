@@ -27,9 +27,10 @@ namespace P42.Utils
 
             using (var stream = new IsolatedStorageFileStream(path, FileMode.Open, storage))
             {
+                await Task.Delay(5);
                 using (var sr = new StreamReader(stream))
                 {
-                    string text = await sr.ReadToEndAsync().ConfigureAwait(false);
+                    string text = await sr.ReadToEndAsync();
                     return text;
                 }
             }
@@ -48,9 +49,10 @@ namespace P42.Utils
             using (var stream = new IsolatedStorageFileStream(tempFileName, FileMode.Create, storage))
             {
                 stream.SetLength(0);
+                await Task.Delay(5);
                 using (var sw = new StreamWriter(stream))
                 {
-                    await sw.WriteAsync(contents).ConfigureAwait(false);
+                    await sw.WriteAsync(contents);
                 }
             }
 
