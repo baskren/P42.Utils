@@ -60,10 +60,10 @@ namespace P42.Utils
         static StreamWriter _streamWriter;
 
 
-        public static void Add(Type type, object crumb, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
+        public static void Add(Type type, object crumb = null, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
             => Add(type?.ToString(), crumb?.ToString(), method, lineNumber, path);
 
-        public static void Add(string className, string crumb, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
+        public static void Add(string className, string crumb = null, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
         {
             if (IsEnabled)
             {
