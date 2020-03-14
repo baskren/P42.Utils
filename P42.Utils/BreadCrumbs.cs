@@ -55,7 +55,8 @@ namespace P42.Utils
             }
         }
 
-        public static Action<string, string, string, int, string> DelegateAction;
+        public static Action<string, string, string, int, string> EventAction;
+        public static Action<Exception, string, string, string, int, string> ExceptionAction;
 
         static StreamWriter _streamWriter;
 
@@ -70,7 +71,20 @@ namespace P42.Utils
                 _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + ":" + lineNumber + "] [" + crumb + "] ");
                 _streamWriter.Flush();
             }
-            DelegateAction?.Invoke(className, crumb, method, lineNumber, path);
+            EventAction?.Invoke(className, crumb, method, lineNumber, path);
+        }
+
+        public static void AddException(Exception e, Type type, object crumb = null, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
+            => AddException(e, type?.ToString(), crumb?.ToString(), method, lineNumber, path);
+
+        public static void AddException(Exception e, string className, string crumb = null, [CallerMemberName] string method = null, [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0, [CallerFilePath] string path = null)
+        {
+            if (IsEnabled)
+            {
+                _streamWriter.WriteLine("[" + DateTime.Now.ToString("o") + "] [" + className + "." + method + ":" + lineNumber + "] [" + crumb + "] ");
+                _streamWriter.Flush();
+            }
+            ExceptionAction?.Invoke(e, className, crumb, method, lineNumber, path);
         }
 
         public static string[] List()
