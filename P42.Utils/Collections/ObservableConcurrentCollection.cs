@@ -66,33 +66,45 @@ namespace P42.Utils
         }
 
         protected bool _editingRange;
-        public virtual void AddRange(IEnumerable<T> range)
+        public virtual NotifyCollectionChangedEventArgs AddRange(IEnumerable<T> range)
         {
+            if (!range.Any())
+                return null;
             _editingRange = true;
             foreach (var item in range)
                 Add(item);
             _editingRange = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range));
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range);
+            OnCollectionChanged(args);
+            return args;
         }
 
-        public virtual void RemoveRange(IEnumerable<T> range)
+        public virtual NotifyCollectionChangedEventArgs RemoveRange(IEnumerable<T> range)
         {
+            if (!range.Any())
+                return null;
             _editingRange = true;
             foreach (var item in range)
                 Remove(item);
             _editingRange = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range));
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range);
+            OnCollectionChanged(args);
+            return args;
         }
 
-        public virtual void AddAndRemoveRanges(IEnumerable<T> addRange, IEnumerable<T> removeRange)
+        public virtual NotifyCollectionChangedEventArgs AddAndRemoveRanges(IEnumerable<T> addRange, IEnumerable<T> removeRange)
         {
+            if (!addRange.Any() && !removeRange.Any())
+                return null;
             _editingRange = true;
             foreach (var item in removeRange)
                 Remove(item);
             foreach (var item in addRange)
                 Add(item);
             _editingRange = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, addRange, removeRange));
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, addRange, removeRange);
+            OnCollectionChanged(args);
+            return args;
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
