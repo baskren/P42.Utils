@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Xamarin.Essentials;
 
 namespace P42.Utils
 {
@@ -70,39 +71,67 @@ namespace P42.Utils
         {
             if (!range.Any())
                 return null;
-            _editingRange = true;
-            foreach (var item in range)
-                Add(item);
-            _editingRange = false;
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range);
+            lock (_lock)
+            {
+                _editingRange = true;
+                AddRangeInner(range);
+                _editingRange = false;
+            }
             OnCollectionChanged(args);
             return args;
+        }
+
+        void AddRangeInner(IEnumerable<T> range)
+        {
+            var count = Count;
+            foreach (var item in range)
+                //Add(item);
+                base.InsertItem(count++, item);
         }
 
         public virtual NotifyCollectionChangedEventArgs RemoveRange(IEnumerable<T> range)
         {
             if (!range.Any())
                 return null;
-            _editingRange = true;
-            foreach (var item in range)
-                Remove(item);
-            _editingRange = false;
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range);
+            lock (_lock)
+            {
+                _editingRange = true;
+                RemoveRangeInner(range);
+                _editingRange = false;
+            }
             OnCollectionChanged(args);
             return args;
+        }
+
+        void RemoveRangeInner(IEnumerable<T> range)
+        {
+            int count = Count;
+            foreach (var item in range)
+            {
+                //Remove(item);
+                var index = IndexOf(item);
+                if (index >= 0 && index < Count)
+                {
+                    base.RemoveItem(index);
+                    count--;
+                }
+            }
         }
 
         public virtual NotifyCollectionChangedEventArgs AddAndRemoveRanges(IEnumerable<T> addRange, IEnumerable<T> removeRange)
         {
             if (!addRange.Any() && !removeRange.Any())
                 return null;
-            _editingRange = true;
-            foreach (var item in removeRange)
-                Remove(item);
-            foreach (var item in addRange)
-                Add(item);
-            _editingRange = false;
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, addRange, removeRange);
+            lock (_lock)
+            {
+                _editingRange = true;
+                RemoveRangeInner(removeRange);
+                AddRangeInner(addRange);
+                _editingRange = false;
+            }
             OnCollectionChanged(args);
             return args;
         }

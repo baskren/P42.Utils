@@ -22,7 +22,7 @@ namespace P42.Utils
 
         public Task<T> Result()
         {
-            return m_tcs.Task;
+            return m_tcs?.Task ?? Task.FromResult<T>(default);
         }
 
 
