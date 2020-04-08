@@ -69,7 +69,7 @@ namespace P42.Utils
         protected bool _editingRange;
         public virtual NotifyCollectionChangedEventArgs AddRange(IEnumerable<T> range)
         {
-            if (!range.Any())
+            if (!range?.Any() ?? true)
                 return null;
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range);
             lock (_lock)
@@ -92,7 +92,7 @@ namespace P42.Utils
 
         public virtual NotifyCollectionChangedEventArgs RemoveRange(IEnumerable<T> range)
         {
-            if (!range.Any())
+            if (!range?.Any() ?? true)
                 return null;
             var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range);
             lock (_lock)
@@ -119,7 +119,7 @@ namespace P42.Utils
                 }
             }
         }
-
+        /*
         public virtual NotifyCollectionChangedEventArgs AddAndRemoveRanges(IEnumerable<T> addRange, IEnumerable<T> removeRange)
         {
             if (!addRange.Any() && !removeRange.Any())
@@ -135,7 +135,7 @@ namespace P42.Utils
             OnCollectionChanged(args);
             return args;
         }
-
+        */
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!_editingRange)
