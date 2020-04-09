@@ -12,7 +12,6 @@ namespace P42.Utils
     public class ObservableConcurrentCollection<T> : ObservableCollection<T>
     {
         protected object _lock = new object();
-        //protected SemaphoreSlim Lock = new SemaphoreSlim(1, 1);
 
         protected override void ClearItems()
         {
@@ -86,7 +85,6 @@ namespace P42.Utils
         {
             var count = Count;
             foreach (var item in range)
-                //Add(item);
                 base.InsertItem(count++, item);
         }
 
@@ -110,7 +108,6 @@ namespace P42.Utils
             int count = Count;
             foreach (var item in range)
             {
-                //Remove(item);
                 var index = IndexOf(item);
                 if (index >= 0 && index < Count)
                 {
@@ -119,23 +116,7 @@ namespace P42.Utils
                 }
             }
         }
-        /*
-        public virtual NotifyCollectionChangedEventArgs AddAndRemoveRanges(IEnumerable<T> addRange, IEnumerable<T> removeRange)
-        {
-            if (!addRange.Any() && !removeRange.Any())
-                return null;
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, addRange, removeRange);
-            lock (_lock)
-            {
-                _editingRange = true;
-                RemoveRangeInner(removeRange);
-                AddRangeInner(addRange);
-                _editingRange = false;
-            }
-            OnCollectionChanged(args);
-            return args;
-        }
-        */
+
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!_editingRange)
