@@ -176,13 +176,13 @@ namespace P42.Utils
                 var path = isZip
                     ? Path.Combine(FolderPath(assembly), resourceId)
                     : Path.Combine(FolderPath(assembly, folderName), fileName);
-                System.Diagnostics.Debug.WriteLine("PATH=[" + path + "]");
+                //System.Diagnostics.Debug.WriteLine("PATH=[" + path + "]");
 
                 //var exists = (isZip && Directory.Exists(path)) || (!isZip && File.Exists(path));
 
                 if (!_cacheTasks.ContainsKey(path) && ( File.Exists(path) || Directory.Exists(path)) )
                 {
-                    System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
+                    //System.Diagnostics.Debug.WriteLine("EmbeddedResourceCache: [" + assembly.GetName().Name + ";" + resourceId + "] exists as [" + path + "]");
                     if (isZip)
                         return FolderPath(assembly, folderName);
                     return fileName;
@@ -240,8 +240,8 @@ namespace P42.Utils
                     }
                     else
                     {
-                        if (File.Exists(path))
-                            System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "]");
+                        //if (File.Exists(path))
+                        //    System.Diagnostics.Debug.WriteLine("DownloadTask: FILE ALREADY EXISTS [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "]");
 
                         using (var fileStream = new FileStream(path, FileMode.Create))
                         {
@@ -249,7 +249,7 @@ namespace P42.Utils
                             stream.CopyTo(fileStream);
                             fileStream.Flush(true);
                             var length = fileStream.Length;
-                            System.Diagnostics.Debug.WriteLine("DownloadTask: file written [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "] length=[" + length + "] name=[" + fileStream.Name + "] pos=[" + fileStream.Position + "]");
+                            //System.Diagnostics.Debug.WriteLine("DownloadTask: file written [" + path + "] [" + assembly.GetName().Name + ";" + resourceId + "] length=[" + length + "] name=[" + fileStream.Name + "] pos=[" + fileStream.Position + "]");
                         }
                         return true;
                     }

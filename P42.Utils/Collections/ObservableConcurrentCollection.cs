@@ -70,7 +70,7 @@ namespace P42.Utils
         {
             if (!range?.Any() ?? true)
                 return null;
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range);
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, range.ToList());
             lock (_lock)
             {
                 _editingRange = true;
@@ -92,7 +92,7 @@ namespace P42.Utils
         {
             if (!range?.Any() ?? true)
                 return null;
-            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range);
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range.ToList());
             lock (_lock)
             {
                 _editingRange = true;
