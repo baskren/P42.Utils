@@ -20,6 +20,10 @@ namespace P42.Utils.Droid
             P42.Utils.Environment.ApplicationDataPath = System.IO.Path.Combine(Context.ApplicationInfo.DataDir, "AppData");
             P42.Utils.Environment.ApplicationCachePath = Context.CacheDir.Path;
             P42.Utils.Environment.TemporaryStoragePath = System.IO.Path.Combine(Context.CacheDir.Path, "tmp");
+
+            Console.WriteLine("DataPath: " + Environment.ApplicationDataPath);
+            Console.WriteLine("CachePath: " + Environment.ApplicationCachePath);
+            Console.WriteLine("TempPath: " + Environment.TemporaryStoragePath);
         }
     }
 }
