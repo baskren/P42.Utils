@@ -1,4 +1,5 @@
-﻿using System;
+﻿using P42.Utils.Uno.Extensions;
+using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -68,5 +69,17 @@ namespace P42.Utils.Uno
             dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action()).WatchForError();
         }
 
+
+        public static DeviceIdiom Idiom
+        {
+            get
+            {
+#if __WASM__ || NETSTANDARD
+                return DeviceIdiom.Web;
+#else
+                return Xamarin.Essentials.DeviceInfo.Idiom.ToUno();
+#endif
+            }
+        }
     }
 }
