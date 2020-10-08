@@ -21,6 +21,9 @@ namespace P42.Utils.Uno
         public static Thickness Add(this Thickness t1, Thickness t2)
             => new Thickness(t1.Left + t2.Left, t1.Top + t2.Top, t1.Right + t2.Right, t1.Bottom + t2.Bottom);
 
+        public static Thickness Subtract(this Thickness t1, Thickness t2)
+            => new Thickness(t1.Left - t2.Left, t1.Top - t2.Top, t1.Right - t2.Right, t1.Bottom - t2.Bottom);
+
         public static Thickness Negate(this Thickness t)
             => new Thickness(-t.Left, -t.Top, -t.Bottom, -t.Right);
     }
