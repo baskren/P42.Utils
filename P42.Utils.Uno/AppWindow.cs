@@ -1,4 +1,5 @@
 ﻿using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 
 namespace P42.Utils.Uno
 {
@@ -14,5 +15,8 @@ namespace P42.Utils.Uno
             var windowHeight = Windows.UI.Xaml.Window.Current.Bounds.Height;
             return new Size(windowWidth, windowHeight);
         }
+
+        public static Page CurrentPage()
+            => (Page)((Frame)Windows.UI.Xaml.Window.Current.Content)?.Content;
     }
 }
