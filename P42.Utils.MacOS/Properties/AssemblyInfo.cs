@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCompany("42nd Parallel")]
 [assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("42nd Parallel, 2020")]
-[assembly: AssemblyTrademark("BuildCalc, 42nd Parallel, and Forms9Patch, FormsGestures and P42.Utils are trademarks of 42nd Parallel.  All rights reserved.")]
+[assembly: AssemblyTrademark("BuildCalc, 42nd Parallel, and the code in the Bc3, P42.Uno, and P42.Utils namespaces, and their subnamespaces, are trademarks of 42nd Parallel.  All rights reserved.")]
 [assembly: AssemblyCulture("")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
