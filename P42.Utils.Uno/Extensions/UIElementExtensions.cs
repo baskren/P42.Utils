@@ -18,5 +18,19 @@ namespace P42.Utils.Uno
             return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
         }
 
+        public static DependencyObject FindAncestor<T>(this FrameworkElement element)
+        {
+            var parent = element.Parent as FrameworkElement;
+            while (parent != null)
+            {
+                if (parent is T)
+                    return parent;
+                if (parent is FrameworkElement fe)
+                    parent = fe.Parent as FrameworkElement;
+                else
+                    parent = null;
+            }
+            return null;
+        }
     }
 }
