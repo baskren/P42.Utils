@@ -11,11 +11,27 @@ namespace P42.Utils.Uno
 {
     public static class UIElementExtensions
     {
-        public static Rect GetBounds(this UIElement element)
+        public static Rect GetBounds(this FrameworkElement element)
         {
             var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
             var location = ttv.TransformPoint(new Point(0, 0));
+            return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
+        }
+
+        public static Rect GetBounds(this UIElement element)
+        {
+            if (element is FrameworkElement fwElement)
+                return fwElement.GetBounds();
+            var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+            var location = ttv.TransformPoint(new Point(0, 0));
             return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
+        }
+
+        public static Rect GetBoundsRelativeTo(this FrameworkElement element, UIElement relativeToElement)
+        {
+            var ttv = element.TransformToVisual(relativeToElement);
+            var location = ttv.TransformPoint(new Point(0, 0));
+            return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
         }
 
         public static DependencyObject FindAncestor<T>(this FrameworkElement element)
