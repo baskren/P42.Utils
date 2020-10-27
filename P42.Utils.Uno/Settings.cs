@@ -9,7 +9,9 @@ namespace P42.Utils.Uno
 {
 	public static class Settings
 	{
-		public static Windows.UI.Xaml.Application Application { get; private set; }
+        public static double MinFontSize = 10.0;
+
+        public static Windows.UI.Xaml.Application Application { get; private set; }
 
         static List<Assembly> _assembliesToInclude;
         public static List<Assembly> AssembliesToInclude

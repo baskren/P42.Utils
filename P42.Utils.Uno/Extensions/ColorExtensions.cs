@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
@@ -596,6 +597,14 @@ namespace P42.Utils.Uno
             return (j << 4) | j;
         }
         #endregion
+
+
+        public static Color AppColor(string key)
+        {
+            if (Application.Current.Resources[key] is Color color)
+                return color;
+            throw new Exception("color not found in Application.Current.Resources for key [" + key + "]. ");
+        }
 
     }
 }
