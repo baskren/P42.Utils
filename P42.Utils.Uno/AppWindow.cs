@@ -16,7 +16,11 @@ namespace P42.Utils.Uno
             return new Size(windowWidth, windowHeight);
         }
 
-        public static Page CurrentPage()
-            => (Page)((Frame)Windows.UI.Xaml.Window.Current.Content)?.Content;
+        public static Page CurrentPage
+            => (Page)CurrentFrame?.Content;
+
+        public static Frame CurrentFrame
+            => (Frame)Windows.UI.Xaml.Window.Current.Content;
+
     }
 }
