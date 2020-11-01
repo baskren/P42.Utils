@@ -22,5 +22,8 @@ namespace P42.Utils.Uno
             size.Height -= thickness.Vertical();
             return size;
         }
+
+        public static bool IsZero(this Size size)
+            => size.Width <= 0 || size.Height <= 0;
     }
 }
