@@ -19,7 +19,31 @@ namespace P42.Utils.Uno
         public string FolderId { get; private set; }
         public string StartPageId { get; private set; }
 
-        public EmbeddedWebViewSource(Assembly assembly, string folderId, string startPageId = null)
+        string FindFolder(Assembly assembly, string resourceId)
+        {
+            var files = assembly.GetManifestResourceNames();
+            var resourcePath = resourceId.Split('.');
+            var folderPath = new List<string>();
+            foreach (var file in files)
+            {
+                if (file != resourceId)
+                {
+                    var filePath = file.Split('.');
+                    for (int i = folderPath.Count; i < resourcePath.Length - 2; i++)
+                    {
+                        if (resourcePath[i] == filePath[i])
+                            folderPath.Add(filePath[i]);
+                        else
+                            break;
+                    }
+                    if (folderPath.Count == resourcePath.Length - 2)
+                        break;
+                }
+            }
+            return string.Join(".", folderPath);
+        }
+
+        public EmbeddedWebViewSource(Assembly assembly, string startPageId = null)
         {
             if (assembly is null)
                 throw new ArgumentException("Assembly cannot be null");
@@ -29,6 +53,7 @@ namespace P42.Utils.Uno
             if (!ids.Any())
                 throw new ArgumentException("There are no embedded resources in assembly [" + Assembly + "]");
 
+            var folderId = FindFolder(assembly, startPageId);
             if (folderId?.EndsWith(".") ?? false)
                 folderId.Trim('.');
             FolderId = folderId;
