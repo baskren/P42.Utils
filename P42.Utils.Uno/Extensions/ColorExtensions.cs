@@ -86,20 +86,20 @@ namespace P42.Utils.Uno
             => ColorFromRgba(r, g, b);
 
         public static Color ColorFromRgb(int r, int g, int b)
-            => new Color { R = (byte)r.Clamp(0, 255), G = (byte)g.Clamp(0, 255), B = (byte)b.Clamp(0, 255) };
+            => ColorFromRgba(r, g, b);
 
         public static Color ColorFromRgb(double r, double g, double b)
-            => ColorFromArgb(1, r, g, b);
+            => ColorFromRgba(r, g, b);
         #endregion
 
         #region RGBA
-        public static Color ColorFromRgba(byte r, byte g, byte b, byte a = 255)
+        public static Color ColorFromRgba(byte r, byte g, byte b, byte a = 0xFF)
             => new Color { R = r, G = g, B = b, A = a };
 
         public static Color ColorFromRgba(int r, int g, int b, int a = 255)
             => new Color { R = (byte)r.Clamp(0, 255), G = (byte)g.Clamp(0, 255), B = (byte)b.Clamp(0, 255), A = (byte)a.Clamp(0, 255) };
 
-        public static Color ColorFromRgba(double r, double g, double b, double a)
+        public static Color ColorFromRgba(double r, double g, double b, double a = 1.0)
             => ColorFromArgb(a, r, g, b);
         #endregion
 
