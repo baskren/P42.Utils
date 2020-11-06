@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace System.Collections
 {
@@ -31,7 +32,9 @@ namespace System.Collections
 
         protected override void ClearItems()
         {
+            var oldItems = this.ToList();
             base.ClearItems();
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
