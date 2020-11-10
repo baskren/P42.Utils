@@ -1,7 +1,7 @@
 ﻿using Windows.Foundation;
 using Windows.UI.Xaml;
 
-namespace P42.Uno.Gestures
+namespace P42.Utils.Uno
 
 {
     /// <summary>
