@@ -27,14 +27,14 @@ namespace P42.Utils.Uno
         public async Task RunAsync()
         {
             StartTime = DateTime.Now;
-            double normalTime = 0.0;
+            double normalTime;
             do
             {
                 await Task.Delay(10);
                 normalTime = Math.Min((DateTime.Now - StartTime).TotalMilliseconds / TimeSpan.TotalMilliseconds,1.0);
                 var normalValue = EasingFunction?.Ease(normalTime) ?? normalTime;
                 var value = Value(normalValue);
-                Action(value);
+                this?.Action(value);
             }
             while (normalTime < 1.0);
         }
