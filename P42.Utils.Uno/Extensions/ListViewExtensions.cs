@@ -1,0 +1,157 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Core;
+using Windows.Foundation;
+#if NETSTANDARD
+using Uno.Foundation;
+#endif
+
+namespace P42.Utils.Uno
+{
+    public static class ListViewExtensions
+    {
+		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
+		{
+#if NETSTANDARD
+                if (list.ContainerFromItem(item) is Windows.UI.Xaml.Controls.Primitives.SelectorItem element)
+                {
+                    var id = element.GetHtmlAttribute("id");
+                    System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
+                    WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End)+ ");");
+                }
+
+#else
+			await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
+#endif
+		}
+
+#if !NETSTANDARD
+		static bool InternalScrollToItemWithAnimation(ListView list, object item)
+		{
+			if (GetScrollViewer(list) is ScrollViewer viewer)
+			{
+				var selectorItem = list.ContainerFromItem(item) as Windows.UI.Xaml.Controls.Primitives.SelectorItem;
+				var transform = selectorItem?.TransformToVisual(viewer.Content as UIElement);
+				var position = transform?.TransformPoint(new Windows.Foundation.Point(0, 0));
+				if (!position.HasValue)
+					return false;
+				// scroll with animation
+				viewer.ChangeView(position.Value.X, position.Value.Y, null);
+				return true;
+			}
+			return false;
+		}
+
+
+		async static Task InternalScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate, bool previouslyFailed)
+		{
+			if (GetScrollViewer(list) is ScrollViewer viewer)
+			{ 
+				// scroll to desired item with animation
+				if (shouldAnimate && InternalScrollToItemWithAnimation(list, item))
+					return;
+
+				var viewportHeight = viewer.ViewportHeight;
+                System.Diagnostics.Debug.WriteLine("ListViewExtensions.InternalScrollToAsync viewportHeight: " + viewportHeight);
+
+				var semanticLocation = new SemanticZoomLocation { Item = item };
+
+				// async scrolling
+				await list.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+				{
+					switch (toPosition)
+					{
+						case ScrollToPosition.Start:
+							{
+
+								list.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+								return;
+							}
+
+						case ScrollToPosition.MakeVisible:
+							{
+								list.ScrollIntoView(item, ScrollIntoViewAlignment.Default);
+								return;
+							}
+
+						case ScrollToPosition.End:
+						case ScrollToPosition.Center:
+							{
+								/*
+								var content = (FrameworkElement)list.ItemTemplate.LoadContent();
+								content.DataContext = item;
+								content.Measure(new Windows.Foundation.Size(viewer.ActualWidth, double.PositiveInfinity));
+								*/
+								if (list.ContainerFromItem(item) is FrameworkElement element)
+								{
+									var tHeight = element.DesiredSize.Height;
+
+									if (toPosition == ScrollToPosition.Center)
+										semanticLocation.Bounds = new Rect(0, viewportHeight / 2 - tHeight / 2, 0, 0);
+									else
+										semanticLocation.Bounds = new Rect(0, viewportHeight - tHeight, 0, 0);
+								}
+								break;
+							}
+
+						default:
+							throw new Exception("Unexpected Case");
+					}
+				});
+
+				// Waiting for loaded doesn't seem to be enough anymore; the ScrollViewer does not appear until after Loaded.
+				// Even if the ScrollViewer is present, an invoke at low priority fails (E_FAIL) presumably because the items are
+				// still loading. An invoke at idle sometimes work, but isn't reliable enough, so we'll just have to commit
+				// treason and use a blanket catch for the E_FAIL and try again.
+				try
+				{
+					list.MakeVisible(semanticLocation);
+				}
+				catch (Exception)
+				{
+					if (previouslyFailed)
+						return;
+
+					Task.Delay(1).ContinueWith(ct => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); }, TaskScheduler.FromCurrentSynchronizationContext()).WatchForError();
+				}
+
+			}
+			else
+			{
+				RoutedEventHandler loadedHandler = null;
+				loadedHandler = async (o, e) =>
+				{
+					list.Loaded -= loadedHandler;
+					// Here we try to avoid an exception, see explanation at bottom
+					await list.Dispatcher.RunIdleAsync(args => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
+				};
+				list.Loaded += loadedHandler;
+				return;
+			}
+
+		}
+
+
+		public static ScrollViewer GetScrollViewer(DependencyObject depObj)
+		{
+			var obj = depObj as ScrollViewer;
+			if (obj != null) return obj;
+
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+			{
+				var child = VisualTreeHelper.GetChild(depObj, i);
+
+				var result = GetScrollViewer(child);
+				if (result != null) return result;
+			}
+			return null;
+		}
+#endif
+	}
+}

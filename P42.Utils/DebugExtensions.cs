@@ -6,9 +6,9 @@ using System.Reflection;
 
 namespace P42.Utils
 {
-    public static class Debug
+    public static class DebugExtensions
     {
-        static Debug()
+        static DebugExtensions()
         {
             System.Diagnostics.Debug.IndentSize = 4;
         }

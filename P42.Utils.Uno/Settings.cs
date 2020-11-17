@@ -22,7 +22,7 @@ namespace P42.Utils.Uno
                 {
                     _assembliesToInclude = new List<Assembly>
                     {
-                        typeof(P42.Utils.Debug).Assembly
+                        typeof(P42.Utils.DebugExtensions).Assembly
                     };
                 }
                 return _assembliesToInclude;

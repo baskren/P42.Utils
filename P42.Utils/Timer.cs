@@ -26,17 +26,17 @@ namespace P42.Utils
 
         public Timer(TimerCallback callback, object state, uint dueTime, uint period) : this(callback, state, new TimeSpan(0, 0, (int)dueTime), new TimeSpan(0, 0, (int)period))
         {
-            P42.Utils.Debug.AddToCensus(this);
+            P42.Utils.DebugExtensions.AddToCensus(this);
         }
 
         public Timer(TimerCallback callback, object state, long dueTime = Timeout.Infinite, long period = Timeout.Infinite) : this(callback, state, new TimeSpan(0, 0, (int)dueTime), new TimeSpan(0, 0, (int)period))
         {
-            P42.Utils.Debug.AddToCensus(this);
+            P42.Utils.DebugExtensions.AddToCensus(this);
         }
 
         public Timer(TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
         {
-            P42.Utils.Debug.AddToCensus(this);
+            P42.Utils.DebugExtensions.AddToCensus(this);
             _id = Count++;
             _callback = callback;
             _state = state;
@@ -68,7 +68,7 @@ namespace P42.Utils
             {
                 _disposed = true;
                 base.Cancel();
-                P42.Utils.Debug.RemoveFromCensus(this);
+                P42.Utils.DebugExtensions.RemoveFromCensus(this);
             }
             base.Dispose(disposing);
         }

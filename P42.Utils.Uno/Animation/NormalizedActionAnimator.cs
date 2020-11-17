@@ -30,7 +30,7 @@ namespace P42.Utils.Uno
             double normalTime;
             do
             {
-                await Task.Delay(10);
+                await Task.Delay(20);
                 normalTime = Math.Min((DateTime.Now - StartTime).TotalMilliseconds / TimeSpan.TotalMilliseconds,1.0);
                 var normalValue = EasingFunction?.Ease(normalTime) ?? normalTime;
                 var value = Value(normalValue);
