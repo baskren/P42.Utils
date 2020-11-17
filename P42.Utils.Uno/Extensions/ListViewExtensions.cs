@@ -23,7 +23,7 @@ namespace P42.Utils.Uno
                 {
                     var id = element.GetHtmlAttribute("id");
                     System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
-                    WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End)+ ");");
+                    WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End).ToString().ToLower()+ ");");
                 }
 
 #else
