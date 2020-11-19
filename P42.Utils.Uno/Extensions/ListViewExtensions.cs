@@ -101,7 +101,7 @@ namespace P42.Utils.Uno
 							}
 
 						default:
-							throw new Exception("Unexpected Case");
+							break;
 					}
 				});
 
