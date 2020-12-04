@@ -48,5 +48,11 @@ namespace P42.Utils.Uno
             }
             return null;
         }
+
+        public static bool IsVisible(this UIElement element)
+            => element.Visibility == Visibility.Visible;
+
+        public static bool IsCollapsed(this UIElement element)
+            => element.Visibility == Visibility.Collapsed;
     }
 }
