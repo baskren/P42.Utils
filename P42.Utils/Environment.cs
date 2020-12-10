@@ -45,6 +45,8 @@ namespace P42.Utils
 #endif
         }
 
+        internal static IPlatformTimer PlatformTimer;
+
         static public void Init()
         {
             MainThreadId = System.Environment.CurrentManagedThreadId;

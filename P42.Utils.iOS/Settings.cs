@@ -8,6 +8,7 @@ namespace P42.Utils.iOS
         public static void Init()
         {
             P42.Utils.Environment.Init();
+            P42.Utils.Environment.PlatformTimer = new Timer();
             P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
             P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
         }

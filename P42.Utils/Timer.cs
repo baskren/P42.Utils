@@ -20,6 +20,22 @@ namespace P42.Utils
         #endregion
 
         #region Constructors
+
+        public static void StartTimer(TimeSpan interval, Func<bool> callback)
+        {
+            if (Environment.PlatformTimer is null)
+                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            Environment.PlatformTimer.StartTimer(interval, callback);
+        }
+
+        public static void StartTimer(TimeSpan interval, Func<Task<bool>> callback)
+        {
+            if (Environment.PlatformTimer is null)
+                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            Environment.PlatformTimer.StartTimer(interval, callback);
+        }
+
+        /*
         //public Timer(TimerCallback callback, object state=null, Int32 dueTime=Timeout.Infinite, Int32 period=Timeout.Infinite) : this  (callback, state, new TimeSpan (0, 0, dueTime), new TimeSpan (0, 0, period))
         //{
         //}
@@ -33,7 +49,7 @@ namespace P42.Utils
         {
             P42.Utils.DebugExtensions.AddToCensus(this);
         }
-
+        */
         public Timer(TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
         {
             P42.Utils.DebugExtensions.AddToCensus(this);

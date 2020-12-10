@@ -33,7 +33,8 @@ namespace P42.Utils.Uno
 		{
 			Application = application;
 			P42.Utils.Environment.Init();
-			P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
+            P42.Utils.Environment.PlatformTimer = new Timer();
+            P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
 			P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
 			P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
             P42.Utils.Environment.EmbeddedResourceAssemblyResolver = AssemblyFromResourceId;
