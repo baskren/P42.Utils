@@ -11,6 +11,13 @@ namespace P42.Utils.Uno
 {
     public static class ColorExtensions
     {
+        public static Color GetForegroundColor(this Color background)
+        {
+            var yiq = ((background.R * 299) + (background.G * 587) + (background.B * 114)) / 1000;
+            return yiq < 128 ? Colors.White : Colors.Black;
+        }
+
+
         #region Tranlators
         public static Color AsWinUiColor(this System.Drawing.Color color)
             => new Color

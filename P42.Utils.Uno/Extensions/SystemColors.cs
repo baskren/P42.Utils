@@ -107,5 +107,23 @@ namespace P42.Utils.Uno
 
         public static Color Accent 
             => ColorExtensions.AppColor("SystemAccentColor");
+
+        public static Color AccentLight3
+            => ColorExtensions.AppColor("SystemAccentColorLight3");
+
+        public static Color AccentLight2
+            => ColorExtensions.AppColor("SystemAccentColorLight2");
+
+        public static Color AccentLight1
+            => ColorExtensions.AppColor("SystemAccentColorLight1");
+
+        public static Color AccentDark1
+            => ColorExtensions.AppColor("SystemAccentColorDark1");
+
+        public static Color AccentDark2
+            => ColorExtensions.AppColor("SystemAccentColorDark2");
+
+        public static Color AccentDark3
+            => ColorExtensions.AppColor("SystemAccentColorDark3");
     }
 }
