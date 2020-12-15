@@ -16,5 +16,12 @@ namespace P42.Utils
                 foreach (var item in range)
                     collection.Add(item);
         }
+
+        public static void AddRange<T,Q>(this IDictionary<T,Q> dictionary, IDictionary<T,Q> range)
+        {
+            if (range != null && dictionary != null)
+                foreach (var item in range)
+                    dictionary[item.Key] = item.Value;
+        }
     }
 }
