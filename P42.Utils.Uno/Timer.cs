@@ -7,7 +7,7 @@ using Windows.UI.Xaml;
 
 namespace P42.Utils.Uno
 {
-    public class Timer : IPlatformTimer
+    internal class Timer : IPlatformTimer
     {
         class MainThreadTimer
         {

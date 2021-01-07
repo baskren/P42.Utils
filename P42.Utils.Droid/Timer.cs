@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace P42.Utils.Droid
 {
-    public class Timer : IPlatformTimer
+    internal class Timer : IPlatformTimer
     {
 		public void StartTimer(TimeSpan interval, Func<bool> callback)
 		{
