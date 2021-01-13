@@ -8,7 +8,7 @@ using UIKit;
 
 namespace P42.Utils.iOS
 {
-    public class Timer : IPlatformTimer
+    internal class Timer : IPlatformTimer
     {
 		public void StartTimer(TimeSpan interval, Func<bool> callback)
 		{

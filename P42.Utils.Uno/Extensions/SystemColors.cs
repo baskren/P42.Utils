@@ -99,10 +99,10 @@ namespace P42.Utils.Uno
         public static Color ColorHotlight 
             => ColorExtensions.AppColor("SystemColorHotlightColor");
 
-        public static Color ColorWindow 
+        public static Color WindowColor 
             => ColorExtensions.AppColor("SystemColorWindowColor");
 
-        public static Color ColorWindowText 
+        public static Color WindowTextColor 
             => ColorExtensions.AppColor("SystemColorWindowTextColor");
 
         public static Color Accent 
