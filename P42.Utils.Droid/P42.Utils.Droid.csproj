@@ -35,7 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +57,10 @@
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\XamarinEssentials\Xamarin.Essentials\Xamarin.Essentials.csproj">
+      <Project>{d3528a83-f87e-4d41-ad73-032da69e02ff}</Project>
+      <Name>Xamarin.Essentials</Name>
+    </ProjectReference>
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
       <Project>{0BCBCD07-F38D-4B3E-B9C5-22EE4FBC27BC}</Project>
       <Name>P42.Utils</Name>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="MSBuild.Sdk.Extras/2.1.2">
+<Project Sdk="MSBuild.Sdk.Extras/3.0.22">
   <PropertyGroup>
     <!--TargetFrameworks >netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks-->
     <TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0</TargetFrameworks>
@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Uno.UI" Version="3.4.0" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Uno.UI.WebAssembly" Version="3.4.0" />
@@ -24,6 +23,7 @@
     <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
   </ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\XamarinEssentials\Xamarin.Essentials\Xamarin.Essentials.csproj" />
 		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
 			<Project>{cad932a9-5e8d-415c-8dc2-ce8e553fa6d3}</Project>
 			<Name>P42.Utils</Name>
