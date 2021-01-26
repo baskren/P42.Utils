@@ -9,10 +9,7 @@ namespace P42.Utils
 {
     public static class DebugExtensions
     {
-        static DebugExtensions()
-        {
-            System.Diagnostics.Debug.IndentSize = 4;
-        }
+        static DateTime LastMessage = DateTime.MaxValue;
 
         public static Func<object, bool> ConditionFunc;
 
@@ -20,22 +17,58 @@ namespace P42.Utils
 
         public static bool IsCensusEnabled = false;
 
+        static Dictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new Dictionary<Guid, (string, DateTime)>();
+
+        static DebugExtensions()
+        {
+            System.Diagnostics.Debug.IndentSize = 4;
+            P42.Utils.Timer.StartTimer(TimeSpan.FromSeconds(5), () =>
+            {
+                if (DateTime.Now - LastMessage > TimeSpan.FromSeconds(5))
+                {
+                    System.Diagnostics.Debug.WriteLine("");
+                    System.Diagnostics.Debug.WriteLine(" ~~~~~~~~~~~~~ OPEN TRACKS : " + OpenTracks.Count + " ~~~~~~~~~~~~~");
+                    var openTracks = OpenTracks.Values.ToList();
+                    openTracks = openTracks.OrderBy(pair => pair.dateTime).ToList();
+                    foreach (var p in openTracks)
+                        System.Diagnostics.Debug.WriteLine("\t [" + p.dateTime.ToString("HH':'mm':'ss'.'fffffffK") + "]" + p.message);
+                    System.Diagnostics.Debug.WriteLine(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    System.Diagnostics.Debug.WriteLine("");
+                }
+                return true;
+            });
+        }
+
+        public static Guid? Message(bool enabled, string message, Guid? guid = null)
+        {
+            if (IsMessagesEnabled && enabled)
+            {
+                var method = new StackTrace().GetFrame(1).GetMethod();
+                //var className = callingMethod.ReflectedType.Name;
+                return Message(message, guid, method.ReflectedType + "." + method.Name);
+            }
+            return null;
+        }
+
+
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static void Message(object obj, string message)
+        public static Guid? Message(object obj, string message, Guid? guid = null)
         {
             if (IsMessagesEnabled && (ConditionFunc?.Invoke(obj) ?? false))
             {
                 var method = new StackTrace().GetFrame(1).GetMethod();
                 //var className = callingMethod.ReflectedType.Name;
-                Message(message, method.ReflectedType + "." + method.Name);
+                return Message(message, guid, method.ReflectedType + "." + method.Name);
             }
+            return null;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static void Message(string message, string callingMethod = null)
+        public static Guid? Message(string message, Guid? guid = null, string callingMethod = null)
         {
             if (!IsMessagesEnabled)
-                return;
+                return null;
 
             if (string.IsNullOrWhiteSpace(callingMethod))
             {
@@ -45,21 +78,23 @@ namespace P42.Utils
             System.Diagnostics.Debug.IndentSize = 4;
             if (message?.Contains("ENTER") ?? false)
             {
+                guid = Guid.NewGuid();
+                OpenTracks.Add(guid.Value, (callingMethod + ": " + message, DateTime.Now));
                 if (System.Diagnostics.Debug.IndentLevel == 0)
                     System.Diagnostics.Debug.WriteLine("=========================================================");
-            }
-            if (message?.Contains("EXIT") ?? false)
-            {
-                System.Diagnostics.Debug.Unindent();
+                System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
             }
             System.Diagnostics.Debug.WriteLine(callingMethod + ": " + message);
-            if (message?.Contains("ENTER") ?? false)
-                System.Diagnostics.Debug.Indent();
             if (message?.Contains("EXIT") ?? false)
             {
+                if (guid.HasValue)
+                    OpenTracks.Remove(guid.Value);
+                System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
                 if (System.Diagnostics.Debug.IndentLevel == 0)
-                    System.Diagnostics.Debug.WriteLine("=========================================================");
+                    System.Diagnostics.Debug.WriteLine("========================================================= OpenTracks.Count: " + OpenTracks.Count);
             }
+            LastMessage = DateTime.Now;
+            return guid;
         }
 
 
@@ -152,15 +187,15 @@ namespace P42.Utils
         /// <param name="methodName">Name of method from which this request was called</param>
         /// <returns></returns>
         public static void RequestUserHelp(
-            this Exception e, 
-            string additionalInfo = null, 
-            [System.Runtime.CompilerServices.CallerFilePath] string path = null, 
-            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1, 
+            this Exception e,
+            string additionalInfo = null,
+            [System.Runtime.CompilerServices.CallerFilePath] string path = null,
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1,
             [System.Runtime.CompilerServices.CallerMemberName] string methodName = null)
         {
             if (IsRequestUserHelpEnabled && RequestHelpDelegate is Func<Exception, string, string, int, string, Task> d)
             {
-                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(async()=>
+                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(async () =>
                     await d(e, additionalInfo, path, lineNumber, methodName));
             }
         }
