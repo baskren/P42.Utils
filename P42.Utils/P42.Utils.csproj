@@ -24,11 +24,9 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Collections\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\XamarinEssentials\Xamarin.Essentials\Xamarin.Essentials.csproj" />
   </ItemGroup>
 </Project>
