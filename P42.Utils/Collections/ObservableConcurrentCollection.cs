@@ -18,6 +18,14 @@ namespace P42.Utils
         {
             lock (_lock)
                 base.ClearItems();
+            // Change made to address Xamarin.Forms.iOS ListView crash:
+            // NSInternalInconsistencyException Reason: Invalid update: invalid number of rows in section X.
+            // The number of rows contained in an existing section after the update (i) must be equal to the number
+            // of rows contained in that section before the update (j), plus or minus the number of rows inserted or
+            // deleted from that section (k inserted, l deleted) and plus or minus the number of rows moved into or
+            // out of that section (0 moved in, 0 moved out).
+            foreach (var item in this.ToArray())
+                Remove(item);
         }
 
         protected override void InsertItem(int index, T item)
