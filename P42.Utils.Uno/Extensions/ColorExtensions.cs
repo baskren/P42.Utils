@@ -608,8 +608,11 @@ namespace P42.Utils.Uno
 
         public static Color AppColor(string key)
         {
-            if (Application.Current.Resources[key] is Color color)
+            var obj = Application.Current.Resources[key];
+            if (obj is Color color)
                 return color;
+            if (obj is SolidColorBrush brush)
+                return brush.Color;
             throw new Exception("color not found in Application.Current.Resources for key [" + key + "]. ");
         }
 
