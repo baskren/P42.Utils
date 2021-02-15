@@ -28,7 +28,4 @@
   <ItemGroup>
     <Folder Include="Collections\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\XamarinEssentials\Xamarin.Essentials\Xamarin.Essentials.csproj" />
-  </ItemGroup>
 </Project>

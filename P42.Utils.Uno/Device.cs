@@ -16,7 +16,8 @@ namespace P42.Utils.Uno
 #if __WASM__ || NETSTANDARD
                 return DeviceIdiom.Web;
 #else
-                return Xamarin.Essentials.DeviceInfo.Idiom.ToUno();
+                //return Xamarin.Essentials.DeviceInfo.Idiom.ToUno();
+                throw new NotImplementedException();
 #endif
             }
         }

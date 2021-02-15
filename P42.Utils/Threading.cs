@@ -5,6 +5,7 @@ namespace P42.Utils
 {
     public static class Threading
     {
+		/*
         public static Task<T> InvokeInBackgroundAsync<T> (Func<Task<T>> funcTask)
         {
 			if (!Xamarin.Essentials.MainThread.IsMainThread)
@@ -89,6 +90,6 @@ namespace P42.Utils
 			});
 			return tcs.Task;
 		}
-
+		*/
 	}
 }

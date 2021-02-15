@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace P42.Utils.Uno.Extensions
 {
+    /*
     public static class DeviceIdiomExtensions
     {
         public static DeviceIdiom ToUno(this Xamarin.Essentials.DeviceIdiom xIdiom)
@@ -34,4 +35,5 @@ namespace P42.Utils.Uno.Extensions
             return Xamarin.Essentials.DeviceIdiom.Unknown;
         }
     }
+    */
 }

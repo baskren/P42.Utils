@@ -175,7 +175,7 @@ namespace P42.Utils
         /// </summary>
         public static string RequestUserHelpMissiveMessage = "I am the developer of this application (or at least the part the just didn't work).  Unfortunately you have managed to trigger a bug that, for the life of me, I cannot reproduce - and therefore fix!  Would you be willing to email me so I can learn more about what just happened?";
 
-        public static Func<Exception, string, string, int, string, Task> RequestHelpDelegate;
+        public static Action<Exception, string, string, int, string> RequestHelpDelegate;
 
         /// <summary>
         /// Used internally to communicate with user when perplexing exception is triggered;
@@ -193,11 +193,7 @@ namespace P42.Utils
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1,
             [System.Runtime.CompilerServices.CallerMemberName] string methodName = null)
         {
-            if (IsRequestUserHelpEnabled && RequestHelpDelegate is Func<Exception, string, string, int, string, Task> d)
-            {
-                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(async () =>
-                    await d(e, additionalInfo, path, lineNumber, methodName));
-            }
+            RequestHelpDelegate?.Invoke(e, additionalInfo, path, lineNumber, methodName);
         }
 
     }
