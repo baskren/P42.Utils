@@ -19,8 +19,11 @@ namespace P42.Utils.Uno
         public static readonly DependencyProperty HtmlProperty =
             DependencyProperty.RegisterAttached("Html", typeof(string), typeof(TextBlockExtensions), new PropertyMetadata(null, HtmlChanged));
 
-        public static void SetHtml(this TextBlock textBlock, string value)
-            => textBlock.SetValue(HtmlProperty, value ?? string.Empty);
+        public static TextBlock SetHtml(this TextBlock textBlock, string value)
+        {
+            textBlock.SetValue(HtmlProperty, value ?? string.Empty);
+            return textBlock;
+        }
 
 
         public static string GetHtml(this TextBlock textBlock)
@@ -77,7 +80,7 @@ namespace P42.Utils.Uno
         /// <param name="color"></param>
         /// <param name="startIndex"></param>
         /// <param name="length"></param>
-        public static void ApplyBackgroundColor(this TextBlock textBlock, Color color, int startIndex = 0, int length = -1)
+        public static TextBlock ApplyBackgroundColor(this TextBlock textBlock, Color color, int startIndex = 0, int length = -1)
         {
             if (TextHighLighterPresent)
             {
@@ -85,7 +88,7 @@ namespace P42.Utils.Uno
                 if (length < 0)
                 {
                     if (startIndex != 0)
-                        return;
+                        return textBlock;
                     length = textBlock.Text.Length;
                     length += textBlock.Inlines.Count;
                 }
@@ -102,6 +105,7 @@ namespace P42.Utils.Uno
                 });
                 textBlock.TextHighlighters.Add(highlighter);
             }
+            return textBlock;
         }
 
 

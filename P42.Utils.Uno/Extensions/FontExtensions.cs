@@ -40,7 +40,7 @@ namespace P42.Utils.Uno
                         _defaultFontFamily = FontFamily.XamlAutoFontFamily;
                     else
 #endif
-                        _defaultFontFamily = new FontFamily("Segoe UI#Regular");
+                    _defaultFontFamily = new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI"); //new FontFamily("Segoe UI#Regular");
                 }
                 return _defaultFontFamily;
             }
@@ -69,9 +69,9 @@ namespace P42.Utils.Uno
                 case "serif":
                     return new FontFamily("Cambria");
                 case "sans-serif":
-                    return new FontFamily("Segoe UI");
+                    return new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI");
                 case "stixgeneral":
-                    return new FontFamily("STIXGeneral-Regular");
+                    return new FontFamily("ms-appx:///Assets/Fonts/STIXGeneral-Regular#STIXGeneral");
                     //resourceId = "Forms9Patch.Resources.Fonts.STIXGeneral.otf";
                     //fontFamilyName = resourceId + "#" + "STIXGeneral";
                     //break;
