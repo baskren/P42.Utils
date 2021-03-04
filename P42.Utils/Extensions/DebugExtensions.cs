@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace P42.Utils
 
         public static bool IsCensusEnabled = false;
 
-        static Dictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new Dictionary<Guid, (string, DateTime)>();
+        //static Dictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new Dictionary<Guid, (string, DateTime)>();
+        static ConcurrentDictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new ConcurrentDictionary<Guid, (string, DateTime)>();
 
         static DebugExtensions()
         {
@@ -70,6 +72,11 @@ namespace P42.Utils
             if (!IsMessagesEnabled)
                 return null;
 
+            //if (message?.Contains("ENTER") ?? false)
+            //    guid = Guid.NewGuid();
+
+            //Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
+            //{
             if (string.IsNullOrWhiteSpace(callingMethod))
             {
                 var method = new StackTrace().GetFrame(1).GetMethod();
@@ -79,7 +86,8 @@ namespace P42.Utils
             if (message?.Contains("ENTER") ?? false)
             {
                 guid = Guid.NewGuid();
-                OpenTracks.Add(guid.Value, (callingMethod + ": " + message, DateTime.Now));
+                ((IDictionary<Guid, (string message, DateTime dateTime)>)OpenTracks).Add(guid.Value, (callingMethod + ": " + message, DateTime.Now));
+                //OpenTracks.GetOrAdd(guid.Value, (callingMethod + ": " + message, DateTime.Now));
                 if (System.Diagnostics.Debug.IndentLevel == 0)
                     System.Diagnostics.Debug.WriteLine("=========================================================");
                 System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
@@ -88,12 +96,13 @@ namespace P42.Utils
             if (message?.Contains("EXIT") ?? false)
             {
                 if (guid.HasValue)
-                    OpenTracks.Remove(guid.Value);
+                    ((IDictionary<Guid, (string message, DateTime dateTime)>)OpenTracks).Remove(guid.Value);
                 System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
                 if (System.Diagnostics.Debug.IndentLevel == 0)
                     System.Diagnostics.Debug.WriteLine("========================================================= OpenTracks.Count: " + OpenTracks.Count);
             }
             LastMessage = DateTime.Now;
+            //});
             return guid;
         }
 
