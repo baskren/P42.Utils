@@ -9,6 +9,9 @@ namespace P42.Utils.Uno
         Desktop,
         TV,
         Watch,
-        Web
+        Web, 
+        Car,
+        VR,
+        GameConsole,
     }
 }

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="MSBuild.Sdk.Extras/3.0.22">
+  <PropertyGroup>
+    <TargetFrameworks>Xamarin.iOS10;</TargetFrameworks>
+  </PropertyGroup>
+	
+</Project>

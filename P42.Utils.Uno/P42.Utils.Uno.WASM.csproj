@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="MSBuild.Sdk.Extras/3.0.22">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Uno.UI.WebAssembly" Version="3.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
+      <LogicalName>$(AssemblyName).xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+</Project>
