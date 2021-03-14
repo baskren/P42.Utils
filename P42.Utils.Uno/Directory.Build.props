@@ -8,7 +8,7 @@
     <AssemblyName>P42.Utils.Uno</AssemblyName>
     <RootNamespace>P42.Utils.Uno</RootNamespace>
 
-    <NoWarn>Uno0001</NoWarn>
+    <NoWarn>Uno0001;VSX1000</NoWarn>
 
     <!--
     Force all projects of this folder to use a different output
@@ -37,10 +37,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
-			<Project>{cad932a9-5e8d-415c-8dc2-ce8e553fa6d3}</Project>
-			<Name>P42.Utils</Name>
-		</ProjectReference>
+		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
 	</ItemGroup>
 
 </Project>

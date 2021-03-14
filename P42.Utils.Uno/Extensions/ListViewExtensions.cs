@@ -29,6 +29,7 @@ namespace P42.Utils.Uno
 #else
 			await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
 #endif
+			await Task.Delay(5);
 		}
 
 #if !NETSTANDARD

@@ -11,7 +11,7 @@ namespace P42.Utils.Uno
 	{
 		internal const string SpanKey = "FontFamily";
 
-		FontFamily _fontName;
+		//FontFamily _fontName;
 		/// <summary>
 		/// Gets or sets the name of the font family -OR- resource ID or embedded resource font.
 		/// </summary>
