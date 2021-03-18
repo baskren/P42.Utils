@@ -16,6 +16,62 @@ namespace P42.Utils.Uno
 {
     public static class ListViewExtensions
     {
+		public static ScrollViewer GetScrollViewer(DependencyObject depObj)
+		{
+			var obj = depObj as ScrollViewer;
+			if (obj != null) return obj;
+
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+			{
+				var child = VisualTreeHelper.GetChild(depObj, i);
+
+				var result = GetScrollViewer(child);
+				if (result != null) return result;
+			}
+			return null;
+		}
+
+		public static Point GetOffsetForItem(this ListView listView, object item)
+		{
+			if (listView.ContainerFromItem(item) is UIElement element)
+			{
+				if (GetScrollViewer(listView) is ScrollViewer viewer)
+				{
+					var transform = element.TransformToVisual(viewer);
+					var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
+					return positionInScrollViewer;
+				}
+			}
+			return new Point(0, 0);
+		}
+
+		public static async Task ScrollToBottom(this ListView listView, object item)
+		{
+			if (GetScrollViewer(listView) is ScrollViewer viewer)
+			{
+				if (listView.ContainerFromItem(item) is FrameworkElement element)
+				{
+					var transform = element.TransformToVisual(viewer);
+					var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
+					System.Diagnostics.Debug.WriteLine(" ==============================================================");
+					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom vtOffset: " + viewer.VerticalOffset);
+					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom position: " + positionInScrollViewer.Y);
+					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom element.H: " + element.ActualHeight);
+					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
+
+
+#if NETFX_CORE
+                    var offset = Math.Max(0, viewer.VerticalOffset + positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight );
+                    viewer.ScrollToVerticalOffset(offset);
+#else
+					var offset = Math.Max(0, positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight);
+					viewer.ChangeView(null, offset, null);
+					await Task.Delay(1000);
+#endif
+				}
+			}
+		}
+
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
 #if NETSTANDARD
