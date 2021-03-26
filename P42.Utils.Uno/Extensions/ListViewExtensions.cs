@@ -196,7 +196,7 @@ namespace P42.Utils.Uno
 
 		}
 
-
+		/*
 		public static ScrollViewer GetScrollViewer(DependencyObject depObj)
 		{
 			var obj = depObj as ScrollViewer;
@@ -211,6 +211,7 @@ namespace P42.Utils.Uno
 			}
 			return null;
 		}
+		*/
 #endif
 	}
 }
