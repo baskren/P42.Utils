@@ -82,7 +82,7 @@ namespace P42.Utils.Uno
         /// <param name="c">C.</param>
         /// <param name="alpha">Alpha.</param>
         public static Color WithAlpha(this Color c, double alpha)
-            => new Color { R = c.R, G = c.G, B = c.B, A = (byte)(alpha).Clamp(0, 255) };
+            => new Color { R = c.R, G = c.G, B = c.B, A = (byte)(alpha*255).Clamp(0, 255) };
         #endregion
 
 
