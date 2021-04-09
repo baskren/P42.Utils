@@ -11,6 +11,10 @@ namespace P42.Utils.Uno
 {
     public static class UIElementExtensions
     {
+        public static bool HasPrescribedWidth(this FrameworkElement element) => !double.IsNaN(element.Width) && element.Width >= 0;
+        public static bool HasPrescribedHeight(this FrameworkElement element) => !double.IsNaN(element.Height) && element.Height >= 0;
+
+
         public static Rect GetBounds(this FrameworkElement element)
         {
             var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
