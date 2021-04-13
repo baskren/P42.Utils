@@ -21,68 +21,106 @@ namespace P42.Utils
 
         public static async Task<T> Start<T>(Func<T> func, Func<T> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            return await task.RunAsync(func, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                return await task.RunAsync(func, cancellationAction);
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                return func.Invoke();
+            return default;
         }
 
         public static async Task<T> Start<T>(Func<Task<T>> func, Func<T> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            return await task.RunAsync(func, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                return await task.RunAsync(func, cancellationAction);
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                return await func.Invoke();
+            return default;
         }
 
         public static async Task<T> Start<T>(Func<T> func, Func<Task<T>> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            return await task.RunAsync(func, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                return await task.RunAsync(func, cancellationAction);
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                return func.Invoke();
+            return default;
         }
 
         public static async Task<T> Start<T>(Func<Task<T>> func, Func<Task<T>> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            return await task.RunAsync(func, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                return await task.RunAsync(func, cancellationAction);
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                return await func.Invoke();
+            return default;
         }
 
 
 
         public static async Task Start(Action action, Action cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            await task.RunAsync(action, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                await task.RunAsync(action, cancellationAction);
+                return;
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            action?.Invoke();
         }
 
         public static async Task Start(Action action, Func<Task> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            await task.RunAsync(action, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                await task.RunAsync(action, cancellationAction);
+                return;
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            action?.Invoke();
         }
 
-        public static async Task Start(Func<Task> action, Action cancellationAction)
+        public static async Task Start(Func<Task> func, Action cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            await task.RunAsync(action, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                await task.RunAsync(func, cancellationAction);
+                return;
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                await func.Invoke();
         }
 
-        public static async Task Start(Func<Task> action, Func<Task> cancellationAction)
+        public static async Task Start(Func<Task> func, Func<Task> cancellationAction)
         {
-            if (Environment.PlatformLongRunningTaskType is null)
-                throw new Exception("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
-            var task = (ILongRunningTask)Activator.CreateInstance(Environment.PlatformLongRunningTaskType);
-            await task.RunAsync(action, cancellationAction);
+            if (Environment.PlatformLongRunningTaskType is Type type)
+            {
+                var task = (ILongRunningTask)Activator.CreateInstance(type);
+                await task.RunAsync(func, cancellationAction);
+                return;
+            }
+            System.Console.WriteLine("Enviroment not set.  Did you initiate P42.Utils.**platform**?");
+            if (func != null)
+                await func.Invoke();
         }
 
     }
