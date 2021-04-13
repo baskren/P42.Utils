@@ -11,6 +11,7 @@ namespace P42.Utils.iOS
             P42.Utils.Environment.PlatformTimer = new Timer();
             P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
             P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
+            P42.Utils.Environment.PlatformLongRunningTaskType = typeof(P42.Utils.iOS.LongRunningTask);
         }
 
         static void PlatformPathLoader()

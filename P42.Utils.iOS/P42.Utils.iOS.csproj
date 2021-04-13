@@ -11,6 +11,7 @@
     <RootNamespace>P42.Utils.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>P42.Utils.iOS</AssemblyName>
+    <ReleaseVersion></ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,10 +48,11 @@
     <Compile Include="Settings.cs" />
     <Compile Include="DiskSpace.cs" />
     <Compile Include="Timer.cs" />
+    <Compile Include="LongRunningTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
-      <Project>{7C117F7E-965B-418C-B465-FFC1D288E35C}</Project>
+      <Project>{ABD591A3-A0A5-4B6F-9DDA-E6937052F595}</Project>
       <Name>P42.Utils</Name>
     </ProjectReference>
   </ItemGroup>
