@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace P42.Utils
 
         public static bool IsCensusEnabled = false;
 
-        static Dictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new Dictionary<Guid, (string, DateTime)>();
+        //static Dictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new Dictionary<Guid, (string, DateTime)>();
+        static ConcurrentDictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new ConcurrentDictionary<Guid, (string, DateTime)>();
 
         static DebugExtensions()
         {
@@ -70,6 +72,11 @@ namespace P42.Utils
             if (!IsMessagesEnabled)
                 return null;
 
+            //if (message?.Contains("ENTER") ?? false)
+            //    guid = Guid.NewGuid();
+
+            //Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
+            //{
             if (string.IsNullOrWhiteSpace(callingMethod))
             {
                 var method = new StackTrace().GetFrame(1).GetMethod();
@@ -79,7 +86,8 @@ namespace P42.Utils
             if (message?.Contains("ENTER") ?? false)
             {
                 guid = Guid.NewGuid();
-                OpenTracks.Add(guid.Value, (callingMethod + ": " + message, DateTime.Now));
+                ((IDictionary<Guid, (string message, DateTime dateTime)>)OpenTracks).Add(guid.Value, (callingMethod + ": " + message, DateTime.Now));
+                //OpenTracks.GetOrAdd(guid.Value, (callingMethod + ": " + message, DateTime.Now));
                 if (System.Diagnostics.Debug.IndentLevel == 0)
                     System.Diagnostics.Debug.WriteLine("=========================================================");
                 System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
@@ -88,12 +96,13 @@ namespace P42.Utils
             if (message?.Contains("EXIT") ?? false)
             {
                 if (guid.HasValue)
-                    OpenTracks.Remove(guid.Value);
+                    ((IDictionary<Guid, (string message, DateTime dateTime)>)OpenTracks).Remove(guid.Value);
                 System.Diagnostics.Debug.IndentLevel = OpenTracks.Count;
                 if (System.Diagnostics.Debug.IndentLevel == 0)
                     System.Diagnostics.Debug.WriteLine("========================================================= OpenTracks.Count: " + OpenTracks.Count);
             }
             LastMessage = DateTime.Now;
+            //});
             return guid;
         }
 
@@ -175,7 +184,7 @@ namespace P42.Utils
         /// </summary>
         public static string RequestUserHelpMissiveMessage = "I am the developer of this application (or at least the part the just didn't work).  Unfortunately you have managed to trigger a bug that, for the life of me, I cannot reproduce - and therefore fix!  Would you be willing to email me so I can learn more about what just happened?";
 
-        public static Action<Exception, string, string, int, string> RequestHelpDelegate;
+        public static Func<Exception, string, string, int, string, Task> RequestHelpDelegate;
 
         /// <summary>
         /// Used internally to communicate with user when perplexing exception is triggered;
@@ -186,14 +195,18 @@ namespace P42.Utils
         /// <param name="lineNumber">Linenumber of where this request was called</param>
         /// <param name="methodName">Name of method from which this request was called</param>
         /// <returns></returns>
-        public static void RequestUserHelp(
+        public static async Task RequestUserHelp(
             this Exception e,
             string additionalInfo = null,
             [System.Runtime.CompilerServices.CallerFilePath] string path = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1,
             [System.Runtime.CompilerServices.CallerMemberName] string methodName = null)
         {
-            RequestHelpDelegate?.Invoke(e, additionalInfo, path, lineNumber, methodName);
+            if (IsRequestUserHelpEnabled && RequestHelpDelegate is Func<Exception, string, string, int, string, Task> d)
+            {
+                //Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(async () =>
+                    await d(e, additionalInfo, path, lineNumber, methodName);
+            }
         }
 
     }

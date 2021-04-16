@@ -46,6 +46,7 @@ namespace P42.Utils
         }
 
         internal static IPlatformTimer PlatformTimer;
+        internal static Type PlatformLongRunningTaskType;
 
         static public void Init()
         {
