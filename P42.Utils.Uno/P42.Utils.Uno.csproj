@@ -4,24 +4,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;MonoAndroid10.0;</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;$(TargetFrameworks);</TargetFrameworks>
+
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Uno.UI.WebAssembly" Version="3.6.6" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-    <Compile Update="**\*.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-  </ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
-	</ItemGroup>
 	
 </Project>
