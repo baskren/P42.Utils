@@ -13,13 +13,13 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;</DefineConstants>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <DefineConstants>TRACE;RELEASE;</DefineConstants>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,5 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Collections\" />
+    <Folder Include="Animation\" />
   </ItemGroup>
 </Project>

@@ -71,7 +71,7 @@ namespace P42.Utils
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null, [CallerFilePath] string callerPath = null)
+        protected bool SetField<T>(ref T field, T value, Action action = null, [CallerMemberName] string propertyName = null, [CallerFilePath] string callerPath = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
                 return false;
@@ -80,6 +80,7 @@ namespace P42.Utils
 
             field = value;
             HasChanged = true;
+            action?.Invoke();
             OnPropertyChanged(propertyName);
             return true;
         }
