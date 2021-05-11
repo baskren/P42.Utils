@@ -5,7 +5,17 @@ namespace P42.Utils
 {
     public static class Threading
     {
-        public static Task<T> InvokeInBackgroundAsync<T> (Func<Task<T>> funcTask)
+		public static void AppleMainThread(Action action)
+		{
+			if (action is null)
+				return;
+			if (Xamarin.Essentials.DeviceInfo.Platform == Xamarin.Essentials.DevicePlatform.iOS)
+				Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(action);
+			else
+				action.Invoke();
+		}
+
+		public static Task<T> InvokeInBackgroundAsync<T> (Func<Task<T>> funcTask)
         {
 			if (!Xamarin.Essentials.MainThread.IsMainThread)
 			{
