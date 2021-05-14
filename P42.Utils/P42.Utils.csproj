@@ -9,18 +9,23 @@
     <Company>42nd Parallel</Company>
     <Product>P42.Utils</Product>
     <Copyright>2017 42nd Parallel</Copyright>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;</DefineConstants>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <DefineConstants>TRACE;RELEASE;</DefineConstants>
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <NoWarn>Uno0001;1701;1702;1705;VSX1000</NoWarn>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+		<DefineConstants>TRACE;DEBUG;$(DefineConstants)</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+		<DefineConstants>RELEASE;$(DefineConstants)</DefineConstants>
+	</PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
