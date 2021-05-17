@@ -16,7 +16,7 @@ namespace P42.Utils.Uno
 {
     public static class ListViewExtensions
     {
-		public static ScrollViewer GetScrollViewer(DependencyObject depObj)
+		public static ScrollViewer GetScrollViewer(this DependencyObject depObj)
 		{
 			var obj = depObj as ScrollViewer;
 			if (obj != null) return obj;
