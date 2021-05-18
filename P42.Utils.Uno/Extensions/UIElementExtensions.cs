@@ -1,4 +1,6 @@
-﻿using Java.Interop;
+﻿#if __ANDROID__
+using Java.Interop;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
