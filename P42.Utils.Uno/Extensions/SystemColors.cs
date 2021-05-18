@@ -81,6 +81,15 @@ namespace P42.Utils.Uno
         public static Color ListMedium 
             => ColorExtensions.AppColor("SystemListMediumColor");
 
+        public static Color ListAccentLow
+            => ColorExtensions.AppColor("SystemListAccentLowColor");
+
+        public static Color ListAccentMedium
+            => ColorExtensions.AppColor("SystemListAccentMediumColor");
+
+        public static Color ListAccentHigh
+            => ColorExtensions.AppColor("SystemListAccentHighColor");
+
         public static Color ColorButtonFace 
             => ColorExtensions.AppColor("SystemColorButtonFaceColor");
 
