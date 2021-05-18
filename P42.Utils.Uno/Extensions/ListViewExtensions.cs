@@ -89,7 +89,7 @@ namespace P42.Utils.Uno
 		}
 
 #if !NETSTANDARD
-		static bool InternalScrollToItemWithAnimation(ListView list, object item)
+		static bool InternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 		{
 			if (GetScrollViewer(list) is ScrollViewer viewer)
 			{
@@ -99,7 +99,15 @@ namespace P42.Utils.Uno
 				if (!position.HasValue)
 					return false;
 				// scroll with animation
-				viewer.ChangeView(position.Value.X, position.Value.Y, null);
+				var containerHeight = selectorItem.DesiredSize.Height;
+				var viewportHeight = viewer.ViewportHeight;
+
+				var offset = 0.0;
+				if (toPosition == ScrollToPosition.Center)
+					offset = (viewportHeight - containerHeight) / 2.0;
+				else if (toPosition == ScrollToPosition.End)
+					offset = viewportHeight - containerHeight;
+				viewer.ChangeView(position.Value.X, position.Value.Y - offset, null);
 				return true;
 			}
 			return false;
@@ -111,7 +119,7 @@ namespace P42.Utils.Uno
 			if (GetScrollViewer(list) is ScrollViewer viewer)
 			{ 
 				// scroll to desired item with animation
-				if (shouldAnimate && InternalScrollToItemWithAnimation(list, item))
+				if (shouldAnimate && InternalScrollToItemWithAnimation(list, item, toPosition))
 					return;
 
 				var viewportHeight = viewer.ViewportHeight;
