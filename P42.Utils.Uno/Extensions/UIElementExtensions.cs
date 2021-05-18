@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Java.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,42 @@ namespace P42.Utils.Uno
         public static bool HasPrescribedWidth(this FrameworkElement element) => !double.IsNaN(element.Width) && element.Width >= 0;
         public static bool HasPrescribedHeight(this FrameworkElement element) => !double.IsNaN(element.Height) && element.Height >= 0;
 
+#if __ANDROID__
 
+        static double _scale = -1;
+        static double DisplayScale
+        {
+            get
+            {
+                if (_scale > 0)
+                    return _scale;
+                using var displayMetrics = new Android.Util.DisplayMetrics();
+                using var service = global::Uno.UI.ContextHelper.Current.GetSystemService(Android.Content.Context.WindowService);
+                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
+                var display = windowManager?.DefaultDisplay;
+                display?.GetRealMetrics(displayMetrics);
+                _scale = (double)displayMetrics?.Density;
+                return _scale;
+            }
+        }
+
+        public static Rect GetBounds(this UIElement element)
+        {
+            if (element is Android.Views.View view)
+            {
+                int[] nativeLocation = new int[2];
+                //view.GetLocationOnScreen(nativeLocation);
+                view.GetLocationInWindow(nativeLocation);
+                var x = nativeLocation[0] / DisplayScale;
+                var y = nativeLocation[1] / DisplayScale;
+                return new Rect(x, y, element.ActualSize.X, element.ActualSize.Y);
+            }
+            var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+            var location = ttv.TransformPoint(new Point(0, 0));
+            return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
+        }
+
+#else
         public static Rect GetBounds(this FrameworkElement element)
         {
             var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
@@ -31,6 +67,7 @@ namespace P42.Utils.Uno
             var location = ttv.TransformPoint(new Point(0, 0));
             return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
         }
+#endif
 
         public static Rect GetBoundsRelativeTo(this FrameworkElement element, UIElement relativeToElement)
         {
