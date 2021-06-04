@@ -12,6 +12,34 @@ namespace P42.Utils
 {
     public class ObservableConcurrentCollection<T> : ObservableCollection<T>, IEnumerable
     {
+        bool _allowDuplicates = true;
+        public bool AllowDuplicates
+        {
+            get => _allowDuplicates;
+            set
+            {
+                if (_allowDuplicates != value)
+                {
+                    _allowDuplicates = value;
+                    if (!_allowDuplicates)
+                    {
+                        lock (_lock)
+                        {
+                            for (int i = 0; i < Count - 1; i++)
+                            {
+                                var item = this[i];
+                                for (int j = Count - 1; j > i; j--)
+                                {
+                                    if (item.Equals(this[j]))
+                                        base.RemoveItem(j);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         protected object _lock = new object();
 
         protected override void ClearItems()
@@ -36,6 +64,8 @@ namespace P42.Utils
 
         protected override void InsertItem(int index, T item)
         {
+            if (!AllowDuplicates && Contains(item))
+                return;
             lock (_lock)
             {
                 if (index > Count)
@@ -54,6 +84,8 @@ namespace P42.Utils
 
         protected override void SetItem(int index, T item)
         {
+            if (!AllowDuplicates && Contains(item))
+                return;
             lock (_lock)
             {
                 if (index > Count)
@@ -100,7 +132,11 @@ namespace P42.Utils
         {
             var count = Count;
             foreach (var item in range)
+            {
+                if (!AllowDuplicates && Contains(item))
+                    continue;
                 base.InsertItem(count++, item);
+            }
         }
 
         public virtual NotifyCollectionChangedEventArgs RemoveRange(IEnumerable<T> range)
