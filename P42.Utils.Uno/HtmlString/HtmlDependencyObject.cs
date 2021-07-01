@@ -329,7 +329,7 @@ namespace P42.Utils.Uno
             if (string.IsNullOrWhiteSpace(text) || text == htmlSpans?.Text)
             {
                 // there isn't any markup!
-                textBlock.Text = text ?? "";
+                textBlock.Text = text ?? string.Empty;
                 return;
             }
 
