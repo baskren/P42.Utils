@@ -615,7 +615,7 @@ namespace P42.Utils.Uno
                                     }
                                     else
                                     {
-                                        throw new FormatException("style=\"font-wieght: " + strs[1] + ";\" not supported");
+                                        throw new FormatException("style=\"font-Weight: " + strs[1] + ";\" not supported");
                                     }
                                     break;
                                 case "font-style":
