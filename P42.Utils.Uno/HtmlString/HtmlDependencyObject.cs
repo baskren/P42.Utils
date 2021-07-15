@@ -339,11 +339,13 @@ namespace P42.Utils.Uno
                 tColor = tBrush.Color;
             }
 
+            /*
             System.Diagnostics.Debug.WriteLine("TextBlockExtensions.SetAndFormatText: textColor: " + (textBlock.Foreground is null ? "null" : tColor.ToHexArgbColorString()));
             if (tColor == default)
             {
                 System.Diagnostics.Debug.WriteLine("TextBlockExtensions.SetAndFormatText fallbackColor: " + SystemColors.WindowTextColor.ToHexArgbColorString());
             }
+            */
 
             #region Layout font-spans (MetaFonts)
             var metaFonts = new List<MetaFont>();

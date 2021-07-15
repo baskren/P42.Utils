@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace P42.Utils
@@ -20,6 +21,40 @@ namespace P42.Utils
             {
                 if (iList.Contains(item))
                     iList.Remove(item);
+            }
+        }
+
+        public static void SyncWith<T>(this IList<T> iList, IList<T> source, bool reversed = false)
+        {
+            if (source is null)
+            {
+                iList.Clear();
+                return;
+            }    
+            foreach (var item in iList.ToArray())
+            {
+                if (!source.Contains(item))
+                    iList.Remove(item);
+            }
+            if (reversed)
+                source = source.Reverse().ToList();
+            for (int i=0; i < source.Count; i++)
+            {
+                var item = source[i];
+                if (iList.Count <= i || !ReferenceEquals(iList[i], item))
+                {
+                    var currentIndex = iList.IndexOf(item);
+                    if (currentIndex >= 0)
+                    {
+                        if (i != currentIndex)
+                        {
+                            iList.Remove(item);
+                            iList.Insert(i, item);
+                        }
+                    }
+                    else
+                        iList.Insert(i, item);
+                }
             }
         }
     }
