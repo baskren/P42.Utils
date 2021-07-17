@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>MonoAndroid10.0;</TargetFrameworks>
+    
   </PropertyGroup>
 	
 </Project>

@@ -10,6 +10,7 @@
     <Product>P42.Utils</Product>
     <Copyright>2017 42nd Parallel</Copyright>
     <LangVersion>7.1</LangVersion>
+    
   </PropertyGroup>
 
 
