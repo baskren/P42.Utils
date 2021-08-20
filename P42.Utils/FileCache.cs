@@ -118,7 +118,7 @@ namespace P42.Utils
 
 
         public static bool Clear(string sourceFilePath = null, string folderName = null)
-            => Clear(DateTime.MinValue, sourceFilePath, folderName);
+            => Clear(DateTime.MinValue.AddYears(1), sourceFilePath, folderName);
 
         public static bool Clear(TimeSpan timeSpan, string sourceFilePath = null, string folderName = null)
             => Clear(DateTime.Now - timeSpan, sourceFilePath, folderName);

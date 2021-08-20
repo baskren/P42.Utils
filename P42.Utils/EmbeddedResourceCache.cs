@@ -107,7 +107,7 @@ namespace P42.Utils
         }
 
         public static bool Clear(string resourceId = null, Assembly assembly = null, string folderName = null)
-            => Clear(DateTime.MinValue, resourceId, assembly, folderName);
+            => Clear(DateTime.MinValue.AddYears(1), resourceId, assembly, folderName);
 
         public static bool Clear(TimeSpan timeSpan, string resourceId = null, Assembly assembly = null, string folderName = null)
             => Clear(DateTime.Now - timeSpan, resourceId, assembly, folderName);

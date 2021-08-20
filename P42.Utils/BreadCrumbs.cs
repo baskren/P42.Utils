@@ -105,7 +105,7 @@ namespace P42.Utils
         }
 
         public static bool Clear()
-            => Clear(DateTime.MinValue);
+            => Clear(DateTime.MinValue.AddYears(1));
 
         public static bool Clear(TimeSpan timeSpan)
             => Clear(DateTime.Now - timeSpan);
