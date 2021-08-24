@@ -53,9 +53,28 @@ namespace P42.Utils.Uno
             return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
         }
 
+#elif __IOS__ || __MACOS__
+
+        public static Rect GetBounds(this FrameworkElement element)
+        {
+
+            //var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+            //var location = ttv.TransformPoint(new Point(0, 0));
+            var rect = element.ConvertRectToView(element.Bounds, null);
+            return new Rect(rect.X, rect.Y, rect.Width,rect.Height);
+        }
+
+        public static Rect GetBounds(this UIElement element)
+        {
+            var rect = element.ConvertRectToView(element.Bounds, null);
+            return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+
 #else
         public static Rect GetBounds(this FrameworkElement element)
         {
+
             var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
             var location = ttv.TransformPoint(new Point(0, 0));
             return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
