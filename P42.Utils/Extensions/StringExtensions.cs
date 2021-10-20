@@ -32,10 +32,11 @@ namespace P42.Utils
                 .ToArray());
         }
 
-        static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        static System.Security.Cryptography.MD5 _md5;
+        static System.Security.Cryptography.MD5 MD5 => _md5 = _md5 ?? System.Security.Cryptography.MD5.Create();
         internal static string ToMd5HashString(this string source)
         {
-            var hash = _md5.ComputeHash(Encoding.UTF8.GetBytes(source));
+            var hash = MD5.ComputeHash(Encoding.UTF8.GetBytes(source));
             var sBuilder = new StringBuilder();
 
             for (int i = 0; i < hash.Length; i++)
