@@ -616,5 +616,12 @@ namespace P42.Utils.Uno
             throw new Exception("color not found in Application.Current.Resources for key [" + key + "]. ");
         }
 
+
+        public static Color AsColor(this Brush brush)
+        {
+            if (brush is SolidColorBrush colorBrush)
+                return colorBrush.Color;
+            return default(Color);
+        }
     }
 }

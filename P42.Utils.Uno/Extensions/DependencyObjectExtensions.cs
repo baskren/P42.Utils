@@ -16,11 +16,11 @@ namespace P42.Utils.Uno
 		//const string bindingContextPath = Binding.SelfPath;
 
 		/// <summary>Bind to a specified property</summary>
-		public static TBindable Bind<TBindable>(
+		public static TBindable		Bind<TBindable>(
 			this TBindable target,
 			DependencyProperty targetProperty,
 			object source,
-			string path = null,
+			string path,
 			BindingMode mode = BindingMode.OneWay,
 			IValueConverter converter = null,
 			object converterParameter = null,
@@ -30,29 +30,30 @@ namespace P42.Utils.Uno
 			object fallbackValue = null, [CallerFilePath] string filePath = null, [CallerLineNumber] int lineNumber = -1
 		) where TBindable : DependencyObject
 		{
-			//if (targetProperty.GetMetadata(target.GetType()) is PropertyMetadata metaData 
-			//	&& metaData.DefaultValue.GetType() is Type type
-			//	&& type.FullName != "System.__ComObject")
+			var binding = new Binding
 			{
-
-				var binding = new Binding
-				{
-					Source = source,
-					Mode = mode,
-					Converter = converter,
-					ConverterParameter = converterParameter,
-					UpdateSourceTrigger = updateSourceTrigger,
-					TargetNullValue = targetNullValue,
-					FallbackValue = fallbackValue
-				};
-				if (!string.IsNullOrWhiteSpace(converterLanguage))
-					binding.ConverterLanguage = converterLanguage;
-				if (!string.IsNullOrWhiteSpace(path))
-					binding.Path = new PropertyPath(path);
-				BindingOperations.SetBinding(target, targetProperty, binding);
+				Source = source,
+				Mode = mode,
+				Converter = converter,
+				ConverterParameter = converterParameter,
+				UpdateSourceTrigger = updateSourceTrigger,
+				TargetNullValue = targetNullValue,
+				FallbackValue = fallbackValue
+			};
+			if (!string.IsNullOrWhiteSpace(converterLanguage))
+				binding.ConverterLanguage = converterLanguage;
+			if (!string.IsNullOrWhiteSpace(path))
+				binding.Path = new PropertyPath(path);
+#if WINDOWS_UWP
+			if (target is FrameworkElement element)
+			{
+				//element.ClearValue();
+				element.SetBinding(targetProperty, binding);
+				return target;
 			}
-			//else
-				//Console.WriteLine("Ignoreing Bind because cannot find PropertyMetaData for binding target["+target+"] targetProperty["+targetProperty+"] source["+source+"] and path["+path+"] at line["+lineNumber+"] in file["+filePath+"].");
+#endif
+			target.ClearValue(targetProperty);
+			BindingOperations.SetBinding(target, targetProperty, binding);
 			return target;
 		}
 
@@ -87,6 +88,15 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
+#if WINDOWS_UWP
+			if (target is FrameworkElement element)
+			{
+				//element.ClearValue();
+				element.SetBinding(targetProperty, binding);
+				return target;
+			}
+#endif
+			target.ClearValue(targetProperty);
 			BindingOperations.SetBinding(target, targetProperty, binding);
 			return target;
 		}
@@ -122,6 +132,16 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
+
+#if WINDOWS_UWP
+			if (target is FrameworkElement element)
+            {
+				//element.ClearValue();
+				element.SetBinding(targetProperty, binding);
+				return target;
+            }
+#endif
+			target.ClearValue(targetProperty);
 			BindingOperations.SetBinding(target, targetProperty, binding);
 			return target;
 		}

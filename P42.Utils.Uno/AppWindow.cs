@@ -16,7 +16,7 @@ namespace P42.Utils.Uno
             //var windowHeight = ((Frame)Windows.UI.Xaml.Window.Current.Content).ActualHeight;
 
             var windowWidth = Windows.UI.Xaml.Window.Current.Bounds.Width;
-            var windowHeight = Windows.UI.Xaml.Window.Current.Bounds.Height - StatusBarHeight(element);
+            var windowHeight = Windows.UI.Xaml.Window.Current.Bounds.Height;
             return new Size(windowWidth, windowHeight);
         }
 
@@ -49,5 +49,25 @@ namespace P42.Utils.Uno
 #endif
             return 0;
         }
+
+        public static Thickness SafeArea(FrameworkElement element)
+        {
+            var result = new Thickness();
+            var winBounds = Windows.UI.Xaml.Window.Current.Bounds;
+            var pageBounds = Windows.UI.Xaml.Window.Current.Content.GetBounds();
+
+#if !WINDOWS_UWP
+            result.Left = pageBounds.Left - winBounds.Left;
+            result.Top = pageBounds.Top - winBounds.Top;
+            result.Right = winBounds.Right - pageBounds.Right;
+            result.Bottom = winBounds.Bottom - pageBounds.Bottom;
+#endif
+
+#if __iOS__
+#endif
+            return result;
+        }
+
+
     }
 }
