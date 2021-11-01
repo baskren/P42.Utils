@@ -126,5 +126,29 @@ namespace P42.Utils.Uno
             System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDatatemplate: markup: " + markup);
             return (DataTemplate)XamlReader.Load(markup);
         }
+
+#if __WASM__
+        public static UIElement GetFirstHtmlDescendent(this FrameworkElement element)
+        {
+            var enumerator = element.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                System.Console.WriteLine($"UIElementExtensions. enum.cur [{enumerator}] [{enumerator.Current.GetType()}] [{enumerator.Current.GetType().BaseType}]");
+                if (enumerator.Current is UIElement fe)
+                {
+                    System.Console.WriteLine($"UIElementExtensions. fe [{fe.GetHtmlAttribute("style")}]");
+                    /*
+                    foreach (var property in fe.GetProperties())
+                    {
+                        System.Console.WriteLine($"UIElementExtensions. property [{property.Name}] [{property.PropertyType}] [{property}] [{fe.GetPropertyValue(property.Name)}]");
+                    }
+                    */
+                    return fe;
+                }
+            }
+            System.Console.WriteLine($"UIElementExtensions. NOTHING");
+            return null;
+        }
+#endif
     }
 }
