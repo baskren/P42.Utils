@@ -18,10 +18,9 @@ namespace P42.Utils.Uno
     {
 		public static ScrollViewer GetScrollViewer(this DependencyObject depObj)
 		{
-			var obj = depObj as ScrollViewer;
-			if (obj != null) return obj;
+            if (depObj is ScrollViewer obj) return obj;
 
-			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
 			{
 				var child = VisualTreeHelper.GetChild(depObj, i);
 
@@ -191,14 +190,14 @@ namespace P42.Utils.Uno
 			}
 			else
 			{
-				RoutedEventHandler loadedHandler = null;
-				loadedHandler = async (o, e) =>
-				{
-					list.Loaded -= loadedHandler;
-					// Here we try to avoid an exception, see explanation at bottom
-					await list.Dispatcher.RunIdleAsync(args => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
-				};
-				list.Loaded += loadedHandler;
+                async void loadedHandler(object o, RoutedEventArgs e)
+                {
+                    list.Loaded -= loadedHandler;
+                    // Here we try to avoid an exception, see explanation at bottom
+                    await list.Dispatcher.RunIdleAsync(args => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
+                }
+
+                list.Loaded += loadedHandler;
 				return;
 			}
 

@@ -616,6 +616,15 @@ namespace P42.Utils.Uno
             throw new Exception("color not found in Application.Current.Resources for key [" + key + "]. ");
         }
 
+        public static Brush AppBrush(string key)
+        {
+            var obj = Application.Current.Resources[key];
+            if (obj is Brush brush)
+                return brush;
+            if (obj is Color color)
+                return color.ToBrush();
+            throw new Exception("Brush not found in Application.Current.Resources for key [" + key + "]. ");
+        }
 
         public static Color AsColor(this Brush brush)
         {

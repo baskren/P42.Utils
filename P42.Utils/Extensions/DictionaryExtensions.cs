@@ -52,5 +52,8 @@ namespace P42.Utils
             key = default;
             return false;
         }
+
+        public static IDictionary<TKey,TValue> FluintAdd<TKey,TValue>(this IDictionary<TKey,TValue> dict, TKey key, TValue value)
+        { dict.Add(key, value); return dict; }
     }
 }
