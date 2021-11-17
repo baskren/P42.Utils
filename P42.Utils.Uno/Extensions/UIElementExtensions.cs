@@ -118,7 +118,7 @@ namespace P42.Utils.Uno
         public static bool IsCollapsed(this UIElement element)
             => element.Visibility == Visibility.Collapsed;
 
-        public static string AsDataTemplateXaml(this Type templateType, Type dataType = null)
+        public static string AsDataTemplateXaml(this Type templateType)
         {
             if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
                 throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
@@ -134,18 +134,11 @@ namespace P42.Utils.Uno
             return markup;
         }
 
-        public static DataTemplate AsDataTemplate(this Type templateType, Type dataType = null)
+        public static DataTemplate AsDataTemplate(this Type templateType)
         {
             if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
                 throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
-            string markup = string.Empty;
-            //if (dataType is null)
-                markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
-            //if (dataType.Namespace == typeof(Type).Namespace)
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" xmlns:tlocal=\"using:{templateType.Namespace}\" xmlns:system=\"using:System\" x:DataType=\"system:{dataType.Name}\"><tlocal:{templateType.Name} /></DataTemplate>";
-            //else
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:tlocal=\"using:{templateType.Namespace}\" \n\t xmlns:dlocal=\"using:{dataType.Namespace}\" \n\t x:DataType=\"dlocal:{dataType.Name}\"> \n\t\t<tlocal:{templateType.Name} /> \n</DataTemplate>";
-            System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDatatemplate: markup: " + markup);
+            var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
             var template = (DataTemplate)XamlReader.Load(markup);
             //template.
             return template;
