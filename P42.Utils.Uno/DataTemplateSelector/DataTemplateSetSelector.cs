@@ -109,13 +109,6 @@ namespace P42.Utils.Uno
 
         public bool IsReadOnly => false;
 
-        public void AddGeneric(Type key, DataTemplate value)
-        {
-            if (key.IsGenericType)
-                key = key.GetGenericTypeDefinition();
-            Add(key, value);
-        }
-
         public void Add(Type key, DataTemplate value)
         {
             if (key is null)
@@ -129,14 +122,14 @@ namespace P42.Utils.Uno
                 ItemTemplateSets.Remove(key);
         }
 
-        public void Add(Type key, Type value)
-            => Add(key, (DataTemplate)value?.AsDataTemplate());
+        //public void Add(Type key, Type value)
+        //    => Add(key, (DataTemplate)value?.AsDataTemplate());
 
         public void Add(KeyValuePair<Type, DataTemplate> item)
             => Add(item.Key, item.Value);
 
-        public void Add(KeyValuePair<Type, Type> item)
-            => Add(item.Key, item.Value);
+        //public void Add(KeyValuePair<Type, Type> item)
+        //    => Add(item.Key, item.Value);
 
         public void Clear()
             => ItemTemplateSets.Clear();
