@@ -62,9 +62,6 @@ namespace P42.Utils.Uno
             return null;
         }
 
-        //protected virtual DataTemplateSet<SelectorItem> SelectDataTemplateSet(object item)
-        //    => SelectDataTemplateSet(item?.GetType());
-
         protected virtual DataTemplateSet<SelectorItem> SelectDataTemplateSet(Type type)
         {
             if (type is null)
@@ -85,14 +82,6 @@ namespace P42.Utils.Uno
             else
                 return NoMatchTemplateSet;
         }
-
-        public virtual void AddTemplate(Type dataType, DataTemplate template)
-            => ItemTemplateSets.Add(dataType, new DataTemplateSet<SelectorItem>(dataType, template));
-
-        public virtual void AddTemplate(Type dataType, Type templateType)
-            => AddTemplate(dataType, templateType.AsDataTemplate());
-        
-
 
         public DataTemplate this[Type key]
         {
@@ -120,6 +109,13 @@ namespace P42.Utils.Uno
 
         public bool IsReadOnly => false;
 
+        public void AddGeneric(Type key, DataTemplate value)
+        {
+            if (key.IsGenericType)
+                key = key.GetGenericTypeDefinition();
+            Add(key, value);
+        }
+
         public void Add(Type key, DataTemplate value)
         {
             if (key is null)
@@ -145,7 +141,6 @@ namespace P42.Utils.Uno
         public void Clear()
             => ItemTemplateSets.Clear();
 
-
         public bool Contains(KeyValuePair<Type, DataTemplate> item)
             => ItemTemplateSets.Contains(item);
 
@@ -157,7 +152,6 @@ namespace P42.Utils.Uno
 
         public IEnumerator<KeyValuePair<Type, DataTemplate>> GetEnumerator()
             => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplate>(s.Key, s.Value.Template)).GetEnumerator();
-
 
         public bool Remove(Type key)
         {
