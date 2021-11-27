@@ -13,6 +13,23 @@ namespace P42.Utils.Uno
     // https://docstaging.z5.web.core.windows.net/aleader/toolkit-7/design/controls-and-patterns/xaml-theme-resources.html#the-xaml-color-ramp-and-theme-dependent-brushes
     public static class SystemColors
     {
+        #region Custom
+        public static Color ListViewHeaderBackgroundColor
+        {
+            get
+            {
+                if (BaseHigh.R == 0)
+                    return Color.FromArgb(0xFF, 0x99, 0x99, 0x99);
+                return Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
+            }
+        }
+
+        public static Color ListViewCellBackgroundColor
+            => AltHigh;
+
+        public static Color PageBackgroundColor
+            => AltHigh;
+        #endregion
         // Light: 0xFFFFFFFF Dark: 0xFF000000
         public static Color AltHigh
             => ColorExtensions.AppColor("SystemAltHighColor");
