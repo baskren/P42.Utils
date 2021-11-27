@@ -150,10 +150,10 @@ namespace P42.Utils.Uno
             var enumerator = element.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                System.Console.WriteLine($"UIElementExtensions. enum.cur [{enumerator}] [{enumerator.Current.GetType()}] [{enumerator.Current.GetType().BaseType}]");
+                //System.Console.WriteLine($"UIElementExtensions. enum.cur [{enumerator}] [{enumerator.Current.GetType()}] [{enumerator.Current.GetType().BaseType}]");
                 if (enumerator.Current is UIElement fe)
                 {
-                    System.Console.WriteLine($"UIElementExtensions. fe [{fe.GetHtmlAttribute("style")}]");
+                    //System.Console.WriteLine($"UIElementExtensions. fe [{fe.GetHtmlAttribute("style")}]");
                     /*
                     foreach (var property in fe.GetProperties())
                     {
@@ -163,7 +163,7 @@ namespace P42.Utils.Uno
                     return fe;
                 }
             }
-            System.Console.WriteLine($"UIElementExtensions. NOTHING");
+            //System.Console.WriteLine($"UIElementExtensions. NOTHING");
             return null;
         }
 #endif
