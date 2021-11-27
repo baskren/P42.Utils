@@ -11,12 +11,12 @@
 	<PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <NoWarn>Uno0001;1701;1702;1705;VSX1000</NoWarn>
 		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
+		<DebugType>portable</DebugType>
     <Optimize>false</Optimize>
 		<DefineConstants>TRACE;DEBUG;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
 		<DefineConstants>RELEASE;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
