@@ -51,7 +51,9 @@ namespace P42.Utils.Uno
 
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            var type = item.GetType();
+            var type = item?.GetType();
+            if (type is null)
+                return NullTemplateSet?.Template;
             if (CachedTemplates.TryGetValue(type, out DataTemplate template))
                 return template;
             if (SelectDataTemplateSet(type) is DataTemplateSet<SelectorItem> templateItem)
