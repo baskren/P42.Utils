@@ -107,7 +107,7 @@ namespace P42.Utils
         }
 
 
-        static string NameOfCallingClass()
+        internal static string NameOfCallingClass()
         {
             string fullName;
             Type declaringType;

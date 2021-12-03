@@ -13,7 +13,8 @@ using ElementType = Windows.UI.Xaml.Controls.TextBlock;
 
 namespace P42.Utils.Uno
 {
-    [System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
+    [Windows.UI.Xaml.Data.Bindable]
+    //[System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
     public static class TextBlockExtensions
     {
         public static readonly DependencyProperty HtmlProperty =

@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 namespace P42.Utils.Uno
 {
     [Windows.UI.Xaml.Data.Bindable]
-    [System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
+    //[System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
     partial class HtmlDependencyObject : DependencyObject
     {
         /*
