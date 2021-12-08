@@ -8,74 +8,92 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace P42.Utils.Uno
 {
-    public class DataTemplateSetSelector : Windows.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplate>
+    public class DataTemplateSetSelector : Windows.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplateSet>
     {
         
-        DataTemplateSet<SelectorItem> NullTemplateSet { get; set; } = new DataTemplateSet<SelectorItem>(null, null);
+        DataTemplateSet NullTemplateSet { get; set; } = new DataTemplateSet(null, null);
 
-        public DataTemplate NullTemplate
+        /*
+        public DataTemplateSet NullTemplate
         {
             get => NullTemplateSet.Template;
             set => NullTemplateSet.Template = value;
         }
+        */
 
-        DataTemplateSet<SelectorItem> NoMatchTemplateSet { get; set; } = new DataTemplateSet<SelectorItem>(typeof(object), null);
+        DataTemplateSet NoMatchTemplateSet { get; set; } = new DataTemplateSet(typeof(object), null);
 
+        /*
         public DataTemplate NoMatchTemplate
         {
             get => NullTemplateSet.Template;
             set => NullTemplateSet.Template = value;
         }
+        */
 
+        //public virtual IEnumerable<DataTemplate> Templates => ItemTemplateSets.Values.Select(s=>s.Template);
 
-        public virtual IEnumerable<DataTemplate> Templates => ItemTemplateSets.Values.Select(s=>s.Template);
+        Dictionary<Type, DataTemplateSet> CachedTemplates;
 
-        Dictionary<Type, DataTemplate> CachedTemplates = new Dictionary<Type, DataTemplate>();
-
-        protected Dictionary<Type, DataTemplateSet<SelectorItem>> ItemTemplateSets;
+        protected Dictionary<Type, DataTemplateSet> ItemTemplateSets;
 
         public DataTemplateSetSelector()
         {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet<SelectorItem>>();
+            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>();
+            CachedTemplates = new Dictionary<Type, DataTemplateSet>();
         }
 
-        public DataTemplateSetSelector(Dictionary<Type, DataTemplateSet<SelectorItem>> itemTemplates)
+        public DataTemplateSetSelector(Dictionary<Type, DataTemplateSet> itemTemplates)
         {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet<SelectorItem>>(itemTemplates);
+            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>(itemTemplates);
         }
 
         public DataTemplateSetSelector(DataTemplateSetSelector selector)
         {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet<SelectorItem>>(selector.ItemTemplateSets);
+            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>(selector.ItemTemplateSets);
+            CachedTemplates = new Dictionary<Type, DataTemplateSet>(selector.CachedTemplates);
+        }
+
+        public UIElement GetUIElement(object item)
+        {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var set = SelectDataTemplateSet(item);
+            var element = set.Constructor.Invoke();
+            System.Diagnostics.Debug.WriteLine($"DataTemplateSet.GetUIElement: [{stopwatch.ElapsedMilliseconds}] [{item}]");
+            stopwatch.Stop();
+            return element;
         }
 
         protected override DataTemplate SelectTemplateCore(object item)
+            => SelectDataTemplateSet(item)?.Template;
+
+        public virtual DataTemplateSet SelectDataTemplateSet(object item)
         {
             var type = item?.GetType();
             if (type is null)
-                return NullTemplateSet?.Template;
-            if (CachedTemplates.TryGetValue(type, out DataTemplate template))
-                return template;
-            if (SelectDataTemplateSet(type) is DataTemplateSet<SelectorItem> templateItem)
+                return NullTemplateSet;
+            if (CachedTemplates.TryGetValue(type, out DataTemplateSet templateSet))
+                return templateSet;
+            if (SelectDataTemplateSetCore(type) is DataTemplateSet templateSetItem)
             {
-                CachedTemplates.Add(type, templateItem.Template);
-                return templateItem.Template;
+                CachedTemplates.Add(type, templateSetItem);
+                return templateSetItem;
             }
             return null;
         }
 
-        protected virtual DataTemplateSet<SelectorItem> SelectDataTemplateSet(Type type)
+        protected virtual DataTemplateSet SelectDataTemplateSetCore(Type type)
         {
             if (type is null)
                 return NullTemplateSet;
             //var typeString = type.ToString();
-            if (ItemTemplateSets.TryGetValue(type, out DataTemplateSet<SelectorItem> exactMatch))
+            if (ItemTemplateSets.TryGetValue(type, out DataTemplateSet exactMatch))
                 return exactMatch;
             if (type.IsConstructedGenericType)
             {
                 var genericSourceType = type.GetGenericTypeDefinition();
                 //var genericTypeString = genericSourceType.ToString();
-                if (ItemTemplateSets.TryGetValue(genericSourceType, out DataTemplateSet<SelectorItem> genericMatch))
+                if (ItemTemplateSets.TryGetValue(genericSourceType, out DataTemplateSet genericMatch))
                     return genericMatch;
             }
             var baseType = type.BaseType;
@@ -85,18 +103,18 @@ namespace P42.Utils.Uno
                 return NoMatchTemplateSet;
         }
 
-        public DataTemplate this[Type key]
+        public DataTemplateSet this[Type key]
         {
             get
             {
-                if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet<SelectorItem> value))
-                    return value.Template;
+                if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet value))
+                    return value;
                 return null;
             }
             set
             {
                 if (value != null)
-                    ItemTemplateSets[key] = new DataTemplateSet<SelectorItem>(key, value);
+                    ItemTemplateSets[key] = value;
                 else if (ItemTemplateSets.ContainsKey(key))
                     ItemTemplateSets.Remove(key);
             }
@@ -105,54 +123,51 @@ namespace P42.Utils.Uno
 
         public ICollection<Type> Keys => ItemTemplateSets.Keys;
 
-        public ICollection<DataTemplate> Values => ItemTemplateSets.Values.Select(s=>s.Template).ToList();
+        public ICollection<DataTemplateSet> Values => ItemTemplateSets.Values;
 
         public int Count => ItemTemplateSets.Count;
 
         public bool IsReadOnly => false;
 
-        public void Add(Type key, DataTemplate value)
+        public void Add(Type key, DataTemplateSet set)
         {
             if (key is null)
             {
-                NullTemplate = value;
+                NullTemplateSet = set;
                 return;
             }
-            if (value != null)
-                ItemTemplateSets[key] = new DataTemplateSet<SelectorItem>(key, value);
+            if (set != null)
+                ItemTemplateSets[key] = set;
             else if (ItemTemplateSets.ContainsKey(key))
                 ItemTemplateSets.Remove(key);
         }
 
-        //public void Add(Type key, Type value)
-        //    => Add(key, (DataTemplate)value?.AsDataTemplate());
+        public void Add(Type key, Type value, Func<UIElement> constructor = null)
+            => Add(key, new DataTemplateSet(key, value, constructor));
 
-        public void Add(KeyValuePair<Type, DataTemplate> item)
+        public void Add(KeyValuePair<Type, DataTemplateSet> item)
             => Add(item.Key, item.Value);
-
-        //public void Add(KeyValuePair<Type, Type> item)
-        //    => Add(item.Key, item.Value);
 
         public void Clear()
             => ItemTemplateSets.Clear();
 
-        public bool Contains(KeyValuePair<Type, DataTemplate> item)
+        public bool Contains(KeyValuePair<Type, DataTemplateSet> item)
             => ItemTemplateSets.Contains(item);
 
         public bool ContainsKey(Type key)
             => ItemTemplateSets.ContainsKey(key);
 
-        public void CopyTo(KeyValuePair<Type, DataTemplate>[] array, int arrayIndex)
-        => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplate>(s.Key, s.Value.Template)).ToArray().CopyTo(array, arrayIndex);
+        public void CopyTo(KeyValuePair<Type, DataTemplateSet>[] array, int arrayIndex)
+            => ItemTemplateSets.ToArray().CopyTo(array, arrayIndex);
 
-        public IEnumerator<KeyValuePair<Type, DataTemplate>> GetEnumerator()
-            => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplate>(s.Key, s.Value.Template)).GetEnumerator();
+        public IEnumerator<KeyValuePair<Type, DataTemplateSet>> GetEnumerator()
+            => ItemTemplateSets.GetEnumerator();
 
         public bool Remove(Type key)
         {
-            if (key is null && NullTemplate != null)
+            if (key is null)
             {
-                NullTemplate = null;
+                NullTemplateSet = null;
                 return true;
             }
             else if (ItemTemplateSets.ContainsKey(key))
@@ -163,14 +178,14 @@ namespace P42.Utils.Uno
             return false;
         }
 
-        public bool Remove(KeyValuePair<Type, DataTemplate> item)
+        public bool Remove(KeyValuePair<Type, DataTemplateSet> item)
         {
-            if (item.Key is null && NullTemplate == item.Value)
+            if (item.Key is null && NullTemplateSet == item.Value)
             {
-                NullTemplate = null;
+                NullTemplateSet = null;
                 return true;
             }
-            else if (TryGetValue(item.Key, out DataTemplate value) && item.Value == value)
+            else if (TryGetValue(item.Key, out DataTemplateSet value) && item.Value == value)
             {
                 ItemTemplateSets.Remove(item.Key);
                 return true;
@@ -178,16 +193,16 @@ namespace P42.Utils.Uno
             return false;
         }
 
-        public bool TryGetValue(Type key, out DataTemplate value)
+        public bool TryGetValue(Type key, out DataTemplateSet value)
         {
             if (key is null)
             {
-                value = NullTemplate;
+                value = NullTemplateSet;
                 return true;
             }
-            if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet<SelectorItem> set))
+            if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet set))
             {
-                value = set.Template;
+                value = set;
                 return true;
             }
             value = null;
@@ -195,6 +210,6 @@ namespace P42.Utils.Uno
         }
 
         IEnumerator IEnumerable.GetEnumerator()
-            => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplate>(s.Key, s.Value.Template)).GetEnumerator();
+            => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplateSet>(s.Key, s.Value)).GetEnumerator();
     }
 }
