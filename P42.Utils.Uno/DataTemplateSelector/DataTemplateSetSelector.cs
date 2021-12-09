@@ -10,28 +10,9 @@ namespace P42.Utils.Uno
 {
     public class DataTemplateSetSelector : Windows.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplateSet>
     {
-        
-        DataTemplateSet NullTemplateSet { get; set; } = new DataTemplateSet(null, null);
+        NullDataTemplateSet NullTemplateSet { get; set; } = new NullDataTemplateSet();
 
-        /*
-        public DataTemplateSet NullTemplate
-        {
-            get => NullTemplateSet.Template;
-            set => NullTemplateSet.Template = value;
-        }
-        */
-
-        DataTemplateSet NoMatchTemplateSet { get; set; } = new DataTemplateSet(typeof(object), null);
-
-        /*
-        public DataTemplate NoMatchTemplate
-        {
-            get => NullTemplateSet.Template;
-            set => NullTemplateSet.Template = value;
-        }
-        */
-
-        //public virtual IEnumerable<DataTemplate> Templates => ItemTemplateSets.Values.Select(s=>s.Template);
+        DataTemplateSet NoMatchTemplateSet { get; set; } = new NullDataTemplateSet();
 
         Dictionary<Type, DataTemplateSet> CachedTemplates;
 
@@ -64,52 +45,91 @@ namespace P42.Utils.Uno
             return element;
         }
 
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            //return base.SelectTemplateCore(item, container);
+            //System.Console.WriteLine($"SelectTemplateCore ENTER {item} {container}");
+            var result = SelectDataTemplateSet(item)?.Template;
+            //System.Console.WriteLine($"SelectTemplateCore EXIT {item} {container}");
+            return result;
+        }
+
         protected override DataTemplate SelectTemplateCore(object item)
-            => SelectDataTemplateSet(item)?.Template;
+        {
+            //System.Console.WriteLine($"SelectTemplateCore ENTER {item}");
+            var result = SelectDataTemplateSet(item)?.Template;
+            //System.Console.WriteLine($"SelectTemplateCore EXIT {item}");
+            return result;
+        }
 
         public virtual DataTemplateSet SelectDataTemplateSet(object item)
         {
+            //System.Console.WriteLine($"SelectDataTemplateSet ENTER {item}");
             var type = item?.GetType();
             if (type is null)
+            {
+                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : A");
                 return NullTemplateSet;
+            }
             if (CachedTemplates.TryGetValue(type, out DataTemplateSet templateSet))
+            {
+                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : B");
                 return templateSet;
+            }
             if (SelectDataTemplateSetCore(type) is DataTemplateSet templateSetItem)
             {
+                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : C");
                 CachedTemplates.Add(type, templateSetItem);
                 return templateSetItem;
             }
+            //System.Console.WriteLine($"SelectDataTemplateSet EXIT : D");
             return null;
         }
 
         protected virtual DataTemplateSet SelectDataTemplateSetCore(Type type)
         {
+            System.Console.WriteLine($"SelectDataTemplateSetCore ENTER {type.Name}");
             if (type is null)
+            {
+                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : A {type.Name}");
                 return NullTemplateSet;
+            }
             //var typeString = type.ToString();
             if (ItemTemplateSets.TryGetValue(type, out DataTemplateSet exactMatch))
+            {
+                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : B {type.Name}");
                 return exactMatch;
+            }
             if (type.IsConstructedGenericType)
             {
                 var genericSourceType = type.GetGenericTypeDefinition();
                 //var genericTypeString = genericSourceType.ToString();
                 if (ItemTemplateSets.TryGetValue(genericSourceType, out DataTemplateSet genericMatch))
+                {
+                    System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : C {type.Name}");
                     return genericMatch;
+                }
             }
             var baseType = type.BaseType;
             if (baseType != null)
-                return SelectDataTemplateSet(baseType);
-            else
-                return NoMatchTemplateSet;
+            {
+                var result = SelectDataTemplateSetCore(baseType);
+                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : D {type.Name}");
+                return result;
+            }
+            System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : E {type.Name}");
+            return NoMatchTemplateSet;
         }
 
         public DataTemplateSet this[Type key]
         {
             get
             {
+                if (key is null)
+                    return NullTemplateSet;
                 if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet value))
                     return value;
-                return null;
+                return NoMatchTemplateSet;
             }
             set
             {
@@ -133,7 +153,9 @@ namespace P42.Utils.Uno
         {
             if (key is null)
             {
-                NullTemplateSet = set;
+                NullTemplateSet = new NullDataTemplateSet(set.TemplateType, set.Constructor);
+                if (set.Template != null)
+                    NullTemplateSet.Template = set.Template;
                 return;
             }
             if (set != null)
@@ -167,7 +189,7 @@ namespace P42.Utils.Uno
         {
             if (key is null)
             {
-                NullTemplateSet = null;
+                NullTemplateSet = new NullDataTemplateSet();
                 return true;
             }
             else if (ItemTemplateSets.ContainsKey(key))
@@ -180,12 +202,12 @@ namespace P42.Utils.Uno
 
         public bool Remove(KeyValuePair<Type, DataTemplateSet> item)
         {
-            if (item.Key is null && NullTemplateSet == item.Value)
+            if (item.Key is null && NullTemplateSet.TemplateType == item.Value.TemplateType)
             {
-                NullTemplateSet = null;
+                NullTemplateSet = new NullDataTemplateSet();
                 return true;
             }
-            else if (TryGetValue(item.Key, out DataTemplateSet value) && item.Value == value)
+            else if (TryGetValue(item.Key, out DataTemplateSet value) && item.Value.TemplateType == value.TemplateType)
             {
                 ItemTemplateSets.Remove(item.Key);
                 return true;
