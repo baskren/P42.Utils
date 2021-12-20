@@ -30,6 +30,9 @@ namespace P42.Utils.Uno
         public static Color PageBackgroundColor
             => AltHigh;
         #endregion
+
+
+        #region ALT
         // Light: 0xFFFFFFFF Dark: 0xFF000000
         public static Color AltHigh
             => ColorExtensions.AppColor("SystemAltHighColor");
@@ -49,7 +52,10 @@ namespace P42.Utils.Uno
         // Light: 0x66FFFFFF Dark: 0x66000000
         public static Color AltMediumLow 
             => ColorExtensions.AppColor("SystemAltMediumLowColor");
+        #endregion
 
+
+        #region BASE
         // Light: 0xFF000000 Dark 0xFFFFFFFF
         public static Color BaseHigh 
             => ColorExtensions.AppColor("SystemBaseHighColor");
@@ -69,7 +75,10 @@ namespace P42.Utils.Uno
         // Light: 0x66000000 Dark: 0x66FFFFFF
         public static Color BaseMediumLow 
             => ColorExtensions.AppColor("SystemBaseMediumLowColor");
+        #endregion
 
+
+        #region Chrome
         // Light: 0xFF171717 Dark: 0xFFF2F2F2
         public static Color ChromeAltLow 
             => ColorExtensions.AppColor("SystemChromeAltLowColor");
@@ -113,7 +122,10 @@ namespace P42.Utils.Uno
 
         public static Color ChromeWhite 
             => ColorExtensions.AppColor("SystemChromeWhiteColor");
+        #endregion
 
+
+        #region List
         public static Color ListLow 
             => ColorExtensions.AppColor("SystemListLowColor");
 
@@ -128,31 +140,47 @@ namespace P42.Utils.Uno
 
         public static Color ListAccentHigh
             => ColorExtensions.AppColor("SystemListAccentHighColor");
+        #endregion
 
+
+        #region Button
         public static Color ColorButtonFace 
             => ColorExtensions.AppColor("SystemColorButtonFaceColor");
 
         public static Color ColorButtonText 
             => ColorExtensions.AppColor("SystemColorButtonTextColor");
+        #endregion
 
+        #region Text
         public static Color ColorGrayText 
             => ColorExtensions.AppColor("SystemColorGrayTextColor");
+        #endregion
 
+        #region HighLight
         public static Color ColorHighlight 
             => ColorExtensions.AppColor("SystemColorHighlightColor");
 
         public static Color ColorHighlightText 
             => ColorExtensions.AppColor("SystemColorHighlightTextColor");
+        #endregion
 
+
+        #region HotLight
         public static Color ColorHotlight 
             => ColorExtensions.AppColor("SystemColorHotlightColor");
+        #endregion
 
+
+        #region Window
         public static Color WindowColor 
             => ColorExtensions.AppColor("SystemColorWindowColor");
 
         public static Color WindowTextColor 
             => ColorExtensions.AppColor("SystemColorWindowTextColor");
+        #endregion
 
+
+        #region Accent
         public static Color Accent 
             => ColorExtensions.AppColor("SystemAccentColor");
 
@@ -173,5 +201,7 @@ namespace P42.Utils.Uno
 
         public static Color AccentDark3
             => ColorExtensions.AppColor("SystemAccentColorDark3");
+        #endregion
+
     }
 }

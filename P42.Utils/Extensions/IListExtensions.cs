@@ -15,7 +15,7 @@ namespace P42.Utils
             }
         }
 
-        public static void RemoveRange<T>(this IList<T> iList, IList<T> range)
+        public static void RemoveRange<T>(this IList<T> iList, IEnumerable<T> range)
         {
             foreach (var item in range)
             {
@@ -55,6 +55,16 @@ namespace P42.Utils
                     else
                         iList.Insert(i, item);
                 }
+            }
+        }
+
+        public static void RemoveIf<T>(this IList<T> iList, Func<T, bool> conditional)
+        {
+            var items = iList.ToArray();
+            foreach (var item in items)
+            {
+                if (conditional.Invoke(item))
+                    iList.Remove(item);
             }
         }
     }

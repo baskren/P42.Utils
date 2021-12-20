@@ -83,6 +83,19 @@ namespace P42.Utils.Uno
         /// <param name="alpha">Alpha.</param>
         public static Color WithAlpha(this Color c, double alpha)
             => new Color { R = c.R, G = c.G, B = c.B, A = (byte)(alpha*255).Clamp(0, 255) };
+
+        public static Color AssureGesturable(this Color c)
+            => new Color { R = c.R, G = c.G, B = c.B, A = Math.Max((byte)0x1,c.A) };
+
+        public static Brush AssureGesturable(this Brush b)
+        {
+            if (b is SolidColorBrush scb)
+            {
+                var color = scb.Color;
+                return new SolidColorBrush(color.AssureGesturable());
+            }
+            return b;
+        }
         #endregion
 
 

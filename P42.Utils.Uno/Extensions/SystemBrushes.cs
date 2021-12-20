@@ -14,6 +14,7 @@ namespace P42.Utils.Uno
     // https://github.com/microsoft/microsoft-ui-xaml/blob/main/dev/CommonStyles/Button_themeresources.xaml
     public static class SystemBrushes
     {
+        #region Accent
         // Light: 0xFFFFFFFF Dark: 0xFF000000
         public static Brush AccentFill
             => ColorExtensions.AppBrush("AccentFillColorDefaultBrush");
@@ -26,7 +27,10 @@ namespace P42.Utils.Uno
 
         public static Brush AccentFillDisabled
             => ColorExtensions.AppBrush("AccentFillColorDisabledBrush");
+        #endregion
 
+
+        #region Text on Accent
         public static Brush TextOnAccentFillPrimary
             => ColorExtensions.AppBrush("TextOnAccentFillColorPrimaryBrush");
 
@@ -35,7 +39,10 @@ namespace P42.Utils.Uno
 
         public static Brush TextOnAccentFillDisabled
             => ColorExtensions.AppBrush("TextOnAccentFillColorDisabled");
+        #endregion
 
+
+        #region Control
         public static Brush AccentControlElevationBorder
             => ColorExtensions.AppBrush("AccentControlElevationBorderBrush");
 
@@ -54,6 +61,15 @@ namespace P42.Utils.Uno
         public static Brush ControlFillDisabled
             => ColorExtensions.AppBrush("ControlFillColorDisabledBrush");
 
+        public static Brush ControlElevationBorder
+            => ColorExtensions.AppBrush("ControlElevationBorderBrush");
+
+        public static Brush ControlStrokeDefault
+            => ColorExtensions.AppBrush("ControlStrokeColorDefaultBrush");
+        #endregion
+
+
+        #region Text
         public static Brush TextFillPrimary
             => ColorExtensions.AppBrush("TextFillColorPrimaryBrush");
 
@@ -63,38 +79,10 @@ namespace P42.Utils.Uno
         public static Brush TextFillDisabled
             => ColorExtensions.AppBrush("TextFillColorDisabledBrush");
 
-        public static Brush ControlElevationBorder
-            => ColorExtensions.AppBrush("ControlElevationBorderBrush");
+        public static Brush DefaultTextForeground
+            => ColorExtensions.AppBrush("DefaultTextForegroundThemeBrush");
+        #endregion
 
-        public static Brush ControlStrokeDefault
-            => ColorExtensions.AppBrush("ControlStrokeColorDefaultBrush");
-
-        public static Brush ControlHighlightAccent
-            => ColorExtensions.AppBrush("SystemControlHighlightAccentBrush");
-
-        public static Brush ControlForegroundAccent
-            => ColorExtensions.AppBrush("SystemControlForegroundAccentBrush");
-
-        public static Brush ControlBackgroundBaseMediumLow
-            => ColorExtensions.AppBrush("SystemControlBackgroundBaseMediumLowBrush");
-
-        public static Brush ControlBackgroundBaseLow
-            => ColorExtensions.AppBrush("SystemControlBackgroundBaseLowBrush");
-
-        public static Brush ControlHighlightAltAccent
-            => ColorExtensions.AppBrush("SystemControlHighlightAltAccentBrush");
-
-        public static Brush ControlBackgroundChromeWhite
-            => ColorExtensions.AppBrush("SystemControlBackgroundChromeWhiteBrush");
-
-        public static Brush ControlHighlightBaseHigh
-            => ColorExtensions.AppBrush("SystemControlHighlightBaseHighBrush");
-
-        public static Brush ControlDisabledBaseMediumLow
-            => ColorExtensions.AppBrush("SystemControlDisabledBaseMediumLowBrush");
-
-        public static Brush ControlHighlightBaseMediumLow
-            => ColorExtensions.AppBrush("SystemControlHighlightBaseMediumLowBrush");
 
     }
 }
