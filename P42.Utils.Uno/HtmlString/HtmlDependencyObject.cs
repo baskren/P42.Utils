@@ -307,7 +307,8 @@ namespace P42.Utils.Uno
 
 
         static readonly FontFamily MathMetaFontFamily = new FontFamily("ms-appx:///Assets/Fonts/STIXGeneral.otf#STIXGeneral"); //FontExtensions.GetFontFamily("STIXGeneral");
-        static readonly FontFamily ScriptFontFamily = new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI"); // new FontFamily("Segoe UI#Regular");
+        //static readonly FontFamily ScriptFontFamily = new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI"); // new FontFamily("Segoe UI#Regular");
+        static readonly FontFamily ScriptFontFamily = new FontFamily("Segoe UI#Regular");
 
         internal static void SetAndFormatText(TextBlock textBlock, HtmlSpans htmlSpans, double altFontSize = -1)
         {
