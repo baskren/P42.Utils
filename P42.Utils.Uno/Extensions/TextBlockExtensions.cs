@@ -66,6 +66,7 @@ namespace P42.Utils.Uno
                 catch (Exception)
                 {
                     // if anything goes wrong just show the html
+                    Console.WriteLine($"TextBlockExtensions.HtmlChanged Could not convert to Html [{text}]");
                     textBlock.Text = Windows.Data.Html.HtmlUtilities.ConvertToText(text);
                 }
             }
