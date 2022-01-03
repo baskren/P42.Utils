@@ -152,7 +152,7 @@ namespace P42.Utils
 
         public static bool ParseBool(this JsonReader reader)
         {
-            return (bool)reader.Value;
+            return (bool)(reader.Value ?? false);
         }
 
         public static double ReadDouble(this JsonReader reader)
