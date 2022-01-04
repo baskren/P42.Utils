@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace P42.Utils
@@ -103,7 +105,7 @@ namespace P42.Utils
         }
 
         public static bool Clear()
-            => Clear(DateTime.MinValue);
+            => Clear(DateTime.MinValue.AddYears(1));
 
         public static bool Clear(TimeSpan timeSpan)
             => Clear(DateTime.Now - timeSpan);
@@ -128,6 +130,32 @@ namespace P42.Utils
                 return filesRemaining;
             }
             return false;
+        }
+
+
+        public static void SplitProperties(Dictionary<string, string> breadcrumbs, int max = 125)
+        {
+            var keys = breadcrumbs.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                string property = null;
+                if (breadcrumbs?.TryGetValue(key, out property) ?? false)
+                {
+                    //if (!string.IsNullOrWhiteSpace(RedundantPath) && property.StartsWith(RedundantPath))
+                    //    property = property.Substring(_redundantPathLength);
+                    if (!string.IsNullOrWhiteSpace(property))
+                    {
+                        if (property.Length > max)
+                        {
+                            breadcrumbs[key] = property.Substring(0, max);
+                            for (int i = 1; i * max < property.Length; i++)
+                                breadcrumbs[key + "." + i] = property.Substring(i * max, Math.Min(max, property.Length - (i * max)));
+                        }
+                        else
+                            breadcrumbs[key] = property;
+                    }
+                }
+            }
         }
 
     }
