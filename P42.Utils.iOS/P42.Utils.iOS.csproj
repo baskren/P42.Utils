@@ -11,7 +11,6 @@
     <RootNamespace>P42.Utils.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>P42.Utils.iOS</AssemblyName>
-    <ReleaseVersion></ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj">
-      <Project>{ABD591A3-A0A5-4B6F-9DDA-E6937052F595}</Project>
+      <Project>{8A733CD3-9F71-4B04-9DEB-738B292941FC}</Project>
       <Name>P42.Utils</Name>
     </ProjectReference>
   </ItemGroup>
