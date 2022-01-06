@@ -109,7 +109,7 @@ namespace P42.Utils.Uno
             var index = 0;
             for (int i = 0; i < _text.Length; i++)
             {
-                if (_text[i] == '<')
+                if (_text[i] == '<' && i+1 < _text.Length && char.IsLetterOrDigit(_text[i+1]))  
                 {
                     var j = i + 1;
                     var closing = false;
@@ -169,7 +169,7 @@ namespace P42.Utils.Uno
                     }
                     i = j;
                 }
-                else if (_text[i] == '&')
+                else if (_text[i] == '&' && i + 1 < _text.Length && char.IsLetterOrDigit(_text[i + 1]))
                 {
                     var escapeCodeBuilder = new StringBuilder();
                     var j = i + 1;
