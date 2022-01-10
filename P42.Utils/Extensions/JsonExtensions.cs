@@ -282,8 +282,14 @@ namespace P42.Utils
                 result = (T)Enum.ToObject(typeof(T), reader.Value);
             else
             {
-                //var valueStr = reader.ParseStringProperty();
-                result = (T)Enum.Parse(typeof(T), (string)reader.Value);
+                try
+                {
+                    result = (T)Enum.Parse(typeof(T), (string)reader.Value);
+                }
+                catch
+                {
+                    result = (T)Enum.ToObject(typeof(T), -1);
+                }
             }
             return result;
         }
@@ -312,12 +318,10 @@ namespace P42.Utils
             writer.WriteStartArray();
             foreach (T item in list)
                 if (typeof(IJsonWriteable).GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo()))
-                    //writer.WriteValue((IJsonWriteable)item);
                     ((IJsonWriteable)item).WriteValue(writer, justValues);
                 else
                     writer.WriteValue(item);
             writer.WriteEnd();
-            //writer.WriteEndArray();
         }
 
 
