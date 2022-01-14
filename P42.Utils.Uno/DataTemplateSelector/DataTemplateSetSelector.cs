@@ -149,6 +149,10 @@ namespace P42.Utils.Uno
 
         public bool IsReadOnly => false;
 
+        public void Add(DataTemplateSet set)
+            => Add(set.DataType, set);
+        
+
         public void Add(Type key, DataTemplateSet set)
         {
             if (key is null)

@@ -136,12 +136,22 @@ namespace P42.Utils.Uno
 
         public static DataTemplate AsDataTemplate(this Type templateType)
         {
-            if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
-                throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
-            var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
-            var template = (DataTemplate)XamlReader.Load(markup);
-            //template.
-            return template;
+            try
+            {
+                if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
+                    throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
+                var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
+                //System.Diagnostics.Trace.WriteLine($"AsDataTemplate : [{markup}]");
+                var template = (DataTemplate)XamlReader.Load(markup);
+                //template.
+                return template;
+            }
+            catch (Exception e)
+            {
+                //System.Console.WriteLine($"EXCEPTION [{e.Message}] [{e.StackTrace}]");
+                System.Diagnostics.Trace.WriteLine($"EXCEPTION [{e.Message}] [{e.StackTrace}]");
+            }
+            return null;
         }
 
 #if __WASM__
