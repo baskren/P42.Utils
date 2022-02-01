@@ -48,7 +48,8 @@ namespace P42.Utils.Uno
 		{
 			if (GetScrollViewer(listView) is ScrollViewer viewer)
 			{
-				if (listView.ContainerFromItem(item) is FrameworkElement element)
+				var container = listView.ContainerFromItem(item);
+				if (container is FrameworkElement element)
 				{
 					var transform = element.TransformToVisual(viewer);
 					var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
