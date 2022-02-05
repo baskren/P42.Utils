@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Uno.UI;
-using Uno.Core;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;

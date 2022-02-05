@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Uno.Extensions.Specialized;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
@@ -15,10 +14,17 @@ namespace P42.Utils.Uno
         public static Visibility ToVisibility(this bool value)
             => value ? Visibility.Visible : Visibility.Collapsed;
 
-        public static Visibility ToVisibility(this IEnumerable collection)
-            => collection?.Any() ?? false
+        public static Visibility ToVisibility(this IEnumerable items)
+        {
+            var any = false;
+            if (items is ICollection collection)
+                any = collection.Count > 0;
+            else if (items.GetEnumerator() is IEnumerator enumerator)
+                any = enumerator.MoveNext();
+            return any
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+        }
 
         public static bool ToBool(this Visibility visibility)
             => visibility == Visibility.Visible;

@@ -5,7 +5,6 @@ using System.Text;
 using System.ComponentModel;
 using System.Globalization;
 using System.Collections.ObjectModel;
-using Uno.Extensions;
 using System.Collections.Specialized;
 using Windows.UI.Xaml.Media;
 using System.Linq;
