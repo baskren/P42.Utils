@@ -31,6 +31,16 @@ namespace P42.Utils.Uno
             => (string)textBlock.GetValue(HtmlProperty);
 
 
+        public static ElementType Html(this ElementType element, string value)
+        { element.SetHtml(value); return element; }
+
+        public static ElementType BindHtml(this ElementType element, object source, string path)
+        {
+            element.Bind(P42.Utils.Uno.TextBlockExtensions.HtmlProperty, source, path);
+            return element;
+        }
+
+
         #region HtmlDependencyObject Property
         internal static readonly DependencyProperty HtmlDependencyObjectProperty = DependencyProperty.RegisterAttached(
             nameof(HtmlDependencyObject),

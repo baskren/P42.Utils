@@ -60,14 +60,14 @@ namespace P42.Utils.Uno
 					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
 
 
-#if NETFX_CORE
-                    var offset = Math.Max(0, viewer.VerticalOffset + positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight );
-                    viewer.ScrollToVerticalOffset(offset);
-#else
+//#if NETFX_CORE
+//                    var offset = Math.Max(0, viewer.VerticalOffset + positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight );
+//                    viewer.ScrollToVerticalOffset(offset);
+//#else
 					var offset = Math.Max(0, positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight);
 					viewer.ChangeView(null, offset, null);
+					//#endif
 					await Task.Delay(1000);
-#endif
 				}
 			}
 		}
@@ -183,7 +183,7 @@ namespace P42.Utils.Uno
 					if (previouslyFailed)
 						return;
 
-					Task.Delay(1).ContinueWith(ct => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); }, TaskScheduler.FromCurrentSynchronizationContext()).WatchForError();
+					Task.Delay(1).ContinueWith(async ct => { await InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); }, TaskScheduler.FromCurrentSynchronizationContext()).WatchForError();
 					//await Task.Delay(5);
 					//await InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); 
 				}
@@ -195,7 +195,7 @@ namespace P42.Utils.Uno
                 {
                     list.Loaded -= loadedHandler;
                     // Here we try to avoid an exception, see explanation at bottom
-                    await list.Dispatcher.RunIdleAsync(args => { InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
+                    await list.Dispatcher.RunIdleAsync(async args => { await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
                 }
 
                 list.Loaded += loadedHandler;

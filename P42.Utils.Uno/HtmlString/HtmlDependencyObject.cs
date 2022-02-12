@@ -223,9 +223,7 @@ namespace P42.Utils.Uno
         private static void OnFontPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is HtmlDependencyObject html)
-            {
                 SetAndFormatText(html.targetTextBlock, html.HtmlSpans);
-            }
         }
 
 
@@ -315,7 +313,7 @@ namespace P42.Utils.Uno
                 return;
 
             textBlock.Text = string.Empty;
-            textBlock.Inlines.Clear();
+            textBlock.Inlines?.Clear();
             textBlock.FontSize = altFontSize > 0
                 ? altFontSize
                 : textBlock.FontSize > 0

@@ -1,16 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>P42.Utils</AssemblyName>
-    <RootNamespace>P42.Utils</RootNamespace>
-    <PackageId>P42.Utils</PackageId>
-    <Authors>Ben Askren</Authors>
-    <Company>42nd Parallel</Company>
-    <Product>P42.Utils</Product>
-    <Copyright>2017 42nd Parallel</Copyright>
-    <LangVersion>7.1</LangVersion>
-    <DebugType>portable</DebugType>
+	  
+	  <TargetFramework>netstandard2.0</TargetFramework>	  
+	  <AssemblyName>P42.Utils</AssemblyName>
+	  <RootNamespace>P42.Utils</RootNamespace>
+	  <PackageId>P42.Utils</PackageId>
+	  <Authors>Ben Askren</Authors>
+	  <Company>42nd Parallel</Company>
+	  <Product>P42.Utils</Product>
+	  <Copyright>2017 42nd Parallel</Copyright>
+	  <LangVersion>7.1</LangVersion>
+	  <DebugType>portable</DebugType>
     
   </PropertyGroup>
 

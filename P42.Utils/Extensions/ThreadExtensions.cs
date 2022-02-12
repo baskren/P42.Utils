@@ -32,7 +32,7 @@ namespace P42.Utils
             {
                 await task;
             }
-            catch (TaskCanceledException tce)
+            catch (TaskCanceledException)
             {
                 // log a message if we were given a logger to use
                 //Serilog.Log.Error(tce, $"Fire and forget task was canceled for calling method: {callingMethodName}");

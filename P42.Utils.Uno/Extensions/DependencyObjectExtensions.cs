@@ -12,11 +12,10 @@ namespace P42.Utils.Uno
 {
     public static class DependencyObjectExtensions
     {
-
 		//const string bindingContextPath = Binding.SelfPath;
 
 		/// <summary>Bind to a specified property</summary>
-		public static TBindable		Bind<TBindable>(
+		internal static TBindable		Bind<TBindable>(
 			this TBindable target,
 			DependencyProperty targetProperty,
 			object source,
@@ -58,7 +57,7 @@ namespace P42.Utils.Uno
 		}
 
 		/// <summary>Bind to a specified property with inline conversion</summary>
-		public static TBindable Bind<TBindable, TSource, TDest>(
+		internal static TBindable Bind<TBindable, TSource, TDest>(
 			this TBindable target,
 			DependencyProperty targetProperty,
 			object source = null,
@@ -102,7 +101,7 @@ namespace P42.Utils.Uno
 		}
 
 		/// <summary>Bind to a specified property with inline conversion and conversion parameter</summary>
-		public static TBindable Bind<TBindable, TSource, TParam, TDest>(
+		internal static TBindable Bind<TBindable, TSource, TParam, TDest>(
 			this TBindable target,
 			DependencyProperty targetProperty,
 			object source = null,
