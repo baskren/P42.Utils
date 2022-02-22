@@ -35,24 +35,8 @@ namespace P42.Utils
             Environment.PlatformTimer.StartTimer(interval, callback);
         }
 
-        /*
-        //public Timer(TimerCallback callback, object state=null, Int32 dueTime=Timeout.Infinite, Int32 period=Timeout.Infinite) : this  (callback, state, new TimeSpan (0, 0, dueTime), new TimeSpan (0, 0, period))
-        //{
-        //}
-
-        public Timer(TimerCallback callback, object state, uint dueTime, uint period) : this(callback, state, new TimeSpan(0, 0, (int)dueTime), new TimeSpan(0, 0, (int)period))
-        {
-            P42.Utils.DebugExtensions.AddToCensus(this);
-        }
-
-        public Timer(TimerCallback callback, object state, long dueTime = Timeout.Infinite, long period = Timeout.Infinite) : this(callback, state, new TimeSpan(0, 0, (int)dueTime), new TimeSpan(0, 0, (int)period))
-        {
-            P42.Utils.DebugExtensions.AddToCensus(this);
-        }
-        */
         public Timer(TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
         {
-            P42.Utils.DebugExtensions.AddToCensus(this);
             _id = Count++;
             _callback = callback;
             _state = state;
@@ -84,7 +68,6 @@ namespace P42.Utils
             {
                 _disposed = true;
                 base.Cancel();
-                P42.Utils.DebugExtensions.RemoveFromCensus(this);
             }
             base.Dispose(disposing);
         }
