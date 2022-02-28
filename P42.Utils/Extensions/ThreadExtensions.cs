@@ -32,7 +32,7 @@ namespace P42.Utils
             {
                 await task;
             }
-            catch (TaskCanceledException tce)
+            catch (TaskCanceledException)
             {
                 // log a message if we were given a logger to use
                 //Serilog.Log.Error(tce, $"Fire and forget task was canceled for calling method: {callingMethodName}");
@@ -46,6 +46,9 @@ namespace P42.Utils
 
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
                 System.Console.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
+
+                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => throw e);
+
             }
         }
 
