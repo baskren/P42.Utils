@@ -91,8 +91,5 @@ namespace P42.Utils.Uno
             return 1;
         }
 
-#if __ANDROID__
-
-#endif
     }
 }
