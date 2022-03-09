@@ -2,13 +2,53 @@
 <Project Sdk="MSbuild.Sdk.Extras/3.0.23">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' AND '$(USERNAME)' == 'ben' ">uap10.0.18362;$(TargetFrameworks);</TargetFrameworks>
+
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>P42.Utils.Uno</AssemblyName>
+    <RootNamespace>P42.Utils.Uno</RootNamespace>
+    <NoWarn>Uno0001;VSX1000</NoWarn>
+
+	  <TargetFrameworks>uap10.0.18362;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.vsmac')) ">netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">Xamarin.Mac20</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.Tizen')) ">Tizen50</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.UWP')) ">uap10.0.18362</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.Wasm')) ">netstandard2.0</TargetFrameworks>
+
+	  <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+    <DebugType>portable</DebugType>
 
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Uno.UI" Version="4.0.13" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
+	</ItemGroup>
+
+  <!-- UWP -->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <PackageReference Include="Win2D.uwp" Version="1.26.0" />
+  </ItemGroup>
+
+  <!-- WASM -->
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Uno.UI.WebAssembly" Version="4.0.13" />
+    <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
+      <LogicalName>P42.Utils.Uno.xml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

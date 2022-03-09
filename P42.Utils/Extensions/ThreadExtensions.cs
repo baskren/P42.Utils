@@ -7,6 +7,8 @@ namespace P42.Utils
 {
     public static class ThreadExtensions
     {
+
+
         [SuppressMessage("ReSharper", "VariableHidesOuterVariable", Justification = "Pass params explicitly to async local function or it will allocate to pass them")]
         public static void Forget(this Task task, [CallerMemberName] string callingMethodName = "")
         {
