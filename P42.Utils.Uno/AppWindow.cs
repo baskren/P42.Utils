@@ -68,6 +68,31 @@ namespace P42.Utils.Uno
             return result;
         }
 
+        public static double DisplayScale(FrameworkElement element)
+        {
+#if __ANDROID__
+            if (element is Android.Views.View view)
+            {
+                //var window = ((Android.App.Activity)view.Context).Window;
+                //window.DecorView.GetWindowVisibleDisplayFrame(rect);
 
+                using var displayMetrics = new Android.Util.DisplayMetrics();
+
+                using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
+                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
+
+                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+
+                return displayMetrics?.Density ?? 1;
+            }
+#elif __IOS__
+            return UIKit.UIScreen.MainScreen.Scale;
+#endif
+            return 1;
+        }
+
+#if __ANDROID__
+
+#endif
     }
 }
