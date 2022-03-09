@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="4.0.13" />
+    <PackageReference Include="Uno.UI" Version="4.1.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
@@ -45,7 +45,7 @@
 
   <!-- WASM -->
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Uno.UI.WebAssembly" Version="4.0.13" />
+    <PackageReference Include="Uno.UI.WebAssembly" Version="4.1.8" />
     <EmbeddedResource Include="LinkerDefinition.Wasm.xml">
       <LogicalName>P42.Utils.Uno.xml</LogicalName>
     </EmbeddedResource>
