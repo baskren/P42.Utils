@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace P42.Utils
     public static class ThreadExtensions
     {
         [SuppressMessage("ReSharper", "VariableHidesOuterVariable", Justification = "Pass params explicitly to async local function or it will allocate to pass them")]
-        public static void Forget(this Task task, [CallerMemberName] string callingMethodName = "")
+        public static void Forget(this Task task, Action<Exception, Dictionary<string,string>> exceptionAction, [CallerMemberName] string callingMethodName = "", [CallerFilePath] string callerPath = "")
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
 
@@ -19,14 +20,14 @@ namespace P42.Utils
             {
                 // use "_" (Discard operation) to remove the warning IDE0058: Because this call is not awaited, execution of the
                 // current method continues before the call is completed - https://docs.microsoft.com/en-us/dotnet/csharp/discards#a-standalone-discard
-                _ = ForgetAwaited(task, callingMethodName);
+                _ = ForgetAwaited(task, exceptionAction, callingMethodName, callerPath);
             }
         }
 
         // Allocate the async/await state machine only when needed for performance reasons.
         // More info about the state machine: https://blogs.msdn.microsoft.com/seteplia/2017/11/30/dissecting-the-async-methods-in-c/?WT.mc_id=DT-MVP-5003978
         // Pass params explicitly to async local function or it will allocate to pass them
-        static async Task ForgetAwaited(Task task, string callingMethodName = "")
+        static async Task ForgetAwaited(Task task, Action<Exception, Dictionary<string, string>> exceptionAction, string callingMethodName = "", [CallerFilePath] string callerPath = "")
         {
             try
             {
@@ -47,7 +48,14 @@ namespace P42.Utils
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
                 System.Console.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
 
-                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => throw e);
+                if (exceptionAction is null)
+                    Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => throw e);
+                else
+                    exceptionAction?.Invoke(e, new Dictionary<string, string>
+                    {
+                        { "CallerName", callingMethodName },
+                        { "CallerPath", callerPath }
+                    });
 
             }
         }
