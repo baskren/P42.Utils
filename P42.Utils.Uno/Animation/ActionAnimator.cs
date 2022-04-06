@@ -15,8 +15,8 @@ namespace P42.Utils.Uno
 
 
 
-        public ActionAnimator(double from, double to, TimeSpan timeSpan, Action<double> action, EasingFunctionBase easingFunction = null)
-            : base(timeSpan, action, easingFunction)
+        public ActionAnimator(double from, double to, TimeSpan timeSpan, Action<double> action, EasingFunctionBase easingFunction = null, bool delta = false)
+            : base(timeSpan, action, easingFunction, delta)
         {
             From = from;
             To = to;
