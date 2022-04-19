@@ -277,10 +277,10 @@ namespace P42.Utils
 
         public static T ParseEnum<T>(this JsonReader reader)
         {
-            T result;
+            T result = (T)Enum.ToObject(typeof(T), -1);
             if (reader.TokenType == JsonToken.Integer)
                 result = (T)Enum.ToObject(typeof(T), reader.Value);
-            else
+            else if (reader.TokenType == JsonToken.String)
             {
                 try
                 {
@@ -288,9 +288,11 @@ namespace P42.Utils
                 }
                 catch
                 {
-                    result = (T)Enum.ToObject(typeof(T), -1);
+                    //throw
                 }
             }
+            else
+                throw new Exception($"Invalid JSON token type [{reader.TokenType}] for Enum type [{typeof(T)}]");
             return result;
         }
         /*
