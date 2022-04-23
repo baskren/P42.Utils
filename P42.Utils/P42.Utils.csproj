@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	  
@@ -9,9 +9,20 @@
 	  <Authors>Ben Askren</Authors>
 	  <Company>42nd Parallel</Company>
 	  <Product>P42.Utils</Product>
-	  <Copyright>2017 42nd Parallel</Copyright>
+	  <Copyright>2022 42nd Parallel</Copyright>
 	  <LangVersion>7.1</LangVersion>
 	  <DebugType>portable</DebugType>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Description>CrossPlatform Utilities</Description>
+	  <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageReleaseNotes>Initial NuGet</PackageReleaseNotes>
+	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
+	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+	  <Version>1.0.0</Version>
     
   </PropertyGroup>
 
@@ -28,6 +39,16 @@
     <Optimize>true</Optimize>
 		<DefineConstants>RELEASE;$(DefineConstants)</DefineConstants>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 
   <ItemGroup>

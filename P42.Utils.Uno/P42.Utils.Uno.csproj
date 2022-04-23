@@ -22,12 +22,40 @@
 
 	  <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
     <DebugType>portable</DebugType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>Ben Askren</Authors>
+    <Company>4nd Parallel</Company>
+    <Description>Uno Cross Platform utilities</Description>
+    <Copyright>2022 42nd Parallel, LLC</Copyright>
+    <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
 
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+  	<None Include="..\README.md">
+  		<Pack>True</Pack>
+  		<PackagePath>\</PackagePath>
+  	</None>
+  	<None Include="..\LICENSE">
+  		<Pack>True</Pack>
+  		<PackagePath>\</PackagePath>
+  	</None>
+  	<None Include="README.md">
+  	  <Pack>True</Pack>
+  	  <PackagePath>\</PackagePath>
+  	</None>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Uno.UI" Version="4.1.8" />
