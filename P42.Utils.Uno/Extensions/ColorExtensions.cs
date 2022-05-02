@@ -31,11 +31,14 @@ namespace P42.Utils.Uno
         public static System.Drawing.Color ToSystemDrawingColor(this Color color)
             => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 
-        public static SolidColorBrush ToBrush(this System.Drawing.Color color)
+        public static Brush ToBrush(this System.Drawing.Color color)
             => new SolidColorBrush(color.AsWinUiColor());
 
-        public static SolidColorBrush ToBrush(this Color color)
+        public static Brush ToBrush(this Color color)
             => new SolidColorBrush(color);
+
+        public static Brush ToBrush(this Brush brush)
+            => brush;
         #endregion
 
 
