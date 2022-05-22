@@ -98,6 +98,10 @@ namespace P42.Utils
 
         public static async Task<string> LocalStorageFullPathForEmbeddedResourceAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            if (assembly == null)
+                return null;
+
             if (await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName) is string subPath)
             {
                 var path = Path.Combine(FolderPath(assembly, folderName), subPath);
