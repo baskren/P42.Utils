@@ -72,6 +72,10 @@ namespace P42.Utils
 
         public static string ApplicationUri(string resourceId, Assembly assembly = null, string folderName = null)
         {
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            if (assembly == null)
+                return null;
+
             var localStorageFileName = LocalStorageSubPathForEmbeddedResource(resourceId, assembly, folderName);
             var asmName = assembly?.GetName().Name;
             var updatedLocalStorageFileName = localStorageFileName.Replace('\\', '/');
