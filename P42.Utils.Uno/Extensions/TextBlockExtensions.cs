@@ -199,6 +199,22 @@ namespace P42.Utils.Uno
             return TextAlignment.Left;
         }
 
+        public static HorizontalAlignment AsHorizontalAlignment(this TextAlignment textAlignment)
+        {
+            switch(textAlignment)
+            {
+                case TextAlignment.Center: 
+                    return HorizontalAlignment.Center;
+                case TextAlignment.Left: 
+                    return HorizontalAlignment.Left;
+                case TextAlignment.Right: 
+                    return HorizontalAlignment.Right;
+                case TextAlignment.Justify:
+                    return HorizontalAlignment.Stretch;
+            }
+            return HorizontalAlignment.Left;
+        }
+
         public static double EnabledToOpacity(bool isEnabled)
             => isEnabled ? 1.0 : 0.5;
 
