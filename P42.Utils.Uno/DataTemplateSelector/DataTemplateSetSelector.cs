@@ -37,12 +37,20 @@ namespace P42.Utils.Uno
 
         public UIElement GetUIElement(object item)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            var set = SelectDataTemplateSet(item);
-            var element = set.Constructor.Invoke();
-            System.Diagnostics.Debug.WriteLine($"DataTemplateSet.GetUIElement: [{stopwatch.ElapsedMilliseconds}] [{item}]");
-            stopwatch.Stop();
-            return element;
+            try
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var set = SelectDataTemplateSet(item);
+                var element = set.Constructor.Invoke();
+                //System.Diagnostics.Debug.WriteLine($"DataTemplateSet.GetUIElement: [{stopwatch.ElapsedMilliseconds}] [{item}]");
+                stopwatch.Stop();
+                return element;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine($"");
+            }
+            return null;
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -88,16 +96,16 @@ namespace P42.Utils.Uno
 
         protected virtual DataTemplateSet SelectDataTemplateSetCore(Type type)
         {
-            System.Console.WriteLine($"SelectDataTemplateSetCore ENTER {type.Name}");
+            //System.Console.WriteLine($"SelectDataTemplateSetCore ENTER {type.Name}");
             if (type is null)
             {
-                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : A {type.Name}");
+                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : A {type.Name}");
                 return NullTemplateSet;
             }
             //var typeString = type.ToString();
             if (ItemTemplateSets.TryGetValue(type, out DataTemplateSet exactMatch))
             {
-                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : B {type.Name}");
+                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : B {type.Name}");
                 return exactMatch;
             }
             if (type.IsConstructedGenericType)
@@ -106,7 +114,7 @@ namespace P42.Utils.Uno
                 //var genericTypeString = genericSourceType.ToString();
                 if (ItemTemplateSets.TryGetValue(genericSourceType, out DataTemplateSet genericMatch))
                 {
-                    System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : C {type.Name}");
+                    //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : C {type.Name}");
                     return genericMatch;
                 }
             }
@@ -114,10 +122,10 @@ namespace P42.Utils.Uno
             if (baseType != null)
             {
                 var result = SelectDataTemplateSetCore(baseType);
-                System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : D {type.Name}");
+                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : D {type.Name}");
                 return result;
             }
-            System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : E {type.Name}");
+            //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : E {type.Name}");
             return NoMatchTemplateSet;
         }
 
