@@ -12,7 +12,7 @@ namespace P42.Utils.Uno
     {
         NullDataTemplateSet NullTemplateSet { get; set; } = new NullDataTemplateSet();
 
-        DataTemplateSet NoMatchTemplateSet { get; set; } = new NullDataTemplateSet();
+        protected DataTemplateSet NoMatchTemplateSet { get; set; } = new NullDataTemplateSet();
 
         Dictionary<Type, DataTemplateSet> CachedTemplates;
 
@@ -27,6 +27,7 @@ namespace P42.Utils.Uno
         public DataTemplateSetSelector(Dictionary<Type, DataTemplateSet> itemTemplates)
         {
             ItemTemplateSets = new Dictionary<Type, DataTemplateSet>(itemTemplates);
+            CachedTemplates = new Dictionary<Type, DataTemplateSet>();
         }
 
         public DataTemplateSetSelector(DataTemplateSetSelector selector)
@@ -148,6 +149,12 @@ namespace P42.Utils.Uno
             }
         }
 
+        public int IndexOf(DataTemplateSet set)
+        {
+            var values = ItemTemplateSets.Values.ToArray();
+            return Array.IndexOf(values, set);
+        }
+
 
         public ICollection<Type> Keys => ItemTemplateSets.Keys;
 
@@ -161,7 +168,7 @@ namespace P42.Utils.Uno
             => Add(set.DataType, set);
         
 
-        public void Add(Type key, DataTemplateSet set)
+        public virtual void Add(Type key, DataTemplateSet set)
         {
             if (key is null)
             {
