@@ -9,7 +9,8 @@
     <RootNamespace>P42.Utils.Uno</RootNamespace>
     <NoWarn>Uno0001;VSX1000</NoWarn>
 
-	  <TargetFrameworks>uap10.0.18362;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.vsmac')) ">netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
