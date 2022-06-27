@@ -110,37 +110,65 @@ namespace P42.Utils
         }
 
         #region ICollection<KeyValuePair<TKey,TValue>> Members 
+        /// <summary>
+        /// Add item
+        /// </summary>
+        /// <param name="item"></param>
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
             TryAddWithNotification(item);
         }
 
+        /// <summary>
+        /// clear items
+        /// </summary>
         void ICollection<KeyValuePair<TKey, TValue>>.Clear()
         {
             ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).Clear();
             NotifyObserversOfChange();
         }
 
+        /// <summary>
+        /// test if contains item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
         {
             return ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).Contains(item);
         }
 
+        /// <summary>
+        /// Copy items to array
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="arrayIndex"></param>
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).CopyTo(array, arrayIndex);
         }
 
+        /// <summary>
+        /// Count of items
+        /// </summary>
         int ICollection<KeyValuePair<TKey, TValue>>.Count
         {
             get { return ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).Count; }
         }
 
+        /// <summary>
+        /// Is read only?
+        /// </summary>
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
         {
             get { return ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).IsReadOnly; }
         }
 
+        /// <summary>
+        /// Remove item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
             TValue temp;
@@ -149,11 +177,19 @@ namespace P42.Utils
         #endregion
 
         #region IEnumerable<KeyValuePair<TKey,TValue>> Members 
+        /// <summary>
+        /// Get enumerable
+        /// </summary>
+        /// <returns></returns>
         IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
         {
             return ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).GetEnumerator();
         }
 
+        /// <summary>
+        /// get enumerator
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((ICollection<KeyValuePair<TKey, TValue>>)_dictionary).GetEnumerator();
@@ -161,42 +197,79 @@ namespace P42.Utils
         #endregion
 
         #region IDictionary<TKey,TValue> Members 
+        /// <summary>
+        /// Add member
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void Add(TKey key, TValue value)
         {
             TryAddWithNotification(key, value);
         }
 
+        /// <summary>
+        /// test if member with key exists
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public bool ContainsKey(TKey key)
         {
             return _dictionary.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Gets collection of keys
+        /// </summary>
         public ICollection<TKey> Keys
         {
             get { return _dictionary.Keys; }
         }
 
+        /// <summary>
+        /// removes item at key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public bool Remove(TKey key)
         {
             TValue temp;
             return TryRemoveWithNotification(key, out temp);
         }
 
+        /// <summary>
+        /// Try to get value for key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool TryGetValue(TKey key, out TValue value)
         {
             return _dictionary.TryGetValue(key, out value);
         }
 
+        /// <summary>
+        /// Get enumerator
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
         public IEnumerator GetEnumerator()
         {
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// get collection of values
+        /// </summary>
         public ICollection<TValue> Values
         {
             get { return _dictionary.Values; }
         }
 
+        /// <summary>
+        /// get value for key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public TValue this[TKey key]
         {
             get { return _dictionary[key]; }
@@ -204,6 +277,9 @@ namespace P42.Utils
         }
         #endregion
 
+        /// <summary>
+        /// Clear members
+        /// </summary>
         public void Clear()
         {
             foreach (var key in Keys)

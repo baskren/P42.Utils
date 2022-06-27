@@ -23,7 +23,7 @@ namespace P42.Utils.Uno
 		/// </summary>
 		/// <param name="start">Start.</param>
 		/// <param name="end">End.</param>
-		/// <param name="fontName">Font name.</param>
+		/// <param name="fontFamily">Font name.</param>
 		public FontFamilySpan(int start, int end, FontFamily fontFamily =null) : base (start, end) {
 			Key = SpanKey;
 			FontFamily = fontFamily;

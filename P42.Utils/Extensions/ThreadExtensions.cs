@@ -50,9 +50,22 @@ namespace P42.Utils
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
                 System.Console.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
 
-                onException?.Invoke(Thread.CurrentThread, e);
+                onException?.Invoke(Thread.CurrentThread, new FireAndForgetException(callingMethodName, e));
             }
         }
 
+    }
+
+    public class FireAndForgetException : Exception
+    {
+        /// <summary>
+        /// Method that called the FireAndForget task
+        /// </summary>
+        public string CallingMethodName { get; private set; }
+
+        public FireAndForgetException(string callingMethodName, Exception innerException) : base($"Fire and forget task, from calling method [{callingMethodName}], failed.", innerException)
+        {
+            CallingMethodName = callingMethodName;
+        }
     }
 }

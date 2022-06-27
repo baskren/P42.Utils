@@ -20,9 +20,9 @@ namespace P42.Utils.Uno
         //internal readonly List<Span> _spans = new List<Span>();
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="P42.Utils.Uno.F9PFormattedString"/>.
+        /// Returns a <see cref="System.String"/> that represents the current Html formatted string.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="P42.Utils.Uno.F9PFormattedString"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current HTML formatted string.</returns>
         public override string ToString()
             => Text;
         

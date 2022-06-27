@@ -1,58 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  
-	  <TargetFramework>netstandard2.0</TargetFramework>	  
+
 	  <AssemblyName>P42.Utils</AssemblyName>
-	  <RootNamespace>P42.Utils</RootNamespace>
-	  <PackageId>P42.Utils</PackageId>
-	  <Authors>Ben Askren</Authors>
-	  <Company>42nd Parallel</Company>
-	  <Product>P42.Utils</Product>
-	  <Copyright>2022 42nd Parallel</Copyright>
-	  <LangVersion>7.1</LangVersion>
-	  <DebugType>portable</DebugType>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Description>CrossPlatform Utilities</Description>
-	  <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
-	  <RepositoryType>git</RepositoryType>
-	  <PackageReleaseNotes>Initial NuGet</PackageReleaseNotes>
-	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
-	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
-	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-	  <Version>1.0.0</Version>
+
+	  <TargetFrameworks>netstandard2.0</TargetFrameworks>	  
     
   </PropertyGroup>
 
 
-	<PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
-    <NoWarn>Uno0001;1701;1702;1705;VSX1000</NoWarn>
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-		<DefineConstants>TRACE;DEBUG;$(DefineConstants)</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-		<DefineConstants>RELEASE;$(DefineConstants)</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
 
 </Project>

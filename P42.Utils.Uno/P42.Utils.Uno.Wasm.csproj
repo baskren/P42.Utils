@@ -1,0 +1,18 @@
+﻿<Project Sdk="MSbuild.Sdk.Extras/3.0.23">
+  <PropertyGroup>
+
+    <AssemblyName>P42.Utils.Uno.Wasm</AssemblyName>
+
+    <TargetFrameworks>netstandard2.0;net6.0;</TargetFrameworks>
+
+
+
+
+
+
+
+    <DefineConstants>__WASM__;$(DefineConstants);</DefineConstants>
+
+  </PropertyGroup>
+
+</Project>

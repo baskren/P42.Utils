@@ -1,0 +1,83 @@
+<Project ToolsVersion="15.0">
+
+  <PropertyGroup>
+
+    <RootNamespace>P42.Utils.Uno</RootNamespace>
+    <Version>0.1.1-dev.2</Version>
+    <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
+
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+	<!--
+	Force all projects of this folder to use a different output
+	path to avoid intermediate output collisions
+	-->
+  	<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
+  	<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+  	<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+  
+  	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+  	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+  	<IncludeSymbols>true</IncludeSymbols>
+  	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <DebugType>portable</DebugType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Ben Askren</Authors>
+    <Company>4nd Parallel</Company>
+    <Description>Uno Cross Platform utilities</Description>
+    <Copyright>2022 42nd Parallel, LLC</Copyright>
+    <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>P42.icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="Uno.UI" Version="4.3.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  
+  <Target Name="B1" BeforeTargets="BeforeBuild">
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
+  </Target>
+  
+  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(LocalNuGet) != '' ">
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text="=============================== NUGET PACK [$(AssemblyName)] ===============================" Importance="high"/>
+    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
+    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(LocalNuGet) " />
+    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(LocalNuGet) " />
+    <Message Importance="high" Text="PACKAGE SAVED TO:  $(LocalNuGet)) " />
+  </Target>
+
+
+</Project>

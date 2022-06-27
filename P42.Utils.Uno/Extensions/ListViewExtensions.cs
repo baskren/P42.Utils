@@ -8,9 +8,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.Foundation;
-#if NETSTANDARD
-using Uno.Foundation;
-#endif
 
 namespace P42.Utils.Uno
 {
@@ -72,6 +69,7 @@ namespace P42.Utils.Uno
 			}
 		}
 
+		/*
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
 #if NETSTANDARD
@@ -87,6 +85,7 @@ namespace P42.Utils.Uno
 #endif
 			await Task.Delay(5);
 		}
+		*/
 
 #if !NETSTANDARD
 		static bool InternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)

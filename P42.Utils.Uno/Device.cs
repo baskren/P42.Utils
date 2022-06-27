@@ -60,14 +60,14 @@ namespace P42.Utils.Uno
                 return Platform.Android;
 #elif __IOS__
                 return Platform.iOS;
-#elif NETSTANDARD
+#elif NETSTANDARD || NET6_0
                 return Platform.WASM;
 #elif __MACOS__
                 return Platform.MacOS;
 #elif __SKIA__
                 return Platform.Skia;
 #else
-                thrown new Execption();
+                throw new Exception();
 #endif
             }
         }

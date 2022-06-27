@@ -40,16 +40,15 @@ namespace P42.Utils.Uno
         {
             try
             {
-                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                 var set = SelectDataTemplateSet(item);
                 var element = set.Constructor.Invoke();
                 //System.Diagnostics.Debug.WriteLine($"DataTemplateSet.GetUIElement: [{stopwatch.ElapsedMilliseconds}] [{item}]");
-                stopwatch.Stop();
                 return element;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine($"");
+                System.Diagnostics.Debug.WriteLine($"EXCEPTION: {e.Message}: {e.StackTrace}");
+                System.Console.WriteLine($"EXCEPTION: {e.Message}: {e.StackTrace}");
             }
             return null;
         }
