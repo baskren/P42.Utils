@@ -1,11 +1,2 @@
 ﻿<linker>
-    <!-- The below doesn't work - LoadHtmlText() fails.
-    <assembly fullname="P42.Uno.HtmlExtensions" />
-    <assembly fullname="P42.Uno.HtmlExtensions" >
-      <type fullname="P42.Uno.HtmlExtensions.NativeWebView">
-        <method name="OnFrameLoaded" />
-        <method name="OnMessageReceived" />
-      </type>
-    </assembly>
-    -->
 </linker>
