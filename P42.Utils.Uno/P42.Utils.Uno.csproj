@@ -3,7 +3,11 @@
 
     <AssemblyName>P42.Utils.Uno</AssemblyName>
 
-    <TargetFrameworks>netstandard2.0;net6.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+    <!--
+    Another example of how Micrsoft just doesn't care about those who don't use only their stuff
+	  <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+    -->
+    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
 	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;net6.0;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
