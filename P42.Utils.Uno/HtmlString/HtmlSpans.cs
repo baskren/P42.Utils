@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 using System.Linq;
 
 namespace P42.Utils.Uno

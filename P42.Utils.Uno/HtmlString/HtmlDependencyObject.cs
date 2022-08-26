@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using Uno.UI;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Windows.UI.Text;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Data;
 
 namespace P42.Utils.Uno
 {
-    [Windows.UI.Xaml.Data.Bindable]
+    [Microsoft.UI.Xaml.Data.Bindable]
     //[System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
     partial class HtmlDependencyObject : DependencyObject
     {
@@ -320,7 +320,7 @@ namespace P42.Utils.Uno
                     ? textBlock.FontSize
                     : textBlock.DefaultFontSize();
             //textBlock.LineHeight = FontExtensions.LineHeightForFontSize(textBlock.FontSize);
-            //textBlock.LineStackingStrategy = Windows.UI.Xaml.LineStackingStrategy.BaselineToBaseline;
+            //textBlock.LineStackingStrategy = Microsoft.UI.Xaml.LineStackingStrategy.BaselineToBaseline;
 
             var text = htmlSpans?.UnmarkedText;
 
@@ -349,8 +349,8 @@ namespace P42.Utils.Uno
             var metaFonts = new List<MetaFont>();
             var baseMetaFont = new MetaFont(
                 textBlock.FontFamily,
-                textBlock.FontSize, //(altFontSize > 0 ? altFontSize : label.DecipheredFontSize()), //(label.FontSize < 0 ? (double)Windows.UI.Xaml.Application.Current.Resources["ControlContentThemeFontSize"] : label.FontSize)), //label.FontSize,
-                textBlock.FontWeight.Weight >= Windows.UI.Text.FontWeights.Bold.Weight,
+                textBlock.FontSize, //(altFontSize > 0 ? altFontSize : label.DecipheredFontSize()), //(label.FontSize < 0 ? (double)Microsoft.UI.Xaml.Application.Current.Resources["ControlContentThemeFontSize"] : label.FontSize)), //label.FontSize,
+                textBlock.FontWeight.Weight >= Microsoft.UI.Text.FontWeights.Bold.Weight,
                 (textBlock.FontStyle & Windows.UI.Text.FontStyle.Italic) > 0,
                 textColor: textBlock.Foreground is SolidColorBrush brush
                     ? brush.Color
@@ -506,7 +506,7 @@ namespace P42.Utils.Uno
             {
                 Text = text.Substring(startIndex, length),
                 FontSize = metaFont.Size,
-                FontWeight = metaFont.Bold ? Windows.UI.Text.FontWeights.Bold : Windows.UI.Text.FontWeights.Normal,
+                FontWeight = metaFont.Bold ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal,
                 FontStyle = metaFont.Italic ? Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal
             };
 
@@ -518,19 +518,19 @@ namespace P42.Utils.Uno
             {
                 case FontBaseline.Numerator:
                     run.FontFamily = ScriptFontFamily;
-                    Typography.SetVariants(run, Windows.UI.Xaml.FontVariants.Superscript);
+                    Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Superscript);
                     break;
                 case FontBaseline.Superscript:
                     run.FontFamily = ScriptFontFamily;
-                    Typography.SetVariants(run, Windows.UI.Xaml.FontVariants.Superscript);
+                    Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Superscript);
                     break;
                 case FontBaseline.Denominator:
                     run.FontFamily = ScriptFontFamily;
-                    Typography.SetVariants(run, Windows.UI.Xaml.FontVariants.Subscript);
+                    Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Subscript);
                     break;
                 case FontBaseline.Subscript:
                     run.FontFamily = ScriptFontFamily;
-                    Typography.SetVariants(run, Windows.UI.Xaml.FontVariants.Subscript);
+                    Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Subscript);
                     break;
                 default:
                     if (metaFont.Family != null)
@@ -565,7 +565,7 @@ namespace P42.Utils.Uno
             /*
             else
             {
-                run.Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(Xamarin.Forms.Color.Blue.ToWindowsColor());
+                run.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Xamarin.Forms.Color.Blue.ToWindowsColor());
                 if (TextDecorationsPresent)
                     ApplyTextDecorations(run, Decoration.Underline);
                 var hyperlink = new Hyperlink();

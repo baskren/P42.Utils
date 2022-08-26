@@ -2,8 +2,8 @@
 using System;
 using System.Globalization;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
 {

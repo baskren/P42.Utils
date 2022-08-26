@@ -30,7 +30,7 @@ namespace P42.Utils.Uno
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FoP42.Utils.Unorms9Patch.BackgroundColorSpan"/> class.
+		/// Initializes a new instance of the <see cref="P42.Utils.Uno.BackgroundColorSpan"/> class.
 		/// </summary>
 		/// <param name="span">Span.</param>
 		public BackgroundColorSpan (BackgroundColorSpan span) : this (span.Start, span.End, span.Color) {

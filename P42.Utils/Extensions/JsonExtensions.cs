@@ -168,26 +168,38 @@ namespace P42.Utils
             switch (reader.TokenType)
             {
                 case JsonToken.Boolean:
-                    var boolVal = (bool)reader.Value;
-                    result = boolVal ? 1 : 0;
+                    if (reader.Value is bool boolVal)
+                        result = boolVal ? 1 : 0;
+                    else
+                        result = 0;
                     break;
                 case JsonToken.Bytes:
-                    var bytesVal = (byte[])reader.Value;
-                    result = BitConverter.ToDouble(bytesVal, 0);
+                    if (reader.Value is byte[] byteArray)
+                        result = BitConverter.ToDouble(byteArray, 0);
+                    else
+                        result = 0;
                     break;
                 case JsonToken.Float:
-                    var doubleVal = (double)reader.Value;
-                    result = doubleVal;
+                    if (reader.Value is double doubleVal)
+                        result = doubleVal;
+                    else
+                        result = 0;
                     break;
                 case JsonToken.Integer:
-                    var intVal = (double)((long)reader.Value);
-                    result = intVal;
+                    if (reader.Value is long intVal)
+                        result = intVal;
+                    else
+                        result = 0;
                     break;
                 case JsonToken.String:
-                    var stringVal = (string)reader.Value;
-                    if (!double.TryParse(stringVal, out doubleVal))
-                        throw new InvalidDataContractException("Could not parse what JSON thinks is a double.");
-                    result = doubleVal;
+                    if (reader.Value is string stringVal)
+                    {
+                        if (!double.TryParse(stringVal, out doubleVal))
+                            throw new InvalidDataContractException("Could not parse what JSON thinks is a double.");
+                        result = doubleVal;
+                    }
+                    else
+                        result = 0;
                     break;
                 default:
                     throw new InvalidDataContractException("Found JSON invalid value token [" + reader.Value + "] of type [" + reader.TokenType + "]");
@@ -203,7 +215,7 @@ namespace P42.Utils
 
         public static double? ParseNullableDouble(this JsonReader reader)
         {
-            if (reader.TokenType == JsonToken.Null)
+            if (reader.TokenType == JsonToken.Null || reader.Value is null)
                 return null;
             return ParseDouble(reader);
         }

@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace P42.Utils.Uno
 {
@@ -48,9 +48,7 @@ namespace P42.Utils.Uno
                 var y = nativeLocation[1] / DisplayScale;
                 return new Rect(x, y, element.ActualSize.X, element.ActualSize.Y);
             }
-            var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
-            var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
+            return WinUIGetBounds(element);
         }
 
 #elif __IOS__ || __MACOS__
@@ -58,7 +56,7 @@ namespace P42.Utils.Uno
         public static Rect GetBounds(this FrameworkElement element)
         {
 
-            //var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+            //var ttv = element.TransformToVisual(Platform.Window.Content);
             //var location = ttv.TransformPoint(new Point(0, 0));
             var rect = element.ConvertRectToView(element.Bounds, null);
             return new Rect(rect.X, rect.Y, rect.Width,rect.Height);
@@ -73,22 +71,30 @@ namespace P42.Utils.Uno
 
 #else
         public static Rect GetBounds(this FrameworkElement element)
-        {
+            => WinUIGetBounds(element);
 
-            var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+        public static Rect GetBounds(this UIElement element)
+            => WinUIGetBounds(element);
+#endif
+
+        static Rect WinUIGetBounds(this FrameworkElement element)
+        {
+            var frame = Platform.Window.Content;
+            var ttv = element.TransformToVisual(frame);
             var location = ttv.TransformPoint(new Point(0, 0));
             return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
         }
 
-        public static Rect GetBounds(this UIElement element)
+        static Rect WinUIGetBounds(this UIElement element)
         {
             if (element is FrameworkElement fwElement)
-                return fwElement.GetBounds();
-            var ttv = element.TransformToVisual(Windows.UI.Xaml.Window.Current.Content);
+                return fwElement.WinUIGetBounds();
+            var ttv = element.TransformToVisual(Platform.Window.Content);
             var location = ttv.TransformPoint(new Point(0, 0));
             return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
         }
-#endif
+
+
 
         public static Rect GetBoundsRelativeTo(this FrameworkElement element, UIElement relativeToElement)
         {

@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace P42.Utils.Uno
 {
-    public class DataTemplateSetSelector : Windows.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplateSet>
+    public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplateSet>
     {
         NullDataTemplateSet NullTemplateSet { get; set; } = new NullDataTemplateSet();
 

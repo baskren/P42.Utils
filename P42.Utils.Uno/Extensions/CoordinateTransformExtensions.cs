@@ -1,5 +1,5 @@
 ﻿using Windows.Foundation;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace P42.Utils.Uno
 

@@ -1,6 +1,6 @@
 ﻿using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 #if __ANDROID__
 using Android.Runtime;
 #endif
@@ -12,11 +12,11 @@ namespace P42.Utils.Uno
         public static Size Size(FrameworkElement element)
         {
             // Doens't work in Uno
-            //var windowWidth = ((Frame)Windows.UI.Xaml.Window.Current.Content).ActualWidth;
-            //var windowHeight = ((Frame)Windows.UI.Xaml.Window.Current.Content).ActualHeight;
+            //var windowWidth = ((Frame)Microsoft.UI.Xaml.Window.Current.Content).ActualWidth;
+            //var windowHeight = ((Frame)Microsoft.UI.Xaml.Window.Current.Content).ActualHeight;
 
-            var windowWidth = Windows.UI.Xaml.Window.Current.Bounds.Width;
-            var windowHeight = Windows.UI.Xaml.Window.Current.Bounds.Height;
+            var windowWidth = Platform.Window?.Bounds.Width ?? 1920;
+            var windowHeight = Platform.Window?.Bounds.Height ?? 1080;
             return new Size(windowWidth, windowHeight);
         }
 
@@ -24,7 +24,7 @@ namespace P42.Utils.Uno
             => (Page)CurrentFrame?.Content;
 
         public static Frame CurrentFrame
-            => (Frame)Windows.UI.Xaml.Window.Current.Content;
+            => (Frame)Platform.Window.Content;
 
         public static double StatusBarHeight(FrameworkElement element)
         {
@@ -53,10 +53,11 @@ namespace P42.Utils.Uno
         public static Thickness SafeArea(FrameworkElement element)
         {
             var result = new Thickness();
-            var winBounds = Windows.UI.Xaml.Window.Current.Bounds;
-            var pageBounds = Windows.UI.Xaml.Window.Current.Content.GetBounds();
+            var winBounds = Platform.Window.Bounds;
+            var pageBounds = Platform.Window.Content.GetBounds();
 
-#if !WINDOWS_UWP
+#if !NET6_0_WINDOWS10_0_19041_0
+
             result.Left = pageBounds.Left - winBounds.Left;
             result.Top = pageBounds.Top - winBounds.Top;
             result.Right = winBounds.Right - pageBounds.Right;

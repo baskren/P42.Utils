@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
-using ElementType = Windows.UI.Xaml.Controls.TextBlock;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using ElementType = Microsoft.UI.Xaml.Controls.TextBlock;
 
 namespace P42.Utils.Uno
 {
-    [Windows.UI.Xaml.Data.Bindable]
+    [Microsoft.UI.Xaml.Data.Bindable]
     //[System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
     public static class TextBlockExtensions
     {
@@ -108,9 +108,9 @@ namespace P42.Utils.Uno
                 var highlighter = new TextHighlighter
                 {
                     Background = new SolidColorBrush(color),
-                    //Foreground = new Windows.UI.Xaml.Media.SolidColorBrush(metaFont.TextColor.ToWindowsColor()),
+                    //Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(metaFont.TextColor.ToWindowsColor()),
                 };
-                highlighter.Ranges.Add(new Windows.UI.Xaml.Documents.TextRange
+                highlighter.Ranges.Add(new Microsoft.UI.Xaml.Documents.TextRange
                 {
                     StartIndex = startIndex,
                     Length = length
@@ -124,7 +124,7 @@ namespace P42.Utils.Uno
         public static double DefaultFontSize(this TextBlock textBlock)
             => (double)Application.Current.Resources["ControlContentThemeFontSize"];
 
-        public static TextBlock Copy(this Windows.UI.Xaml.Controls.TextBlock textBlock)
+        public static TextBlock Copy(this Microsoft.UI.Xaml.Controls.TextBlock textBlock)
         {
             if (textBlock is TextBlock source)
             {
@@ -219,7 +219,7 @@ namespace P42.Utils.Uno
             => isEnabled ? 1.0 : 0.5;
 
         public static double FloorFontSize(double fontSize)
-            => Math.Max(fontSize, Settings.MinFontSize);
+            => Math.Max(fontSize, Platform.MinFontSize);
 
         static bool _textHighlighterPresent;
         static bool _textHighlighterPresentSet;
@@ -229,7 +229,7 @@ namespace P42.Utils.Uno
             {
                 if (!_textHighlighterPresentSet)
                 {
-                    _textHighlighterPresent = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Documents.TextHighlighter");
+                    _textHighlighterPresent = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Microsoft.UI.Xaml.Documents.TextHighlighter");
                     _textHighlighterPresentSet = true;
                 }
                 return _textHighlighterPresent;

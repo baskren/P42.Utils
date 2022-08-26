@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Dynamic;
 using Newtonsoft.Json;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace P42.Utils.Uno
 {

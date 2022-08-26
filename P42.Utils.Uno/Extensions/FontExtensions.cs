@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
 {
@@ -21,7 +21,7 @@ namespace P42.Utils.Uno
             {
                 if (!_xamlAutoFontFamilyPresentSet)
                 {
-                    _xamlAutoFontFamilyPresent = Windows.Foundation.Metadata.ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.FontFamily", "XamlAutoFontFamily");
+                    _xamlAutoFontFamilyPresent = Windows.Foundation.Metadata.ApiInformation.IsPropertyPresent("Microsoft.UI.Xaml.Media.FontFamily", "XamlAutoFontFamily");
                     _xamlAutoFontFamilyPresentSet = true;
                 }
                 return _xamlAutoFontFamilyPresent;
@@ -35,7 +35,7 @@ namespace P42.Utils.Uno
             {
                 if (_defaultFontFamily == null)
                 {
-#if NETFX_CORE
+#if NET6_0_WINDOWS10_0_19041_0
                     if (XamlAutoFontFamilyPresent)
                         _defaultFontFamily = FontFamily.XamlAutoFontFamily;
                     else
@@ -120,7 +120,7 @@ namespace P42.Utils.Uno
                 // if that doesn't work, look through all known assemblies
                 if (localStorageFileName == null)
                 {
-                    foreach (var asm in Settings.AssembliesToInclude)
+                    foreach (var asm in Platform.AssembliesToInclude)
                     {
                         var asmName = asm.GetName().Name;
                         if (targetAsmNameA == asmName || targetAsmNameB == asmName)

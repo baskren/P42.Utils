@@ -4,8 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 using P42.Utils;
 
 namespace P42.Utils.Uno
@@ -43,7 +43,8 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
-#if WINDOWS_UWP
+#if NET6_0_WINDOWS10_0_19041_0
+
 			if (target is FrameworkElement element)
 			{
 				//element.ClearValue();
@@ -87,7 +88,8 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
-#if WINDOWS_UWP
+#if NET6_0_WINDOWS10_0_19041_0
+
 			if (target is FrameworkElement element)
 			{
 				//element.ClearValue();
@@ -132,7 +134,8 @@ namespace P42.Utils.Uno
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
 
-#if WINDOWS_UWP
+#if NET6_0_WINDOWS10_0_19041_0
+
 			if (target is FrameworkElement element)
             {
 				//element.ClearValue();

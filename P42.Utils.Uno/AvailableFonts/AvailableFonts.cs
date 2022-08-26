@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.UI;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
+using DWrite;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace P42.Utils.Uno
 {
@@ -47,8 +50,65 @@ namespace P42.Utils.Uno
 #elif __WASM__
             // https://cmsdk.com/css3/enumerate-fontface-urls-using-javascriptjquery.html
             throw new NotImplementedException();
-#elif WINDOWS_UWP
-                return Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+#elif NET6_0_WINDOWS10_0_19041_0
+
+                Guid CLSID_DWriteFactory = new Guid("B859EE5A-D838-4B5B-A2E8-1ADC7D93DB48");
+                Guid CLSID_DWriteFactory7 = new Guid("35D0E0B3-9076-4D2E-A016-A91B568A06B4");
+                IntPtr pDWriteFactoryPtr = IntPtr.Zero;
+                HRESULT hr = DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE.DWRITE_FACTORY_TYPE_SHARED, ref CLSID_DWriteFactory7, out pDWriteFactoryPtr);
+                //IDWriteFactory m_pDWriteFactory = null;
+                IDWriteFactory7 m_pDWriteFactory7 = null;
+
+                var fonts = new List<string>(); //new System.Collections.ObjectModel.ObservableCollection<string>();
+
+                if (hr == HRESULT.S_OK)
+                {
+                    // m_pDWriteFactory = Marshal.GetObjectForIUnknown(pDWriteFactoryPtr) as IDWriteFactory;
+                    m_pDWriteFactory7 = Marshal.GetObjectForIUnknown(pDWriteFactoryPtr) as IDWriteFactory7;
+                    //IDWriteFontCollection pFontCollection;
+                    //hr = m_pDWriteFactory.GetSystemFontCollection(out pFontCollection);
+                    IDWriteFontCollection3 pFontCollection;
+                    hr = m_pDWriteFactory7.GetSystemFontCollection7(false, DWRITE_FONT_FAMILY_MODEL.DWRITE_FONT_FAMILY_MODEL_TYPOGRAPHIC, out pFontCollection);
+                    if (hr == HRESULT.S_OK)
+                    {
+                        uint nFamilyCount = pFontCollection.GetFontFamilyCount();
+                        for (uint i = 0; i < nFamilyCount; i++)
+                        {
+                            IDWriteFontFamily pFontFamily;
+                            hr = pFontCollection.GetFontFamily(i, out pFontFamily);
+                            IDWriteLocalizedStrings pFamilyNames;
+                            pFontFamily.GetFamilyNames(out pFamilyNames);
+                            // https://docs.microsoft.com/en-us/windows/win32/api/dwrite/nf-dwrite-idwritelocalizedstrings-findlocalename
+                            uint nIndex = 0;
+                            bool bExists = false;
+                            StringBuilder sbLocaleName = new StringBuilder(LOCALE_NAME_MAX_LENGTH);
+                            int nDefaultLocaleSuccess = GetUserDefaultLocaleName(sbLocaleName, LOCALE_NAME_MAX_LENGTH);
+                            if (nDefaultLocaleSuccess > 0)
+                            {
+                                hr = pFamilyNames.FindLocaleName(sbLocaleName.ToString(), out nIndex, out bExists);
+                            }
+                            if (hr == HRESULT.S_OK && !bExists)
+                            {
+                                hr = pFamilyNames.FindLocaleName("en-us", out nIndex, out bExists);
+                            }
+                            if (!bExists)
+                                nIndex = 0;
+                            hr = pFamilyNames.GetString(nIndex, sbLocaleName, LOCALE_NAME_MAX_LENGTH);
+                            string sName = sbLocaleName.ToString();
+                            //Console.WriteLine("Font : {0}", sName);
+                            //System.Diagnostics.Debug.WriteLine("Font : " + sName);
+                            fonts.Add(sName);
+                            Marshal.ReleaseComObject(pFamilyNames);
+                            Marshal.ReleaseComObject(pFontFamily);
+                        }
+                        Marshal.ReleaseComObject(pFontCollection);
+                    }
+                    //Marshal.ReleaseComObject(m_pDWriteFactory);
+                    Marshal.ReleaseComObject(m_pDWriteFactory7);
+                }
+                //return Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+
+                return fonts.ToArray();
 #else
             throw new NotImplementedException();
 #endif
@@ -65,5 +125,15 @@ namespace P42.Utils.Uno
             return new FontFamily(name);
 #endif
         }
+
+#if NET6_0_WINDOWS10_0_19041_0                           
+
+        [DllImport("DWriteCore.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern HRESULT DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE factoryType, ref Guid iid, out IntPtr factory);
+
+        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int GetUserDefaultLocaleName(StringBuilder lpLocaleName, int cchLocaleName);
+        public const int LOCALE_NAME_MAX_LENGTH = 85;
+#endif
     }
 }

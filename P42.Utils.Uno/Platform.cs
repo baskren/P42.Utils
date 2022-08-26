@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace P42.Utils.Uno
 {
-	public static class Settings
+	public static class Platform
 	{
         public static double MinFontSize = 10.0;
 
-        public static Windows.UI.Xaml.Application Application { get; private set; }
+        public static Microsoft.UI.Xaml.Application Application { get; private set; }
+
+        public static Microsoft.UI.Xaml.Window Window { get; private set; }
 
         static List<Assembly> _assembliesToInclude;
         public static List<Assembly> AssembliesToInclude
@@ -29,9 +31,10 @@ namespace P42.Utils.Uno
             }
         }
 
-        public static void Init(Windows.UI.Xaml.Application application)
+        public static void Init(Microsoft.UI.Xaml.Application application, Microsoft.UI.Xaml.Window window)
 		{
 			Application = application;
+            Window = window;
 			P42.Utils.Environment.Init();
             P42.Utils.Environment.PlatformTimer = new Timer();
             P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
@@ -71,7 +74,7 @@ namespace P42.Utils.Uno
             {
                 var resourceIndex = resourcePath.IndexOf("Resources");
                 var asmName = string.Join(".", resourcePath.GetRange(0, resourceIndex));
-                var appAsm = Windows.UI.Xaml.Application.Current.GetType().Assembly;  
+                var appAsm = Microsoft.UI.Xaml.Application.Current.GetType().Assembly;  
                 if (appAsm?.GetName().Name == asmName)
                     return appAsm;
 
@@ -84,7 +87,7 @@ namespace P42.Utils.Uno
                 for (int i = resourcePath.Count - 1; i < 0; i--)
                 {
                     var asmName = string.Join(".", resourcePath.GetRange(0, i));
-                    foreach (var asm in Settings.AssembliesToInclude)
+                    foreach (var asm in Platform.AssembliesToInclude)
                         if (asm?.GetName().Name == asmName)
                             return asm;
                 }

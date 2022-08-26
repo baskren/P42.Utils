@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.Foundation;
 
@@ -57,7 +57,7 @@ namespace P42.Utils.Uno
 					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
 
 
-//#if NETFX_CORE
+//#if NET6_0_WINDOWS10_0_19041_0
 //                    var offset = Math.Max(0, viewer.VerticalOffset + positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight );
 //                    viewer.ScrollToVerticalOffset(offset);
 //#else
@@ -73,7 +73,7 @@ namespace P42.Utils.Uno
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
 #if NETSTANDARD
-                if (list.ContainerFromItem(item) is Windows.UI.Xaml.Controls.Primitives.SelectorItem element)
+                if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem element)
                 {
                     var id = element.GetHtmlAttribute("id");
                     System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
@@ -92,7 +92,7 @@ namespace P42.Utils.Uno
 		{
 			if (GetScrollViewer(list) is ScrollViewer viewer)
 			{
-				var selectorItem = list.ContainerFromItem(item) as Windows.UI.Xaml.Controls.Primitives.SelectorItem;
+				var selectorItem = list.ContainerFromItem(item) as Microsoft.UI.Xaml.Controls.Primitives.SelectorItem;
 				var transform = selectorItem?.TransformToVisual(viewer.Content as UIElement);
 				var position = transform?.TransformPoint(new Windows.Foundation.Point(0, 0));
 				if (!position.HasValue)

@@ -50,28 +50,6 @@ namespace P42.Utils.Uno
             }
         }
 
-        public static Platform Platform
-        {
-            get
-            {
-#if NETFX_CORE
-                return Platform.UWP;
-#elif __ANDROID__
-                return Platform.Android;
-#elif __IOS__
-                return Platform.iOS;
-#elif NETSTANDARD || NET6_0
-                return Platform.WASM;
-#elif __MACOS__
-                return Platform.MacOS;
-#elif __SKIA__
-                return Platform.Skia;
-#else
-                throw new Exception();
-#endif
-            }
-        }
-
 
     }
 }

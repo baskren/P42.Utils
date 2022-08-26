@@ -5,17 +5,17 @@
 
     <!--
     Another example of how Micrsoft just doesn't care about those who don't use only their stuff
-	  <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
-    -->
     <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.18362;net6.0;netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
+    -->
+	<TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net6.0-windows10.0.19041.0;net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+	  <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">Xamarin.Mac20</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Tizen')) ">Tizen50</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.UWP')) ">uap10.0.18362</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net6.0-windows10.0.19041.0</TargetFrameworks>
 
   </PropertyGroup>
 
@@ -25,5 +25,10 @@
     <PackageReference Include="Win2D.uwp" Version="1.26.0" />
   </ItemGroup>
 
+  <!-- WinUI Windows -->
+  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.DWrite" Version="1.0.0-experimental1" />
+  </ItemGroup>
 
 </Project>
