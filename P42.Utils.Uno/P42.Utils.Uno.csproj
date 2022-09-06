@@ -7,14 +7,12 @@
     Another example of how Micrsoft just doesn't care about those who don't use only their stuff
     <TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid11.0;</TargetFrameworks>
     -->
-	<TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
+	  <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
 	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net6.0-windows10.0.19041.0;net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos;</TargetFrameworks>
-	  <TargetFrameworks Condition=" $(SolutionName.Contains('.Droid')) ">MonoAndroid11.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">Xamarin.iOS10</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">Xamarin.Mac20</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Tizen')) ">Tizen50</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">net6.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">net6.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net6.0-windows10.0.19041.0</TargetFrameworks>
 
   </PropertyGroup>
