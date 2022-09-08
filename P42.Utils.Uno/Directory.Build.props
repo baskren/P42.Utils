@@ -3,7 +3,7 @@
   <PropertyGroup>
 
     <RootNamespace>P42.Utils.Uno</RootNamespace>
-    <Version>4.4.13-winui.0.1</Version>
+    <Version>4.4.20-winui.0.1</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
@@ -57,7 +57,7 @@
 
   <ItemGroup>
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
-    <PackageReference Include="Uno.WinUI" Version="4.4.13" />
+    <PackageReference Include="Uno.WinUI" Version="4.4.20" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   
