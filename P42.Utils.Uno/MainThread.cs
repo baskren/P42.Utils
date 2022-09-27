@@ -8,7 +8,10 @@ using Windows.UI.Core;
 
 namespace P42.Utils.Uno
 {
-    public class MainThread
+    /// <summary>
+    /// NO LONGER PUBLICALLY VISIBLE - USE XAMARIN.ESSENTIALS.MAINTHREAD instead
+    /// </summary>
+    class MainThread
     {
         public static bool IsMainThread
         {
@@ -34,11 +37,61 @@ namespace P42.Utils.Uno
 
         public static void BeginInvokeOnMainThread(Action action)
         {
-            var dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
+            if (action is null)
+                return;
 
+            if (IsMainThread)
+            {
+                action.Invoke();
+                return;
+            }
+
+            var dispatcher = CoreApplication.MainView?.CoreWindow?.Dispatcher;
             if (dispatcher == null)
                 throw new InvalidOperationException("Unable to find main thread.");
-            dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action?.Invoke()).WatchForError();
+
+            dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action.Invoke()).WatchForError();
+        }
+
+
+
+        public static T BeginInvokeOnMainThread<T>(Func<T> action)
+        {
+            if (action is null)
+                return default(T);
+
+            if (P42.Utils.Uno.MainThread.IsMainThread)
+                return action.Invoke();
+
+            var task = Task.Run(async () => await BeginInvokeOnMainThreadAsync(() => action.Invoke()));
+            task.Wait();
+            return task.Result;
+        }
+
+        public static async Task<T> BeginInvokeOnMainThreadAsync<T>(Func<T> action)
+        {
+            if (action is null)
+                return default(T);
+
+            if (P42.Utils.Uno.MainThread.IsMainThread)
+                return action.Invoke();
+
+            var coreDispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView?.CoreWindow?.Dispatcher;
+            if (coreDispatcher == null)
+            {
+                throw new InvalidOperationException("Unable to find main thread.");
+            }
+
+            var tcs = new TaskCompletionSource<T>();
+            coreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, delegate
+            {
+                var result = action.Invoke();
+                tcs.SetResult(result);
+            }).WatchForError();
+
+            await tcs.Task;
+
+            return tcs.Task.Result;
         }
 
     }
