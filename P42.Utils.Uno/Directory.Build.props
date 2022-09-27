@@ -3,7 +3,7 @@
   <PropertyGroup>
 
     <RootNamespace>P42.Utils.Uno</RootNamespace>
-    <Version>4.5.9-winui.0.3</Version>
+    <Version>4.5.9-winui.0.4</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
