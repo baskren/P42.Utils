@@ -4,8 +4,8 @@
 
 	  <AssemblyName>P42.Utils</AssemblyName>
 
-    <TargetFrameworks>net6.0</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0;netstandard2.0</TargetFrameworks>
     
   </PropertyGroup>
 
