@@ -59,7 +59,7 @@ namespace P42.Utils
 
         public static async Task<Stream> GetStreamAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return null;
             var fileName = await LocalStorageSubPathForEmbeddedResourceAsync(resourceId, assembly, folderName);
@@ -72,7 +72,7 @@ namespace P42.Utils
 
         public static string ApplicationUri(string resourceId, Assembly assembly = null, string folderName = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return null;
 
@@ -102,7 +102,7 @@ namespace P42.Utils
 
         public static async Task<string> LocalStorageFullPathForEmbeddedResourceAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return null;
 
@@ -147,7 +147,7 @@ namespace P42.Utils
                 return false;
             }
 
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return false;
 
@@ -166,7 +166,7 @@ namespace P42.Utils
 
         public static async Task<string> LocalStorageSubPathForEmbeddedResourceAsync(string resourceId, Assembly assembly = null, string folderName = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return null;
 

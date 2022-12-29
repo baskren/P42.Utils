@@ -71,7 +71,7 @@ namespace P42.Utils
         /// <value><c>true</c> if is on main thread; otherwise, <c>false</c>.</value>
         public static bool IsOnMainThread => IsHeadlessTest || System.Environment.CurrentManagedThreadId == MainThreadId;
 
-        static public Func<string, Assembly> EmbeddedResourceAssemblyResolver;
+        static public Func<string, Assembly, Assembly> EmbeddedResourceAssemblyResolver;
 
         /// <summary>
         /// Gets the operating system.

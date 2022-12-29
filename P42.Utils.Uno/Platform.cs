@@ -40,7 +40,7 @@ namespace P42.Utils.Uno
             P42.Utils.Environment.PlatformPathLoader = PlatformPathLoader;
 			P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
 			P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
-            P42.Utils.Environment.EmbeddedResourceAssemblyResolver = AssemblyFromResourceId;
+            P42.Utils.Environment.EmbeddedResourceAssemblyResolver = EmbeddedResourceExtensions.FindAssemblyForResourceId;
 
         }
 
@@ -63,7 +63,7 @@ namespace P42.Utils.Uno
 			P42.Utils.Environment.ApplicationCachePath = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
 			P42.Utils.Environment.TemporaryStoragePath = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 		}
-
+        /*
         public static Assembly AssemblyFromResourceId(string resourceId)
         {
             if (string.IsNullOrWhiteSpace(resourceId))
@@ -94,7 +94,7 @@ namespace P42.Utils.Uno
             }
             return assembly;
         }
-
+        */
 
     }
 }

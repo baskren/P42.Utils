@@ -9,7 +9,7 @@ namespace P42.Utils
     {
         public static System.IO.Stream GetStream(string resourceId, Assembly assembly = null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return null;
             // the following is very bad for UWP?
@@ -22,7 +22,7 @@ namespace P42.Utils
 
         public static bool Available(string resourceId, Assembly assembly=null)
         {
-            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId);
+            assembly = assembly ?? Environment.EmbeddedResourceAssemblyResolver?.Invoke(resourceId, null);
             if (assembly == null)
                 return false;
             if (!_resources.ContainsKey(assembly))
