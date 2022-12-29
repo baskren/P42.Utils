@@ -35,7 +35,7 @@ namespace P42.Utils.Uno
             {
                 if (_defaultFontFamily == null)
                 {
-#if NET6_0_WINDOWS10_0_19041_0
+#if NET7_0_WINDOWS10_0_19041_0
                     if (XamlAutoFontFamilyPresent)
                         _defaultFontFamily = FontFamily.XamlAutoFontFamily;
                     else

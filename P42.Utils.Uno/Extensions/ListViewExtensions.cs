@@ -57,7 +57,7 @@ namespace P42.Utils.Uno
 					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
 
 
-//#if NET6_0_WINDOWS10_0_19041_0
+//#if NET7_0_WINDOWS10_0_19041_0
 //                    var offset = Math.Max(0, viewer.VerticalOffset + positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight );
 //                    viewer.ScrollToVerticalOffset(offset);
 //#else

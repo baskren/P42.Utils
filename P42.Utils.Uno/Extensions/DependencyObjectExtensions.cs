@@ -43,7 +43,7 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
-#if NET6_0_WINDOWS10_0_19041_0
+#if NET7_0_WINDOWS10_0_19041_0
 
 			if (target is FrameworkElement element)
 			{
@@ -88,7 +88,7 @@ namespace P42.Utils.Uno
 				binding.ConverterLanguage = converterLanguage;
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
-#if NET6_0_WINDOWS10_0_19041_0
+#if NET7_0_WINDOWS10_0_19041_0
 
 			if (target is FrameworkElement element)
 			{
@@ -134,7 +134,7 @@ namespace P42.Utils.Uno
 			if (!string.IsNullOrWhiteSpace(path))
 				binding.Path = new PropertyPath(path);
 
-#if NET6_0_WINDOWS10_0_19041_0
+#if NET7_0_WINDOWS10_0_19041_0
 
 			if (target is FrameworkElement element)
             {
