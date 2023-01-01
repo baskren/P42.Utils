@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Uno.UI;
 using Microsoft.UI.Xaml.Media;
 using DWrite;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace P42.Utils.Uno
 {

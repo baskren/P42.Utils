@@ -69,25 +69,25 @@ namespace P42.Utils.Uno
 			}
 		}
 
-		/*
+		
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
-#if NETSTANDARD
-                if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem element)
-                {
-                    var id = element.GetHtmlAttribute("id");
-                    System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
-                    WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End).ToString().ToLower()+ ");");
-                }
+#if __WASM__
+			if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
+            {
+                var id = selectorItem.GetHtmlAttribute("id");
+                System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
+				global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End).ToString().ToLower()+ ");");
+            }
 
 #else
 			await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
 #endif
 			await Task.Delay(5);
 		}
-		*/
+		
 
-#if !NETSTANDARD
+#if !__WASM__
 		static bool InternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 		{
 			if (GetScrollViewer(list) is ScrollViewer viewer)

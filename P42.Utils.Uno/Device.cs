@@ -14,12 +14,11 @@ namespace P42.Utils.Uno
         {
             get
             {
-#if __WASM__ || NETSTANDARD
+#if __WASM__ 
                 return DeviceIdiom.Web;
 #elif __MACOS__
                 return DeviceIdiom.Desktop;
 #else
-                //return Xamarin.Essentials.DeviceInfo.Idiom.ToUno();
                 System.Diagnostics.Debug.WriteLine("DeviceForm: " + AnalyticsInfo.DeviceForm);
                 System.Diagnostics.Debug.WriteLine("DeviceFamily: " + AnalyticsInfo.VersionInfo.DeviceFamily);
                 switch (AnalyticsInfo.DeviceForm.ToLower())
