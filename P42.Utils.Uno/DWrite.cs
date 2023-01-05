@@ -6,7 +6,7 @@ namespace DWrite
 {
 
 
-#if NET7_0_WINDOWS10_0_19041_0                           
+#if !HAS_UNO                           
 
     // Commented to not link with DWrite.dll
 

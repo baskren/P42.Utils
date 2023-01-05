@@ -48,7 +48,7 @@ namespace P42.Utils.Uno
 #elif __WASM__
             // https://cmsdk.com/css3/enumerate-fontface-urls-using-javascriptjquery.html
             throw new NotImplementedException();
-#elif NET7_0_WINDOWS10_0_19041_0
+#elif !HAS_UNO
 
                 Guid CLSID_DWriteFactory = new Guid("B859EE5A-D838-4B5B-A2E8-1ADC7D93DB48");
                 Guid CLSID_DWriteFactory7 = new Guid("35D0E0B3-9076-4D2E-A016-A91B568A06B4");
@@ -124,7 +124,7 @@ namespace P42.Utils.Uno
 #endif
         }
 
-#if NET7_0_WINDOWS10_0_19041_0                           
+#if !HAS_UNO                           
 
         [DllImport("DWriteCore.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern HRESULT DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE factoryType, ref Guid iid, out IntPtr factory);

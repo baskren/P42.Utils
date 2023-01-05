@@ -10,7 +10,7 @@ namespace P42.Utils
     {
         static Environment()
         {
-#if NETSTANDARD2_0_VOIDED
+#if NET7_0_VOIDED
             //DocumentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
             switch (GetOperatingSystem().ToLower())
             {

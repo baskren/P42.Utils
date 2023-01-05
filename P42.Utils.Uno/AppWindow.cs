@@ -56,7 +56,7 @@ namespace P42.Utils.Uno
             var winBounds = Platform.Window.Bounds;
             var pageBounds = Platform.Window.Content.GetBounds();
 
-#if !NET7_0_WINDOWS10_0_19041_0
+#if HAS_UNO
 
             result.Left = pageBounds.Left - winBounds.Left;
             result.Top = pageBounds.Top - winBounds.Top;
