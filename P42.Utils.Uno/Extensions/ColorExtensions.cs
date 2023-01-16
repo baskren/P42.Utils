@@ -10,7 +10,7 @@ using Windows.UI;
 
 namespace P42.Utils.Uno
 {
-    public static class ColorExtensions
+    static class ColorExtensions
     {
         public static Color GetForegroundColor(this Color background)
         {

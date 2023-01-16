@@ -33,7 +33,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace P42.Utils.Uno
+namespace P42.Utils
 {
 
     public static class WildcardMatch

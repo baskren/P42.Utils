@@ -8,7 +8,7 @@ namespace P42.Utils.Uno
     /// <summary>
     /// P42.Utils.Uno FormattedString Span
     /// </summary>
-    abstract class Span : NotifiableObject, ICopiable<Span> 
+    abstract class Span : P42.NotifiableObject.FieldBackedNotifiablePropertyObject, ICopiable<Span> 
     {
         #region Fields
         internal string Key;

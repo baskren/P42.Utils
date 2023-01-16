@@ -352,7 +352,7 @@ namespace P42.Utils.Uno
                 (textBlock.FontStyle & Windows.UI.Text.FontStyle.Italic) > 0,
                 textColor: textBlock.Foreground is SolidColorBrush brush
                     ? brush.Color
-                    : SystemColors.WindowTextColor //(Color)Application.Current.Resources["SystemBaseHighColor"]
+                    : ColorExtensions.AppColor("SystemColorWindowTextColor") //(Color)Application.Current.Resources["SystemBaseHighColor"]
                 );
 
             var MathMetaFont = new MetaFont(baseMetaFont)

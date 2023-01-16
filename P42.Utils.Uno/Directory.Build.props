@@ -3,7 +3,7 @@
   <PropertyGroup>
 
     <RootNamespace>P42.Utils.Uno</RootNamespace>
-    <Version>4.6.39-winui.0.4</Version>
+    <Version>4.6.39</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
+	  <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
   </ItemGroup>
 
 
@@ -58,6 +58,7 @@
   <ItemGroup>
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="P42.NotifiableObject" Version="1.0.0" />
   </ItemGroup>
   
   <Target Name="B1" BeforeTargets="BeforeBuild">
