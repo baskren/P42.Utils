@@ -18,8 +18,8 @@
 
 	<!-- WASM -->
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.6.39" />
-		<PackageReference Include="Uno.WinUI" Version="4.6.39" />
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.6.41" />
+		<PackageReference Include="Uno.WinUI" Version="4.6.41" />
 		
 		<EmbeddedResource Include="LinkerConfig.Wasm.xml">
 			<LogicalName>$(AssemblyName).xml</LogicalName>
