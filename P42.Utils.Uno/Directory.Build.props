@@ -3,7 +3,7 @@
   <PropertyGroup>
 
     <RootNamespace>P42.Utils.Uno</RootNamespace>
-    <Version>4.6.41</Version>
+    <Version>4.7.37</Version>
     <NoWarn>Uno0001;VSX1000;CA1416</NoWarn>
 
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
