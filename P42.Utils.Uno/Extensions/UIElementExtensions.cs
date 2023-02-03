@@ -103,13 +103,13 @@ namespace P42.Utils.Uno
             return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
         }
 
-        public static DependencyObject FindAncestor<T>(this FrameworkElement element)
+        public static T FindAncestor<T>(this FrameworkElement element) where T : FrameworkElement
         {
             var parent = element.Parent as FrameworkElement;
             while (parent != null)
             {
                 if (parent is T)
-                    return parent;
+                    return parent as T;
                 if (parent is FrameworkElement fe)
                     parent = fe.Parent as FrameworkElement;
                 else
