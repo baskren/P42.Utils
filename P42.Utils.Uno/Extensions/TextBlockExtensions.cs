@@ -66,6 +66,7 @@ namespace P42.Utils.Uno
                     if (textBlock.GetHtmlDependencyObject() is HtmlDependencyObject html)
                     {
                         html.HtmlSpans = htmlSpans;
+                        html.FontFamily = textBlock.FontFamily;
                     }
                     else
                     {

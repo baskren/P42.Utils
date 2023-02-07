@@ -65,18 +65,30 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
+    <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) : $(Configuration) : $(P42TargetPlatform) : $(Version) ] ===============================" Importance="high"/>
+    <Message Text="COMPILE: ($Compile)"/>
   </Target>
   
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(LocalNuGet) != '' ">
+  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(LocalNuGet) != '' AND $(P42TargetPlatform) == '' ">
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="=============================== NUGET PACK [$(AssemblyName)] ===============================" Importance="high"/>
+    <Message Text="=============================== NUGET PACK [$(AssemblyName) : $(TargetFramework) : $(Configuration) : $(P42TargetPlatform) : $(Version) ] ===============================" Importance="high"/>
     <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
-    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(LocalNuGet) " />
-    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(LocalNuGet) " />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(LocalNuGet) " />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(LocalNuGet) " />
     <Message Importance="high" Text="PACKAGE SAVED TO:  $(LocalNuGet)) " />
+  </Target>
+
+  <Target Name="NuGetMoveWasm" AfterTargets="Pack" Condition=" $(LocalNuGet) != '' AND $(P42TargetPlatform.ToLower().Contains('wasm')) ">
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text="=============================== NUGET PACK [$(AssemblyName) : $(TargetFramework) : $(Configuration) : $(P42TargetPlatform) : $(Version) ] ===============================" Importance="high"/>
+    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFiles="$([System.IO.Path]::Combine($(LocaLNuGet),$(AssemblyName).Wasm.$(Version).nupkg))" />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFiles="$([System.IO.Path]::Combine($(LocaLNuGet),$(AssemblyName).Wasm.$(Version).snupkg))" />
+    <Message Importance="high" Text="PACKAGE SAVED TO:  $([System.IO.Path]::Combine($(LocaLNuGet),$(AssemblyName).Wasm.$(Version).nupkg)) " />
   </Target>
 
 

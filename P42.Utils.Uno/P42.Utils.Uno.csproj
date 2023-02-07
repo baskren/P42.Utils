@@ -9,12 +9,21 @@
     -->
 	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
 	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.18362;net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.iOS')) ">net7.0-ios</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.macOS')) ">net7.0-macos</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.GtK')) ">net7.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.WPF')) ">net7.0</TargetFrameworks>
-    <TargetFrameworks Condition=" $(SolutionName.Contains('.Windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
 
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.android')) ">net7.0-android</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.ios')) ">net7.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.macos')) ">net7.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">net7.0-macos</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">net7.0</TargetFrameworks>
+    <TargetFrameworks Condition=" $(SolutionName.ToLower().Contains('.windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) OR $(P42TargetPlatform.ToLower.Contains('wasm')) ">
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <DefineConstants >__WASM__;$(DefineConstants);</DefineConstants>
+    <P42TargetPlatform>wasm</P42TargetPlatform>
   </PropertyGroup>
 
 
@@ -30,5 +39,20 @@
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
       <PackageReference Include="Uno.WinUI" Version="4.7.37" />
   </ItemGroup>
+
+	<!-- .NetStandard Bait -->
+	<ItemGroup Condition=" !$(P42TargetPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
+	</ItemGroup>
+
+	<!-- WASM -->
+	<ItemGroup Condition=" $(P42TargetPlatform.ToLower().Contains('wasm')) ">
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.37" />
+
+		<EmbeddedResource Include="LinkerConfig.Wasm.xml">
+			<LogicalName>P42.Utils.Uno.Wasm.xml</LogicalName>
+		</EmbeddedResource>
+
+	</ItemGroup>
+
 
 </Project>

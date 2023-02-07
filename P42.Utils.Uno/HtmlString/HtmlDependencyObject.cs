@@ -232,6 +232,7 @@ namespace P42.Utils.Uno
         internal HtmlDependencyObject(TextBlock textBlock, HtmlSpans spans)
         {
             targetTextBlock = textBlock;
+            FontFamily = textBlock.FontFamily;
             HtmlSpans = spans;
             this.BindFont(textBlock);
         }
