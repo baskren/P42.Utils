@@ -3,7 +3,7 @@
   <PropertyGroup>
 
 	<RootNamespace>P42.Utils</RootNamespace>
-	<Version>1.0.2</Version>
+	<Version>1.0.3</Version>
     <NoWarn>Uno0001;1701;1702;1705;VSX1000</NoWarn>
 
 	<!--
