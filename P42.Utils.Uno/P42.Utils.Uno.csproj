@@ -22,7 +22,7 @@
 
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) OR $(P42TargetPlatform.ToLower.Contains('wasm')) ">
     <TargetFrameworks>net7.0</TargetFrameworks>
-    <DefineConstants >__WASM__;$(DefineConstants);</DefineConstants>
+    <DefineConstants>__WASM__;$(DefineConstants);</DefineConstants>
     <P42TargetPlatform>wasm</P42TargetPlatform>
   </PropertyGroup>
 
