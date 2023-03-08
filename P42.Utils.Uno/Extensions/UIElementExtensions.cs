@@ -10,6 +10,7 @@ using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
 {
@@ -17,6 +18,13 @@ namespace P42.Utils.Uno
     {
         public static bool HasPrescribedWidth(this FrameworkElement element) => !double.IsNaN(element.Width) && element.Width >= 0;
         public static bool HasPrescribedHeight(this FrameworkElement element) => !double.IsNaN(element.Height) && element.Height >= 0;
+
+        public static bool HasMinWidth(this FrameworkElement element) => !double.IsNaN(element.MinWidth) && element.MinWidth >= 0;
+        public static bool HasMinHeight(this FrameworkElement element) => !double.IsNaN(element.MinHeight) && element.MinHeight >= 0;
+
+        public static bool HasMaxWidth(this FrameworkElement element) => !double.IsNaN(element.MaxWidth) && element.MaxWidth >= 0;
+        public static bool HasMaxHeight(this FrameworkElement element) => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
+
 
 #if __ANDROID__
 
@@ -129,7 +137,7 @@ namespace P42.Utils.Uno
             //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" xmlns:tlocal=\"using:{templateType.Namespace}\" xmlns:system=\"using:System\" x:DataType=\"system:{dataType.Name}\"><tlocal:{templateType.Name} /></DataTemplate>";
             //else
             //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:tlocal=\"using:{templateType.Namespace}\" \n\t xmlns:dlocal=\"using:{dataType.Namespace}\" \n\t x:DataType=\"dlocal:{dataType.Name}\"> \n\t\t<tlocal:{templateType.Name} /> \n</DataTemplate>";
-            System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDatatemplate: markup: " + markup);
+            // System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDataTemplate: markup: " + markup);
             //template.
             return markup;
         }
@@ -177,5 +185,25 @@ namespace P42.Utils.Uno
             return null;
         }
 #endif
+
+        public static DependencyObject FindChildByName(this DependencyObject parent, string ControlName)
+        {
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is FrameworkElement && ((FrameworkElement)child).Name == ControlName)
+                    return child;
+
+                var FindResult = FindChildByName(child, ControlName);
+                if (FindResult != null)
+                    return FindResult;
+            }
+
+            return null;
+        }
+
+
     }
 }
