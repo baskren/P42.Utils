@@ -82,9 +82,14 @@ namespace P42.Utils.Uno
                 using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
                 using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
 
-                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+                //if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
+                {
+                    windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+                    return displayMetrics?.Density ?? 1;
+                }
 
-                return displayMetrics?.Density ?? 1;
+                
+                
             }
 #elif __IOS__
             return UIKit.UIScreen.MainScreen.Scale;
