@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
 {
@@ -33,5 +36,37 @@ namespace P42.Utils.Uno
         public static Thickness Subtract(this Thickness thickness, double offset)
             => thickness.Subtract(new Thickness(offset));
 
+        static ThicknessConverter thicknessConverter;
+        public static ThicknessConverter ThicknessConverter => thicknessConverter ??= new ThicknessConverter();
+
     }
+
+    public class ThicknessConverter : IValueConverter
+    {
+        internal ThicknessConverter() { }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var zero = new Thickness(0);
+            var fallback = zero;
+            if (parameter is Thickness param)
+                fallback = param;
+
+            if (value is null)
+                return new Thickness(0);
+            if (value is bool tf)
+                return tf ? fallback : zero;
+            if (value is int intValue)
+                return new Thickness(intValue);
+            if (value is double doubleValue)
+                return new Thickness(doubleValue);
+            return zero;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new InvalidCastException($"Cannot P42.Utils.Uno.ThicknessConverter.ConvertBack({value},{targetType}) ");
+        }
+    }
+
 }
