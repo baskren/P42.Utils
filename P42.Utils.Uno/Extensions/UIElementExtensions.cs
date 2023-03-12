@@ -54,6 +54,23 @@ namespace P42.Utils.Uno
                 view.GetLocationInWindow(nativeLocation);
                 var x = nativeLocation[0] / DisplayScale;
                 var y = nativeLocation[1] / DisplayScale;
+
+                /*
+                var rect = new Android.Graphics.Rect();
+                var window = ((Android.App.Activity)view.Context).Window;
+                window.DecorView.GetWindowVisibleDisplayFrame(rect);
+
+                using var displayMetrics = new Android.Util.DisplayMetrics();
+
+                using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
+                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
+
+                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+
+                var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
+
+                x -= statusBarHeight;
+                */
                 return new Rect(x, y, element.ActualSize.X, element.ActualSize.Y);
             }
             return WinUIGetBounds(element);
