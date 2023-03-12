@@ -1,6 +1,7 @@
 ﻿using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.ViewManagement;
 #if __ANDROID__
 using Android.Runtime;
 #endif
@@ -50,23 +51,16 @@ namespace P42.Utils.Uno
             return 0;
         }
 
-        public static Thickness SafeArea(FrameworkElement element)
+        public static Thickness SafeMargin(FrameworkElement element)
         {
-            var result = new Thickness();
-            var winBounds = Platform.Window.Bounds;
-            var pageBounds = Platform.Window.Content.GetBounds();
-
-#if HAS_UNO
-
-            result.Left = pageBounds.Left - winBounds.Left;
-            result.Top = pageBounds.Top - winBounds.Top;
-            result.Right = winBounds.Right - pageBounds.Right;
-            result.Bottom = winBounds.Bottom - pageBounds.Bottom;
-#endif
-
-#if __iOS__
-#endif
-            return result;
+            var windowBounds = P42.Utils.Uno.Platform.Window.Bounds;
+            var visibleBounds = ApplicationView.GetForCurrentView().VisibleBounds;
+            return new Thickness(
+                visibleBounds.Left - windowBounds.Left,
+                visibleBounds.Top - windowBounds.Top,
+                windowBounds.Right - visibleBounds.Right,
+                windowBounds.Bottom - visibleBounds.Bottom
+            );
         }
 
         public static double DisplayScale(FrameworkElement element)
