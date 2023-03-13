@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Dispatching;
 
 namespace P42.Utils.Uno
 {
@@ -14,6 +16,10 @@ namespace P42.Utils.Uno
         public static Microsoft.UI.Xaml.Application Application { get; private set; }
 
         public static Microsoft.UI.Xaml.Window Window { get; private set; }
+
+        public static Thread MainThread { get; private set; }
+
+        public static DispatcherQueue MainThreadDispatchQueue { get; private set; }
 
         static List<Assembly> _assembliesToInclude;
         public static List<Assembly> AssembliesToInclude
@@ -41,10 +47,12 @@ namespace P42.Utils.Uno
 			P42.Utils.DiskSpace.PlatformDiskSpace = new DiskSpace();
 			P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
             P42.Utils.Environment.EmbeddedResourceAssemblyResolver = EmbeddedResourceExtensions.FindAssemblyForResourceId;
+            MainThread = Thread.CurrentThread;
+            MainThreadDispatchQueue = DispatcherQueue.GetForCurrentThread();
 
         }
 
-		static void PlatformPathLoader()
+        static void PlatformPathLoader()
 		{
 			/*
             //var envVars = System.Environment.GetEnvironmentVariables();
