@@ -13,7 +13,7 @@ namespace P42.Utils.Uno
         {
             get
             {
-#if __WASM__ 
+#if __P42WASM__ 
                 return DeviceIdiom.Web;
 #elif __MACOS__
                 return DeviceIdiom.Desktop;

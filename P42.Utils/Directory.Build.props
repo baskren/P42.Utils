@@ -10,8 +10,10 @@
 	Force all projects of this folder to use a different output
 	path to avoid intermediate output collisions
 	-->
+	<!--
   	<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
   	<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+	-->
   	<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
   
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -70,15 +72,15 @@
     <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
   </Target>
   
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(LocalNuGet) != '' ">
+  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(P42LocalNuGet) != '' ">
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text="=============================== NUGET PACK [$(AssemblyName)] ===============================" Importance="high"/>
-    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
-    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(LocalNuGet) " />
-    <Copy SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(LocalNuGet) " />
-    <Message Importance="high" Text="PACKAGE SAVED TO:  $(LocalNuGet)) " />
+    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
+    <Copy SourceFiles="$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(P42LocalNuGet) " />
+    <Copy SourceFiles="$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(P42LocalNuGet) " />
+    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42LocalNuGet)) " />
   </Target>
 
 

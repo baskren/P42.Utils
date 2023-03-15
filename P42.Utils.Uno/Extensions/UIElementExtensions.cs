@@ -179,7 +179,7 @@ namespace P42.Utils.Uno
             return null;
         }
 
-#if __WASM__
+#if __P42WASM__
         public static UIElement GetFirstHtmlDescendent(this FrameworkElement element)
         {
             var enumerator = element.GetEnumerator();
