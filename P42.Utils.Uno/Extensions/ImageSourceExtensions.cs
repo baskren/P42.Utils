@@ -14,7 +14,7 @@ namespace P42.Utils.Uno
 { 
     static class ImageSourceExtensions
     {
-        public static async Task<ImageSource> GetImageSourceFromEmbeddedResource(string resourceId, Assembly assembly = null)
+        public static ImageSource GetImageSourceFromEmbeddedResourceId(string resourceId, Assembly assembly = null)
         {
             try
             {
@@ -25,34 +25,34 @@ namespace P42.Utils.Uno
                 if (assembly == null)
                     return null;
 
-                using (var resourceStream = EmbeddedResourceExtensions.FindStreamForResourceId(resourceId, assembly))
-                {
-                    if (resourceStream is null)
-                        return null;
+                using var resourceStream = EmbeddedResourceExtensions.FindStreamForResourceId(resourceId, assembly);
+                if (resourceStream is null)
+                    return null;
 
-                    if (resourceId.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                        resourceId.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                        resourceId.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
-                    {
-                        using (var stream = resourceStream.AsRandomAccessStream())
-                        {
-                            var bitmapImage = new BitmapImage();
-                            bitmapImage.SetSource(stream);
-                            return bitmapImage;
-                        }
-                    }
-                    else if (resourceId.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
-                    {
-                        using (var stream = resourceStream.AsRandomAccessStream())
-                        {
-                            var svgImage = new SvgImageSource();
-                            await svgImage.SetSourceAsync(stream);
-                            return svgImage;
-                        }
-                    }
-                    else
-                        throw new ArgumentException($"Invalid file type [{resourceId}]");
+                if (resourceId.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                    resourceId.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    resourceId.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+                {
+                    using var stream = resourceStream.AsRandomAccessStream();
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.SetSource(stream);
+                    return bitmapImage;
                 }
+                else if (resourceId.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                {
+                    using var stream = resourceStream.AsRandomAccessStream();
+                    var svgImageSource = new SvgImageSource();
+                    Task.Run(() =>
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            await svgImageSource.SetSourceAsync(stream);
+                        });
+                    });
+                    return svgImageSource;
+                }
+                else
+                    throw new ArgumentException($"Invalid file type [{resourceId}]");
             }
             catch (Exception ex)
             {

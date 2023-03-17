@@ -128,19 +128,24 @@ namespace P42.Utils.Uno
             return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
         }
 
-        public static T FindAncestor<T>(this FrameworkElement element) where T : FrameworkElement
+        public static T FindAncestor<T>(this UIElement element) where T : UIElement
         {
-            var parent = element.Parent as FrameworkElement;
+
+
+            var parent = VisualTreeHelper.GetParent(element); // as FrameworkElement;
             while (parent != null)
             {
                 if (parent is T)
                     return parent as T;
+                parent = VisualTreeHelper.GetParent(parent);
+                /*
                 if (parent is FrameworkElement fe)
                     parent = fe.Parent as FrameworkElement;
                 else
                     parent = null;
+                */
             }
-            return null;
+            return default;
         }
 
         public static string AsDataTemplateXaml(this Type templateType)
