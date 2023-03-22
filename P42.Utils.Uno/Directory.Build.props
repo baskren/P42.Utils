@@ -1,12 +1,12 @@
 <Project ToolsVersion="15.0">
 
   <PropertyGroup>
-    <P42PlatformFiles>false</P42PlatformFiles>
+    <P42_PlatformSpecificFiles>false</P42_PlatformSpecificFiles>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <EnableDefaultCompileItems Condition="$(P42PlatformFiles)">false</EnableDefaultCompileItems>
+    <EnableDefaultCompileItems Condition="$(P42_PlatformSpecificFiles)">false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <!-- CORE TARGETS -->
@@ -17,38 +17,38 @@
 
   <!-- TARGET FRAMEWORK FILTERING -->
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.android')) ">
-    <P42TargetPlatform>android</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>android</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.ios')) ">
-    <P42TargetPlatform>ios</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>ios</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.macos')) ">
-    <P42TargetPlatform>macos</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>macos</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">
-    <P42TargetPlatform>maccatalyst</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>maccatalyst</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">
-    <P42TargetPlatform>gtk</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>gtk</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">
-    <P42TargetPlatform>wpf</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>wpf</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.windows')) ">
-    <P42TargetPlatform>windows</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>windows</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) ">
-    <P42TargetPlatform>wasm</P42TargetPlatform>
+    <P42_TargetOnlyThisPlatform>wasm</P42_TargetOnlyThisPlatform>
   </PropertyGroup>
   <PropertyGroup>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('android')) ">net7.0-android</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('ios')) ">net7.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('macos')) ">net7.0-macos</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42TargetPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) ">net7.0-android</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) ">net7.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('macos')) ">net7.0-macos</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
@@ -73,37 +73,37 @@
     <WarningLevel>5</WarningLevel>
   </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.android.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.android.*.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.droid.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.droid.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.android.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.android.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.droid.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.droid.*.cs" />
   </ItemGroup>
 
   <!-- IOS -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('ios')) OR $(TargetFramework.ToLower().Contains('maccatalyst'))">
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.ios.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.ios.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.ios.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.ios.*.cs" />
   </ItemGroup>  
 
   <!-- MACOS -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('macos')) ">
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.macos.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.macos.*.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.mac.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.mac.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.macos.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.macos.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.mac.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.mac.*.cs" />
   </ItemGroup>
 
   <!-- maccatalyst -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('maccatalyst')) ">
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.maccatalyst.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.maccatalyst.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.maccatalyst.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.maccatalyst.*.cs" />
   </ItemGroup>  
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
     <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.7.44" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.tizen.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.tizen.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.*.cs" />
   </ItemGroup>
 
   <!-- WinUI Windows -->
@@ -112,16 +112,16 @@
   </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.3" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.win.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.win.*.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.windows.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.windows.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.windows.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.windows.*.cs" />
   </ItemGroup>
 
   <!-- Not Windows -->
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
     <PackageReference Include="Uno.WinUI" Version="4.7.44" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.uno.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.uno.cs" />
     <Content Include="Assets\**" />
     <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
     <Compile Update="**\*.xaml.cs">
@@ -130,23 +130,23 @@
   </ItemGroup>
 
   <!-- NetStandard bait -->
-  <ItemGroup Condition=" !$(P42TargetPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.net.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.net.*.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.netstandard.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.netstandard.*.cs" />
+  <ItemGroup Condition=" !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.net.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.net.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.netstandard.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.netstandard.*.cs" />
   </ItemGroup>
 
   <!-- WASM -->
-  <PropertyGroup Condition=" $(P42TargetPlatform.ToLower().Contains('wasm')) ">
+  <PropertyGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
     <DefineConstants>__P42WASM__;$(DefineConstants);</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition=" $(P42TargetPlatform.ToLower().Contains('wasm')) ">
+  <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
     <!-- THIS WILL CAUSE ASSETS TO NOT BE ADDED TO BUILD FILES.  FORTUNATELY, WASM CALLS STILL WORK SINCE THIS PACKAGE IS REFERENCED IN P42.Utils.Uno
 		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.7.44" />
     -->
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.wasm.cs" />
-    <Compile Condition="$(P42PlatformFiles)" Include="**\*.wasm.*.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.cs" />
+    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.*.cs" />
   </ItemGroup>
 
 
@@ -155,7 +155,7 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="===============================  [ AssemblyName:[$(AssemblyName)] | TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42TargetPlatform:[$(P42TargetPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)] ] ===============================" Importance="high"/>
+    <Message Text="===============================  [ AssemblyName:[$(AssemblyName)] | TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42_TargetOnlyThisPlatform:[$(P42_TargetOnlyThisPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)] ] ===============================" Importance="high"/>
     <Message Text="COMPILE: ($Compile)"/>
   </Target>
   
@@ -163,11 +163,11 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="=============================== NUGET PACK [ PackageId[$(PackageId)] |TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42TargetPlatform:[$(P42TargetPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)]  ] ===============================" Importance="high"/>
+    <Message Text="=============================== NUGET PACK [ PackageId[$(PackageId)] |TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42_TargetOnlyThisPlatform:[$(P42_TargetOnlyThisPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)]  ] ===============================" Importance="high"/>
     <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg)) "/>
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42LocalNuGet) " />
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42LocalNuGet) " />
-    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42LocalNuGet) " />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
+    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42_LocalNuGetFolderPath) " />
   </Target>
 
 </Project>
