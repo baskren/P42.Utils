@@ -27,25 +27,29 @@ namespace P42.Utils.Uno
         public static Frame CurrentFrame
             => (Frame)Platform.Window.Content;
 
-        public static double StatusBarHeight(FrameworkElement element)
+        public static double StatusBarHeight()
         {
 #if __ANDROID__
-            if (element is Android.Views.View view)
+
+            if (Platform.Window.Content is Frame frame)
             {
+                if (frame is Android.Views.View view)
+                {
 
-                var rect = new Android.Graphics.Rect();
-                var window = ((Android.App.Activity)view.Context).Window;
-                window.DecorView.GetWindowVisibleDisplayFrame(rect);
+                    var rect = new Android.Graphics.Rect();
+                    var window = ((Android.App.Activity)view.Context).Window;
+                    window.DecorView.GetWindowVisibleDisplayFrame(rect);
 
-                using var displayMetrics = new Android.Util.DisplayMetrics();
+                    using var displayMetrics = new Android.Util.DisplayMetrics();
 
-                using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
-                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
+                    using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
+                    using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
 
-                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+                    windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
 
-                var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
-                return statusBarHeight;
+                    var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
+                    return statusBarHeight;
+                }
             }
 #endif
             return 0;
