@@ -50,11 +50,11 @@ namespace P42.Utils.Uno
 				{
 					var transform = element.TransformToVisual(viewer);
 					var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
-					System.Diagnostics.Debug.WriteLine(" ==============================================================");
-					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom vtOffset: " + viewer.VerticalOffset);
-					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom position: " + positionInScrollViewer.Y);
-					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom element.H: " + element.ActualHeight);
-					System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
+					//System.Diagnostics.Debug.WriteLine(" ==============================================================");
+					//System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom vtOffset: " + viewer.VerticalOffset);
+					//System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom position: " + positionInScrollViewer.Y);
+					//System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom element.H: " + element.ActualHeight);
+					//System.Diagnostics.Debug.WriteLine("ListViewExtensions.ScrollToBottom listView.H: " + listView.ActualHeight);
 
 
 //#if !HAS_UNO
@@ -76,7 +76,7 @@ namespace P42.Utils.Uno
 			if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
             {
                 var id = selectorItem.GetHtmlAttribute("id");
-                System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
+                //System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
 				global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End).ToString().ToLower()+ ");");
             }
 
@@ -122,7 +122,7 @@ namespace P42.Utils.Uno
 					return;
 
 				var viewportHeight = viewer.ViewportHeight;
-                System.Diagnostics.Debug.WriteLine("ListViewExtensions.InternalScrollToAsync viewportHeight: " + viewportHeight);
+                //System.Diagnostics.Debug.WriteLine("ListViewExtensions.InternalScrollToAsync viewportHeight: " + viewportHeight);
 
 				var semanticLocation = new SemanticZoomLocation { Item = item };
 

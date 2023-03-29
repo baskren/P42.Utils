@@ -18,8 +18,8 @@ namespace P42.Utils.Uno
 #elif __MACOS__
                 return DeviceIdiom.Desktop;
 #else
-                System.Diagnostics.Debug.WriteLine("DeviceForm: " + AnalyticsInfo.DeviceForm);
-                System.Diagnostics.Debug.WriteLine("DeviceFamily: " + AnalyticsInfo.VersionInfo.DeviceFamily);
+                //System.Diagnostics.Debug.WriteLine("DeviceForm: " + AnalyticsInfo.DeviceForm);
+                //System.Diagnostics.Debug.WriteLine("DeviceFamily: " + AnalyticsInfo.VersionInfo.DeviceFamily);
                 switch (AnalyticsInfo.DeviceForm.ToLower())
                 {
                     case "desktop":
