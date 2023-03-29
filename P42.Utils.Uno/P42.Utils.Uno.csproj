@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<!-- NUGET PACKAGE GENERATION -->
-	<PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
+	<PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'  AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
     	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     	<Version>4.8.15</Version>
     	<PackageId Condition=" $(P42_TargetOnlyThisPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>

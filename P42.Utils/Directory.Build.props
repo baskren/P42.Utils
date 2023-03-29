@@ -72,7 +72,7 @@
     <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
   </Target>
   
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(P42_LocalNuGetFolderPath) != '' ">
+  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'">
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
