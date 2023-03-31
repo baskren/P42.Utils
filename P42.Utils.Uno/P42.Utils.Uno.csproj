@@ -46,7 +46,6 @@
 		<None Include="..\README.md" Pack="true" PackagePath="\" />
 		<None Include="..\LICENSE" Pack="true" PackagePath="\" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-		<PackageReference Include="P42.NotifiableObject" Version="1.0.1" />
 		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
 	</ItemGroup>
   
