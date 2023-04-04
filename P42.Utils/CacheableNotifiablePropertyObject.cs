@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace P42.Utils
 {
-    public class SelfBackedCacheableNotifiablePropertyObject : P42.NotifiableObject.SelfBackedNotifiablePropertyObject
+    public class CacheableNotifiablePropertyObject : P42.NotifiableObject.SelfBackedNotifiablePropertyObject
     {
         string _folderName;
         string FolderName => _folderName = _folderName ?? GetType().FullName;
