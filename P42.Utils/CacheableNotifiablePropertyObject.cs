@@ -19,24 +19,33 @@ namespace P42.Utils
         protected T GetCachedValue<T>(T defaultValue = default, [CallerMemberName] string propertyName = null)
         {
             if (InitializedProperties.Contains(propertyName))
-                return GetValue<T>(defaultValue, propertyName);
+                return GetValue(defaultValue, propertyName);
 
             if (TextCache.Recall(propertyName, FolderName) is string json && !string.IsNullOrEmpty(json))
             {
                 try
                 {
-                    var value = JsonConvert.DeserializeObject<T>(json);
+                    var value = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
+                    {
+                        Formatting = Formatting.Indented,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                        TypeNameHandling = TypeNameHandling.All
+                    });
+                    SetValue(value, propertyName);
                     InitializedProperties.Add(propertyName);
                     return value;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    System.Diagnostics.Debug.WriteLine($"CacheableNotifiablePropertyObject.GetCachedValue<{typeof(T)}> : EXCEPTION : {ex}");
+                    Console.WriteLine($"CacheableNotifiablePropertyObject.GetCachedValue<{typeof(T)}> : EXCEPTION : {ex}");
                 }
             }
 
             InitializedProperties.Add(propertyName);
-            return defaultValue;
+            return GetValue(defaultValue, propertyName);
         }
 
 
@@ -47,12 +56,36 @@ namespace P42.Utils
                 if (!InitializedProperties.Contains(propertyName))
                     InitializedProperties.Add(@propertyName);
 
-                var json = JsonConvert.SerializeObject(value);
+                var json = JsonConvert.SerializeObject(value, new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                    TypeNameHandling = TypeNameHandling.All
+                });
                 TextCache.Store(json, propertyName, FolderName);
 
                 return true;
             }
             return false;
+        }
+
+        protected void Cache<T>(T value, string propertyName)
+        {
+            if (!InitializedProperties.Contains(propertyName))
+                InitializedProperties.Add(@propertyName);
+
+            var json = JsonConvert.SerializeObject(value, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                TypeNameHandling = TypeNameHandling.All
+            });
+            TextCache.Store(json, propertyName, FolderName);
+
         }
     }
 }

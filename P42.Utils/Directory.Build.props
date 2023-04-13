@@ -3,7 +3,7 @@
   <PropertyGroup>
 
 	<RootNamespace>P42.Utils</RootNamespace>
-	<Version>1.0.4</Version>
+	<Version>1.0.5</Version>
     <NoWarn>Uno0001;1701;1702;1705;VSX1000</NoWarn>
 
 	<!--
@@ -63,7 +63,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
-	<PackageReference Include="P42.NotifiableObject" Version="1.0.2" />
+	<PackageReference Include="P42.NotifiableObject" Version="1.0.3" />
   </ItemGroup>
 
   <Target Name="B1" BeforeTargets="BeforeBuild">
