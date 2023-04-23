@@ -50,6 +50,7 @@ namespace P42.Utils.Uno
             MainThread = Thread.CurrentThread;
             MainThreadDispatchQueue = DispatcherQueue.GetForCurrentThread();
 
+            P42.NotifiableObject.BaseNotifiablePropertyObject.MainThreadAction = P42.Utils.Uno.MainThread.BeginInvokeOnMainThread;
         }
 
         static void PlatformPathLoader()
