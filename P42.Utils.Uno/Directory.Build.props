@@ -101,7 +101,7 @@
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.8.15" />
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.8.24" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.*.cs" />
   </ItemGroup>
@@ -120,7 +120,7 @@
 
   <!-- Not Windows -->
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-    <PackageReference Include="Uno.WinUI" Version="4.8.15" />
+    <PackageReference Include="Uno.WinUI" Version="4.8.24" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.uno.cs" />
     <Content Include="Assets\**" />
     <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
@@ -143,7 +143,7 @@
   </PropertyGroup>
   <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
     <!-- THIS WILL CAUSE ASSETS TO NOT BE ADDED TO BUILD FILES.  FORTUNATELY, WASM CALLS STILL WORK SINCE THIS PACKAGE IS REFERENCED IN P42.Utils.Uno
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.8.15" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.8.24" />
     -->
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.*.cs" />
