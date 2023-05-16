@@ -48,7 +48,6 @@ namespace P42.Utils
             return GetValue(defaultValue, propertyName);
         }
 
-
         protected bool SetCachedValue<T>(T value, [CallerMemberName] string propertyName = null)
         {
             if (SetValue(value, propertyName))

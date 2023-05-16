@@ -23,5 +23,10 @@ namespace P42.Utils.Uno
         public static Rect Shrink(this Rect t1, double value)
             => t1.Shrink(new Thickness(value));
 
+        public static double CenterX(this Rect r)
+            => (r.Right + r.Left)/2.0;
+
+        public static double CenterY(this Rect r)
+            => (r.Bottom + r.Top)/2.0;    
     }
 }
