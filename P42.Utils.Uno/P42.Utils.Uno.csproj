@@ -9,7 +9,7 @@
 	<!-- NUGET PACKAGE GENERATION -->
 	<PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'  AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
     	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    	<Version>4.8.24</Version>
+    	<Version>4.9.17</Version>
     	<PackageId Condition=" $(P42_TargetOnlyThisPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
 		<!--
 		Force all projects of this folder to use a different output
@@ -64,7 +64,7 @@
 
 	<!-- WASM -->
 	<ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.8.24" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.9.17" />
 		<EmbeddedResource Include="LinkerConfig.Wasm.xml">
 			<LogicalName>P42.Utils.Uno.Wasm.xml</LogicalName>
 		</EmbeddedResource>

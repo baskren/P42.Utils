@@ -12,7 +12,7 @@
   <!-- CORE TARGETS -->
   <PropertyGroup>
 	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.18362;$(TargetFrameworks)</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.19041;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <!-- TARGET FRAMEWORK FILTERING -->
@@ -47,7 +47,7 @@
 		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
 		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.18362</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.19041</TargetFrameworks>
 		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
   </PropertyGroup>
 
@@ -101,7 +101,7 @@
 
   <!-- TIZEN -->
   <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.8.24" />
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="4.9.17" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.*.cs" />
   </ItemGroup>
@@ -111,7 +111,7 @@
     <DefineConstants>WINDOWS;$(DefineConstants);</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.3" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.*.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.windows.cs" />
@@ -120,7 +120,7 @@
 
   <!-- Not Windows -->
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-    <PackageReference Include="Uno.WinUI" Version="4.8.24" />
+    <PackageReference Include="Uno.WinUI" Version="4.9.17" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.uno.cs" />
     <Content Include="Assets\**" />
     <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
@@ -143,7 +143,7 @@
   </PropertyGroup>
   <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
     <!-- THIS WILL CAUSE ASSETS TO NOT BE ADDED TO BUILD FILES.  FORTUNATELY, WASM CALLS STILL WORK SINCE THIS PACKAGE IS REFERENCED IN P42.Utils.Uno
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.8.24" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.9.17" />
     -->
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.cs" />
     <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.*.cs" />
