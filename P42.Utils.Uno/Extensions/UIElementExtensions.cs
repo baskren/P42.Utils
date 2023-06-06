@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Shapes;
 using Microsoft.UI.Xaml.Media;
+using System.Reflection;
 
 namespace P42.Utils.Uno
 {
@@ -226,6 +227,27 @@ namespace P42.Utils.Uno
             return null;
         }
 
+        public static List<T> FindChildren<T>(this DependencyObject parent) where T : DependencyObject
+        {
+            var results = new List<T>();
+            FindChildren(results, parent);
+            return results;
+        }
 
+        internal static void FindChildren<T>(List<T> results, DependencyObject startNode)
+          where T : DependencyObject
+        {
+            int count = VisualTreeHelper.GetChildrenCount(startNode);
+            for (int i = 0; i < count; i++)
+            {
+                DependencyObject current = VisualTreeHelper.GetChild(startNode, i);
+                if ((current.GetType()).Equals(typeof(T)) || (current.GetType().GetTypeInfo().IsSubclassOf(typeof(T))))
+                {
+                    T asType = (T)current;
+                    results.Add(asType);
+                }
+                FindChildren<T>(results, current);
+            }
+        }
     }
 }
