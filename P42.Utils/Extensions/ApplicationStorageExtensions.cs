@@ -17,6 +17,15 @@ namespace P42.Utils
 {
     public static class ApplicationStorageExtensions
     {
+        static JsonSerializerSettings _serialSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        };
+
         const string ApplicationStorageFolderName = "ApplicationStorage";
 
         static string FolderPath
@@ -77,10 +86,7 @@ namespace P42.Utils
             var text = LoadText(uid, resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
             {
-                var result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto
-                });
+                var result = JsonConvert.DeserializeObject<TType>(text, _serialSettings);
                 return result;
             }
             return defaultValue;
@@ -91,10 +97,7 @@ namespace P42.Utils
             var text = EmbeddedStoredText(resourceName, assembly);
             if (!string.IsNullOrEmpty(text))
             {
-                var result = JsonConvert.DeserializeObject<TType>(text, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto
-                });
+                var result = JsonConvert.DeserializeObject<TType>(text, _serialSettings);
                 return result;
             }
             return defaultValue;
@@ -105,13 +108,7 @@ namespace P42.Utils
         {
             if (resourceName != null)
             {
-                var jsonSerializationSetings = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All,
-                    Formatting = Formatting.Indented,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-                };
-                var textToStore = JsonConvert.SerializeObject(obj, jsonSerializationSetings);
+                var textToStore = JsonConvert.SerializeObject(obj, _serialSettings);
                 if (string.IsNullOrEmpty(textToStore))
                     throw new InvalidDataContractException("Could not serialize object [" + obj + "]");
                 StoreText(uid, textToStore, resourceName);
