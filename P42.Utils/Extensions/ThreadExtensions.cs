@@ -8,6 +8,8 @@ namespace P42.Utils
 {
     public static class ThreadExtensions
     {
+        public static Action<Thread, Exception> DefaultExceptionHandler = P42.Serilog.QuickLog.QLogExtensions.LogException;
+
         [SuppressMessage("ReSharper", "VariableHidesOuterVariable", Justification = "Pass params explicitly to async local function or it will allocate to pass them")]
         public static void Forget(this Task task, Action<Thread, Exception> onException = null, [CallerMemberName] string callingMethodName = "")
         {
@@ -36,19 +38,17 @@ namespace P42.Utils
             catch (TaskCanceledException)
             {
                 // log a message if we were given a logger to use
-                //Serilog.Log.Error(tce, $"Fire and forget task was canceled for calling method: {callingMethodName}");
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task was canceled for calling method: {callingMethodName}");
             }
             catch (Exception e)
             {
                 // log a message if we were given a logger to use
-                //Serilog.Log.Error(e, $"Fire and forget task failed for calling method: {callingMethodName}");
-                //using (var p = Forms9Patch.Toast.Create("EXCEPTION : " + callingMethodName, e.Message)) { p.CancelOnPageOverlayTouch = p.CancelOnBackButtonClick = false; }
 
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
                 System.Console.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
 
-                onException?.Invoke(Thread.CurrentThread, new FireAndForgetException(callingMethodName, e));
+                onException = onException ?? DefaultExceptionHandler;
+                onException.Invoke(Thread.CurrentThread, new FireAndForgetException(callingMethodName, e));
             }
         }
 

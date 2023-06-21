@@ -9,6 +9,10 @@
     
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.4" />
+  </ItemGroup>
+
 
 
 </Project>

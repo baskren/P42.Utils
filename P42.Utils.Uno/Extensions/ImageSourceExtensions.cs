@@ -12,9 +12,9 @@ using Windows.Storage.Streams;
 
 namespace P42.Utils.Uno
 { 
-    static class ImageSourceExtensions
+    public static class ImageSourceExtensions
     {
-        public static ImageSource GetImageSourceFromEmbeddedResourceId(string resourceId, Assembly assembly = null)
+        public static ImageSource GetImageSourceFromEmbeddedResource(string resourceId, Assembly assembly = null)
         {
             try
             {
