@@ -53,7 +53,7 @@ namespace P42.Utils
 
         public NotifiablePropertyObject()
         {
-            //Recursion.IsMonitoringChanged += (sender, e) => _recursionCount.Clear();
+            //Recursion.IsMonitoringChanged += (sender, e) => RecursionCount.Clear();
             InstanceId = Instances++;
         }
 

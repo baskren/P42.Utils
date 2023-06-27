@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace P42.Utils
 {
+
     public static class ThreadExtensions
     {
+        public static Action<Thread, Exception> DefaultExceptionHandler = P42.Serilog.QuickLog.QLogExtensions.LogException;
+
+
         [SuppressMessage("ReSharper", "VariableHidesOuterVariable", Justification = "Pass params explicitly to async local function or it will allocate to pass them")]
-        public static void Forget(this Task task, Action<Exception, Dictionary<string,string>> exceptionAction, [CallerMemberName] string callingMethodName = "", [CallerFilePath] string callerPath = "")
+        public static void Forget(this Task task, Action<Thread, Exception> onException = null, [CallerMemberName] string callingMethodName = "")
         {
-            if (task == null) throw new ArgumentNullException(nameof(task));
+            if (task == null)
+                throw new ArgumentNullException(nameof(task));
 
             // note: this code is inspired by a tweet from Ben Adams: https://twitter.com/ben_a_adams/status/1045060828700037125
             // Only care about tasks that may fault (not completed) or are faulted,
@@ -20,14 +26,14 @@ namespace P42.Utils
             {
                 // use "_" (Discard operation) to remove the warning IDE0058: Because this call is not awaited, execution of the
                 // current method continues before the call is completed - https://docs.microsoft.com/en-us/dotnet/csharp/discards#a-standalone-discard
-                _ = ForgetAwaited(task, exceptionAction, callingMethodName, callerPath);
+                _ = ForgetAwaited(task, onException, callingMethodName);
             }
         }
 
         // Allocate the async/await state machine only when needed for performance reasons.
         // More info about the state machine: https://blogs.msdn.microsoft.com/seteplia/2017/11/30/dissecting-the-async-methods-in-c/?WT.mc_id=DT-MVP-5003978
         // Pass params explicitly to async local function or it will allocate to pass them
-        static async Task ForgetAwaited(Task task, Action<Exception, Dictionary<string, string>> exceptionAction, string callingMethodName = "", [CallerFilePath] string callerPath = "")
+        static async Task ForgetAwaited(Task task, Action<Thread, Exception> onException, string callingMethodName = "")
         {
             try
             {
@@ -48,17 +54,23 @@ namespace P42.Utils
                 System.Diagnostics.Debug.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
                 System.Console.WriteLine($"Fire and forget task failed for calling method: {callingMethodName} [{e.Message}][{e.StackTrace}]");
 
-                if (exceptionAction is null)
-                    Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() => throw e);
-                else
-                    exceptionAction?.Invoke(e, new Dictionary<string, string>
-                    {
-                        { "CallerName", callingMethodName },
-                        { "CallerPath", callerPath }
-                    });
-
+                onException = onException ?? DefaultExceptionHandler;
+                onException.Invoke(Thread.CurrentThread, new FireAndForgetException(callingMethodName, e));
             }
         }
 
+    }
+
+    public class FireAndForgetException : Exception
+    {
+        /// <summary>
+        /// Method that called the FireAndForget task
+        /// </summary>
+        public string CallingMethodName { get; private set; }
+
+        public FireAndForgetException(string callingMethodName, Exception innerException) : base($"Fire and forget task, from calling method [{callingMethodName}], failed.", innerException)
+        {
+            CallingMethodName = callingMethodName;
+        }
     }
 }

@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
+    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Collections\" />

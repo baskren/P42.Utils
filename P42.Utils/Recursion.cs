@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -42,7 +43,7 @@ namespace P42.Utils
                 {
                     _enabled = value;
                     //_monitoringCount = 0;
-                    _recursionCount.Clear();
+                    RecursionCount.Clear();
                     IsMonitoringChanged?.Invoke(null, IsEnabled);
                 }
 
@@ -53,9 +54,9 @@ namespace P42.Utils
         public static event EventHandler RecursionDetected;
 
         const int _recursionLimit = 100;
-        static readonly Dictionary<string, int> _recursionCount = new Dictionary<string, int>();
+        public static readonly ConcurrentDictionary<string, int> RecursionCount = new ConcurrentDictionary<string, int>();
 
-        static readonly Dictionary<string, DateTime> _recursionTime = new Dictionary<string, DateTime>();
+        //static readonly Dictionary<string, DateTime> _recursionTime = new Dictionary<string, DateTime>();
 
         public static void Enter(Type type, object instanceId, [CallerMemberName] string method = null, [CallerFilePath] string path = null)
             => Enter(type?.ToString(), instanceId?.ToString(), method, path);
@@ -66,10 +67,10 @@ namespace P42.Utils
             if (Recursion.IsEnabled)
             {
                 var name = className + "." + method + " : " + path + ":" + instanceId;
-                if (!_recursionTime.ContainsKey(name))
-                    _recursionTime[name] = DateTime.Now;
-                _recursionCount[name] = _recursionCount.ContainsKey(name) ? _recursionCount[name] + 1 : 1;
-                if (_recursionCount[name] > _recursionLimit)
+                //if (!_recursionTime.ContainsKey(name))
+                //    _recursionTime[name] = DateTime.Now;
+                RecursionCount[name] = RecursionCount.ContainsKey(name) ? RecursionCount[name] + 1 : 1;
+                if (RecursionCount[name] > _recursionLimit)
                 {
                     var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss") + ".txt"; ;
                     var filePath = Path.Combine(FolderPath, fileName);
@@ -88,17 +89,19 @@ namespace P42.Utils
             if (Recursion.IsEnabled)
             {
                 var name = className + "." + method + " : " + path + ":" + instanceId;
-                if (_recursionCount.ContainsKey(name))
+                if (RecursionCount.ContainsKey(name))
                 {
-                    _recursionCount[name] = _recursionCount[name] - 1;
-                    if (_recursionCount[name] < 0)
-                        _recursionCount[name] = 0;
-                    if (_recursionCount[name] == 0 && _recursionTime.ContainsKey(name))
+                    RecursionCount[name] = RecursionCount[name] - 1;
+                    if (RecursionCount[name] < 0)
+                        RecursionCount[name] = 0;
+                    /*
+                    if (RecursionCount[name] == 0 && _recursionTime.ContainsKey(name))
                     {
                         var delta = DateTime.Now - _recursionTime[name];
                         _recursionTime.Remove(name);
                         Console.WriteLine("RecursionTime: " + name + " [" + delta.TotalMilliseconds + "ms]");
                     }
+                    */
                 }
 
             }
