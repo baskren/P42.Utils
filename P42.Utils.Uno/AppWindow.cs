@@ -93,10 +93,12 @@ namespace P42.Utils.Uno
                 
                 
             }
+            return 1;
 #elif __IOS__
             return UIKit.UIScreen.MainScreen.Scale;
-#endif
+#else
             return 1;
+#endif
         }
 
     }

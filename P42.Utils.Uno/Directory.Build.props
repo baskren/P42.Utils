@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <P42_PlatformSpecificFiles>false</P42_PlatformSpecificFiles>
-    <GenerateLibraryLayout>true</GenerateLibraryLayout>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
@@ -14,6 +13,19 @@
 	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
 	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.19041;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+    Force all projects of this folder to use a different output
+    path to avoid intermediate output collisions
+    -->
+    <BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
+    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+  </PropertyGroup>
+
 
   <!-- TARGET FRAMEWORK FILTERING -->
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.android')) ">

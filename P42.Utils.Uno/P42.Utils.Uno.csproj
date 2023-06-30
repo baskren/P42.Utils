@@ -8,21 +8,16 @@
 
 	<!-- NUGET PACKAGE GENERATION -->
 	<PropertyGroup Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'  AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('mac')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) AND !$(P42_TargetOnlyThisPlatform.ToLower().Contains('tizen')) ">
-    	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
     	<Version>4.9.26</Version>
     	<PackageId Condition=" $(P42_TargetOnlyThisPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
-		<!--
-		Force all projects of this folder to use a different output
-		path to avoid intermediate output collisions
-		-->
-		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
-		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
-		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
-	
+
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+	    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Authors>Ben Askren</Authors>
@@ -30,13 +25,13 @@
 		<Description>Uno Cross Platform utilities</Description>
 		<Copyright>2022 42nd Parallel, LLC</Copyright>
 		<PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageIcon>P42.icon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>P42.Utils Uno.Platform</PackageTags>
 	</PropertyGroup>
 
 
@@ -45,7 +40,7 @@
 		<None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
 		<None Include="..\README.md" Pack="true" PackagePath="\" />
 		<None Include="..\LICENSE" Pack="true" PackagePath="\" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
 	</ItemGroup>
   
