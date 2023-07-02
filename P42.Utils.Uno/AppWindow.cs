@@ -45,7 +45,9 @@ namespace P42.Utils.Uno
                     using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
                     using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
 
+#pragma warning disable CA1422 // Validate platform compatibility
                     windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+#pragma warning restore CA1422 // Validate platform compatibility
 
                     var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
                     return statusBarHeight;
@@ -86,7 +88,9 @@ namespace P42.Utils.Uno
 
                 //if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
                 {
+#pragma warning disable CA1422 // Validate platform compatibility
                     windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
+#pragma warning restore CA1422 // Validate platform compatibility
                     return displayMetrics?.Density ?? 1;
                 }
 

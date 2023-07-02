@@ -40,7 +40,9 @@ namespace P42.Utils.Uno
                 using var service = global::Uno.UI.ContextHelper.Current.GetSystemService(Android.Content.Context.WindowService);
                 using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
                 var display = windowManager?.DefaultDisplay;
+#pragma warning disable CA1422 // Validate platform compatibility
                 display?.GetRealMetrics(displayMetrics);
+#pragma warning restore CA1422 // Validate platform compatibility
                 _scale = (double)displayMetrics?.Density;
                 return _scale;
             }
