@@ -74,9 +74,14 @@ namespace P42.Utils
                 {
                     var fileName = DateTime.Now.ToString("yyyyMMdd'T'HHmmss") + ".txt"; ;
                     var filePath = Path.Combine(FolderPath, fileName);
-                    var stackTrace = System.Environment.StackTrace;
-                    System.IO.File.WriteAllText(filePath, stackTrace);
-                    RecursionDetected?.Invoke(System.Environment.StackTrace, EventArgs.Empty);
+                    try
+                    {
+                        var stackTrace = new System.Diagnostics.StackTrace();
+                        var traceText = stackTrace.ToString();
+                        System.IO.File.WriteAllText(filePath, traceText);
+                        RecursionDetected?.Invoke(traceText, EventArgs.Empty);
+                    }
+                    catch (Exception) { }
                 }
             }
         }
