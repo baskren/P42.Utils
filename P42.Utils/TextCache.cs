@@ -52,20 +52,19 @@ namespace P42.Utils
                 return;
 
             var path = CachedPath(key, folderName);
-
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var guid = Guid.NewGuid().ToString();
-            var tmpPath = CachedPath(guid, folderName);
+            var tmpPath = CachedPath(Guid.NewGuid().ToString(), folderName);
 
             System.IO.File.WriteAllText(tmpPath, text);
-
-            if (System.IO.File.Exists(path))
+#if NETSTANDARD2_0
+            if (File.Exists(path))
                 System.IO.File.Delete(path);
-
             System.IO.File.Move(tmpPath, path);
-
+#else
+            System.IO.File.Move(tmpPath, path, true);
+#endif
             System.IO.File.Delete(tmpPath);
         }
 
