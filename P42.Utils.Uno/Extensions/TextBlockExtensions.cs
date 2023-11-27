@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using ElementType = Microsoft.UI.Xaml.Controls.TextBlock;
+using System.Runtime.CompilerServices;
 
 namespace P42.Utils.Uno
 {
@@ -34,9 +35,17 @@ namespace P42.Utils.Uno
         public static ElementType Html(this ElementType element, string value)
         { element.SetHtml(value); return element; }
 
-        public static ElementType BindHtml(this ElementType element, object source, string path)
+        public static ElementType BindHtml(this ElementType element, object source, string path,
+            BindingMode mode = BindingMode.OneWay,
+            IValueConverter converter = null,
+            object converterParameter = null,
+            string converterLanguage = null,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
+            object targetNullValue = null,
+            object fallbackValue = null, [CallerFilePath] string filePath = null, [CallerLineNumber] int lineNumber = -1
+            )
         {
-            element.Bind(P42.Utils.Uno.TextBlockExtensions.HtmlProperty, source, path);
+            element.Bind(HtmlProperty, source, path, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
             return element;
         }
 
