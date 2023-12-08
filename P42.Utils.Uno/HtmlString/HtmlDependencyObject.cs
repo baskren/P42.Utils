@@ -7,6 +7,7 @@ using Windows.UI.Text;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Data;
+using Microsoft.UI;
 
 namespace P42.Utils.Uno
 {
@@ -425,6 +426,7 @@ namespace P42.Utils.Uno
                             metaFonts[i].Baseline = FontBaseline.Denominator;
                             break;
                         case HyperlinkSpan.SpanKey:  // Hyperlink span ??
+                            //metaFonts[i].TextColor = Colors.Blue;
                             metaFonts[i].Action = new MetaFontAction((HyperlinkSpan)span);
                             break;
                         case BackgroundColorSpan.SpanKey: // if Win10 fall creator's update, there is a solution: create TextHighlighter, set its BackgroundColor and add the Range (Start/End) to it's Ranges, and add to TextBlock.Highlighters
@@ -493,10 +495,23 @@ namespace P42.Utils.Uno
         {
             if (metaFont.IsActiveAction)
             {
-                var link = new Hyperlink
+                var link = new Hyperlink();
+
+                if (metaFont.Action.Href?.Trim().StartsWith("http") ?? false)
+                    link.NavigateUri = new Uri(metaFont.Action.Href);
+                else if (textBlock.GetLinkTappedHandler() is Action<string, string> action)
+                    link.Click += (s, e) => action.Invoke(metaFont.Action.Id, metaFont.Action.Href);
+
+                var linkrun = new Run
                 {
-                    NavigateUri = new Uri(metaFont.Action.Href)
+                    Text = text.Substring(startIndex, length),
+                    FontSize = metaFont.Size,
+                    FontWeight = metaFont.Bold ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal,
+                    FontStyle = metaFont.Italic ? Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal
                 };
+
+                link.Inlines.Add(linkrun);
+
                 textBlock.Inlines.Add(link);
                 return;
             }
@@ -551,28 +566,15 @@ namespace P42.Utils.Uno
 #pragma warning restore CC0004 // Catch block cannot be empty
             }
 
-            //if (metaFont.IsActionEmpty())
-            {
-                if (metaFont.TextColor != default)
-                    run.Foreground = new SolidColorBrush(metaFont.TextColor);
-                else
-                    run.Foreground = new SolidColorBrush((Color)Application.Current.Resources["SystemBaseHighColor"]);
-                if (TextBlockExtensions.TextDecorationsPresent && metaFont.Underline)
-                    ApplyTextDecorations(run, Decoration.Underline);
-                textBlock.Inlines.Add(run);
-            }
-            /*
+            if (metaFont.TextColor != default)
+                run.Foreground = new SolidColorBrush(metaFont.TextColor);
             else
-            {
-                run.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Xamarin.Forms.Color.Blue.ToWindowsColor());
-                if (TextDecorationsPresent)
-                    ApplyTextDecorations(run, Decoration.Underline);
-                var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(run);
-                hyperlink.Click += (Hyperlink sender, HyperlinkClickEventArgs args) => label.Tap(metaFont.Action.Id, metaFont.Action.Href);
-                textBlock.Inlines.Add(hyperlink);
-            }
-            */
+                run.Foreground = new SolidColorBrush((Color)Application.Current.Resources["SystemBaseHighColor"]);
+            if (TextBlockExtensions.TextDecorationsPresent && metaFont.Underline)
+                ApplyTextDecorations(run, Decoration.Underline);
+            textBlock.Inlines.Add(run);
+            
+
         }
 
 

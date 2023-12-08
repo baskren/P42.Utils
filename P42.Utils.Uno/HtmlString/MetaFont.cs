@@ -59,7 +59,7 @@ namespace P42.Utils.Uno
         public MetaFont(FontFamily family, double size, bool bold = false, bool italic = false, string id = null, string href = null, Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, bold, italic)
         {
             if (!string.IsNullOrEmpty(id) || !string.IsNullOrEmpty(href))
-                Action = new MetaFontAction(href);
+                Action = new MetaFontAction(href, id);
             TextColor = textColor;
             BackgroundColor = backgroundColor;
             Underline = underline;
@@ -128,13 +128,13 @@ namespace P42.Utils.Uno
 
     class MetaFontAction
     {
-        //public string Id { get; set; }
+        public string Id { get; set; }
 
         public string Href { get; set; }
 
-        public MetaFontAction(string href)
+        public MetaFontAction(string href, string id)
         {
-            //Id = id;
+            Id = id;
             Href = href;
         }
 
@@ -147,7 +147,7 @@ namespace P42.Utils.Uno
         {
             if (IsEmpty())
                 return null;
-            return new MetaFontAction(Href);
+            return new MetaFontAction(Href, Id);
         }
 
         public static bool operator ==(MetaFontAction a1, MetaFontAction a2) => Equals(a1, a2);
@@ -156,28 +156,28 @@ namespace P42.Utils.Uno
 
         public static bool Equals(MetaFontAction a1, MetaFontAction a2)
         {
-            //if (a1?.Id != a2?.Id)
-            //    return false;
+            if (a1?.Id != a2?.Id)
+                return false;
             if (a1?.Href != a2?.Href)
                 return false;
             
             return true;
         }
 
-        public override bool Equals(object obj) => Equals(this, obj);
+        public override bool Equals(object obj) => Equals(this, obj as MetaFontAction);
         
 
         public override int GetHashCode()
         {
             var hash = 7;
-            //hash = hash * 17 + Id.GetHashCode();
+            hash = hash * 17 + Id.GetHashCode();
             hash = hash * 17 + Href.GetHashCode();
             return hash;
         }
 
         public MetaFontAction(HyperlinkSpan actionSpan)
         {
-            //Id = actionSpan.Id;
+            Id = actionSpan.Id;
             Href = actionSpan.Href;
         }
     }

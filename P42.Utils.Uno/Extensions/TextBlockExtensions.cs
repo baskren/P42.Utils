@@ -18,6 +18,22 @@ namespace P42.Utils.Uno
     //[System.ComponentModel.Bindable(System.ComponentModel.BindableSupport.Yes)]
     public static class TextBlockExtensions
     {
+        #region Link Tapped Property
+        public static readonly DependencyProperty LinkTappedProperty =
+            DependencyProperty.RegisterAttached("LinkTapped", typeof(Action<string,string>), typeof(TextBlockExtensions), new PropertyMetadata(null));
+
+        public static TextBlock SetLinkTappedHandler(this TextBlock textBlock, Action<string, string> value)
+        {
+            textBlock.SetValue(LinkTappedProperty, value);
+            return textBlock;
+        }
+
+        public static Action<string, string> GetLinkTappedHandler(this TextBlock textBlock)
+            => (Action<string,string>)textBlock.GetValue(LinkTappedProperty);
+        #endregion
+
+
+        #region Html Property
         public static readonly DependencyProperty HtmlProperty =
             DependencyProperty.RegisterAttached("Html", typeof(string), typeof(TextBlockExtensions), new PropertyMetadata(null, HtmlChanged));
 
@@ -26,7 +42,6 @@ namespace P42.Utils.Uno
             textBlock.SetValue(HtmlProperty, value ?? string.Empty);
             return textBlock;
         }
-
 
         public static string GetHtml(this TextBlock textBlock)
             => (string)textBlock.GetValue(HtmlProperty);
@@ -48,7 +63,7 @@ namespace P42.Utils.Uno
             element.Bind(HtmlProperty, source, path, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
             return element;
         }
-
+        #endregion
 
         #region HtmlDependencyObject Property
         internal static readonly DependencyProperty HtmlDependencyObjectProperty = DependencyProperty.RegisterAttached(

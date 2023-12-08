@@ -569,6 +569,7 @@ namespace P42.Utils.Uno
                     break;
                 case "a":
                     string href = null;
+                    string id = null;
                     foreach (var attr in tag.Attributes)
                     {
                         switch (attr.Name)
@@ -576,14 +577,12 @@ namespace P42.Utils.Uno
                             case nameof(href):
                                 href = attr.Value;
                                 break;
-                                /*
                             case nameof(id):
                                 id = attr.Value;
                                 break;
-                                */
                         }
                     }
-                    span = new HyperlinkSpan(tag.Start, index - 1, href);
+                    span = new HyperlinkSpan(tag.Start, index - 1, href, id);
                     Add(span);
                     break;
             }

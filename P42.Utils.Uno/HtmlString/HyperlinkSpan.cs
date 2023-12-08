@@ -17,26 +17,30 @@ namespace P42.Utils.Uno
 
 		public string Href { get; set; }
 
+		public string Id { get; set; }
 
-		public HyperlinkSpan(int start, int end, string href=null) : base (start, end) {
+
+		public HyperlinkSpan(int start, int end, string href=null, string id=null) : base (start, end) {
 			Key = SpanKey;
 			Href = href;
+			Id = id;
 		}
 
-		public HyperlinkSpan(HyperlinkSpan span) : this (span.Start, span.End, span.Href) {
+		public HyperlinkSpan(HyperlinkSpan span) : this (span.Start, span.End, span.Href, span.Id) {
 		}
 
 		public void PropertiesFrom(HyperlinkSpan source)
 		{
 			base.PropertiesFrom(source);
 			Href = source.Href;
+			Id = source.Id;
 		}
 
 		public override Span Copy()
 		{
-			return new HyperlinkSpan(Start, End, Href);
+			return new HyperlinkSpan(Start, End, Href, Id);
 		}
 
-        public bool IsEmpty() => string.IsNullOrEmpty(Href);
+        public bool IsEmpty() => string.IsNullOrWhiteSpace(Href) && string.IsNullOrWhiteSpace(Id);
 	}
 }
