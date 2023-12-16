@@ -45,7 +45,7 @@ namespace P42.Utils.Uno
                 return UIKit.UIFont.FamilyNames;
 #elif __MACOS__
                 return AppKit.NSFontManager.SharedFontManager.AvailableFontFamilies;
-#elif __P42WASM__
+#elif __WASM__
             // https://cmsdk.com/css3/enumerate-fontface-urls-using-javascriptjquery.html
             throw new NotImplementedException();
 #elif !HAS_UNO

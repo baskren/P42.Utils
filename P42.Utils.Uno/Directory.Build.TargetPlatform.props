@@ -1,0 +1,44 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- TARGET FRAMEWORK FILTERING -->
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.android')) ">
+    <P42_TargetPlatform>android</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.ios')) ">
+    <P42_TargetPlatform>ios</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.macos')) ">
+    <P42_TargetPlatform>macos</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">
+    <P42_TargetPlatform>maccatalyst</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">
+    <P42_TargetPlatform>gtk</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">
+    <P42_TargetPlatform>wpf</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.windows')) ">
+    <P42_TargetPlatform>windows</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) ">
+    <P42_TargetPlatform>wasm</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.skia')) ">
+    <P42_TargetPlatform>skia</P42_TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">net7.0-android</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">net7.0-ios</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">net7.0-macos</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('skia')) ">net7.0</TargetFrameworks>
+  </PropertyGroup>
+
+</Project>

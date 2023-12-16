@@ -187,8 +187,8 @@ namespace P42.Utils.Uno
             return null;
         }
 
-#if __P42WASM__
-        public static UIElement GetFirstHtmlDescendent(this FrameworkElement element)
+#if __WASM__  // out of commission
+        public static UIElement GetFirstDescendent(this FrameworkElement element)
         {
             var enumerator = element.GetEnumerator();
             while (enumerator.MoveNext())

@@ -59,9 +59,7 @@ namespace P42.Utils.Uno
 
         public static Thickness SafeMargin(FrameworkElement element)
         {
-#if !HAS_UNO
-            return default(Thickness);
-#endif
+#if HAS_UNO
             var windowBounds = P42.Utils.Uno.Platform.Window.Bounds;
             
             var visibleBounds = ApplicationView.GetForCurrentView().VisibleBounds;
@@ -71,6 +69,9 @@ namespace P42.Utils.Uno
                 windowBounds.Right - visibleBounds.Right,
                 windowBounds.Bottom - visibleBounds.Bottom
             );
+#else
+            return default(Thickness);
+#endif
         }
 
         public static double DisplayScale(FrameworkElement element)

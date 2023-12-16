@@ -2,17 +2,45 @@
 
   <PropertyGroup>
 
-	  <AssemblyName>P42.Utils</AssemblyName>
+	<AssemblyName>P42.Utils</AssemblyName>
 
     <TargetFrameworks>net7.0</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0;netstandard2.0</TargetFrameworks>
     
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.8" />
-  </ItemGroup>
+  <PropertyGroup>
+  	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+  	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+  	<IncludeSymbols>true</IncludeSymbols>
+  	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
+	<PackageId>P42.Utils</PackageId>
+	<Authors>Ben Askren</Authors>
+	<Company>42nd Parallel</Company>
+	<Product>P42.Utils</Product>
+	<Copyright>2022 42nd Parallel</Copyright>
+	<LangVersion>7.1</LangVersion>
+	<DebugType>portable</DebugType>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Description>CrossPlatform Utilities</Description>
+	<PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageReleaseNotes>Initial NuGet</PackageReleaseNotes>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageIcon>P42.icon.png</PackageIcon>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+  <ItemGroup>
+	<None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
+	<None Include="..\README.md" Pack="true" PackagePath="\" />
+	<None Include="..\LICENSE" Pack="true" PackagePath="\" />
+  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
 
 
 </Project>

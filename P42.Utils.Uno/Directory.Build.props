@@ -1,68 +1,30 @@
 <Project ToolsVersion="15.0">
 
+
+  <!-- Uno CrossRuntime Directory.Build.Props -->
   <PropertyGroup>
-    <P42_PlatformSpecificFiles>false</P42_PlatformSpecificFiles>
+  	<!--
+  	Force all projects of this folder to use a different output
+  	path to avoid intermediate output collisions
+  	-->
+  	<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
+  	<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+  	<DefaultItemExcludes>$(DefaultItemExcludes);obj\**;bin\**</DefaultItemExcludes>
+  	<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+  	<GenerateLibraryLayout>true</GenerateLibraryLayout>
+  </PropertyGroup>
+
+
+  <!-- SHARED PROPERTIES -->
+  <PropertyGroup>
+    <CoreProjectName>$(MSBuildProjectName.Replace(".Skia","").Replace(".Wasm",""))</CoreProjectName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
+		<NoWarn>$(NoWarn);Uno0001;VSX1000;CA1416;MSB3884</NoWarn>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    <EnableDefaultCompileItems Condition="$(P42_PlatformSpecificFiles)">false</EnableDefaultCompileItems>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
   </PropertyGroup>
-
-  <!-- CORE TARGETS -->
-  <PropertyGroup>
-	  <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst;net7.0-macos;</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net7.0-windows10.0.19041;$(TargetFrameworks)</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!--
-    Force all projects of this folder to use a different output
-    path to avoid intermediate output collisions
-    -->
-    <BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
-    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
-    <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
-    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
-    <GenerateLibraryLayout>true</GenerateLibraryLayout>
-  </PropertyGroup>
-
-
-  <!-- TARGET FRAMEWORK FILTERING -->
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.android')) ">
-    <P42_TargetOnlyThisPlatform>android</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.ios')) ">
-    <P42_TargetOnlyThisPlatform>ios</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.macos')) ">
-    <P42_TargetOnlyThisPlatform>macos</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">
-    <P42_TargetOnlyThisPlatform>maccatalyst</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">
-    <P42_TargetOnlyThisPlatform>gtk</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">
-    <P42_TargetOnlyThisPlatform>wpf</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.windows')) ">
-    <P42_TargetOnlyThisPlatform>windows</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) ">
-    <P42_TargetOnlyThisPlatform>wasm</P42_TargetOnlyThisPlatform>
-  </PropertyGroup>
-  <PropertyGroup>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('android')) ">net7.0-android</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('ios')) ">net7.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('macos')) ">net7.0-macos</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.19041</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
-  </PropertyGroup>
-
+  <!-- DEBUG / RELEASE PROPERTIES -->
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
 	  <DefineConstants>TRACE;DEBUG;$(DefineConstants)</DefineConstants>
@@ -71,115 +33,80 @@
     <Optimize>true</Optimize>
 	  <DefineConstants>RELEASE;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
-
-  <!-- SHARED RESOURCES -->
-  <ItemGroup>
-    <EmbeddedResource Include="Resources/**" />
-    <Compile Include="**\*.shared.cs" />
-    <Compile Include="**\*.shared.*.cs" />
-  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-  </ItemGroup>
-
-  <!-- ANDROID -->
-  <PropertyGroup Condition=" $(TargetFramework.ToLower().Contains('android')) And '$(Configuration)'=='Debug' ">
-    <WarningLevel>5</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('android')) ">
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.android.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.android.*.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.droid.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.droid.*.cs" />
-  </ItemGroup>
-
-  <!-- IOS -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('ios')) OR $(TargetFramework.ToLower().Contains('maccatalyst'))">
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.ios.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.ios.*.cs" />
-  </ItemGroup>  
-
-  <!-- MACOS -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('macos')) ">
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.macos.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.macos.*.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.mac.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.mac.*.cs" />
-  </ItemGroup>
-
-  <!-- maccatalyst -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('maccatalyst')) ">
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.maccatalyst.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.maccatalyst.*.cs" />
-  </ItemGroup>  
-
-  <!-- TIZEN -->
-  <ItemGroup Condition=" $(TargetFramework.ToLower().Contains('tizen')) ">
-    <PackageReference Include="Uno.WinUI.Runtime.Skia.Tizen" Version="5.0.64" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.tizen.*.cs" />
-  </ItemGroup>
-
-  <!-- WinUI Windows -->
+  <!-- PLATFORM PROPERTIES -->
   <PropertyGroup Condition=" $(TargetFramework.Contains('windows')) ">
-    <DefineConstants>WINDOWS;$(DefineConstants);</DefineConstants>
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.win.*.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.windows.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.windows.*.cs" />
-  </ItemGroup>
-
-  <!-- Not Windows -->
-  <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-    <PackageReference Include="Uno.WinUI" Version="5.0.64" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.uno.cs" />
-    <Content Include="Assets\**" />
-    <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-    <Compile Update="**\*.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <!-- NetStandard bait -->
-  <ItemGroup Condition=" !$(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) AND $(TargetFramework.ToLower().Equals('net7.0')) ">
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.net.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.net.*.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.netstandard.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.netstandard.*.cs" />
-  </ItemGroup>
-
-  <!-- WASM -->
-  <PropertyGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <DefineConstants>__P42WASM__;$(DefineConstants);</DefineConstants>
+  <PropertyGroup Condition=" !$(TargetFramework.Contains('windows')) ">
   </PropertyGroup>
-  <ItemGroup Condition=" $(P42_TargetOnlyThisPlatform.ToLower().Contains('wasm')) ">
-    <!-- THIS WILL CAUSE ASSETS TO NOT BE ADDED TO BUILD FILES.  FORTUNATELY, WASM CALLS STILL WORK SINCE THIS PACKAGE IS REFERENCED IN P42.Utils.Uno
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="5.0.64" />
-    -->
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.cs" />
-    <Compile Condition="$(P42_PlatformSpecificFiles)" Include="**\*.wasm.*.cs" />
+  <Choose>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.64" />
+    		<EmbeddedResource Condition="Exists('LinkerConfig.Wasm.xml')" Include="LinkerConfig.Wasm.xml">
+    		  <LogicalName>$(MSBuildProjectName).xml</LogicalName>
+    		</EmbeddedResource>
+      </ItemGroup>
+    </When>
+    <When Condition="  $(MSBuildProjectName.ToLower().Contains('skia'))  OR  $(P42_TargetPlatform.ToLower().Contains('skia'))  OR  $(SolutionName.ToLower().Contains('skia')) ">
+      <PropertyGroup>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <PropertyGroup>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/**/*" />
   </ItemGroup>
 
 
+  <!-- REFERENCES -->
+  <Import Condition="Exists('$(CoreProjectName).References.props')" Project="$(CoreProjectName).References.props" />
+
+
+  <!-- PLATFORM SPECIFIC SOURCE -->
+  <Import Condition="Exists('Directory.Build.PlatformFiles.targets')" Project="Directory.Build.PlatformFiles.targets" />
+
+
+  <!-- NUGET PACKAGE PROPERTIES -->
+  <Import Condition="Exists('$(CoreProjectName).NugetPackage.props')"  Project="$(CoreProjectName).NugetPackage.props" />
+
+
+  <!-- BUILD MESSAGES -->
   <!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022#default-build-targets -->
   <Target Name="B1" BeforeTargets="BeforeBuild">
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text="===============================  [ AssemblyName:[$(AssemblyName)] | TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42_TargetOnlyThisPlatform:[$(P42_TargetOnlyThisPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)] ] ===============================" Importance="high"/>
-    <Message Text="COMPILE: ($Compile)"/>
+    <Message Text="==============================================================" Importance="high"/>
+  	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
+    <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
+    <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>
+    <Message Text="  CoreProjectName:[$(CoreProjectName)]" Importance="high"/>
+    <Message Text="  TargetFrameworks:[$(TargetFrameworks)] " Importance="high"/>
+    <Message Text="  TargetFramework:[$(TargetFramework)]" Importance="high"/>
+  	<Message Text="  P42_TargetPlatform:[$(P42_TargetPlatform)] " Importance="high" />
+    <Message Text="  Configuration:[$(Configuration)] " Importance="high"/>
+    <Message Text="  SaveNuget:[$(GeneratePackageOnBuild)] " Importance="high"/>
+    <Message Text="  PackageVersion:[$(Version)] " Importance="high"/>
+    <Message Text="  DefineConstants:[$(DefineConstants)]" Importance="high" />
+    <Message Text="  Compile:[" Importance="high"/>
+    <Message Text="      @(Compile, '%0a      ')" Importance="high"/>
+    <Message Text="  ]" Importance="high"/>
+    <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
+    <Message Text="==============================================================" Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
   </Target>
   
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(GeneratePackageOnBuild) ">
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text="=============================== NUGET PACK [ PackageId[$(PackageId)] |TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : P42_TargetOnlyThisPlatform:[$(P42_TargetOnlyThisPlatform)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)]  ] ===============================" Importance="high"/>
-    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg)) "/>
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42_LocalNuGetFolderPath) " />
-  </Target>
-
+  
 </Project>

@@ -72,7 +72,7 @@ namespace P42.Utils.Uno
 		
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
-#if __P42WASM__
+#if __WASM__
 			if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
             {
                 var id = selectorItem.GetHtmlAttribute("id");
@@ -87,7 +87,7 @@ namespace P42.Utils.Uno
 		}
 		
 
-#if !__P42WASM__
+#if !__WASM__
 		static bool InternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 		{
 			if (GetScrollViewer(list) is ScrollViewer viewer)
