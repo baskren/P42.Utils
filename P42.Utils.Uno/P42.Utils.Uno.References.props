@@ -1,10 +1,15 @@
 <Project ToolsVersion="15.0">
 
 
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
+  </PropertyGroup>
+  
   <!-- SHARED ITEMS -->
   <ItemGroup>
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	<ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.0.8" />
   </ItemGroup>
 
 
