@@ -4,7 +4,7 @@
   <!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">  
     
-    <Version>5.0.64</Version>  
+    <Version>5.0.118</Version>  
 	<PackageId Condition=" $(P42_TargetPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
 
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
