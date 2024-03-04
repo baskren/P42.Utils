@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +8,39 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.Foundation;
+using Microsoft.UI.Xaml.Input;
 
 namespace P42.Utils.Uno
 {
     public static class ListViewExtensions
     {
-		public static ScrollViewer GetScrollViewer(this DependencyObject depObj)
+        public static TElement AddPointerWheelChangedIntercept<TElement>(this TElement listView, PointerEventHandler handler) where TElement : ListView
+        {
+            // In latest versions of Windows, Scrolling of a ListView, nested in a ScrollViewer, doesn't work
+            // and said ListView's ScrollViewer won't fire PointerWheelChanged events.  The below allows you to 
+            // get the event before it gets to the ListView's ScrollViewer.  These can be overriden (e.Handled = true) 
+            // and then used for other things (like scrolling the outer ScrollView)
+
+
+            if (listView.GetScrollViewer() is not ScrollViewer scrollViewer)
+            {
+                listView.Loaded += (s, e) =>
+                {
+                    if (s is ListView listView)
+                        listView.AddPointerWheelChangedIntercept(handler);
+                };
+                return listView;
+            }
+
+            if (VisualTreeHelper.GetChild(scrollViewer, 0) is Border border)
+                border.PointerWheelChanged += handler;
+
+            return listView;
+        }
+
+
+
+        public static ScrollViewer GetScrollViewer(this DependencyObject depObj)
 		{
             if (depObj is ScrollViewer obj) return obj;
 
