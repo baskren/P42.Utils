@@ -154,8 +154,8 @@ namespace P42.Utils.Uno
 				var semanticLocation = new SemanticZoomLocation { Item = item };
 
 				// async scrolling
-				await list.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-				{
+				//await list.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+				//{
 					switch (toPosition)
 					{
 						case ScrollToPosition.Start:
@@ -194,7 +194,7 @@ namespace P42.Utils.Uno
 						default:
 							break;
 					}
-				});
+				//});
 
 				// Waiting for loaded doesn't seem to be enough anymore; the ScrollViewer does not appear until after Loaded.
 				// Even if the ScrollViewer is present, an invoke at low priority fails (E_FAIL) presumably because the items are
