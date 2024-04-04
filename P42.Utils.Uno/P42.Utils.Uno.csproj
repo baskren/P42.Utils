@@ -13,7 +13,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Uno.WinUI" Version="5.0.118" />
+    <PackageReference Include="Uno.WinUI" Version="5.1.104" />
   </ItemGroup>
 
 

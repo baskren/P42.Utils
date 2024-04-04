@@ -44,7 +44,7 @@
         <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
       </PropertyGroup>
       <ItemGroup>
-        <PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="5.0.118" />
+        <PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="5.1.104" />
     		<EmbeddedResource Condition="Exists('LinkerConfig.Wasm.xml')" Include="LinkerConfig.Wasm.xml">
     		  <LogicalName>$(MSBuildProjectName).xml</LogicalName>
     		</EmbeddedResource>
