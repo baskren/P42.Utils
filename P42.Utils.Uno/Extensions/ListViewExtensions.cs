@@ -209,6 +209,7 @@ namespace P42.Utils.Uno
 					if (previouslyFailed)
 						return;
 
+                    await Task.Delay(10);
 					Task.Delay(1).ContinueWith(async ct => { await InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); }, TaskScheduler.FromCurrentSynchronizationContext()).WatchForError();
 					//await Task.Delay(5);
 					//await InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); 
