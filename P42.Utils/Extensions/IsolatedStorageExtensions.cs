@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-#if NET7_0
+#if NET7_0_OR_GREATER
 using System.IO.IsolatedStorage;
 using System.IO;
 

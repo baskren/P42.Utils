@@ -163,7 +163,7 @@ namespace P42.Utils
     {
         public RecursionException() { }
 
-        protected RecursionException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        //protected RecursionException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public RecursionException(string message) : base(message) { }
 

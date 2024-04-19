@@ -30,15 +30,15 @@
     <P42_TargetPlatform>skia</P42_TargetPlatform>
   </PropertyGroup>
   <PropertyGroup>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">net7.0-android</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">net7.0-ios</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">net7.0-macos</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('gtk')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wpf')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">net7.0-windows10.0.19041</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">net7.0</TargetFrameworks>
-		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('skia')) ">net7.0</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">$(DotNetVersion)-android</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">$(DotNetVersion)-ios</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">$(DotNetVersion)-macos</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">$(DotNetVersion)-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('gtk')) ">$(DotNetVersion)</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wpf')) ">$(DotNetVersion)</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">$(DotNetVersion)-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">$(DotNetVersion)</TargetFrameworks>
+		<TargetFrameworks Condition=" $(P42_TargetPlatform.ToLower().Contains('skia')) ">$(DotNetVersion)</TargetFrameworks>
   </PropertyGroup>
 
 </Project>
