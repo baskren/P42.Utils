@@ -36,10 +36,20 @@
     <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
   </ItemGroup>
 
+
   <Target Name="B1" BeforeTargets="BeforeBuild">
+
+    <!--
     <Message Text=" " Importance="high"/>
+    <Message Text=" CodeAnalysisRuleSet: [$(CodeAnalysisRuleSet)]" Importance="high"/>
     <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
+    -->
+
+    <PropertyGroup>
+      <!-- Get rid of `Could not find rule set file "ManagedMinimumRules.ruleset" ` warning -->
+      <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
+    </PropertyGroup>
+
     <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
   </Target>
   

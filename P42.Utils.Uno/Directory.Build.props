@@ -21,7 +21,7 @@
     <CoreProjectName>$(MSBuildProjectName.Replace(".Skia","").Replace(".Wasm",""))</CoreProjectName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
-		<NoWarn>$(NoWarn);Uno0001;VSX1000;CA1416;MSB3884</NoWarn>
+		<NoWarn>$(NoWarn);Uno0001;VSX1000;CA1416;MSB3884;NETSDK1206</NoWarn>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <!-- DEBUG / RELEASE PROPERTIES -->
@@ -73,7 +73,7 @@
 
 
   <!-- PLATFORM SPECIFIC SOURCE -->
-  <Import Condition="Exists('Directory.Build.PlatformFiles.targets')" Project="Directory.Build.PlatformFiles.targets" />
+  <Import Condition="Exists('Directory.Build.PlatformFiles.propss')" Project="Directory.Build.PlatformFiles.propss" />
 
 
   <!-- NUGET PACKAGE PROPERTIES -->
