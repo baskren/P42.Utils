@@ -1,10 +1,8 @@
 <Project Sdk="Uno.Sdk">
 
-
   <PropertyGroup>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$(DotNetVersion)-windows10.0.19041.0</TargetFrameworks>
     <TargetFrameworks>$(TargetFrameworks);$(DotNetVersion);$(DotNetVersion)-android;$(DotNetVersion)-ios;$(DotNetVersion)-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="'$(P42_OverrideTargetFramework)'!=''">$(P42_OverrideTargetFramework)</TargetFrameworks>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>

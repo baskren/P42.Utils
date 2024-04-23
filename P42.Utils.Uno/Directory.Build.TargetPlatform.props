@@ -41,4 +41,8 @@
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('skia')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TargetFrameworks Condition="'$(P42_OverrideTargetFramework)'!=''">$(P42_OverrideTargetFramework)</TargetFrameworks>
+  </PropertyGroup>
+
 </Project>
