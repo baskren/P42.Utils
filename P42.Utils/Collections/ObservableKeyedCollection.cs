@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace System.Collections
+namespace P42.Utils
 {
     /// <summary>
     /// Keyed collection (like dictionary but keys are provided by items) that is observable
@@ -52,6 +52,7 @@ namespace System.Collections
         {
             var oldItems = this.ToList();
             base.ClearItems();
+            Dictionary.Clear();
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -62,8 +63,10 @@ namespace System.Collections
         /// <param name="index"></param>
         protected override void RemoveItem(int index)
         {
-            var item = this[index];
+            var item = this[index];            
             base.RemoveItem(index);
+            if (TryGetKey(item, out var key))
+                Dictionary.Remove(key);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
         }
 
@@ -90,8 +93,13 @@ namespace System.Collections
         /// <exception cref="NotImplementedException"></exception>
         protected override TKey GetKeyForItem(TItem item)
         {
-            throw new NotImplementedException();
+            if (Dictionary.TryGetKey(item, out TKey key))
+                return (TKey)key;
+            throw new System.Exception("No key for item");
         }
+
+        public virtual bool TryGetKey(TItem item, out TKey key)
+            => Dictionary.TryGetKey(item, out key);
 
         /// <summary>
         /// Test if item with key is in collection
