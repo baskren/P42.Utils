@@ -5,7 +5,7 @@
   <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">  
     
     <Version>5.1.104</Version>  
-	<PackageId Condition=" $(P42_TargetPlatform.ToLower.Contains('wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
+	<PackageId Condition=" $(P42_TargetPlatform.ToLower.Contains('wasm')) OR $(SolutionName.ToLower().Contains('.wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
 
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<EmbedUntrackedSources>true</EmbedUntrackedSources>
