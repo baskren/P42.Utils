@@ -14,31 +14,19 @@
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.maccatalyst')) ">
     <P42_TargetPlatform>maccatalyst</P42_TargetPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.gtk')) ">
-    <P42_TargetPlatform>gtk</P42_TargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wpf')) ">
-    <P42_TargetPlatform>wpf</P42_TargetPlatform>
-  </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.windows')) ">
     <P42_TargetPlatform>windows</P42_TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.wasm')) ">
     <P42_TargetPlatform>wasm</P42_TargetPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(SolutionName.ToLower().Contains('.skia')) ">
-    <P42_TargetPlatform>skia</P42_TargetPlatform>
-  </PropertyGroup>
   <PropertyGroup>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">$(DotNetVersion)-android</P42_OverrideTargetFramework>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">$(DotNetVersion)-ios</P42_OverrideTargetFramework>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">$(DotNetVersion)-macos</P42_OverrideTargetFramework>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">$(DotNetVersion)-maccatalyst</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('gtk')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('wpf')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">$(DotNetVersion)-windows10.0.19041</P42_OverrideTargetFramework>
 		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('skia')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

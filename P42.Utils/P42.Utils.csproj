@@ -21,7 +21,6 @@
 	  <Company>42nd Parallel</Company>
 	  <Product>P42.Utils</Product>
 	  <Copyright>2022 42nd Parallel</Copyright>
-	  <LangVersion>7.1</LangVersion>
 	  <DebugType>portable</DebugType>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Description>CrossPlatform Utilities</Description>
@@ -35,6 +34,9 @@
 	  <PackageIcon>P42.icon.png</PackageIcon>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+
   </PropertyGroup>
   
   <ItemGroup>

@@ -4,7 +4,7 @@
   <!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">  
     
-    <Version>5.1.104</Version>  
+    <Version>5.2.132</Version>  
 	<PackageId Condition=" $(P42_TargetPlatform.ToLower.Contains('wasm')) OR $(SolutionName.ToLower().Contains('.wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
 
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -27,6 +27,7 @@
     <PackageTags>P42.Utils Uno.Platform</PackageTags>
 
   </PropertyGroup>
+  
   <ItemGroup>
   	<None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
   	<None Include="..\README.md" Pack="true" PackagePath="\" />
@@ -40,9 +41,9 @@
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text="=============================== NUGET PACK [ PackageId[$(PackageId)] |TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : MSBuildProjectName:[$(MSBuildProjectName)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)]  ] ===============================" Importance="high"/>
-    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg)) "/>
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(AssemblyName),$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
+    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).nupkg)) "/>
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
+    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
     <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42_LocalNuGetFolderPath) " />
   </Target>
 

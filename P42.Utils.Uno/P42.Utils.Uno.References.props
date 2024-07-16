@@ -20,11 +20,7 @@
   </ItemGroup>
 
   <Choose>
-    <When Condition="  $(MSBuildProjectName.ToLower().Contains('wasm'))  OR  $(P42_TargetPlatform.ToLower().Contains('wasm'))  OR  $(SolutionName.ToLower().Contains('wasm')) ">
-      <ItemGroup>
-      </ItemGroup>
-    </When>
-    <When Condition="  $(MSBuildProjectName.ToLower().Contains('skia'))  OR  $(P42_TargetPlatform.ToLower().Contains('skia'))  OR  $(SolutionName.ToLower().Contains('skia')) ">
+    <When Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
       <ItemGroup>
       </ItemGroup>
     </When>
