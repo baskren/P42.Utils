@@ -1,4 +1,4 @@
-﻿using P42.Utils;
+using P42.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,29 +28,11 @@ namespace P42.Utils.Uno
             }
         }
 
-        static FontFamily _defaultFontFamily;
-        public static FontFamily DefaultSystemFontFamily
-        {
-            get
-            {
-                if (_defaultFontFamily == null)
-                {
-#if !HAS_UNO
-                    if (XamlAutoFontFamilyPresent)
-                        _defaultFontFamily = FontFamily.XamlAutoFontFamily;
-                    else
-#endif
-                    //_defaultFontFamily = new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI"); //new FontFamily("Segoe UI#Regular");
-                    _defaultFontFamily = new FontFamily("Segoe UI#Regular");
-                }
-                return _defaultFontFamily;
-            }
-        }
-
+        public readonly static Microsoft.UI.Xaml.Media.FontFamily DefaultSystemFontFamily = Platform.SansSerifFontFamily;
 
         public static Dictionary<string, string> EmbeddedFontSources = new Dictionary<string, string>();
 
-        public static FontFamily GetFontFamily(string fontFamilyName)
+        public static Microsoft.UI.Xaml.Media.FontFamily GetFontFamily(string fontFamilyName)
         {
             if (fontFamilyName == null)
                 return (FontFamily)Application.Current.Resources["ContentControlThemeFontFamily"];
@@ -66,21 +48,20 @@ namespace P42.Utils.Uno
             switch (fontFamilyName.ToLower())
             {
                 case "monospace":
-                    return new FontFamily("Consolas");
+                    return Platform.MonoSpaceFontFamily;
                 case "serif":
-                    return new FontFamily("Cambria");
+                    return new Microsoft.UI.Xaml.Media.FontFamily("Cambria");
                 case "sans-serif":
-                    //return new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI");
-                    return new FontFamily("Segoe UI#Regular");
+                    return Platform.SansSerifFontFamily;
                 case "stixgeneral":
-                    return new FontFamily("ms-appx:///Assets/Fonts/STIXGeneral-Regular#STIXGeneral");
-                    //resourceId = "Forms9Patch.Resources.Fonts.STIXGeneral.otf";
+                    return Platform.MathFontFamily;
+                    //resourceId = "Forms9Patch.Resources.Fonts.STIXGeneral.ttf";
                     //fontFamilyName = resourceId + "#" + "STIXGeneral";
                     //break;
             }
 
             if (EmbeddedFontSources.ContainsKey(fontFamilyName))
-                return new FontFamily(EmbeddedFontSources[fontFamilyName]);
+                return new Microsoft.UI.Xaml.Media.FontFamily(EmbeddedFontSources[fontFamilyName]);
 
             var idParts = fontFamilyName.Split('#');
             resourceId = idParts[0];
@@ -135,7 +116,7 @@ namespace P42.Utils.Uno
             }
 
             if (localStorageFileName == null)
-                return new FontFamily(fontFamilyName);
+                return new Microsoft.UI.Xaml.Media.FontFamily(fontFamilyName);
 
             string fontName;
             if (idParts.Count() > 1)
@@ -152,7 +133,7 @@ namespace P42.Utils.Uno
             //foreach (var c in uwpFontFamily)
             //    System.Diagnostics.Debug.WriteLine("c=["+c+"]["+(int)c+"]");
             EmbeddedFontSources.Add(fontFamilyName, uwpFontFamily);
-            return new FontFamily(uwpFontFamily);
+            return new Microsoft.UI.Xaml.Media.FontFamily(uwpFontFamily);
         }
 
         /*
@@ -168,5 +149,6 @@ namespace P42.Utils.Uno
             return 0;
         }
         */
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Windows.UI;
 using Microsoft.UI.Xaml;
@@ -149,13 +149,13 @@ namespace P42.Utils.Uno
         #region FontFamily Property
         public static readonly DependencyProperty FontFamilyProperty = DependencyProperty.Register(
             nameof(FontFamily),
-            typeof(FontFamily),
+            typeof(Microsoft.UI.Xaml.Media.FontFamily),
             typeof(HtmlDependencyObject),
-            new PropertyMetadata(default(FontFamily), OnFontPropertyChanged)
+            new PropertyMetadata(default(Microsoft.UI.Xaml.Media.FontFamily), OnFontPropertyChanged)
         );
-        public FontFamily FontFamily
+        public Microsoft.UI.Xaml.Media.FontFamily FontFamily
         {
-            get => (FontFamily)GetValue(FontFamilyProperty);
+            get => (Microsoft.UI.Xaml.Media.FontFamily)GetValue(FontFamilyProperty);
             set => SetValue(FontFamilyProperty, value);
         }
         #endregion FontFamily Property
@@ -302,11 +302,6 @@ namespace P42.Utils.Uno
         #endregion
 
 
-
-        static readonly FontFamily MathMetaFontFamily = new FontFamily("ms-appx:///Assets/Fonts/STIXGeneral.otf#STIXGeneral"); //FontExtensions.GetFontFamily("STIXGeneral");
-        //static readonly FontFamily ScriptFontFamily = new FontFamily("ms-appx:///Assets/Fonts/segoeui.ttf#Segoe UI"); // new FontFamily("Segoe UI#Regular");
-        static readonly FontFamily ScriptFontFamily = new FontFamily("Segoe UI#Regular");
-
         internal static void SetAndFormatText(TextBlock textBlock, HtmlSpans htmlSpans, double altFontSize = -1)
         {
             if (textBlock == null)
@@ -359,7 +354,7 @@ namespace P42.Utils.Uno
 
             var MathMetaFont = new MetaFont(baseMetaFont)
             {
-                Family = MathMetaFontFamily //FontService.ReconcileFontFamily("Forms9Patch.Resources.Fonts.STIXGeneral.otf", P42.Utils.ReflectionExtensions.GetAssembly(typeof(Forms9Patch.Label)))
+                Family = Platform.MathFontFamily //FontService.ReconcileFontFamily("Forms9Patch.Resources.Fonts.STIXGeneral.ttf", P42.Utils.ReflectionExtensions.GetAssembly(typeof(Forms9Patch.Label)))
             };
 
             for (int i = 0; i < text.Length; i++)
@@ -531,19 +526,19 @@ namespace P42.Utils.Uno
             switch (metaFont.Baseline)
             {
                 case FontBaseline.Numerator:
-                    run.FontFamily = ScriptFontFamily;
+                    run.FontFamily = Platform.SansSerifFontFamily;
                     Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Superscript);
                     break;
                 case FontBaseline.Superscript:
-                    run.FontFamily = ScriptFontFamily;
+                    run.FontFamily = Platform.SansSerifFontFamily;
                     Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Superscript);
                     break;
                 case FontBaseline.Denominator:
-                    run.FontFamily = ScriptFontFamily;
+                    run.FontFamily = Platform.SansSerifFontFamily;
                     Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Subscript);
                     break;
                 case FontBaseline.Subscript:
-                    run.FontFamily = ScriptFontFamily;
+                    run.FontFamily = Platform.SansSerifFontFamily;
                     Typography.SetVariants(run, Microsoft.UI.Xaml.FontVariants.Subscript);
                     break;
                 default:

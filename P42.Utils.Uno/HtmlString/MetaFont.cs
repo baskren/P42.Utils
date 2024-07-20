@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,7 @@ namespace P42.Utils.Uno
     {
         #region Properties
 
-        public FontFamily Family { get; set; }
+        public Microsoft.UI.Xaml.Media.FontFamily Family { get; set; }
 
         public double Size { get; set; }
 
@@ -36,7 +36,7 @@ namespace P42.Utils.Uno
 
 
         #region Constrction
-        public MetaFont(FontFamily family, double size, bool bold = false, bool italic = false)
+        public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, bool bold = false, bool italic = false)
         {
             Baseline = FontBaseline.Normal;
             Family = family;
@@ -56,7 +56,7 @@ namespace P42.Utils.Uno
             Underline = f.Underline;
             Strikethrough = f.Strikethrough;
         }
-        public MetaFont(FontFamily family, double size, bool bold = false, bool italic = false, string id = null, string href = null, Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, bold, italic)
+        public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, bool bold = false, bool italic = false, string id = null, string href = null, Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, bold, italic)
         {
             if (!string.IsNullOrEmpty(id) || !string.IsNullOrEmpty(href))
                 Action = new MetaFontAction(href, id);

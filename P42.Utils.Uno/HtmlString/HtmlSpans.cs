@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -548,7 +548,7 @@ namespace P42.Utils.Uno
                     break;
                 case "pre": // preformatted text
                 case "tt": // teletype (monospaced)
-                    span = new FontFamilySpan(tag.Start, index - 1, new FontFamily("Lucida Console"));
+                    span = new FontFamilySpan(tag.Start, index - 1, new Microsoft.UI.Xaml.Media.FontFamily("Lucida Console"));
                     Add(span);
                     break;
                 case "strike":
@@ -608,7 +608,7 @@ namespace P42.Utils.Uno
                                     Add(span);
                                     break;
                                 case "font-family":
-                                    span = new FontFamilySpan(tag.Start, index - 1, new FontFamily(strs[1]));
+                                    span = new FontFamilySpan(tag.Start, index - 1, new Microsoft.UI.Xaml.Media.FontFamily(strs[1]));
                                     Add(span);
                                     break;
                                 case "font-size":

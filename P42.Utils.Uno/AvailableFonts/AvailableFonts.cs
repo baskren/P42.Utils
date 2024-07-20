@@ -13,7 +13,7 @@ namespace P42.Utils.Uno
     {
 #if __ANDROID__
         const string AssetPrefix = "ms-appx:///Assets/";
-        static Dictionary<string, FontFamily> FontFamiliesByName = new Dictionary<string, FontFamily> { {"default", null } };
+        static Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> FontFamiliesByName = new Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> { {"default", null } };
 
         static AvailableFonts()
         {
@@ -29,7 +29,7 @@ namespace P42.Utils.Uno
                     var fileName = Path.GetFileName(file);
                     if (fileName == "uno-fluentui-assets")
                         fileName = "Symbols";
-                    FontFamiliesByName.Add(fileName, new FontFamily(file));
+                    FontFamiliesByName.Add(fileName, new Microsoft.UI.Xaml.Media.FontFamily(file));
                 }
             }
     }
@@ -113,14 +113,14 @@ namespace P42.Utils.Uno
             }
         }
 
-        public static FontFamily FontFamily(string name)
+        public static Microsoft.UI.Xaml.Media.FontFamily FontFamily(string name)
         {
 #if __ANDROID__
             if (FontFamiliesByName.TryGetValue(name, out var family))
                 return family;
             return null;
 #else
-            return new FontFamily(name);
+            return new Microsoft.UI.Xaml.Media.FontFamily(name);
 #endif
         }
 

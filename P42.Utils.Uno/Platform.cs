@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,6 +36,19 @@ namespace P42.Utils.Uno
                 return _assembliesToInclude;
             }
         }
+
+        static Assembly _assembly;
+        public static Assembly Assembly => _assembly ??= typeof(Platform).Assembly;
+
+        static Microsoft.UI.Xaml.Media.FontFamily _mathFontFamily;
+        public static Microsoft.UI.Xaml.Media.FontFamily MathFontFamily => _mathFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily(AssetExtensions.AssetPath("ms-appx:///Assets/Fonts/STIXGeneral.ttf#STIXGeneral"));
+
+        static Microsoft.UI.Xaml.Media.FontFamily _sansSerifFontFamily;
+        public static Microsoft.UI.Xaml.Media.FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI#Regular");
+
+        static Microsoft.UI.Xaml.Media.FontFamily _monoSpaceFontFamily;
+        public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily(AssetExtensions.AssetPath("ms-appx:///Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code"));
+
 
         public static void Init(Microsoft.UI.Xaml.Application application, Microsoft.UI.Xaml.Window window)
 		{

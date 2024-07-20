@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using P42.Utils;
 using Microsoft.UI.Xaml.Media;
 
@@ -11,12 +11,11 @@ namespace P42.Utils.Uno
 	{
 		internal const string SpanKey = "FontFamily";
 
-		//FontFamily _fontName;
 		/// <summary>
 		/// Gets or sets the name of the font family -OR- resource ID or embedded resource font.
 		/// </summary>
 		/// <value>The name of the font family.</value>
-		public FontFamily FontFamily { get; set; }
+		public Microsoft.UI.Xaml.Media.FontFamily FontFamily { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="P42.Utils.Uno.FontFamilySpan"/> class.
@@ -24,7 +23,7 @@ namespace P42.Utils.Uno
 		/// <param name="start">Start.</param>
 		/// <param name="end">End.</param>
 		/// <param name="fontFamily">Font name.</param>
-		public FontFamilySpan(int start, int end, FontFamily fontFamily =null) : base (start, end) {
+		public FontFamilySpan(int start, int end, Microsoft.UI.Xaml.Media.FontFamily fontFamily =null) : base (start, end) {
 			Key = SpanKey;
 			FontFamily = fontFamily;
 		}
