@@ -55,7 +55,7 @@
     <Message Text="============================ IOS ============================= " Condition=" $(TargetFramework.Contains('ios')) " Importance="high" />
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
-  	<Message Text="  DotNetVersion:[$(DotNetVersion)]" Importance="high" />
+  	<Message Text="  DotNetVersion:[net8.0]" Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>

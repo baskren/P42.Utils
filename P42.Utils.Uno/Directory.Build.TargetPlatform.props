@@ -21,12 +21,12 @@
     <P42_TargetPlatform>wasm</P42_TargetPlatform>
   </PropertyGroup>
   <PropertyGroup>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">$(DotNetVersion)-android</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">$(DotNetVersion)-ios</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">$(DotNetVersion)-macos</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">$(DotNetVersion)-maccatalyst</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">$(DotNetVersion)-windows10.0.19041</P42_OverrideTargetFramework>
-		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">$(DotNetVersion)</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('android')) ">net8.0-android</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('ios')) ">net8.0-ios</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('macos')) ">net8.0-macos</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('maccatalyst')) ">net8.0-maccatalyst</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('windows')) ">net8.0-windows10.0.19041</P42_OverrideTargetFramework>
+		<P42_OverrideTargetFramework Condition=" $(P42_TargetPlatform.ToLower().Contains('wasm')) ">net8.0</P42_OverrideTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

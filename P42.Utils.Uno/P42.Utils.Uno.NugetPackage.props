@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0" Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">
+<Project ToolsVersion="15.0" Condition="  $(P42_LocalNuGetFolderPath) != ''  AND   $(Configuration) == 'Release'">
 
 
   <!-- NUGET PACKAGE GENERATION -->
