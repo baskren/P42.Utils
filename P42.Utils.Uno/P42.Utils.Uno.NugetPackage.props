@@ -1,11 +1,11 @@
-<Project ToolsVersion="15.0">
+<Project ToolsVersion="15.0" Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">
 
 
   <!-- NUGET PACKAGE GENERATION -->
-  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''  AND  $([MSBuild]::IsOSPlatform('windows'))  AND  $(Configuration) == 'Release'">  
+  <PropertyGroup>  
     
-    <Version>5.2.132</Version>  
-	<PackageId Condition=" $(P42_TargetPlatform.ToLower.Contains('wasm')) OR $(SolutionName.ToLower().Contains('.wasm')) ">$(MSBuildProjectName).Wasm</PackageId>
+    <Version>$(UnoVersion)</Version>
+    <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -35,17 +35,17 @@
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
-
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(GeneratePackageOnBuild) AND ! $(MSBuildProjectName.ToLower().Contains('skia')) AND !$(MSBuildProjectName.ToLower().Contains('wasm')) ">
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text="=============================== NUGET PACK [ PackageId[$(PackageId)] |TargetFramework:[$(TargetFramework)] | Configuration:[$(Configuration)] : MSBuildProjectName:[$(MSBuildProjectName)] : SaveNuget:[$(GeneratePackageOnBuild)] | PackageVersion:[$(Version)]  ] ===============================" Importance="high"/>
-    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).nupkg)) "/>
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Move SourceFiles="$([System.IO.Path]::Combine('.',bin,$(Configuration),$(PackageId).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42_LocalNuGetFolderPath) " />
-  </Target>
+  <!-- NUGET WINDOWS ASSETS WORKAROUND -->
+  <!--
+  <ItemGroup>
+    <None Include="Assets/**/*">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/any/net8.0-windows10.0.19041/$(PackageId)/Assets</PackagePath>
+      <BuildAction>Content</BuildAction>
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
+  </ItemGroup>
+-->
 
 
 </Project>

@@ -1,16 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-
-	  <AssemblyName>P42.Utils</AssemblyName>
-
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0</TargetFrameworks>
-
+	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
   <PropertyGroup>
+	<Version>1.0.9</Version>
+    <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
+	
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
   	<EmbedUntrackedSources>true</EmbedUntrackedSources>
   	<IncludeSymbols>true</IncludeSymbols>
@@ -35,15 +34,13 @@
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-
   </PropertyGroup>
   
   <ItemGroup>
 	  <None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
-  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 

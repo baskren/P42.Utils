@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace P42.Utils
@@ -7,9 +7,14 @@ namespace P42.Utils
     {
         public static DirectoryInfo AssureExists(string fullPath)
         {
-            if (!Directory.Exists(fullPath))
-                return Directory.CreateDirectory(fullPath);
-            return new DirectoryInfo(fullPath);
+            if (string.IsNullOrWhiteSpace(fullPath))
+                throw new ArgumentNullException(nameof(fullPath));
+            DirectoryInfo info = Directory.Exists(fullPath)
+                ? info = new DirectoryInfo(fullPath)
+                : info = Directory.CreateDirectory(fullPath);
+            if (!info.Exists)
+                throw new Exception("Could not assure existence of directory [" + info + "]");
+            return info;
         }
     }
 }

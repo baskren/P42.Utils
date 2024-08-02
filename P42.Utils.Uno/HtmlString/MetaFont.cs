@@ -35,7 +35,7 @@ namespace P42.Utils.Uno
         #endregion
 
 
-        #region Constrction
+        #region Construction
         public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, bool bold = false, bool italic = false)
         {
             Baseline = FontBaseline.Normal;

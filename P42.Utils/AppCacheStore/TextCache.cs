@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -115,6 +115,8 @@ namespace P42.Utils
         static string CachedPath(string key, string folderName = null)
         {
             var fileName = key.Trim().ToMd5HashString();
+            if (string.IsNullOrWhiteSpace(folderName))
+                return fileName;
             return Path.Combine(FolderPath(folderName), fileName);
         }
 

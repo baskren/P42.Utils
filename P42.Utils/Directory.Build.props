@@ -3,7 +3,6 @@
   <PropertyGroup>
 
 	<RootNamespace>P42.Utils</RootNamespace>
-	<Version>1.0.9</Version>
     <NoWarn>$(NoWarn);Uno0001;1701;1702;1705;VSX1000</NoWarn>
 
 	<!--
@@ -53,16 +52,6 @@
     <Message Text="===============================  [ $(AssemblyName) : $(TargetFramework) ] ===============================" Importance="high"/>
   </Target>
   
-  <Target Name="NuGetMove" AfterTargets="Pack" Condition=" $(P42_LocalNuGetFolderPath) != '' AND  '$(OS)' == 'Windows_NT'">
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text="=============================== NUGET PACK [$(AssemblyName)] ===============================" Importance="high"/>
-    <Message Importance="high" Text="NuGetPath= $([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).nupkg)) "/>
-    <Copy SourceFiles="$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).nupkg))"  DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Copy SourceFiles="$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),bin,$(Configuration),$(AssemblyName).$(Version).snupkg))" DestinationFolder=" $(P42_LocalNuGetFolderPath) " />
-    <Message Importance="high" Text="PACKAGE SAVED TO:  $(P42_LocalNuGetFolderPath)) " />
-  </Target>
 
 
 </Project>

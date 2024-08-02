@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -18,15 +18,9 @@ namespace P42.Utils
             {
                 if (_folderPath == null)
                 {
-                    if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                        Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
+                    DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
                     var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, BreadCrumbFolderName);
-                    if (!Directory.Exists(folderPath))
-                    {
-                        var directoryInfo = Directory.CreateDirectory(folderPath);
-                        if (!directoryInfo.Exists)
-                            throw new Exception("huh?  Could not create directory [" + directoryInfo + "]");
-                    }
+                    DirectoryExtensions.AssureExists(folderPath);
                     _folderPath = folderPath;
                 }
                 return _folderPath;

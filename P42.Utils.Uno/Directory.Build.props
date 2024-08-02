@@ -79,9 +79,14 @@
     <Message Text="  EmbeddedResource:[" Importance="high"/>
     <Message Text="      @(EmbeddedResource, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
+    <Message Text="  Content:[" Importance="high"/>
+    <Message Text="      @(Content, '%0a      ')" Importance="high"/>
+    <Message Text="  ]" Importance="high"/>
     <Message Text="  AndroidResource:[" Importance="high"/>
     <Message Text="      @(AndroidResource, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
+    <Message Text="  NuGetPackageRoot:[$(NuGetPackageRoot)]" Importance="high" />
+    <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
     <Message Text="==============================================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

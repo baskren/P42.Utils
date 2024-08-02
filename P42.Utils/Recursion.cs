@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -19,11 +19,9 @@ namespace P42.Utils
             {
                 if (_folderPath == null)
                 {
-                    if (!Directory.Exists(P42.Utils.Environment.ApplicationCachePath))
-                        Directory.CreateDirectory(P42.Utils.Environment.ApplicationCachePath);
+                    DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
                     var folderPath = Path.Combine(P42.Utils.Environment.ApplicationCachePath, RecursionFolderName);
-                    if (!Directory.Exists(folderPath))
-                        Directory.CreateDirectory(folderPath);
+                    DirectoryExtensions.AssureExists(folderPath);
                     _folderPath = folderPath;
                 }
                 return _folderPath;

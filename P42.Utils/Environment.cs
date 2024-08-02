@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -136,8 +136,7 @@ namespace P42.Utils
             set
             {
                 _applicationDataPath = value;
-                if (!Directory.Exists(value))
-                    Directory.CreateDirectory(value);
+                P42.Utils.DirectoryExtensions.AssureExists(value);
             }
         }
 
@@ -153,8 +152,7 @@ namespace P42.Utils
             set
             {
                 _applicationCachePath = value;
-                if (!Directory.Exists(value))
-                    Directory.CreateDirectory(value);
+                P42.Utils.DirectoryExtensions.AssureExists(value);
             }
         }
 
@@ -170,8 +168,7 @@ namespace P42.Utils
             set
             {
                 _temporaryStoratePath = value;
-                if (!Directory.Exists(value))
-                    Directory.CreateDirectory(value);
+                P42.Utils.DirectoryExtensions.AssureExists(value);
             }
         }
 
