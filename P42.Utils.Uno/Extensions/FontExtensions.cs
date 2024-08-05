@@ -1,13 +1,7 @@
-using P42.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Text;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.Uno
 {

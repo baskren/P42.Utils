@@ -3,8 +3,6 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 
 
 // Why is GetCallingAssembly commented out?  Because it doesn't work with UWP when .NET Native compile chain is enabled

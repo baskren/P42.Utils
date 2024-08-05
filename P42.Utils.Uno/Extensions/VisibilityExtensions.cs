@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI;
+﻿using System.Collections;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace P42.Utils.Uno
 {

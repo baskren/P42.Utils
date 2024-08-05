@@ -7,7 +7,6 @@ using Windows.UI.Text;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI;
 
 namespace P42.Utils.Uno
 {

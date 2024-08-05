@@ -1,13 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-using Serilog;
-using Windows.ApplicationModel;
-using Windows.Storage;
 
 namespace P42.Utils.Uno;
 

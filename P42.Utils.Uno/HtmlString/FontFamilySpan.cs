@@ -1,7 +1,3 @@
-using System.Windows.Input;
-using P42.Utils;
-using Microsoft.UI.Xaml.Media;
-
 namespace P42.Utils.Uno
 {
 	/// <summary>

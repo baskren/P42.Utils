@@ -1,5 +1,4 @@
-﻿using System;
-using P42.Utils.Interfaces;
+﻿using P42.Utils.Interfaces;
 
 namespace P42.Utils
 {

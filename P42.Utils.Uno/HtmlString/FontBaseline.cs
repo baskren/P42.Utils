@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno
 {
 	enum FontBaseline
 	{

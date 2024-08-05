@@ -1,7 +1,3 @@
-using P42.Utils.Interfaces;
-using System;
-using System.Threading.Tasks;
-using Windows.Storage;
 using Windows.System.Diagnostics;
 
 namespace P42.Utils.Uno

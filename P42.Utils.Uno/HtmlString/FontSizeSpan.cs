@@ -1,7 +1,4 @@
-﻿using System;
-using P42.Utils;
-
-namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno
 {
 	/// <summary>
 	/// Font size span.

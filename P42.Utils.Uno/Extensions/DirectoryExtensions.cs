@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage.Search;
-using Windows.Storage;
-
-namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno
 {
     public static class DirectoryExtensions
     {

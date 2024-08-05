@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using P42.Utils;
-using P42.Utils.Uno;
-using System;
+﻿using System;
 
 namespace P42.Utils.Uno
 {

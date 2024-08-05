@@ -4,9 +4,6 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.ComponentModel;
 using System.Globalization;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using Microsoft.UI.Xaml.Media;
 using System.Linq;
 
 namespace P42.Utils.Uno

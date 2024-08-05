@@ -3,13 +3,9 @@ using Java.Interop;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
-using Microsoft.UI.Xaml.Shapes;
 using Microsoft.UI.Xaml.Media;
 using System.Reflection;
 

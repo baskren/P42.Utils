@@ -3,9 +3,6 @@
 //  * ActionSpan.cs copyright 2017 ben, 42nd Parallel - ALL RIGHTS RESERVED.
 //  *
 //  *******************************************************************/
-using System;
-using System.Windows.Input;
-using P42.Utils;
 
 namespace P42.Utils.Uno
 {

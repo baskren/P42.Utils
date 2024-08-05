@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-namespace P42.Utils
+﻿namespace P42.Utils
 {
     /*
     public class EventLogEntry

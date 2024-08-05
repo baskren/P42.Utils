@@ -1,5 +1,4 @@
-﻿using System;
-namespace P42.Utils.Interfaces
+﻿namespace P42.Utils.Interfaces
 {
     public interface IDiskSpace
     {

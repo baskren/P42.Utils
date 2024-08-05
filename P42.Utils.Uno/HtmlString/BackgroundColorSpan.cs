@@ -1,6 +1,4 @@
-﻿using System;
-using P42.Utils;
-using Windows.UI;
+﻿using Windows.UI;
 
 namespace P42.Utils.Uno
 {

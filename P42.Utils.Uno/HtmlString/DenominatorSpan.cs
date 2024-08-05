@@ -3,8 +3,6 @@
 //  * DenominatorSpan.cs copyright 2016 ben, 42nd Parallel - ALL RIGHTS RESERVED.
 //  *
 //  *******************************************************************/
-using System;
-using P42.Utils;
 
 namespace P42.Utils.Uno
 {
