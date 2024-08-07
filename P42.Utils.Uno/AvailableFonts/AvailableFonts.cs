@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using DWrite;
 
 namespace P42.Utils.Uno
 {
@@ -122,11 +125,11 @@ namespace P42.Utils.Uno
 
 #if !HAS_UNO                           
 
-        [DllImport("DWriteCore.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern HRESULT DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE factoryType, ref Guid iid, out IntPtr factory);
+        [System.Runtime.InteropServices.DllImport("DWriteCore.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        public static extern DWrite.HRESULT DWriteCoreCreateFactory(DWrite.DWRITE_FACTORY_TYPE factoryType, ref Guid iid, out IntPtr factory);
 
-        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern int GetUserDefaultLocaleName(StringBuilder lpLocaleName, int cchLocaleName);
+        [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        public static extern int GetUserDefaultLocaleName(System.Text.StringBuilder lpLocaleName, int cchLocaleName);
         public const int LOCALE_NAME_MAX_LENGTH = 85;
 #endif
     }

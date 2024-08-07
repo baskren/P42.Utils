@@ -1,4 +1,7 @@
-﻿namespace DWrite
+using System;
+using System.Runtime.InteropServices;
+
+namespace DWrite
 {
 
 
@@ -21,7 +24,7 @@
         E_FAIL = unchecked((int)0x80004005)
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
     public struct RECT
     {
         public int left;
@@ -41,7 +44,7 @@
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
     public struct SIZE
     {
         public int cx;
@@ -53,7 +56,7 @@
         }
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
     public class LOGFONT
     {
         public int lfHeight = 0;
@@ -69,11 +72,11 @@
         public byte lfClipPrecision = 0;
         public byte lfQuality = 0;
         public byte lfPitchAndFamily = 0;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst = 32)]
         public string lfFaceName = string.Empty;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
     public struct D2D1_POINT_2F
     {
         public float x;
