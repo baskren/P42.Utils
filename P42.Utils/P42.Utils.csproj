@@ -30,14 +30,14 @@
 	  <PackageReleaseNotes>Initial NuGet</PackageReleaseNotes>
 	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
 	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
-	  <PackageIcon>P42.icon.png</PackageIcon>
+	  <PackageIcon>icon.png</PackageIcon>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 
   </PropertyGroup>
   
   <ItemGroup>
-	  <None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
+	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />

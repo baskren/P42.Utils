@@ -22,14 +22,14 @@
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	<PackageIcon>P42.icon.png</PackageIcon>
+	<PackageIcon>icon.png</PackageIcon>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>P42.Utils Uno.Platform</PackageTags>
 
   </PropertyGroup>
   
   <ItemGroup>
-  	<None Include="..\P42.icon.png" Pack="true" PackagePath="\" />
+  	<None Include="..\icon.png" Pack="true" PackagePath="\" />
   	<None Include="..\README.md" Pack="true" PackagePath="\" />
   	<None Include="..\LICENSE" Pack="true" PackagePath="\" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
