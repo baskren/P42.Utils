@@ -44,15 +44,11 @@ namespace P42.Utils
 
         public static void Store(string text, string key, string folderName = null)
         {
-            if (string.IsNullOrWhiteSpace(key))
-                return;
-
             var path = CachedPath(key, folderName);
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
             var tmpPath = CachedPath(Guid.NewGuid().ToString(), folderName);
-
             System.IO.File.WriteAllText(tmpPath, text);
 #if NETSTANDARD2_0
             if (File.Exists(path))
@@ -66,40 +62,33 @@ namespace P42.Utils
 
         public static string Recall(string key, string folderName = null)
         {
+            string result = null;
             try
             {
-                if (string.IsNullOrWhiteSpace(key))
-                    return null;
-
                 var path = CachedPath(key, folderName);
-
-                if (string.IsNullOrWhiteSpace(path))
-                    return null;
-                if (System.IO.File.Exists(path))
-                    return System.IO.File.ReadAllText(path);
-                return null;
+                if (!string.IsNullOrWhiteSpace(path))
+                    if (System.IO.File.Exists(path))
+                        result = System.IO.File.ReadAllText(path);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex);
-                return null;
             }
+
+            return result;
         }
 
         public static StreamReader GetStreamReader(string key, string folderName = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(key))
-                    return null;
-
                 var path = CachedPath(key, folderName);
-
                 if (string.IsNullOrWhiteSpace(path))
                     return null;
-                if (System.IO.File.Exists(path))
-                    return new StreamReader(path);
-                return null;
+                
+                return System.IO.File.Exists(path) 
+                    ? new StreamReader(path) 
+                    : null;
             }
             catch (Exception ex)
             {
@@ -108,11 +97,12 @@ namespace P42.Utils
             }
         }
 
-        static string CachedPath(string key, string folderName = null)
+        private static string CachedPath(string key, string folderName = null)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return null;
+            
             var fileName = key.Trim().ToMd5HashString();
-            if (string.IsNullOrWhiteSpace(folderName))
-                return fileName;
             return Path.Combine(FolderPath(folderName), fileName);
         }
 
