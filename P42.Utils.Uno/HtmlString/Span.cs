@@ -5,7 +5,7 @@ namespace P42.Utils.Uno
     /// <summary>
     /// P42.Utils.Uno FormattedString Span
     /// </summary>
-    abstract class Span : P42.NotifiableObject.FieldBackedNotifiablePropertyObject, ICopiable<Span> 
+    abstract class Span : P42.NotifiableObject.FieldBackedNotifiablePropertyObject, ICopiable<Span> , IEquatable<Span>
     {
         #region Fields
         internal string Key;
@@ -103,6 +103,46 @@ namespace P42.Utils.Uno
             throw new NotImplementedException();
         }
         #endregion
+
+        public bool Equals(Span other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return Key == other.Key && _start == other._start && _end == other._end;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            return Equals((Span)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Key, _start, _end);
+        }
     }
 
 }

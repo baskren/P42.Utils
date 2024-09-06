@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -301,29 +302,53 @@ namespace P42.Utils.Uno
         #endregion
 
 
-        internal static void SetAndFormatText(TextBlock textBlock, HtmlSpans htmlSpans, double altFontSize = -1)
+        internal static void SetAndFormatText(TextBlock textBlock, HtmlSpans newSpans, double altFontSize = -1)
         {
             if (textBlock == null)
                 return;
 
-            textBlock.Text = string.Empty;
-            textBlock.Inlines?.Clear();
             textBlock.FontSize = altFontSize > 0
                 ? altFontSize
                 : textBlock.FontSize > 0
                     ? textBlock.FontSize
                     : textBlock.DefaultFontSize();
+
+            string newText = string.Empty;
+            HtmlSpans oldSpans = null;
+            try
+            {
+                newText = newSpans?.UnmarkedText;
+                var oldHtmlDependencyObject = textBlock.GetHtmlDependencyObject();
+                oldSpans = oldHtmlDependencyObject?.HtmlSpans;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            if (textBlock.Text == (newText ?? string.Empty) && (oldSpans?.Count ?? -1) == (newSpans?.Count ?? -1))
+            {
+                if (oldSpans is null || oldSpans.Count == 0)
+                    return;
+                var equal = !oldSpans.Where((t, i) => !t.Equals(newSpans[i])).Any();
+
+                if (equal)
+                    return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newText) || newText == newSpans?.Text)
+            {
+                // there isn't any markup!
+                textBlock.Text = newText ?? string.Empty;
+                return;
+            }
+
+            textBlock.Text = string.Empty;
+            textBlock.Inlines?.Clear();
             //textBlock.LineHeight = FontExtensions.LineHeightForFontSize(textBlock.FontSize);
             //textBlock.LineStackingStrategy = Microsoft.UI.Xaml.LineStackingStrategy.BaselineToBaseline;
 
-            var text = htmlSpans?.UnmarkedText;
 
-            if (string.IsNullOrWhiteSpace(text) || text == htmlSpans?.Text)
-            {
-                // there isn't any markup!
-                textBlock.Text = text ?? string.Empty;
-                return;
-            }
 
             Color tColor = default;
             if (textBlock.Foreground is SolidColorBrush tBrush)
@@ -356,9 +381,9 @@ namespace P42.Utils.Uno
                 Family = Platform.MathFontFamily //FontService.ReconcileFontFamily("Forms9Patch.Resources.Fonts.STIXGeneral.ttf", P42.Utils.ReflectionExtensions.GetAssembly(typeof(Forms9Patch.Label)))
             };
 
-            for (int i = 0; i < text.Length; i++)
+            for (int i = 0; i < newText.Length; i++)
             {
-                if (i + 1 < text.Length && text[i] == '\ud835' && text[i + 1] >= '\udc00' && text[i + 1] <= '\udeff')
+                if (i + 1 < newText.Length && newText[i] == '\ud835' && newText[i + 1] >= '\udc00' && newText[i + 1] <= '\udeff')
                 {
                     metaFonts.Add(new MetaFont(MathMetaFont));
                     metaFonts.Add(new MetaFont(MathMetaFont));  // there are two because we're using a double byte unicode character
@@ -371,14 +396,14 @@ namespace P42.Utils.Uno
 
 
             #region Apply non-font Spans
-            foreach (var span in htmlSpans)
+            foreach (var span in newSpans)
             {
                 var spanStart = span.Start;
                 var spanEnd = span.End;
 
                 //spanEnd++;
-                if (spanEnd >= text.Length)
-                    spanEnd = text.Length - 1;
+                if (spanEnd >= newText.Length)
+                    spanEnd = newText.Length - 1;
 
                 for (int i = spanStart; i <= spanEnd; i++)
                 {
@@ -445,12 +470,12 @@ namespace P42.Utils.Uno
                 {
                     // we are at the start of a new span
                     if (i > 0) // && lastMetaFont != baseMetaFont)
-                        AddInline(textBlock, lastMetaFont, text, startIndex, i - startIndex);
+                        AddInline(textBlock, lastMetaFont, newText, startIndex, i - startIndex);
                     lastMetaFont = metaFont;
                     startIndex = i;
                 }
             }
-            AddInline(textBlock, lastMetaFont, text, startIndex, text.Length - startIndex);
+            AddInline(textBlock, lastMetaFont, newText, startIndex, newText.Length - startIndex);
             #endregion
 
         }
