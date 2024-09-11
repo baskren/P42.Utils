@@ -2,159 +2,150 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using P42.Serilog.QuickLog;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+#nullable enable
+
+public static class TextCache
 {
-    public static class TextCache
+    private const string LocalStorageFolderName = "P42.Utils.TextCache";
+    private static readonly string s_rootPath;
+        
+    static TextCache()
     {
-        const string DownloadStorageFolderName = "P42.Utils.TextCache";
+        DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
+        s_rootPath = Path.Combine(Environment.ApplicationCachePath, LocalStorageFolderName);
+        DirectoryExtensions.AssureExists(s_rootPath);
+    }
+    
+    private static string FolderPath(string? folderName)
+    {
 
-        static string FolderPath(string folderName)
-        {
-            DirectoryExtensions.AssureExists(Environment.ApplicationCachePath);
-            var root = Path.Combine(Environment.ApplicationCachePath, DownloadStorageFolderName);
-            DirectoryExtensions.AssureExists(root);
+        if (string.IsNullOrWhiteSpace(folderName))
+            return s_rootPath;
 
-            if (string.IsNullOrWhiteSpace(folderName))
-                return root;
+        var folderPath = Path.Combine(s_rootPath, folderName);
+        if (!Directory.Exists(folderPath))
+            Directory.CreateDirectory(folderPath);
 
-            var folderPath = Path.Combine(root, folderName);
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
+        return folderPath;
+    }
+    
+    public static List<string> List(string folderName)
+    {
+        var folderPath = FolderPath(folderName);
+        var files = Directory.EnumerateFiles(folderPath);
+        return files.ToList();
+    }
 
-            return folderPath;
-        }
+    private static string CachedPath(string key, string? folderName = default)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            return string.Empty;
+            
+        var fileName = key.Trim().ToMd5HashString();
+        return Path.Combine(FolderPath(folderName), fileName);
+    }
 
-        static TextCache()
-        {
-            // can be used for caching text between session.  
-        }
+    public static bool IsCached(string key, string? folderName = default)
+    {
+        var path = CachedPath(key, folderName);
+        return !string.IsNullOrWhiteSpace(path) && File.Exists(path);
+    }
 
+    public static void Store(string text, string key, string? folderName = default)
+    {
+        var path = CachedPath(key, folderName);
+        if (string.IsNullOrWhiteSpace(path))
+            return;
 
-        //static readonly object _locker = new object();
-        //static readonly Dictionary<string, Task<bool>> _downloadTasks = new Dictionary<string, Task<bool>>();
-        //static readonly System.Security.Cryptography.MD5 _md5 = System.Security.Cryptography.MD5.Create();
+        var tmpPath = CachedPath(Guid.NewGuid().ToString(), folderName);
+        File.WriteAllText(tmpPath, text);
+        File.Move(tmpPath, path, true);
+        File.Delete(tmpPath);
+    }
 
-        public static List<string> List(string folderName)
-        {
-            var folderPath = FolderPath(folderName);
-            var files = System.IO.Directory.EnumerateFiles(folderPath);
-            return files.ToList();
-        }
-
-        public static void Store(string text, string key, string folderName = null)
+    public static string Recall(string key, string? folderName = default)
+    {
+        var result = string.Empty;
+        try
         {
             var path = CachedPath(key, folderName);
             if (string.IsNullOrWhiteSpace(path))
-                return;
-
-            var tmpPath = CachedPath(Guid.NewGuid().ToString(), folderName);
-            System.IO.File.WriteAllText(tmpPath, text);
-#if NETSTANDARD2_0
+                return result;
             if (File.Exists(path))
-                System.IO.File.Delete(path);
-            System.IO.File.Move(tmpPath, path);
-#else
-            System.IO.File.Move(tmpPath, path, true);
-#endif
-            System.IO.File.Delete(tmpPath);
+                result = File.ReadAllText(path);
         }
-
-        public static string Recall(string key, string folderName = null)
+        catch (Exception ex)
         {
-            string result = null;
-            try
-            {
-                var path = CachedPath(key, folderName);
-                if (!string.IsNullOrWhiteSpace(path))
-                    if (System.IO.File.Exists(path))
-                        result = System.IO.File.ReadAllText(path);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-            }
-
-            return result;
+            QLog.Error(ex);
         }
 
-        public static StreamReader GetStreamReader(string key, string folderName = null)
-        {
-            try
-            {
-                var path = CachedPath(key, folderName);
-                if (string.IsNullOrWhiteSpace(path))
-                    return null;
-                
-                return System.IO.File.Exists(path) 
-                    ? new StreamReader(path) 
-                    : null;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return null;
-            }
-        }
-
-        private static string CachedPath(string key, string folderName = null)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-                return null;
-            
-            var fileName = key.Trim().ToMd5HashString();
-            return Path.Combine(FolderPath(folderName), fileName);
-        }
-
-        public static bool IsCached(string key, string folderName = null)
-        {
-            var path = CachedPath(key, folderName);
-            return path != null && System.IO.File.Exists(path);
-        }
-
-        public static bool Clear(string key = null, string folderName = null)
-            => Clear(DateTime.MinValue.AddYears(1), key, folderName);
-
-        public static bool Clear(TimeSpan timeSpan, string key = null, string folderName = null)
-            => Clear(DateTime.Now - timeSpan, key, folderName);
-
-        public static bool Clear(DateTime dateTime, string key = null, string folderName = null)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                // complete clear
-                var folderPath = FolderPath(folderName);
-                if (System.IO.Directory.Exists(folderPath))
-                {
-                    var files = System.IO.Directory.EnumerateFiles(folderPath);
-                    bool filesRemaining = false;
-                    foreach (var file in files)
-                    {
-                        if (System.IO.File.Exists(file))
-                        {
-                            if (System.IO.File.GetLastWriteTime(file) < dateTime)
-                                System.IO.File.Delete(file);
-                            else
-                                filesRemaining = true;
-                        }
-                    }
-                    if (!filesRemaining && folderPath != FolderPath(null))
-                        System.IO.Directory.Delete(folderPath);
-                    return true;
-                }
-                return false;
-            }
-            var path = CachedPath(key, folderName);
-            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
-            {
-                if (System.IO.File.GetLastWriteTime(path) < dateTime)
-                {
-                    System.IO.File.Delete(path);
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        return result;
     }
+
+    public static StreamReader? GetStreamReader(string key, string? folderName = default)
+    {
+        try
+        {
+            var path = CachedPath(key, folderName);
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
+                
+            if (File.Exists(path)) 
+                return new StreamReader(path); 
+        }
+        catch (Exception ex)
+        {
+            QLog.Error(ex);
+        }
+        return null;
+    }
+
+    public static bool Clear(string? key = null, string? folderName = default)
+        => Clear(DateTime.MinValue.AddYears(1), key, folderName);
+
+    public static bool Clear(TimeSpan timeSpan, string? key = default, string? folderName = default)
+        => Clear(DateTime.Now - timeSpan, key, folderName);
+
+    public static bool Clear(DateTime dateTime, string? key = default, string? folderName = default)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            // complete clear
+            var folderPath = FolderPath(folderName);
+            if (!Directory.Exists(folderPath))
+                return false;
+
+            var filesRemaining = false;
+            foreach (var file in Directory.EnumerateFiles(folderPath))
+            {
+                if (!File.Exists(file))
+                    continue;
+
+                if (File.GetLastWriteTime(file) < dateTime)
+                    File.Delete(file);
+                else
+                    filesRemaining = true;
+            }
+            
+            if (!filesRemaining && folderPath != FolderPath(null))
+                Directory.Delete(folderPath);
+                
+            return true;
+        }
+        
+        var path = CachedPath(key, folderName);
+        if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            return false;
+
+        if (File.GetLastWriteTime(path) >= dateTime)
+            return false;
+
+        File.Delete(path);
+        return true;
+    }
+
 }

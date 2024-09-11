@@ -45,7 +45,7 @@ namespace P42.Utils
         internal static IPlatformTimer PlatformTimer;
         internal static Type PlatformLongRunningTaskType;
 
-        static public void Init()
+        public static void Init()
         {
             MainThreadId = System.Environment.CurrentManagedThreadId;
         }
@@ -54,13 +54,13 @@ namespace P42.Utils
         /// Gets or sets the main thread identifier.
         /// </summary>
         /// <value>The main thread identifier.</value>
-        static public int MainThreadId { get; set; }
+        public static int MainThreadId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is headless test (and thus the MainThreadId is questionable).
         /// </summary>
         /// <value><c>true</c> if is headless test; otherwise, <c>false</c>.</value>
-        static public bool IsHeadlessTest { get; set; } = false;
+        public static bool IsHeadlessTest { get; set; } = false;
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is on main thread.
@@ -68,7 +68,7 @@ namespace P42.Utils
         /// <value><c>true</c> if is on main thread; otherwise, <c>false</c>.</value>
         public static bool IsOnMainThread => IsHeadlessTest || System.Environment.CurrentManagedThreadId == MainThreadId;
 
-        static public Func<string, Assembly, Assembly> EmbeddedResourceAssemblyResolver;
+        public static Func<string, Assembly, Assembly> EmbeddedResourceAssemblyResolver;
 
         /// <summary>
         /// Gets the operating system.

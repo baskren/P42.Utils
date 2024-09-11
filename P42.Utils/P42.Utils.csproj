@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
-	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks)</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
   <PropertyGroup>
-	<Version>1.0.9</Version>
+	<Version>1.1.0</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
-	
+
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
   	<EmbedUntrackedSources>true</EmbedUntrackedSources>
   	<IncludeSymbols>true</IncludeSymbols>
@@ -35,7 +36,7 @@
 	  <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 
   </PropertyGroup>
-  
+
   <ItemGroup>
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
