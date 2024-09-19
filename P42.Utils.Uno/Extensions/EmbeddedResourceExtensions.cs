@@ -17,6 +17,44 @@ public static class EmbeddedResourceExtensions
 {
     private static readonly Dictionary<Assembly, string[]> s_embeddedResourceNames = new();
 
+    private static Assembly? s_entryAssembly;
+
+    private static Assembly EntryAssembly
+    {
+        get
+        {
+            if (s_entryAssembly is not null)
+                return s_entryAssembly;
+            
+            // the following works in:
+            // - iOS
+            // - WASM
+            // - WinAppSdk (packaged)
+            // doesn't work in:
+            // - Android
+            // - WinAppSdk (unpackaged)
+            s_entryAssembly = Assembly.GetEntryAssembly();       
+            if (s_entryAssembly is not null)
+                return s_entryAssembly;
+            
+            var stackTrace = new StackTrace();
+            System.Diagnostics.Debug.WriteLine("");
+            var asms =  stackTrace.GetFrames().Select(f => f.GetMethod().DeclaringType.Assembly).Distinct();
+            int index = 0;
+            Assembly? lastCandidateAsm = null;
+            foreach (var asm in asms)
+            {
+                var name = asm.GetName().Name;
+                if (name.Equals("Mono.Android") || name.Equals("Uno.UI") || name.Equals("Microsoft.Maui") || name.Equals("Microsoft.Maui.Controls") )
+                    continue;
+                s_entryAssembly = asm; 
+                System.Diagnostics.Debug.WriteLine($"{index++}: {asm.FullName} : {asm.Location} {asm.IsDynamic} {asm.EntryPoint} {asm.IsFullyTrusted}");
+            }
+
+            return s_entryAssembly;
+        }
+    }
+    
     /// <summary>
     /// Finds the assembly that contains an embedded resource matching the resourceId
     /// </summary>
@@ -42,13 +80,14 @@ public static class EmbeddedResourceExtensions
                 }
             }
             
-            //assembly = Application.Current.GetType().Assembly;
+            // assembly = Microsoft.UI.Xaml.Application.Current.GetType().Assembly;
             // the following works in:
             // - iOS
             // - WASM
+            // - WinAppSdk
             // doesn't work in:
             // - Android
-            assembly = Assembly.GetEntryAssembly();
+            assembly = EntryAssembly;
             Console.WriteLine($"ASSEMBLY: {assembly}");
             Debug.WriteLine($"ASSEMBLY: {resourceId}");
             return FindAssemblyForResourceId(resourceId, assembly) is null 
