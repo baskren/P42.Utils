@@ -1,39 +1,19 @@
-﻿namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno;
+
+internal class UnderlineSpan(int start, int end) : Span(SpanKey, start, end), ICopiable<UnderlineSpan>
 {
-	/// <summary>
-	/// P42.Utils.Uno Underline span.
-	/// </summary>
-	class UnderlineSpan : Span, ICopiable<UnderlineSpan>
-	{
-		internal const string SpanKey = "Underline";
+    internal const string SpanKey = nameof(UnderlineSpan);
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public UnderlineSpan (int start, int end) : base (start, end) {
-			//Color = color;
-			//Style = style;
-			Key = SpanKey;
-		}
+    //Color = color;
+    //Style = style;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public UnderlineSpan (UnderlineSpan span) : this (span.Start, span.End) {
-		}
+    public UnderlineSpan (UnderlineSpan span) : this (span.Start, span.End) { }
 
-		public void PropertiesFrom(UnderlineSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
+    public void PropertiesFrom(UnderlineSpan source)
+        => base.PropertiesFrom(source);
+    
 
-		public override Span Copy()
-		{
-			return new UnderlineSpan(Start, End);
-		}
-	}
+    public override Span Copy()
+        => new UnderlineSpan(Start, End);
+    
 }
-

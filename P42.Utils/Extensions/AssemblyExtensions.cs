@@ -1,80 +1,90 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-namespace P42.Utils
+namespace P42.Utils;
+
+public static class AssemblyExtensions
 {
-    public static class AssemblyExtensions
+        
+    private static Assembly? _applicationAssembly;
+    
+    /// <summary>
+    /// What is the root  app assembly?
+    /// </summary>
+    /// <returns>root app assembly</returns>
+    /// <exception cref="NullReferenceException"></exception>
+    public static Assembly GetApplicationAssembly()
     {
-        public static bool EmbeddedResourceExists(this Assembly assembly, string resourceId)
+        if (_applicationAssembly is not null)
+            return _applicationAssembly;
+            
+        // the following works in:
+        // - iOS
+        // - WASM
+        // - WinAppSdk (packaged)
+        // doesn't work in:
+        // - Android
+        // - WinAppSdk (un-packaged)
+        _applicationAssembly = Assembly.GetEntryAssembly();       
+        if (_applicationAssembly is not null)
+            return _applicationAssembly;
+            
+        // Android and WinAppSdk (un-packaged)
+        var stackTrace = new StackTrace();
+        //System.Diagnostics.Debug.WriteLine("");
+        var frames = stackTrace.GetFrames();
+        var assemblies =  frames.Select(f => f.GetMethod()?.DeclaringType?.Assembly).Distinct();
+        //var index = 0;
+        //Assembly? lastCandidateAsm = null;
+        foreach (var asm in assemblies)
         {
-            foreach (var res in assembly.GetManifestResourceNames())
-                if (res == resourceId)
-                    return true;
-            return false;
+            if (asm is null)
+                continue;
+            
+            var name = asm.GetName().Name ?? string.Empty;
+            if (
+                name.Equals("Mono.Android") || 
+                name.Equals("Uno.UI") || 
+                name.Equals("Microsoft.Maui") || 
+                name.Equals("Microsoft.Maui.Controls") || 
+                name.Equals("Uno.UI.BindingHelper.Android") || 
+                name.Equals("Java.Interop") || 
+                name.Equals("Avalonia.Controls") 
+            )
+                continue;
+            _applicationAssembly = asm; 
+            //System.Diagnostics.Debug.WriteLine($"{index++}: {asm.FullName} : {asm.Location} {asm.IsDynamic} {asm.EntryPoint} {asm.IsFullyTrusted}");
         }
-
-        public static void TryCopyResource(this Assembly assembly, string resourceId, string path)
-        {
-            if (assembly.GetManifestResourceStream(resourceId) is Stream stream)
-            {
-                WriteToFile(stream, path);
-                stream.Dispose();
-            }
-        }
-
-
-        public static void WriteToFile(Stream stream, string destinationFile, int bufferSize = 4096, FileMode mode = FileMode.OpenOrCreate, FileAccess access = FileAccess.ReadWrite, FileShare share = FileShare.ReadWrite)
-        {
-            using (var destinationFileStream = new FileStream(destinationFile, mode, access, share))
-            {
-                while (stream.Position < stream.Length)
-                {
-                    destinationFileStream.WriteByte((byte)stream.ReadByte());
-                }
-            }
-        }
-
-        public static Assembly FindAssemblyForMultiResource(string resourceId, Assembly assembly = null)
-        {
-            if (assembly?.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) ?? false)
-                return assembly;
-            if (resourceId.IndexOf(".Resources.", StringComparison.Ordinal) is int index && index > 0)
-            {
-                var assemblyName = resourceId.Substring(0, index);
-                assembly = GetAssemblyByName(assemblyName);
-                if (assembly?.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) ?? false)
-                    return assembly;
-            }
-            assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            if (assembly?.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) ?? false)
-                return assembly;
-            foreach (var assm in ReflectionExtensions.GetAssemblies())
-            {
-                if (!assm.IsDynamic && assm.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)))
-                    return assm;
-            }
-            return null;
-        }
-
-        public static Assembly GetAssemblyByName(string name)
-        {
-            foreach (Assembly assembly in GetAssemblies())
-            {
-                if (assembly.GetName().Name == name)
-                {
-                    return assembly;
-                }
-            }
-
-            return null;
-        }
-
-        public static List<Assembly> GetAssemblies()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies()?.ToList();
-        }
-
+        
+        if (_applicationAssembly is not null)
+            return _applicationAssembly;
+        
+        throw new NullReferenceException("Could not get application assembly.");
     }
+
+    /// <summary>
+    /// List all  assemblies in application's domain
+    /// </summary>
+    /// <returns>Assembly[]</returns>
+    public static Assembly[] GetAssemblies()
+        => AppDomain.CurrentDomain.GetAssemblies();
+
+    /// <summary>
+    /// Find assembly that matches name
+    /// </summary>
+    /// <param name="name">name</param>
+    /// <returns>matching assembly or null</returns>
+    public static Assembly? GetAssemblyByName(string name)
+        => GetAssemblies().FirstOrDefault(asm => asm.GetName().Name == name);
+        
+    /// <summary>
+    /// Get assembly that contains type
+    /// </summary>
+    /// <param name="type">type</param>
+    /// <returns>assembly</returns>
+    public static Assembly GetAssembly(this Type type)
+        => type.GetTypeInfo().Assembly;
+
 }

@@ -1,90 +1,106 @@
-﻿using System;
-using System.Threading.Tasks;
-
-#if NET7_0_OR_GREATER
+﻿using System.Threading.Tasks;
 using System.IO.IsolatedStorage;
 using System.IO;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+/// <summary>
+/// IsolatedStorage Extensions
+/// </summary>
+static class IsolatedStorageExtensions
 {
-    static class IsolatedStorageExtensions
-
+    /// <summary>
+    /// Read text in file in IsolatedStorage
+    /// </summary>
+    /// <param name="storage"></param>
+    /// <param name="fileName"></param>
+    /// <returns>Task with contents of the file</returns>
+    public static async Task<string> ReadTextAsync(this IsolatedStorageFile storage, string fileName)
     {
+        using var reader = storage.StreamReader(fileName);
+        if (reader is null)
+            return string.Empty;
+        
+        return await reader.ReadToEndAsync();
+    }
 
+    /// <summary>
+    /// Writes text to a file, overwriting any existing data
+    /// </summary>
+    /// <param name="storage">an IsolatedStorageFile</param>
+    /// <param name="fileName">file name</param>
+    /// <param name="text">text to write</param>
+    /// <returns>A task which completes when the write operation finishes</returns>
+    public static async Task WriteTextAsync(this IsolatedStorageFile storage, string fileName, string text)
+    {
+        await using var stream = storage.CreateFile(fileName);
+        await using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(text));
+        await memoryStream.CopyToAsync(stream);
+    }
 
+    /// <summary>
+    /// Read text in file in IsolatedStorage
+    /// </summary>
+    /// <param name="storage"></param>
+    /// <param name="fileName"></param>
+    /// <returns>text (string.Empty on fail)</returns>
+    public static string ReadText(this IsolatedStorageFile storage, string fileName)
+    {
+        using var reader = storage.StreamReader(fileName);
+        return reader is not null 
+            ? reader.ReadToEnd() 
+            : string.Empty;
+    }
 
-        /// <summary>
-        /// Reads the contents of a file as a string
-        /// </summary>
-        /// <param name="file">The file to read </param>
-        /// <returns>The contents of the file</returns>
-        public static async Task<string> ReadAllTextAsync(this IsolatedStorageFile storage, string path)
-        {
-            if (!storage.FileExists(path))
-                return null;
+    /// <summary>
+    /// Writes text to file in IsolatedStorage
+    /// </summary>
+    /// <param name="storage">an IsolatedStorageFile</param>
+    /// <param name="fileName">file name</param>
+    /// <param name="text">text to write</param>
+    public static void WriteText(this IsolatedStorageFile storage, string fileName, string text)
+    {
+        using var stream = storage.CreateFile(fileName);
+        using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(text));
+        memoryStream.WriteTo(stream);
+    }
 
-            using (var stream = new IsolatedStorageFileStream(path, FileMode.Open, storage))
-            {
-                await Task.Delay(5);
-                using (var sr = new StreamReader(stream))
-                {
-                    string text = await sr.ReadToEndAsync();
-                    return text;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes text to a file, overwriting any existing data
-        /// </summary>
-        /// <param name="file">The file to write to</param>
-        /// <param name="contents">The content to write to the file</param>
-        /// <returns>A task which completes when the write operation finishes</returns>
-        public static async Task WriteAllTextAsync(this IsolatedStorageFile storage, string path, string contents)
-        {
-            var tempFileName = Guid.NewGuid().ToString();
-
-            using (var stream = new IsolatedStorageFileStream(tempFileName, FileMode.Create, storage))
-            {
-                stream.SetLength(0);
-                await Task.Delay(5);
-                using (var sw = new StreamWriter(stream))
-                {
-                    await sw.WriteAsync(contents);
-                }
-            }
-
-            storage.MoveFile(tempFileName, path);
-        }
-
-        public static string ReadAllText(this IsolatedStorageFile storage, string path)
-        {
-            Task<string> task = Task.Run(() => storage.ReadAllTextAsync(path));
-            return task.Result;
-        }
-
-        public static void WriteAllText(this IsolatedStorageFile storage, string path, string contents)
-        {
-            var task = Task.Run(() => storage.WriteAllTextAsync(path, contents));
-            task.Wait();
-            return;
-        }
-
-        public static StreamReader StreamReader(this IsolatedStorageFile storage, string path)
-        {
-            var stream = new IsolatedStorageFileStream(path, FileMode.Open, storage);
-            if (stream != null)
-                return new StreamReader(stream);
+    /// <summary>
+    /// Creates a StreamReader for a file (fileName) in IsolatedStorage
+    /// </summary>
+    /// <param name="storage">an IsolatedStorage</param>
+    /// <param name="fileName">file name</param>
+    /// <returns>StreamReader or null on fail</returns>
+    public static StreamReader? StreamReader(this IsolatedStorageFile storage, string fileName)
+    {
+        if (!storage.FileExists(fileName))
             return null;
-        }
-
-        public static StreamWriter StreamWriter(this IsolatedStorageFile storage, string path)
-        {
-            var stream = new IsolatedStorageFileStream(path, FileMode.CreateNew, storage);
-            if (stream != null)
-                return new StreamWriter(stream);
+            
+        if (storage.OpenFile(fileName, FileMode.Open) is not { } stream)
             return null;
-        }
+
+        if (stream.CanRead)
+            return new StreamReader(stream);
+            
+        stream.Dispose();
+        return null;
+    }
+
+    /// <summary>
+    /// Creates a new file (fileName) in IsolatedStorage and returns StreamWriter for it 
+    /// </summary>
+    /// <param name="storage">an IsolatedStorageFile</param>
+    /// <param name="fileName">file name</param>
+    /// <returns>StreamWriter or null on fail</returns>
+    public static StreamWriter? StreamWriter(this IsolatedStorageFile storage, string fileName)
+    {
+        if (storage.CreateFile(fileName) is not { } stream)
+            return null;
+            
+        if (stream.CanWrite)
+            return new StreamWriter(stream);
+            
+        stream.Dispose();
+        return null;
     }
 }
-#endif

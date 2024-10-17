@@ -1,20 +1,34 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public static class IconExtensions
 {
-    public static class IconExtensions
+    /// <summary>
+    /// Creates IconElement from IconSource
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns>null on fail</returns>
+    public static IconElement? AsIconElement(this IconSource source)
     {
-        public static IconElement AsIconElement(this IconSource source)
+        return source switch
         {
-            if (source is BitmapIconSource bsource)
-                return new BitmapIcon { UriSource = bsource.UriSource, ShowAsMonochrome = bsource.ShowAsMonochrome };
-            if (source is FontIconSource fsource)
-                return new FontIcon { FontFamily = fsource.FontFamily, FontSize = fsource.FontSize, FontWeight = fsource.FontWeight, Glyph = fsource.Glyph, IsTextScaleFactorEnabled = fsource.IsTextScaleFactorEnabled, MirroredWhenRightToLeft = fsource.MirroredWhenRightToLeft };
-            if (source is PathIconSource psource)
-                return new PathIcon { Data = psource.Data };
-            if (source is SymbolIconSource ssource)
-                return new SymbolIcon { Symbol = ssource.Symbol };
-            return null;
-        }
+            BitmapIconSource bSource => new BitmapIcon
+            {
+                UriSource = bSource.UriSource, ShowAsMonochrome = bSource.ShowAsMonochrome
+            },
+            FontIconSource fSource => new FontIcon
+            {
+                FontFamily = fSource.FontFamily,
+                FontSize = fSource.FontSize,
+                FontWeight = fSource.FontWeight,
+                Glyph = fSource.Glyph,
+                IsTextScaleFactorEnabled = fSource.IsTextScaleFactorEnabled,
+                MirroredWhenRightToLeft = fSource.MirroredWhenRightToLeft
+            },
+            PathIconSource pSource => new PathIcon { Data = pSource.Data },
+            SymbolIconSource sSource => new SymbolIcon { Symbol = sSource.Symbol },
+            _ => null
+        };
     }
 }

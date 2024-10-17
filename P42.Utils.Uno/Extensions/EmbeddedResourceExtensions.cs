@@ -4,57 +4,103 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-//using Microsoft.UI.Xaml;
+using System.Threading.Tasks;
+using P42.Serilog.QuickLog;
 
 namespace P42.Utils.Uno;
-
-#nullable enable
 
 /// <summary>
 /// Embedded Resource extension methods
 /// </summary>
 public static class EmbeddedResourceExtensions
 {
-    private static readonly Dictionary<Assembly, string[]> s_embeddedResourceNames = new();
+    private static readonly Dictionary<Assembly, string[]> EmbeddedResourceNames = new();
+    
+    /// <summary>
+    /// Test is embedded resource exists
+    /// </summary>
+    /// <param name="assembly">target assembly</param>
+    /// <param name="resourceId">ResourceId</param>
+    /// <returns>true on success</returns>
+    public static bool EmbeddedResourceExists(this Assembly assembly, string resourceId)
+        => FindAssemblyForResourceId(resourceId, assembly) is not null;
 
-    private static Assembly? s_entryAssembly;
-
-    private static Assembly EntryAssembly
+    /// <summary>
+    /// Test is embedded resource exists
+    /// </summary>
+    /// <param name="resourceId">ResourceId</param>
+    /// <param name="assembly">optional, target assembly</param>
+    /// <returns>true on success</returns>
+    public static bool EmbeddedResourceExists(string resourceId, Assembly? assembly = null)
+        => FindAssemblyForResourceId(resourceId, assembly) is not null;
+    
+    
+    /// <summary>
+    /// Copy embedded resource to file at path
+    /// </summary>
+    /// <param name="assembly">Source assembly</param>
+    /// <param name="resourceId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static bool TryCopyResource(this Assembly assembly, string resourceId, string path)
     {
-        get
-        {
-            if (s_entryAssembly is not null)
-                return s_entryAssembly;
-            
-            // the following works in:
-            // - iOS
-            // - WASM
-            // - WinAppSdk (packaged)
-            // doesn't work in:
-            // - Android
-            // - WinAppSdk (unpackaged)
-            s_entryAssembly = Assembly.GetEntryAssembly();       
-            if (s_entryAssembly is not null)
-                return s_entryAssembly;
-            
-            var stackTrace = new StackTrace();
-            System.Diagnostics.Debug.WriteLine("");
-            var asms =  stackTrace.GetFrames().Select(f => f.GetMethod().DeclaringType.Assembly).Distinct();
-            int index = 0;
-            Assembly? lastCandidateAsm = null;
-            foreach (var asm in asms)
-            {
-                var name = asm.GetName().Name;
-                if (name.Equals("Mono.Android") || name.Equals("Uno.UI") || name.Equals("Microsoft.Maui") || name.Equals("Microsoft.Maui.Controls") )
-                    continue;
-                s_entryAssembly = asm; 
-                System.Diagnostics.Debug.WriteLine($"{index++}: {asm.FullName} : {asm.Location} {asm.IsDynamic} {asm.EntryPoint} {asm.IsFullyTrusted}");
-            }
+        if (FindStreamForResourceId(resourceId, assembly) is not { } stream)
+            return false;
 
-            return s_entryAssembly;
+        try
+        {
+            using var destinationFileStream =
+                new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            
+            stream.CopyTo(destinationFileStream);
         }
+        catch (Exception ex)
+        {
+            QLog.Error(ex);
+            return false;
+        }
+        finally
+        {
+            stream.Dispose();
+        }
+        return true;
+
     }
     
+    
+    /// <summary>
+    /// Copy embedded resource to file at path
+    /// </summary>
+    /// <param name="assembly">Source assembly</param>
+    /// <param name="resourceId"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static async Task<bool> TryCopyResourceAsync(this Assembly assembly, string resourceId, string path)
+    {
+        if (FindStreamForResourceId(resourceId, assembly) is not { } stream)
+            return false;
+
+        try
+        {
+            await using var destinationFileStream =
+                new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            
+            await stream.CopyToAsync(destinationFileStream);
+        }
+        catch (Exception ex)
+        {
+            QLog.Error(ex);
+            return false;
+        }
+        finally
+        {
+            await stream.DisposeAsync();
+        }
+        return true;
+
+    }
+
+
     /// <summary>
     /// Finds the assembly that contains an embedded resource matching the resourceId
     /// </summary>
@@ -74,7 +120,7 @@ public static class EmbeddedResourceExtensions
                 if (index > 0)
                 {
                     var assemblyName = resourceId[..index];
-                    if (ReflectionExtensions.GetAssemblyByName(assemblyName) is { } asmA
+                    if (AssemblyExtensions.GetAssemblyByName(assemblyName) is { } asmA
                         && FindAssemblyForResourceId(resourceId, asmA) is not null)
                         return asmA;
                 }
@@ -87,11 +133,11 @@ public static class EmbeddedResourceExtensions
             // - WinAppSdk
             // doesn't work in:
             // - Android
-            assembly = EntryAssembly;
+            assembly = AssemblyExtensions.GetApplicationAssembly();
             Console.WriteLine($"ASSEMBLY: {assembly}");
             Debug.WriteLine($"ASSEMBLY: {resourceId}");
             return FindAssemblyForResourceId(resourceId, assembly) is null 
-                ? ReflectionExtensions
+                ? AssemblyExtensions
                     .GetAssemblies()
                     .FirstOrDefault(asmB => !asmB.IsDynamic && FindAssemblyForResourceId(resourceId, asmB) is not null) 
                 : assembly;
@@ -99,7 +145,7 @@ public static class EmbeddedResourceExtensions
         
         if (resourceId[0] == '.')
         {
-            if (s_embeddedResourceNames.TryGetValue(assembly, out var names))
+            if (EmbeddedResourceNames.TryGetValue(assembly, out var names))
                 return names.Any(n => n.EndsWith(resourceId)) 
                     ? assembly 
                     : null;
@@ -108,7 +154,7 @@ public static class EmbeddedResourceExtensions
             if (names.Length == 0)
                 return null;
 
-            s_embeddedResourceNames[assembly] = names;
+            EmbeddedResourceNames[assembly] = names;
             return names.Any(n => n.EndsWith(resourceId)) 
                 ? assembly 
                 : null;
@@ -116,7 +162,7 @@ public static class EmbeddedResourceExtensions
         else
         {
 
-            if (s_embeddedResourceNames.TryGetValue(assembly, out var names))
+            if (EmbeddedResourceNames.TryGetValue(assembly, out var names))
                 return names.Contains(resourceId) 
                     ? assembly 
                     : null;
@@ -125,7 +171,7 @@ public static class EmbeddedResourceExtensions
             if (names.Length == 0)
                 return null;
 
-            s_embeddedResourceNames[assembly] = names;
+            EmbeddedResourceNames[assembly] = names;
             return names.Contains(resourceId) 
                 ? assembly 
                 : null;
@@ -140,10 +186,10 @@ public static class EmbeddedResourceExtensions
         if (assembly == null)
             return null;
 
-        if (!s_embeddedResourceNames.TryGetValue(assembly, out var names))
+        if (!EmbeddedResourceNames.TryGetValue(assembly, out var names))
         {
             names = assembly.GetManifestResourceNames();
-            s_embeddedResourceNames[assembly] = names;
+            EmbeddedResourceNames[assembly] = names;
         }
 
         if (names.Length == 0)

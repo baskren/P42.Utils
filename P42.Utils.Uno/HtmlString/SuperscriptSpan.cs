@@ -1,37 +1,15 @@
-﻿namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno;
+
+internal class SuperscriptSpan(int start, int end) : Span(SpanKey, start, end), ICopiable<SuperscriptSpan>
 {
-	/// <summary>
-	/// P42.Utils.Uno Superscript span.
-	/// </summary>
-	class SuperscriptSpan : Span, ICopiable<SuperscriptSpan>
-	{
-		internal const string SpanKey = "Superscript";
+    internal const string SpanKey = nameof(SuperscriptSpan);
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.SuperscriptSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public SuperscriptSpan (int start, int end) : base(start, end) {
-			Key = SpanKey;
-		}
+    public SuperscriptSpan (SuperscriptSpan span) : this(span.Start, span.End) { }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.SuperscriptSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public SuperscriptSpan (SuperscriptSpan span) : this(span.Start, span.End) {
-		}
+    public void PropertiesFrom(SuperscriptSpan source)
+        => base.PropertiesFrom(source);
 
-		public void PropertiesFrom(SuperscriptSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
-
-		public override Span Copy()
-		{
-			return new SuperscriptSpan(Start, End);
-		}
-	}
+    public override Span Copy()
+        => new SuperscriptSpan(Start, End);
+    
 }
-

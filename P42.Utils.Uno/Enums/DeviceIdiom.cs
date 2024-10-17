@@ -1,17 +1,16 @@
 ﻿
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public enum DeviceIdiom
 {
-    public enum DeviceIdiom
-    {
-        Unknown,
-        Phone,
-        Tablet,
-        Desktop,
-        TV,
-        Watch,
-        Web, 
-        Car,
-        VR,
-        GameConsole,
-    }
+    Unknown,
+    Phone,
+    Tablet,
+    Desktop,
+    TV,
+    Watch,
+    Web, 
+    Car,
+    VR,
+    GameConsole,
 }

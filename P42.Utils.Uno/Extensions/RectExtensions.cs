@@ -1,27 +1,63 @@
 using Microsoft.UI.Xaml;
 using Windows.Foundation;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// Extensions for Windows.Foundation.Rect
+/// </summary>
+public static class RectExtensions
 {
-    public static class RectExtensions
-    {
 
-        public static Rect Grow(this Rect t1, Thickness t2)
-            => new Rect(t1.Left - t2.Left, t1.Top - t2.Top, t1.Width + t2.Left + t2.Right, t1.Height + t2.Top + t2.Bottom);
+    /// <summary>
+    /// Grow rect by Thickness
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="thickness"></param>
+    /// <returns>update Rect</returns>
+    public static Rect Grow(this Rect rect, Thickness thickness)
+        => new Rect(rect.Left - thickness.Left, rect.Top - thickness.Top, rect.Width + thickness.Left + thickness.Right, rect.Height + thickness.Top + thickness.Bottom);
 
-        public static Rect Shrink(this Rect t1, Thickness t2)
-            => new Rect(t1.Left + t2.Left, t1.Top + t2.Top, t1.Width - t2.Left - t2.Right, t1.Height - t2.Top - t2.Bottom);
+    /// <summary>
+    /// Shrink rect by thickness
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="thickness"></param>
+    /// <returns>updated Rect</returns>
+    public static Rect Shrink(this Rect rect, Thickness thickness)
+        => new Rect(rect.Left + thickness.Left, rect.Top + thickness.Top, rect.Width - thickness.Left - thickness.Right, rect.Height - thickness.Top - thickness.Bottom);
 
-        public static Rect Grow(this Rect t1, double value)
-            => t1.Grow(new Thickness(value));
+    /// <summary>
+    /// Grow rect by moving sides by value away from center
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="value"></param>
+    /// <returns>updated rect</returns>
+    public static Rect Grow(this Rect rect, double value)
+        => rect.Grow(new Thickness(value));
 
-        public static Rect Shrink(this Rect t1, double value)
-            => t1.Shrink(new Thickness(value));
+    /// <summary>
+    /// Shrink rect by moving sides by value toward center
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="value"></param>
+    /// <returns>updated rect</returns>
+    public static Rect Shrink(this Rect rect, double value)
+        => rect.Shrink(new Thickness(value));
 
-        public static double CenterX(this Rect r)
-            => (r.Right + r.Left)/2.0;
+    /// <summary>
+    /// Horizontal center of rect
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <returns></returns>
+    public static double CenterX(this Rect rect)
+        => (rect.Right + rect.Left)/2.0;
 
-        public static double CenterY(this Rect r)
-            => (r.Bottom + r.Top)/2.0;    
-    }
+    /// <summary>
+    /// Vertical center of rect
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <returns></returns>
+    public static double CenterY(this Rect rect)
+        => (rect.Bottom + rect.Top)/2.0;    
 }

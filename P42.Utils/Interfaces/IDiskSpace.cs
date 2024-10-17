@@ -1,11 +1,16 @@
-﻿namespace P42.Utils.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace P42.Utils.Interfaces;
+
+public interface IDiskSpace
 {
-    public interface IDiskSpace
-    {
-        ulong Free { get; }
+    ulong Free { get; }
 
-        ulong Size { get; }
+    ulong Size { get; }
 
-        ulong Used { get; }
-    }
+    ulong Used { get; }
+        
+    Task<ulong> GetFreeSpaceAsync();
+        
+    Task<ulong> GetCapacityAsync();
 }

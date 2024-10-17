@@ -4,36 +4,24 @@
 //  *
 //  *******************************************************************/
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+internal class DenominatorSpan(int start, int end) : Span(SpanKey, start, end), ICopiable<DenominatorSpan>
 {
-	class DenominatorSpan : Span, ICopiable<DenominatorSpan>
-	{
-		internal const string SpanKey = "Denominator";
+    internal const string SpanKey = nameof(DenominatorSpan);
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="P42.Utils.Uno.DenominatorSpan"/> class.
+    /// </summary>
+    /// <param name="span">Span.</param>
+    public DenominatorSpan(DenominatorSpan span) : this (span.Start, span.End) {
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.DenominatorSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public DenominatorSpan(int start, int end) : base (start, end) {
-			Key = SpanKey;
-		}
+    public void PropertiesFrom(DenominatorSpan source)
+        => base.PropertiesFrom(source);
+    
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.DenominatorSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public DenominatorSpan(DenominatorSpan span) : this (span.Start, span.End) {
-		}
-
-		public void PropertiesFrom(DenominatorSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
-
-		public override Span Copy()
-		{
-			return new DenominatorSpan(Start, End);
-		}
-	}
+    public override Span Copy()
+        => new DenominatorSpan(Start, End);
+    
 }

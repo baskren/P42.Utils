@@ -1,48 +1,38 @@
 ﻿using Windows.System.Profile;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// Device methods
+/// </summary>
+public static class Device
 {
-    public class Device
+    public static DeviceIdiom Idiom
     {
-        public static DeviceIdiom Idiom
+        get
         {
-            get
-            {
-#if __WASM__ 
-                return DeviceIdiom.Web;
+#if __WASM__
+               return DeviceIdiom.Web;
 #elif __MACOS__
                 return DeviceIdiom.Desktop;
 #else
-                //System.Diagnostics.Debug.WriteLine("DeviceForm: " + AnalyticsInfo.DeviceForm);
-                //System.Diagnostics.Debug.WriteLine("DeviceFamily: " + AnalyticsInfo.VersionInfo.DeviceFamily);
-                switch (AnalyticsInfo.DeviceForm.ToLower())
-                {
-                    case "desktop":
-                        return DeviceIdiom.Desktop;
-                    case "mobile":
-                    case "phone":
-                        return DeviceIdiom.Phone;
-                    case "tablet":
-                        return DeviceIdiom.Tablet;
-                    case "gameconsole":
-                        return DeviceIdiom.GameConsole;
-                    case "watch":
-                        return DeviceIdiom.Watch;
-                    case "car":
-                        return DeviceIdiom.Car;
-                    case "television":
-                    case "tv":
-                        return DeviceIdiom.TV;
-                    case "virtualreality":
-                    case "vr":
-                        return DeviceIdiom.VR;
-                    default:
-                        return DeviceIdiom.Unknown;
-                }
+            //System.Diagnostics.Debug.WriteLine("DeviceForm: " + AnalyticsInfo.DeviceForm);
+            //System.Diagnostics.Debug.WriteLine("DeviceFamily: " + AnalyticsInfo.VersionInfo.DeviceFamily);
+            return AnalyticsInfo.DeviceForm.ToLower() switch
+            {
+                "desktop" => DeviceIdiom.Desktop,
+                "mobile" or "phone" => DeviceIdiom.Phone,
+                "tablet" => DeviceIdiom.Tablet,
+                "gameconsole" => DeviceIdiom.GameConsole,
+                "watch" => DeviceIdiom.Watch,
+                "car" => DeviceIdiom.Car,
+                "television" or "tv" => DeviceIdiom.TV,
+                "virtualreality" or "vr" => DeviceIdiom.VR,
+                _ => DeviceIdiom.Unknown
+            };
 #endif
-            }
         }
-
-
     }
+
+
 }

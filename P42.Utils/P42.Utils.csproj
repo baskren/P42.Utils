@@ -2,9 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
-	  <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks)</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-    <!--<Nullable>enable</Nullable>-->
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -41,6 +40,7 @@
 	  <None Include="..\icon.png" Pack="true" PackagePath="\" />
 	  <None Include="..\README.md" Pack="true" PackagePath="\" />
 	  <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+	  <PackageReference Include="AsyncAwaitBestPractices" Version="8.0.0" />
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using System;
+/*
 namespace P42.Utils
 {
 	public class EventArgs<T> : EventArgs
@@ -11,4 +12,4 @@ namespace P42.Utils
 		}
 	}
 }
-
+*/

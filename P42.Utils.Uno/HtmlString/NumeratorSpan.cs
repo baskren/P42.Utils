@@ -4,36 +4,19 @@
 //  *
 //  *******************************************************************/
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+internal class NumeratorSpan(int start, int end): Span(SpanKey, start, end), ICopiable<NumeratorSpan>
 {
-	class NumeratorSpan: Span, ICopiable<NumeratorSpan>
-	{
-		internal const string SpanKey = "Numerator";
+    internal const string SpanKey = nameof(NumeratorSpan);
+        
+    public NumeratorSpan(NumeratorSpan span) : this(span.Start, span.End) { }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.NumeratorSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public NumeratorSpan(int start, int end) : base(start, end) {
-			Key = SpanKey;
-		}
+    public void PropertiesFrom(NumeratorSpan source)
+        => base.PropertiesFrom(source);
+		
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.NumeratorSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public NumeratorSpan(NumeratorSpan span) : this(span.Start, span.End) {
-		}
-
-		public void PropertiesFrom(NumeratorSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
-
-		public override Span Copy()
-		{
-			return new NumeratorSpan(Start, End);
-		}
-	}
+    public override Span Copy()
+        => new NumeratorSpan(Start, End);
+		
 }

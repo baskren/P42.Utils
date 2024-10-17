@@ -1,37 +1,15 @@
-﻿namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno;
+
+internal class SubscriptSpan(int start, int end) : Span(SpanKey, start, end), ICopiable<SubscriptSpan>
 {
-	/// <summary>
-	/// P42.Utils.Uno Subscript span.
-	/// </summary>
-	class SubscriptSpan : Span, ICopiable<SubscriptSpan>
-	{
-		internal const string SpanKey = "Subscript";
+    internal const string SpanKey = nameof(SubscriptSpan);
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.SubscriptSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public SubscriptSpan (int start, int end) : base (start, end) {
-			Key = SpanKey;
-		}
+    public SubscriptSpan (SubscriptSpan span) : this (span.Start, span.End) { }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.SubscriptSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public SubscriptSpan (SubscriptSpan span) : this (span.Start, span.End) {
-		}
+    public void PropertiesFrom(SubscriptSpan source)
+        => base.PropertiesFrom(source);
 
-		public void PropertiesFrom(SubscriptSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
-
-		public override Span Copy()
-		{
-			return new SubscriptSpan(Start, End);
-		}
-	}
+    public override Span Copy()
+        => new SubscriptSpan(Start, End);
+    
 }
-

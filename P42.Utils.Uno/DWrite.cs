@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DWrite
-{
+// TODO: Does this need to be removed?
 
+namespace DWrite;
 
 #if !HAS_UNO                           
 
@@ -5249,4 +5249,3 @@ namespace DWrite
         DWRITE_FONT_SOURCE_TYPE_REMOTE_FONT_PROVIDER
     };
 #endif
-}

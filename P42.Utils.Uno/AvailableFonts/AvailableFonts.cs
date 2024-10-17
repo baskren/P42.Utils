@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DWrite;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public static class AvailableFonts
 {
-    public static class AvailableFonts
-    {
 #if __ANDROID__
-        const string AssetPrefix = "ms-appx:///Assets/";
-        static Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> FontFamiliesByName = new Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> { {"default", null } };
+    private const string AssetPrefix = "ms-appx:///Assets/";
+    private static Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> FontFamiliesByName = new Dictionary<string, Microsoft.UI.Xaml.Media.FontFamily> { {"default", null } };
 
         static AvailableFonts()
         {
@@ -34,10 +34,10 @@ namespace P42.Utils.Uno
     }
 #endif
 
-        public static string[] Names
+    public static string[] Names
+    {
+        get
         {
-            get
-            {
 #if __ANDROID__
                 return FontFamiliesByName.Keys.ToArray();
 #elif __IOS__
@@ -109,19 +109,19 @@ namespace P42.Utils.Uno
 #else
             throw new NotImplementedException();
 #endif
-            }
         }
+    }
 
-        public static Microsoft.UI.Xaml.Media.FontFamily FontFamily(string name)
-        {
+    public static Microsoft.UI.Xaml.Media.FontFamily FontFamily(string name)
+    {
 #if __ANDROID__
             if (FontFamiliesByName.TryGetValue(name, out var family))
                 return family;
             return null;
 #else
-            return new Microsoft.UI.Xaml.Media.FontFamily(name);
+        return new Microsoft.UI.Xaml.Media.FontFamily(name);
 #endif
-        }
+    }
 
 #if !HAS_UNO                           
 
@@ -132,5 +132,4 @@ namespace P42.Utils.Uno
         public static extern int GetUserDefaultLocaleName(System.Text.StringBuilder lpLocaleName, int cchLocaleName);
         public const int LOCALE_NAME_MAX_LENGTH = 85;
 #endif
-    }
 }

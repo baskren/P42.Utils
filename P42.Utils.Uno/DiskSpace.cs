@@ -3,55 +3,69 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// Disk Space utilities
+/// </summary>
+public class DiskSpace : IDiskSpace
 {
-    public class DiskSpace : IDiskSpace
+    /// <summary>
+    /// Free disk space
+    /// </summary>
+    public ulong Free
     {
-        public ulong Free
+        get
         {
-            get
-            {
-                var task = GetFreeSpace();
-                var waiter = task.GetAwaiter();
-                var result = waiter.GetResult();
-                return result;
-            }
+            var task = GetFreeSpaceAsync();
+            var waiter = task.GetAwaiter();
+            var result = waiter.GetResult();
+            return result;
         }
-
-        public ulong Size
-        {
-            get
-            {
-                var task = GetCapacity();
-                var waiter = task.GetAwaiter();
-                var result = waiter.GetResult();
-                return result;
-            }
-        }
-
-        public ulong Used
-        {
-            get
-            {
-                return Size - Free;
-            }
-        }
-
-        static async Task<UInt64> GetAppFolderProperty(string property)
-        {
-            StorageFolder local = ApplicationData.Current.LocalFolder;
-            var task = local.Properties.RetrievePropertiesAsync(new string[] { property });
-            var retrivedProperties = await task.AsTask();
-            return (UInt64)retrivedProperties[property];
-        }
-
-        async Task<UInt64> GetFreeSpace()
-            => await GetAppFolderProperty("System.FreeSpace");
-
-        async Task<UInt64> GetCapacity()
-            => await GetAppFolderProperty("System.Capacity");
-
-
-
     }
+
+    /// <summary>
+    /// Size of disk
+    /// </summary>
+    public ulong Size
+    {
+        get
+        {
+            var task = GetCapacityAsync();
+            var waiter = task.GetAwaiter();
+            var result = waiter.GetResult();
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Used disk space (Size-Free)
+    /// </summary>
+    public ulong Used => Size - Free;
+    
+
+    private static async Task<ulong> GetAppFolderProperty(string property)
+    {
+        var local = ApplicationData.Current.LocalFolder;
+        var task = local.Properties.RetrievePropertiesAsync([property]);
+        var retrievedProperties = await task.AsTask();
+        return (ulong)retrievedProperties[property];
+    }
+
+    /// <summary>
+    /// Get free disk space
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ulong> GetFreeSpaceAsync()
+        => await GetAppFolderProperty("System.FreeSpace");
+
+    /// <summary>
+    /// Get disk capacity
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ulong> GetCapacityAsync()
+        => await GetAppFolderProperty("System.Capacity");
+
+
+
 }

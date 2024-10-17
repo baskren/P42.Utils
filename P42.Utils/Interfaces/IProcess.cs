@@ -2,7 +2,7 @@
 {
     interface IProcess
     {
-        ulong Memory();
+        ulong Memory(string path, int line);
 
     }
 }

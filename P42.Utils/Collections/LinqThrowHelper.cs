@@ -5,70 +5,74 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+internal static class ThrowHelper
 {
-    internal static class ThrowHelper
+    internal static void ThrowArgumentNullException(ExceptionArgument argument, Type type, [CallerMemberName] string? method = null) => throw new ArgumentNullException(
+        $"{type}.{method}: {GetArgumentString(argument)}");
+
+    internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, Type type, [CallerMemberName] string? method = null) => throw new ArgumentOutOfRangeException(
+        $"{type}.{method}: {GetArgumentString(argument)}");
+
+    internal static void ThrowMoreThanOneElementException(Type type, [CallerMemberName] string? method = null) => throw new InvalidOperationException(
+        $"{type}.{method}: More than one element.  ");
+
+    internal static void ThrowMoreThanOneMatchException(Type type, [CallerMemberName] string? method = null) => throw new InvalidOperationException(
+        $"{type}.{method}: More than one match.  ");
+
+    internal static void ThrowNoElementsException(Type type, [CallerMemberName] string? method = null) => throw new InvalidOperationException(
+        $"{type}.{method}: No elements.  ");
+
+    internal static void ThrowNoMatchException(Type type, [CallerMemberName] string? method = null) => throw new InvalidOperationException(
+        $"{type}.{method}: No match.  ");
+
+    internal static void ThrowNotSupportedException(Type type, [CallerMemberName] string? method = null) => throw new NotSupportedException(
+        $"{type}.{method}: Not supported.  ");
+
+    private static string GetArgumentString(ExceptionArgument argument)
     {
-        internal static void ThrowArgumentNullException(ExceptionArgument argument, Type type, [CallerMemberName] string method = null) => throw new ArgumentNullException(type + "." + method + ": " + GetArgumentString(argument));
-
-        internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, Type type, [CallerMemberName] string method = null) => throw new ArgumentOutOfRangeException(type + "." + method + ": " + GetArgumentString(argument));
-
-        internal static void ThrowMoreThanOneElementException(Type type, [CallerMemberName] string method = null) => throw new InvalidOperationException(type + "." + method + ": More than one element.  ");
-
-        internal static void ThrowMoreThanOneMatchException(Type type, [CallerMemberName] string method = null) => throw new InvalidOperationException(type + "." + method + ": More than one match.  ");
-
-        internal static void ThrowNoElementsException(Type type, [CallerMemberName] string method = null) => throw new InvalidOperationException(type + "." + method + ": No elements.  ");
-
-        internal static void ThrowNoMatchException(Type type, [CallerMemberName] string method = null) => throw new InvalidOperationException(type + "." + method + ": No match.  ");
-
-        internal static void ThrowNotSupportedException(Type type, [CallerMemberName] string method = null) => throw new NotSupportedException(type + "." + method + ": Not supported.  ");
-
-        private static string GetArgumentString(ExceptionArgument argument)
+        return argument switch
         {
-            switch (argument)
-            {
-                case ExceptionArgument.collectionSelector: return nameof(ExceptionArgument.collectionSelector);
-                case ExceptionArgument.count: return nameof(ExceptionArgument.count);
-                case ExceptionArgument.elementSelector: return nameof(ExceptionArgument.elementSelector);
-                case ExceptionArgument.enumerable: return nameof(ExceptionArgument.enumerable);
-                case ExceptionArgument.first: return nameof(ExceptionArgument.first);
-                case ExceptionArgument.func: return nameof(ExceptionArgument.func);
-                case ExceptionArgument.index: return nameof(ExceptionArgument.index);
-                case ExceptionArgument.inner: return nameof(ExceptionArgument.inner);
-                case ExceptionArgument.innerKeySelector: return nameof(ExceptionArgument.innerKeySelector);
-                case ExceptionArgument.keySelector: return nameof(ExceptionArgument.keySelector);
-                case ExceptionArgument.outer: return nameof(ExceptionArgument.outer);
-                case ExceptionArgument.outerKeySelector: return nameof(ExceptionArgument.outerKeySelector);
-                case ExceptionArgument.predicate: return nameof(ExceptionArgument.predicate);
-                case ExceptionArgument.resultSelector: return nameof(ExceptionArgument.resultSelector);
-                case ExceptionArgument.second: return nameof(ExceptionArgument.second);
-                case ExceptionArgument.selector: return nameof(ExceptionArgument.selector);
-                case ExceptionArgument.source: return nameof(ExceptionArgument.source);
-                default:
-                    //Debug.Fail("The ExceptionArgument value is not defined.");
-                    return string.Empty;
-            }
-        }
+            ExceptionArgument.CollectionSelector => nameof(ExceptionArgument.CollectionSelector),
+            ExceptionArgument.Count => nameof(ExceptionArgument.Count),
+            ExceptionArgument.ElementSelector => nameof(ExceptionArgument.ElementSelector),
+            ExceptionArgument.Enumerable => nameof(ExceptionArgument.Enumerable),
+            ExceptionArgument.First => nameof(ExceptionArgument.First),
+            ExceptionArgument.Func => nameof(ExceptionArgument.Func),
+            ExceptionArgument.Index => nameof(ExceptionArgument.Index),
+            ExceptionArgument.Inner => nameof(ExceptionArgument.Inner),
+            ExceptionArgument.InnerKeySelector => nameof(ExceptionArgument.InnerKeySelector),
+            ExceptionArgument.KeySelector => nameof(ExceptionArgument.KeySelector),
+            ExceptionArgument.Outer => nameof(ExceptionArgument.Outer),
+            ExceptionArgument.OuterKeySelector => nameof(ExceptionArgument.OuterKeySelector),
+            ExceptionArgument.Predicate => nameof(ExceptionArgument.Predicate),
+            ExceptionArgument.ResultSelector => nameof(ExceptionArgument.ResultSelector),
+            ExceptionArgument.Second => nameof(ExceptionArgument.Second),
+            ExceptionArgument.Selector => nameof(ExceptionArgument.Selector),
+            ExceptionArgument.Source => nameof(ExceptionArgument.Source),
+            _ => string.Empty
+        };
     }
+}
 
-    internal enum ExceptionArgument
-    {
-        collectionSelector,
-        count,
-        elementSelector,
-        enumerable,
-        first,
-        func,
-        index,
-        inner,
-        innerKeySelector,
-        keySelector,
-        outer,
-        outerKeySelector,
-        predicate,
-        resultSelector,
-        second,
-        selector,
-        source,
-    }
+internal enum ExceptionArgument
+{
+    CollectionSelector,
+    Count,
+    ElementSelector,
+    Enumerable,
+    First,
+    Func,
+    Index,
+    Inner,
+    InnerKeySelector,
+    KeySelector,
+    Outer,
+    OuterKeySelector,
+    Predicate,
+    ResultSelector,
+    Second,
+    Selector,
+    Source,
 }

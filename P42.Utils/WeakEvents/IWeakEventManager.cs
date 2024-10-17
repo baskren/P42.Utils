@@ -1,6 +1,7 @@
 ﻿using System;
 namespace P42.Utils
 {
+    /*
 	public interface IWeakEventManager
 	{
 		void AddEventHandler<TEventArgs>(object source, string eventName, EventHandler<TEventArgs> value)
@@ -16,5 +17,6 @@ namespace P42.Utils
 
 		void RemoveEventHandler(string eventName, EventHandler value);
 	}
+	*/
 }
 

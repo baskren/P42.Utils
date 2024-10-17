@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+/*
 namespace P42.Utils
 {
     public class AsyncAwaitForSet<T>
@@ -48,3 +49,4 @@ namespace P42.Utils
 
     }
 }
+*/

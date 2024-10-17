@@ -1,180 +1,139 @@
 using System;
 using System.Reflection;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+public static class Environment
 {
-    public static class Environment
+
+    internal static IPlatformTimer? PlatformTimer { get; set; }
+    internal static Type? PlatformLongRunningTaskType { get; set; }
+
+    /// <summary>
+    /// Initialization - must be called from app's MainThread
+    /// </summary>
+    public static void Init()
     {
-        static Environment()
-        {
-#if NET7_0_VOIDED
-            //DocumentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
-            switch (GetOperatingSystem().ToLower())
-            {
-                /*
-                case "apple":
-                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
-                    path = path.Remove(path.IndexOf("Caches"));
-                    path = path + "ApplicationData";
-                    ApplicationDataPath = path;
-                    break;
-                    */
-                case "linux":
-                    ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData, System.Environment.SpecialFolderOption.Create);
-                    break;
-                default:
-                    ApplicationDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData, System.Environment.SpecialFolderOption.Create);
-                    break;
-            }
-            switch (GetOperatingSystem().ToLower())
-            {
-                case "linux":
-                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal, System.Environment.SpecialFolderOption.Create);
-                    path = System.IO.Path.Combine(path, ".cache");
-                    ApplicationCachePath = path;
-                    break;
-                default:
-                    ApplicationCachePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache, System.Environment.SpecialFolderOption.Create);
-                    break;
-            }
-
-            TemporaryStoragePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments, System.Environment.SpecialFolderOption.Create);
-#endif
-        }
-
-        internal static IPlatformTimer PlatformTimer;
-        internal static Type PlatformLongRunningTaskType;
-
-        public static void Init()
-        {
-            MainThreadId = System.Environment.CurrentManagedThreadId;
-        }
-
-        /// <summary>
-        /// Gets or sets the main thread identifier.
-        /// </summary>
-        /// <value>The main thread identifier.</value>
-        public static int MainThreadId { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is headless test (and thus the MainThreadId is questionable).
-        /// </summary>
-        /// <value><c>true</c> if is headless test; otherwise, <c>false</c>.</value>
-        public static bool IsHeadlessTest { get; set; } = false;
-
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is on main thread.
-        /// </summary>
-        /// <value><c>true</c> if is on main thread; otherwise, <c>false</c>.</value>
-        public static bool IsOnMainThread => IsHeadlessTest || System.Environment.CurrentManagedThreadId == MainThreadId;
-
-        public static Func<string, Assembly, Assembly> EmbeddedResourceAssemblyResolver;
-
-        /// <summary>
-        /// Gets the operating system.
-        /// </summary>
-        /// <returns>The operating system.</returns>
-        public static string GetOperatingSystem()
-        {
-            var windir = System.Environment.GetEnvironmentVariable("windir");
-            if (!string.IsNullOrEmpty(windir) && windir.Contains(@"\") && System.IO.Directory.Exists(windir))
-                return "Windows";
-            else if (System.IO.File.Exists(@"/proc/sys/kernel/ostype"))
-            {
-                var osType = System.IO.File.ReadAllText(@"/proc/sys/kernel/ostype");
-                if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase))
-                    // Note: Android gets here too
-                    return "Linux";
-                else
-                {
-                    throw new UnsupportedPlatformException(osType);
-                }
-            }
-            else if (System.IO.File.Exists(@"/System/Library/CoreServices/SystemVersion.plist"))
-            {
-                // Note: iOS gets here too
-                return "Apple";
-            }
-            else
-            {
-                throw new UnsupportedPlatformException();
-            }
-        }
-
-
-        public static Action PlatformPathLoader;
-
-        /*
-        static string _documentsPath;
-        public static string DocumentsPath
-        {
-            get
-            {
-                if (_documentsPath == null)
-                    PlatformPathLoader?.Invoke();
-                return _documentsPath;
-            }
-            set
-            {
-                _documentsPath = value;
-            }
-        }
-        */
-
-        static string _applicationDataPath;
-        public static string ApplicationDataPath
-        {
-            get
-            {
-                if (_applicationDataPath == null)
-                    PlatformPathLoader?.Invoke();
-                return _applicationDataPath;
-            }
-            set
-            {
-                _applicationDataPath = value;
-                P42.Utils.DirectoryExtensions.AssureExists(value);
-            }
-        }
-
-        static string _applicationCachePath;
-        public static string ApplicationCachePath
-        {
-            get
-            {
-                if (_applicationCachePath == null)
-                    PlatformPathLoader?.Invoke();
-                return _applicationCachePath;
-            }
-            set
-            {
-                _applicationCachePath = value;
-                P42.Utils.DirectoryExtensions.AssureExists(value);
-            }
-        }
-
-        static string _temporaryStoratePath;
-        public static string TemporaryStoragePath
-        {
-            get
-            {
-                if (_temporaryStoratePath == null)
-                    PlatformPathLoader?.Invoke();
-                return _temporaryStoratePath;
-            }
-            set
-            {
-                _temporaryStoratePath = value;
-                P42.Utils.DirectoryExtensions.AssureExists(value);
-            }
-        }
-
+        MainThreadId = System.Environment.CurrentManagedThreadId;
     }
 
-    public class UnsupportedPlatformException : Exception
-    {
-        public UnsupportedPlatformException() : base("Unsupported Platform Exception") { }
+    /// <summary>
+    /// Gets or sets the main thread identifier.
+    /// </summary>
+    /// <value>The main thread identifier.</value>
+    public static int MainThreadId { get; set; }
 
-        public UnsupportedPlatformException(string osType) : base("Unsupported Platform Exception: " + osType) { }
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is headless test (and thus the MainThreadId is questionable).
+    /// </summary>
+    /// <value><c>true</c> if is headless test; otherwise, <c>false</c>.</value>
+    public static bool IsHeadlessTest { get; set; } = false;
+
+    /// <summary>
+    /// Gets a value indicating whether this <see cref="T:P42.Utils.Environment"/> is on main thread.
+    /// </summary>
+    /// <value><c>true</c> if is on main thread; otherwise, <c>false</c>.</value>
+    public static bool IsOnMainThread => IsHeadlessTest || System.Environment.CurrentManagedThreadId == MainThreadId;
+
+    //TODO: MOVE THIS FROM P42.Utils.Uno 
+    public static Func<string, Assembly?, Assembly?>? EmbeddedResourceAssemblyResolver { get; set; }
+
+    /// <summary>
+    /// Gets the operating system.
+    /// </summary>
+    /// <returns>The operating system.</returns>
+    public static string GetOperatingSystem()
+    {
+        var winDir = System.Environment.GetEnvironmentVariable("windir");
+        if (!string.IsNullOrEmpty(winDir) && winDir.Contains('\\') && System.IO.Directory.Exists(winDir))
+            return "Windows";
+        
+        if (System.IO.File.Exists("/proc/sys/kernel/ostype"))
+        {
+            var osType = System.IO.File.ReadAllText("/proc/sys/kernel/ostype");
+            if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase))
+                // Note: Android gets here too
+                return "Linux";
+
+            throw new UnsupportedPlatformException(osType);
+        }
+        
+        if (System.IO.File.Exists("/System/Library/CoreServices/SystemVersion.plist"))
+            // Note: iOS gets here too
+            return "Apple";
+
+        throw new UnsupportedPlatformException();
+        
     }
+
+    /// <summary>
+    /// Platform specific loader of application paths
+    /// </summary>
+    public static Action? PlatformPathLoader { get; set; }
+
+
+    static string? _applicationDataPath;
+    /// <summary>
+    /// Path to platform's app data path
+    /// </summary>
+    public static string ApplicationDataPath
+    {
+        get
+        {
+            if (_applicationDataPath == null)
+                PlatformPathLoader?.Invoke();
+            return _applicationDataPath ?? string.Empty;
+        }
+        set
+        {
+            _applicationDataPath = value;
+            DirectoryExtensions.GetOrCreateDirectory(value);
+        }
+    }
+
+    static string? _applicationCachePath;
+    /// <summary>
+    /// Path to platforms application cache
+    /// </summary>
+    public static string ApplicationCachePath
+    {
+        get
+        {
+            if (_applicationCachePath == null)
+                PlatformPathLoader?.Invoke();
+            return _applicationCachePath ?? string.Empty;
+        }
+        set
+        {
+            _applicationCachePath = value;
+            DirectoryExtensions.GetOrCreateDirectory(value);
+        }
+    }
+
+    static string? _temporaryStoratePath;
+    /// <summary>
+    /// Path to platform temporary storage
+    /// </summary>
+    public static string TemporaryStoragePath
+    {
+        get
+        {
+            if (_temporaryStoratePath == null)
+                PlatformPathLoader?.Invoke();
+            return _temporaryStoratePath ?? string.Empty;
+        }
+        set
+        {
+            _temporaryStoratePath = value;
+            DirectoryExtensions.GetOrCreateDirectory(value);
+        }
+    }
+
+}
+
+public class UnsupportedPlatformException : Exception
+{
+    public UnsupportedPlatformException() : base("Unsupported Platform Exception") { }
+
+    public UnsupportedPlatformException(string osType) : base("Unsupported Platform Exception: " + osType) { }
 }

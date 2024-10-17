@@ -4,7 +4,7 @@ namespace P42.Utils
 {
     public static class DiskSpace
     {
-        internal static IDiskSpace PlatformDiskSpace;
+        internal static IDiskSpace? PlatformDiskSpace;
 
         public static ulong Free => PlatformDiskSpace?.Free ?? 0;
 

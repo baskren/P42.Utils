@@ -2,61 +2,59 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+internal class Timer : IPlatformTimer
 {
-    internal class Timer : IPlatformTimer
+    private class MainThreadTimer
     {
-        class MainThreadTimer
+        private readonly DispatcherTimer _dispatcherTimer;
+        private readonly Func<bool> _func;
+
+        public MainThreadTimer(TimeSpan span, Func<bool> func)
         {
-            readonly DispatcherTimer dispatcherTimer;
-            readonly Func<bool> Func;
-
-            public MainThreadTimer(TimeSpan span, Func<bool> func)
-            {
-                Func = func;
-                dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += DispatcherTimer_Tick;
-                dispatcherTimer.Interval = span;
-                dispatcherTimer.Start();
-            }
-
-            void DispatcherTimer_Tick(object sender, object e)
-            {
-                if (!Func.Invoke())
-                {
-                    dispatcherTimer.Stop();
-                }
-            }
+            _func = func;
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += DispatcherTimer_Tick;
+            _dispatcherTimer.Interval = span;
+            _dispatcherTimer.Start();
         }
 
-        class AsyncMainThreadTimer
+        private void DispatcherTimer_Tick(object? sender, object e)
         {
-            readonly DispatcherTimer dispatcherTimer;
-            readonly Func<Task<bool>> task;
-
-            public AsyncMainThreadTimer(TimeSpan span, Func<Task<bool>> task)
+            if (!_func.Invoke())
             {
-                this.task = task;
-                dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += DispatcherTimer_Tick;
-                dispatcherTimer.Interval = span;
-                dispatcherTimer.Start();
-            }
-
-            async void DispatcherTimer_Tick(object sender, object e)
-            {
-                if (!await task.Invoke())
-                {
-                    dispatcherTimer.Stop();
-                }
+                _dispatcherTimer.Stop();
             }
         }
-
-        public void StartTimer(TimeSpan timeSpan, Func<bool> func)
-            => new MainThreadTimer(timeSpan, func);
-
-        public void StartTimer(TimeSpan timeSpan, Func<Task<bool>> task)
-            => new AsyncMainThreadTimer(timeSpan, task);
-
     }
+
+    private class AsyncMainThreadTimer
+    {
+        private readonly DispatcherTimer _dispatcherTimer;
+        private readonly Func<Task<bool>> _task;
+
+        public AsyncMainThreadTimer(TimeSpan span, Func<Task<bool>> task)
+        {
+            this._task = task;
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += DispatcherTimer_Tick;
+            _dispatcherTimer.Interval = span;
+            _dispatcherTimer.Start();
+        }
+
+        private async void DispatcherTimer_Tick(object? sender, object e)
+        {
+            if (!await _task.Invoke())
+                _dispatcherTimer.Stop();
+                
+        }
+    }
+
+    public void StartTimer(TimeSpan timeSpan, Func<bool> func)
+        => _ = new MainThreadTimer(timeSpan, func);
+
+    public void StartTimer(TimeSpan timeSpan, Func<Task<bool>> task)
+        => _ = new AsyncMainThreadTimer(timeSpan, task);
+
 }

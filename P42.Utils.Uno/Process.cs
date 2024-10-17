@@ -1,28 +1,42 @@
+using System;
+using System.Runtime.CompilerServices;
+using System.Text;
 using Windows.System.Diagnostics;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public class Process : IProcess
 {
-    public class Process : IProcess
+
+    /// <summary>
+    /// Dumps current memory consumption info to Console and Debug output
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="line"></param>
+    /// <returns></returns>
+    public ulong Memory([CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
     {
+        var process = ProcessDiagnosticInfo.GetForCurrentProcess();
+        var memoryReport = process.MemoryUsage.GetReport();
 
-        public ulong Memory()
-        {
-            var process = ProcessDiagnosticInfo.GetForCurrentProcess();
-            var memoryReport = process.MemoryUsage.GetReport();
-            System.Diagnostics.Debug.WriteLine(GetType() + " " + ReflectionExtensions.CallerString() + ": "
-                + "\n NonPagedPoolSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.NonPagedPoolSizeInBytes)
-                + "\n PagedPoolSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PagedPoolSizeInBytes)
-                + "\n PageFaultCount: " + StringExtensions.HumanReadableBytes(memoryReport.PageFaultCount)
-                + "\n PageFileSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PageFileSizeInBytes)
-                + "\n PeakNonPagedPoolSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PeakNonPagedPoolSizeInBytes)
-                + "\n PeakPagedPoolSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PeakPagedPoolSizeInBytes)
-                + "\n PeakPageFileSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PeakPageFileSizeInBytes)
-                + "\n PeakVirtualMemorySizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PeakVirtualMemorySizeInBytes)
-                + "\n PeakWorkingSetSizeInBytes: " + StringExtensions.HumanReadableBytes(memoryReport.PeakWorkingSetSizeInBytes)
-                + "\n PrivatePageCount: " + StringExtensions.HumanReadableBytes(memoryReport.PrivatePageCount)
-                + "\n\n"); ;
-            return memoryReport.PrivatePageCount;
-        }
-
+        var builder = new StringBuilder();
+        
+        builder.Append($"{nameof(Memory)} {path}:{line}");
+        builder.Append($"\t NonPagedPoolSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.NonPagedPoolSizeInBytes)}");
+        builder.Append($"\t PagedPoolSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PagedPoolSizeInBytes)}");
+        builder.Append($"\t PageFaultCount: {StringExtensions.HumanReadableBytes(memoryReport.PageFaultCount)}");
+        builder.Append($"\t PageFileSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PageFileSizeInBytes)}");
+        builder.Append($"\n PeakNonPagedPoolSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PeakNonPagedPoolSizeInBytes)}");
+        builder.Append($"\n PeakPagedPoolSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PeakPagedPoolSizeInBytes)}");
+        builder.Append($"\n PeakPageFileSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PeakPageFileSizeInBytes)}"); 
+        builder.Append($"\n PeakVirtualMemorySizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PeakVirtualMemorySizeInBytes)}");
+        builder.Append($"\n PeakWorkingSetSizeInBytes: {StringExtensions.HumanReadableBytes(memoryReport.PeakWorkingSetSizeInBytes)}");
+        builder.Append($"\n PrivatePageCount: {StringExtensions.HumanReadableBytes(memoryReport.PrivatePageCount)}\n\n");
+        
+        System.Diagnostics.Debug.WriteLine(builder.ToString());
+        Console.WriteLine(builder.ToString());
+        
+        return memoryReport.PrivatePageCount;
     }
+
 }

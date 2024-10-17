@@ -17,9 +17,9 @@ namespace P42.Utils
 
 		void Delete(bool recursive);
 
-		IDirectoryInfo[] GetDirectories ( string searchPattern=null);
+		IDirectoryInfo[] GetDirectories ( string? searchPattern=null);
 
-		IFileInfo[] GetFiles ( string searchPattern=null);
+		IFileInfo[] GetFiles ( string? searchPattern=null);
 
 		void MoveTo ( string destDirName );
 	}

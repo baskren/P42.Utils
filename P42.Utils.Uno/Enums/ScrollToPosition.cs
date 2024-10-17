@@ -1,10 +1,9 @@
-﻿namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno;
+
+public enum ScrollToPosition
 {
-	public enum ScrollToPosition
-	{
-		MakeVisible = 0,
-		Start = 1,
-		Center = 2,
-		End = 3
-	}
+    MakeVisible = 0,
+    Start = 1,
+    Center = 2,
+    End = 3
 }
