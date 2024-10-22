@@ -51,7 +51,7 @@
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>
     <Message Text="  TargetFrameworks:[$(TargetFrameworks)] " Importance="high"/>
     <Message Text="  TargetFramework:[$(TargetFramework)]" Importance="high"/>
-  	<Message Text="  P42_TargetPlatform:[$(P42_TargetPlatform)] " Importance="high" />
+  	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
     <Message Text="  Configuration:[$(Configuration)] " Importance="high"/>
     <Message Text="  SaveNuget:[$(GeneratePackageOnBuild)] " Importance="high"/>
     <Message Text="  PackageVersion:[$(Version)] " Importance="high"/>
