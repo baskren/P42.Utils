@@ -4,6 +4,7 @@
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
 	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -46,12 +46,13 @@
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
   	<Message Text="  DotNetVersion:[net8.0]" Importance="high" />
+  	<Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
+  	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>
     <Message Text="  TargetFrameworks:[$(TargetFrameworks)] " Importance="high"/>
     <Message Text="  TargetFramework:[$(TargetFramework)]" Importance="high"/>
-  	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
     <Message Text="  Configuration:[$(Configuration)] " Importance="high"/>
     <Message Text="  SaveNuget:[$(GeneratePackageOnBuild)] " Importance="high"/>
     <Message Text="  PackageVersion:[$(Version)] " Importance="high"/>
