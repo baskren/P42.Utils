@@ -80,6 +80,9 @@
     <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
     <Message Text="  DebugSymbols:[$(DebugSymbols)]" Importance="high" />
     <Message Text="  Optimize:[$(Optimize)]" Importance="high" />
+    <Message Text="  WindowsSdkPackageVersion:[$(WindowsSdkPackageVersion)]" Importance="high" />
+    <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]" />
+    <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]" />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

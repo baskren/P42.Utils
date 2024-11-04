@@ -1,0 +1,77 @@
+<Project Sdk="Uno.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>
+      net8.0-android;
+      net8.0-ios;
+      net8.0-maccatalyst;
+    </TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
+      $(TargetFrameworks);
+      net8.0-windows10.0.19041
+    </TargetFrameworks>
+    <TargetFrameworks>
+      $(TargetFrameworks);
+      net8.0-browserwasm;
+      net8.0-desktop;
+    </TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <UnoSingleProject>true</UnoSingleProject>
+
+    <!-- Display name -->
+    <ApplicationTitle>Demo</ApplicationTitle>
+    <!-- App Identifier -->
+    <ApplicationId>com.company.app</ApplicationId>
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <!-- Package Publisher -->
+    <ApplicationPublisher>ben</ApplicationPublisher>
+    <!-- Package Description -->
+    <Description>P42.Utils Demo powered by Uno Platform.</Description>
+    <!--
+      If you encounter this error message:
+
+        error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+        Please update to a newer .NET SDK in order to reference this assembly.
+
+      This means that the two packages below must be aligned with the "build" version number of
+      the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+      must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+    -->
+    <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+
+    <CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
+    <SkiaSharpVersion>3.0.0-preview.5.1</SkiaSharpVersion>
+        <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
+
+
+    <!--
+      UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+      https://aka.platform.uno/singleproject-features
+    -->
+    <UnoFeatures>
+      Lottie;
+      Toolkit;
+      ThemeService;
+      MediaElement;
+      Skia;
+      Svg;
+    </UnoFeatures>
+    <PackageCertificateThumbprint>6E2D2623C87282F3FCC413CBCF5AE7E5FD57845A</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Demo_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+  </PropertyGroup>
+
+
+<PropertyGroup>
+	<BaseOutputPath>C:\temp</BaseOutputPath>
+</PropertyGroup>
+
+
+<ItemGroup>
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils.Uno"  />
+</ItemGroup>
+
+</Project>
