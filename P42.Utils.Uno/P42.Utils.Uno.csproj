@@ -33,6 +33,7 @@
 
     <BuildInParallel>true</BuildInParallel>
     <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+    <WinAppSdkBuildToolsVersion>10.0.22621.756</WinAppSdkBuildToolsVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks> 
     <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
 
