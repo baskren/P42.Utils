@@ -52,7 +52,7 @@ namespace P42.Utils
         {
             var oldItems = this.ToList();
             base.ClearItems();
-            Dictionary.Clear();
+            Dictionary?.Clear();
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -66,7 +66,7 @@ namespace P42.Utils
             var item = this[index];            
             base.RemoveItem(index);
             if (TryGetKey(item, out var key))
-                Dictionary.Remove(key);
+                Dictionary?.Remove(key);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
         }
 
@@ -93,13 +93,18 @@ namespace P42.Utils
         /// <exception cref="NotImplementedException"></exception>
         protected override TKey GetKeyForItem(TItem item)
         {
-            if (Dictionary.TryGetKey(item, out TKey key))
+            if (Dictionary is not null &&  Dictionary.TryGetKey(item, out TKey key))
                 return (TKey)key;
             throw new System.Exception("No key for item");
         }
 
         public virtual bool TryGetKey(TItem item, out TKey key)
-            => Dictionary.TryGetKey(item, out key);
+        {
+            if (Dictionary is not null)
+                return Dictionary.TryGetKey(item, out key);
+            key = default;
+            return false;
+        } 
 
         /// <summary>
         /// Test if item with key is in collection
@@ -108,7 +113,7 @@ namespace P42.Utils
         /// <returns></returns>
         public virtual bool ContainsKey(TKey key)
         {
-            return Dictionary.ContainsKey(key);
+            return Dictionary?.ContainsKey(key) ?? false;
         }
     }
 
