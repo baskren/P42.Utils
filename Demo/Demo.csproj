@@ -42,7 +42,7 @@
     <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
     <CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
-    <SkiaSharpVersion>3.0.0-preview.5.4</SkiaSharpVersion>
+    <SkiaSharpVersion>3.0.0-preview.5.1</SkiaSharpVersion>
         <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
 
 

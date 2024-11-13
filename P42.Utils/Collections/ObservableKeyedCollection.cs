@@ -93,14 +93,14 @@ namespace P42.Utils
         /// <exception cref="NotImplementedException"></exception>
         protected override TKey GetKeyForItem(TItem item)
         {
-            if (Dictionary is not null &&  Dictionary.TryGetKey(item, out TKey key))
+            if (Dictionary != null &&  Dictionary.TryGetKey(item, out TKey key))
                 return (TKey)key;
             throw new System.Exception("No key for item");
         }
 
         public virtual bool TryGetKey(TItem item, out TKey key)
         {
-            if (Dictionary is not null)
+            if (Dictionary != null)
                 return Dictionary.TryGetKey(item, out key);
             key = default;
             return false;
