@@ -78,29 +78,29 @@ namespace P42.Utils.Uno
 
         private static void HtmlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TextBlock textBlock)
+            if (d is not TextBlock textBlock)
+                return;
+
+            var text = (string)e.NewValue ?? string.Empty;
+            try
             {
-                var text = (string)e.NewValue ?? string.Empty;
-                try
+                var htmlSpans = new HtmlSpans(text);
+                if (textBlock.GetHtmlDependencyObject() is HtmlDependencyObject html)
                 {
-                    var htmlSpans = new HtmlSpans(text);
-                    if (textBlock.GetHtmlDependencyObject() is HtmlDependencyObject html)
-                    {
-                        html.HtmlSpans = htmlSpans;
-                        html.FontFamily = textBlock.FontFamily;
-                    }
-                    else
-                    {
-                        html = new HtmlDependencyObject(textBlock, htmlSpans);
-                        textBlock.SetHtmlDependencyObject(html);
-                    }
+                    html.HtmlSpans = htmlSpans;
+                    html.FontFamily = textBlock.FontFamily;
                 }
-                catch (Exception)
+                else
                 {
-                    // if anything goes wrong just show the html
-                    Console.WriteLine($"TextBlockExtensions.HtmlChanged Could not convert to Html [{text}]");
-                    textBlock.Text = Windows.Data.Html.HtmlUtilities.ConvertToText(text);
+                    html = new HtmlDependencyObject(textBlock, htmlSpans);
+                    textBlock.SetHtmlDependencyObject(html);
                 }
+            }
+            catch (Exception)
+            {
+                // if anything goes wrong just show the html
+                Console.WriteLine($"TextBlockExtensions.HtmlChanged Could not convert to Html [{text}]");
+                textBlock.Text = Windows.Data.Html.HtmlUtilities.ConvertToText(text);
             }
         }
 
