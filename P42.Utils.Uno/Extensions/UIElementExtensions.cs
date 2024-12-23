@@ -235,6 +235,8 @@ namespace P42.Utils.Uno
         internal static void FindChildren<T>(List<T> results, DependencyObject startNode)
           where T : DependencyObject
         {
+            startNode ??= Platform.Window?.Content;
+            
             int count = VisualTreeHelper.GetChildrenCount(startNode);
             for (int i = 0; i < count; i++)
             {
@@ -247,5 +249,7 @@ namespace P42.Utils.Uno
                 FindChildren<T>(results, current);
             }
         }
+        
+        
     }
 }

@@ -27,7 +27,7 @@ public static class AssetExtensions
             projectPath = projectPath.Substring(index + prefix2.Length);
         }
 
-        Console.WriteLine($"projectName:projectPath = {projectName}:{projectPath}");
+        // Console.WriteLine($"projectName:projectPath = {projectName}:{projectPath}");
 
         var argument = string.Empty;
         if (projectPath.IndexOf('#') is int argIndex && argIndex > -1)
