@@ -42,7 +42,8 @@ public static class AssetExtensions
 
 #if ANDROID
         useProjectPath = true;
-#elif !RELEASE && BROWSERWASM
+#elif BROWSERWASM
+//#elif !RELEASE && BROWSERWASM
         useProjectPath = true;
 #elif !RELEASE && DESKTOP
         useProjectPath = true;

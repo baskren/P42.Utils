@@ -37,13 +37,13 @@ namespace P42.Utils.Uno
         public static Assembly Assembly => _assembly ??= typeof(Platform).Assembly;
 
         static Microsoft.UI.Xaml.Media.FontFamily _mathFontFamily;
-        public static Microsoft.UI.Xaml.Media.FontFamily MathFontFamily => _mathFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily(AssetExtensions.AssetPath("ms-appx:///P42.Utils.Uno/Assets/Fonts/STIXGeneral.ttf#STIXGeneral"));
+        public static Microsoft.UI.Xaml.Media.FontFamily MathFontFamily => _mathFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/STIXGeneral.ttf#STIXGeneral");
 
         static Microsoft.UI.Xaml.Media.FontFamily _sansSerifFontFamily;
         public static Microsoft.UI.Xaml.Media.FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI#Regular");
 
         static Microsoft.UI.Xaml.Media.FontFamily _monoSpaceFontFamily;
-        public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily(AssetExtensions.AssetPath("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code"));
+        public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
 
 
         public static void Init(Microsoft.UI.Xaml.Application application, Microsoft.UI.Xaml.Window window)
