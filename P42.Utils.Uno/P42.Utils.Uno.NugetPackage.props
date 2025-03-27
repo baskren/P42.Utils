@@ -35,7 +35,7 @@
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
-  <!-- NUGET WINDOWS ASSETS WORKAROUND -->
+  <!-- NUGET WINDOWS ASSETS WORKAROUND : CAN WE DELETE THIS? -->
   <!--
   <ItemGroup>
     <None Include="Assets/**/*">

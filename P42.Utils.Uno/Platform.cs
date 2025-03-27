@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
-using Microsoft.UI.Dispatching;
 
 namespace P42.Utils.Uno;
 
@@ -11,15 +6,16 @@ public static class Platform
     /// <summary>
     /// Floor value for FontSize, used by TextBlockExtensions.FloorFontSize
     /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public static double MinFontSize { get; set; } = 10.0;
 
     #region Application
-    private static Microsoft.UI.Xaml.Application? _application;
+    private static Application? _application;
     /// <summary>
     /// Reference to current application
     /// </summary>
     /// <exception cref="Exception"></exception>
-    public static Microsoft.UI.Xaml.Application Application
+    public static Application Application
     {
         get => _application ?? throw new Exception("P42.Utils.Uno.Platform.Application not set");
         private set => _application = value;
@@ -27,23 +23,23 @@ public static class Platform
     #endregion
 
     #region Window / Frame
-    private static Microsoft.UI.Xaml.Window? _mainWindow;
+    private static Window? _mainWindow;
 
     [Obsolete("Use MainWindow instead", true)]
-    public static Microsoft.UI.Xaml.Window Window => throw new NotImplementedException();
+    public static Window Window => throw new NotImplementedException();
 
     /// <summary>
     /// Reference to main window
     /// </summary>
     /// <exception cref="Exception"></exception>
-    public static Microsoft.UI.Xaml.Window MainWindow
+    public static Window MainWindow
     {
         get => _mainWindow ?? throw new Exception("P42.Utils.Uno.Platform.Window not set");
         private set => _mainWindow = value; 
     }
 
-    public static Microsoft.UI.Xaml.Controls.Frame Frame 
-        => MainWindow.Content as Microsoft.UI.Xaml.Controls.Frame
+    public static Frame Frame 
+        => MainWindow.Content as Frame
            ?? throw new Exception("P42.Utils.Uno.Platform.MainWindow.Current not a Frame");
     #endregion
     
@@ -59,12 +55,12 @@ public static class Platform
         private set => _mainThread = value;
     }
 
-    private static DispatcherQueue? _mainThreadDispatchQueue;
+    private static Microsoft.UI.Dispatching.DispatcherQueue? _mainThreadDispatchQueue;
     /// <summary>
     /// DispatchQueue for the main thread
     /// </summary>
     /// <exception cref="Exception"></exception>
-    public static DispatcherQueue MainThreadDispatchQueue
+    public static Microsoft.UI.Dispatching.DispatcherQueue MainThreadDispatchQueue
     {
         get => _mainThreadDispatchQueue ?? throw new Exception("Platform.MainThreadDispatchQueue not set"); 
         private set => _mainThreadDispatchQueue = value;
@@ -72,15 +68,15 @@ public static class Platform
     #endregion
 
     #region AssembliesToInclude
-    private static List<Assembly>? _assembliesToInclude;
+    private static List<System.Reflection.Assembly>? _assembliesToInclude;
     [Obsolete("Is this still needed?", true)]
-    public static List<Assembly> AssembliesToInclude => _assembliesToInclude ??= [typeof(P42.Utils.DebugExtensions).Assembly];
+    public static List<System.Reflection.Assembly> AssembliesToInclude => _assembliesToInclude ??= [typeof(P42.Utils.DebugExtensions).Assembly];
     #endregion
 
     #region Assembly
-    private static Assembly? _assembly;
+    private static System.Reflection.Assembly? _assembly;
     [Obsolete("Is this still needed?", true)]
-    public static Assembly Assembly => _assembly ??= typeof(Platform).Assembly;
+    public static System.Reflection.Assembly Assembly => _assembly ??= typeof(Platform).Assembly;
     #endregion
 
     #region Font Families
@@ -113,10 +109,11 @@ public static class Platform
     /// <summary>
     /// Monospace font family
     /// </summary>
+    // ReSharper disable once StringLiteralTypo
     public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
     #endregion
 
-    public static void Init(Microsoft.UI.Xaml.Application application, Microsoft.UI.Xaml.Window window)
+    public static void Init(Application application, Window window)
     {
         Application = application;
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -125,19 +122,19 @@ public static class Platform
         Environment.Init();
         // Environment.PlatformTimer = new Timer();
         Environment.PlatformPathLoader = PlatformPathLoader;
-        P42.Utils.DiskSpace.PlatformDiskSpace = new DeviceDisk();
+        DiskSpace.PlatformDiskSpace = new DeviceDisk();
         P42.Utils.Process.PlatformProcess = new Process();
         MainThread = Thread.CurrentThread;
-        MainThreadDispatchQueue = DispatcherQueue.GetForCurrentThread();
+        MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
         NotifiableObject.BaseNotifiablePropertyObject.MainThreadAction = P42.Utils.Uno.MainThread.Invoke;
     }
 
     private static void PlatformPathLoader()
     {
-        Environment.ApplicationLocalFolderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-        Environment.ApplicationLocalCacheFolderPath = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
-        Environment.ApplicationTemporaryFolderPath = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
+        Environment.ApplicationLocalFolderPath = ApplicationData.Current.LocalFolder.Path;
+        Environment.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
+        Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
     }
 
 }
