@@ -1,65 +1,86 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public interface IDataTemplateSet
 {
+    Type DataType { get; }
+    Type TemplateType { get; }
+    Func<UIElement> Constructor { get; }
+    
+    DataTemplate Template { get;  }
+}
 
+/// <summary>
+/// Container for using a FrameworkElement's Type as DataTemplate, paired with a Type to be used for the DataBinding  
+/// </summary>
+/// <param name="dataType"></param>
+/// <param name="templateType"></param>
+/// <param name="constructor">recommended constructor lambda for improved performance</param>
+public abstract class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> constructor) : IDataTemplateSet
+{
+    /// <summary>
+    /// Type that will be bound to Template 
+    /// </summary>
+    public Type DataType { get; } = dataType;
 
-    public class DataTemplateSet
+    /// <summary>
+    /// Type used for Template bound to Data
+    /// </summary>
+    public Type TemplateType { get; } = templateType;
+
+    public readonly HashSet<UIElement> RecycleStore = [];
+
+    /// <summary>
+    /// Optional constructor, for better performance over Activator.CreateInstance()
+    /// </summary>
+    public Func<UIElement> Constructor { get; } = constructor;
+
+    private DataTemplate? _dataTemplate;
+    public DataTemplate Template
     {
-
-        public Type DataType { get; protected set; }
-        public Type TemplateType { get; protected set; }
-        public readonly HashSet<UIElement> RecycleStore = new HashSet<UIElement>();
-
-        public Func<UIElement> Constructor { get; protected set; }
-
-        DataTemplate dataTemplate;
-        public DataTemplate Template
-        {
-            get
-            {
-                //System.Console.WriteLine($"get_DataTemplate ENTER {DataType} {TemplateType}");
-                if (dataTemplate is null)
-                {
-                    //System.Console.WriteLine($"get_DataTemplate A {DataType} {TemplateType}");
-                    dataTemplate = TemplateType?.AsDataTemplate();
-                }
-                //System.Console.WriteLine($"get_DataTemplate EXIT {DataType} {TemplateType} {dataTemplate}");
-                return dataTemplate;
-            }
-            internal set => dataTemplate = value;
-        }
-
-        public DataTemplateSet(Type dataType, Type templateType, Func<UIElement> constructor = null)
-        {
-            DataType = dataType;
-            if (dataType is null)
-                throw new ArgumentNullException(nameof(dataType));
-
-            TemplateType = templateType;
-            if (templateType is null)
-                throw new ArgumentNullException(nameof(templateType));
-
-            Constructor = constructor;
-
-            if (Constructor is null)
-                Constructor = () =>
-                {
-                    if (TemplateType is null)
-                        return null;
-                    return (UIElement)Activator.CreateInstance(TemplateType);
-                };
-        }
+        get => _dataTemplate ??= TemplateType.AsDataTemplate() ?? throw new Exception("Cannot generate data template for " + TemplateType);
+        internal set => _dataTemplate = value;
     }
+}
 
-    public class NullDataTemplateSet : DataTemplateSet
-    {
-        public NullDataTemplateSet(Type templateType = null, Func<UIElement> constructor = null) : base (typeof(object), typeof(object), constructor)
-        {
-            DataType = null;
-            TemplateType = templateType;
-        }
-    }
+/// <summary>
+/// Container for using a FrameworkElement's Type as DataTemplate, paired with a Type to be used for the DataBinding  
+/// </summary>
+/// <param name="constructor">>recommended constructor lambda for improved performance.
+/// default: () => (FrameworkElement)(templateType is null ? new NullView() : Activator.CreateInstance(templateType))</param>
+/// <typeparam name="TData">Type for Data</typeparam>
+/// <typeparam name="TTemplate">Type of DataTemplate</typeparam>
+public class DataTemplateSet<TData, TTemplate>(Func<UIElement>? constructor = null) 
+    : DataTemplateSet(typeof(TData), typeof(TTemplate), constructor ?? Activator.CreateInstance<TTemplate>)  
+    where TTemplate : FrameworkElement, new();
+
+public interface INullDataTemplateSet : IDataTemplateSet;
+
+/// <summary>
+/// 
+/// Template set used to set view to be used with null data
+/// </summary>
+/// <param name="constructor">>recommended constructor lambda for improved performance.
+/// default: () => (FrameworkElement)(templateType is null ? new NullView() : Activator.CreateInstance(templateType))</param>
+/// <typeparam name="TTemplate">Type for DataTemplate</typeparam>
+public class NullDataTemplateSet<TTemplate>(Func<UIElement>? constructor = null)
+    : DataTemplateSet<NullView, TTemplate>(constructor ?? Activator.CreateInstance<TTemplate>), INullDataTemplateSet
+    where TTemplate : FrameworkElement, new();
+
+/// <summary>
+/// Default DataTemplateSet for .NullTemplateSet and .NoMatchTemplateSet in DataTemplateSetSelector
+/// </summary>
+public class DefaultNullDataTemplateSet() : NullDataTemplateSet<NullView>(() => new NullView());
+
+/// <summary>
+/// Default view returned by DataTemplateSetSelector for null DataContext
+/// </summary>
+public partial class NullView : Microsoft.UI.Xaml.Controls.Grid
+{
+    public NullView()
+        => Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Gray);
 }

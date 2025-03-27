@@ -1,251 +1,243 @@
-﻿#if __ANDROID__
-using Java.Interop;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using P42.Serilog.QuickLog;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+// ReSharper disable CommentTypo
+// ReSharper disable once InconsistentNaming
+public static class UIElementExtensions
 {
-    public static class UIElementExtensions
+    /// <summary>
+    /// Does the element have a prescribed width
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasPrescribedWidth(this FrameworkElement element) => !double.IsNaN(element.Width) && element.Width >= 0;
+    /// <summary>
+    /// Does the element have a prescrib`ed height
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasPrescribedHeight(this FrameworkElement element) => !double.IsNaN(element.Height) && element.Height >= 0;
+
+    /// <summary>
+    /// Does the element have a prescribed minimum width
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasMinWidth(this FrameworkElement element) => !double.IsNaN(element.MinWidth) && element.MinWidth >= 0;
+    /// <summary>
+    /// Does the element have a prescribed minimum height
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasMinHeight(this FrameworkElement element) => !double.IsNaN(element.MinHeight) && element.MinHeight >= 0;
+
+    /// <summary>
+    /// Does the element have a prescribed maximum width
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasMaxWidth(this FrameworkElement element) => !double.IsNaN(element.MaxWidth) && element.MaxWidth >= 0;
+    /// <summary>
+    /// Does the element have a prescribed maximum height
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static bool HasMaxHeight(this FrameworkElement element) => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
+    
+    /// <summary>
+    /// Get Bounds of FrameworkElement
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="relativeTo">default: AppWindow.Frame</param>
+    /// <returns></returns>
+    // ReSharper disable once InconsistentNaming
+    private static Rect GetBounds(this FrameworkElement element, UIElement? relativeTo = null)
     {
-        public static bool HasPrescribedWidth(this FrameworkElement element) => !double.IsNaN(element.Width) && element.Width >= 0;
-        public static bool HasPrescribedHeight(this FrameworkElement element) => !double.IsNaN(element.Height) && element.Height >= 0;
+        relativeTo ??= Platform.Frame;
+        var ttv = element.TransformToVisual(relativeTo);
+        var location = ttv.TransformPoint(new Point(0, 0));
+        return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
+    }
 
-        public static bool HasMinWidth(this FrameworkElement element) => !double.IsNaN(element.MinWidth) && element.MinWidth >= 0;
-        public static bool HasMinHeight(this FrameworkElement element) => !double.IsNaN(element.MinHeight) && element.MinHeight >= 0;
+    /// <summary>
+    /// Get Bounds of UIElement
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="relativeTo">default: AppWindow.Frame</param>
+    /// <returns></returns>
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once UnusedMember.Local
+    private static Rect GetBounds(this UIElement element, UIElement? relativeTo = null)
+    {
+        if (element is FrameworkElement fe)
+            return GetBounds(fe, relativeTo);
+        
+        relativeTo ??= Platform.Frame;
+        var ttv = element.TransformToVisual(relativeTo);
+        var location = ttv.TransformPoint(new Point(0, 0));
+        return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
+    }
+    
+    /// <summary>
+    /// Get Bounds of UIElement relative to another UIElement
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="relativeToElement"></param>
+    /// <returns></returns>
+    [Obsolete("Use GetBounds() instead.")]
+    public static Rect GetBoundsRelativeTo(this FrameworkElement element, UIElement relativeToElement)
+    {
+        var ttv = element.TransformToVisual(relativeToElement);
+        var location = ttv.TransformPoint(new Point(0, 0));
+        return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
+    }
 
-        public static bool HasMaxWidth(this FrameworkElement element) => !double.IsNaN(element.MaxWidth) && element.MaxWidth >= 0;
-        public static bool HasMaxHeight(this FrameworkElement element) => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
-
-
-#if __ANDROID__
-
-        static double _scale = -1;
-        static double DisplayScale
+    /// <summary>
+    /// Find first ancestor of type T
+    /// </summary>
+    /// <param name="element"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T? FindAncestor<T>(this UIElement element) where T : UIElement
+    {
+        var parent = VisualTreeHelper.GetParent(element); // as FrameworkElement;
+        while (parent != null)
         {
-            get
+            if (parent is T uiElement)
+                return uiElement;
+            
+            parent = VisualTreeHelper.GetParent(parent);
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// Try to find first ancestor of type T
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="ancestor"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static bool TryFindAncestor<T>(this UIElement element, out T? ancestor) where T : UIElement
+    {
+        ancestor = element.FindAncestor<T>();
+        return ancestor != null;
+    }
+
+    /// <summary>
+    /// Convert a type into a DataTemplate Xaml string
+    /// </summary>
+    /// <param name="templateType"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public static string AsDataTemplateXaml(this Type templateType)
+    {
+        if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
+            throw new Exception($"Cannot convert type [{templateType}] into DataTemplate");
+
+        var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
+        //if (dataType.Namespace == typeof(Type).Namespace)
+        //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" xmlns:tlocal=\"using:{templateType.Namespace}\" xmlns:system=\"using:System\" x:DataType=\"system:{dataType.Name}\"><tlocal:{templateType.Name} /></DataTemplate>";
+        //else
+        //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:tlocal=\"using:{templateType.Namespace}\" \n\t xmlns:dlocal=\"using:{dataType.Namespace}\" \n\t x:DataType=\"dlocal:{dataType.Name}\"> \n\t\t<tlocal:{templateType.Name} /> \n</DataTemplate>";
+        // System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDataTemplate: markup: " + markup);
+        //template.
+        return markup;
+    }
+
+    /// <summary>
+    /// Convert type to a DataTemplate
+    /// </summary>
+    /// <param name="templateType"></param>
+    /// <param name="filePath"></param>
+    /// <param name="lineNumber"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public static DataTemplate? AsDataTemplate(this Type templateType, [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
+    {
+        try
+        {
+            var markup = templateType.AsDataTemplateXaml();
+            return (DataTemplate)XamlReader.Load(markup);
+        }
+        catch (Exception e)
+        {
+            QLog.Error(e, $"{filePath}:{lineNumber}");
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Gets the first descendent of a FrameworkElement
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static UIElement? GetFirstDescendent(this FrameworkElement element)
+        => element.FindChildren<UIElement>().FirstOrDefault();
+
+    /// <summary>
+    /// Find's child of a FrameworkElement by name
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="controlName"></param>
+    /// <returns></returns>
+    public static DependencyObject? FindChildByName(this DependencyObject parent, string controlName)
+    {
+        var count = VisualTreeHelper.GetChildrenCount(parent);
+
+        for (var i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is FrameworkElement element && element.Name == controlName)
+                return element;
+
+            var findResult = FindChildByName(child, controlName);
+            if (findResult != null)
+                return findResult;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets the Children of a DependencyObject
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="strictTypeCheck">true: will not check for derived classes</param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static List<T> FindChildren<T>(this DependencyObject parent, bool strictTypeCheck = true) where T : DependencyObject
+    {
+        var results = new List<T>();
+        FindChildrenInternal(results, parent, strictTypeCheck);
+        return results;
+    }
+
+    internal static void FindChildrenInternal<T>(List<T> results, DependencyObject? startNode, bool strictTypeCheck) where T : DependencyObject
+    {
+        startNode ??= Window.Current?.Content;
+
+        var count = VisualTreeHelper.GetChildrenCount(startNode);
+        for (var i = 0; i < count; i++)
+        {
+            var current = VisualTreeHelper.GetChild(startNode, i);
+            if (current is T || (!strictTypeCheck && current.GetType().GetTypeInfo().IsSubclassOf(typeof(T))))
             {
-                if (_scale > 0)
-                    return _scale;
-                using var displayMetrics = new Android.Util.DisplayMetrics();
-                using var service = global::Uno.UI.ContextHelper.Current.GetSystemService(Android.Content.Context.WindowService);
-                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
-                var display = windowManager?.DefaultDisplay;
-#pragma warning disable CA1422 // Validate platform compatibility
-                display?.GetRealMetrics(displayMetrics);
-#pragma warning restore CA1422 // Validate platform compatibility
-                _scale = (double)displayMetrics?.Density;
-                return _scale;
+                var asType = (T)current;
+                results.Add(asType);
             }
-        }
-
-        public static Rect GetBounds(this UIElement element)
-        {
-            if (element is Android.Views.View view)
-            {
-                int[] nativeLocation = new int[2];
-                //view.GetLocationOnScreen(nativeLocation);
-                view.GetLocationInWindow(nativeLocation);
-                var x = nativeLocation[0] / DisplayScale;
-                var y = nativeLocation[1] / DisplayScale;
-
-                /*
-                var rect = new Android.Graphics.Rect();
-                var window = ((Android.App.Activity)view.Context).Window;
-                window.DecorView.GetWindowVisibleDisplayFrame(rect);
-
-                using var displayMetrics = new Android.Util.DisplayMetrics();
-
-                using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
-                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
-
-                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
-
-                var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
-
-                x -= statusBarHeight;
-                */
-                return new Rect(x, y, element.ActualSize.X, element.ActualSize.Y);
-            }
-            return WinUIGetBounds(element);
-        }
-
-#elif __IOS__ || __MACOS__
-
-        public static Rect GetBounds(this FrameworkElement element)
-        {
-
-            //var ttv = element.TransformToVisual(Platform.Window.Content);
-            //var location = ttv.TransformPoint(new Point(0, 0));
-            var rect = element.ConvertRectToView(element.Bounds, null);
-            return new Rect(rect.X, rect.Y, rect.Width,rect.Height);
-        }
-
-        public static Rect GetBounds(this UIElement element)
-        {
-            var rect = element.ConvertRectToView(element.Bounds, null);
-            return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
-        }
-
-
-#else
-        public static Rect GetBounds(this FrameworkElement element)
-            => WinUIGetBounds(element);
-
-        public static Rect GetBounds(this UIElement element)
-            => WinUIGetBounds(element);
-#endif
-
-        static Rect WinUIGetBounds(this FrameworkElement element)
-        {
-            var frame = Platform.Window.Content;
-            var ttv = element.TransformToVisual(frame);
-            var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
-        }
-
-        static Rect WinUIGetBounds(this UIElement element)
-        {
-            if (element is FrameworkElement fwElement)
-                return fwElement.WinUIGetBounds();
-            var ttv = element.TransformToVisual(Platform.Window.Content);
-            var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
-        }
-
-
-
-        public static Rect GetBoundsRelativeTo(this FrameworkElement element, UIElement relativeToElement)
-        {
-            var ttv = element.TransformToVisual(relativeToElement);
-            var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
-        }
-
-        public static T FindAncestor<T>(this UIElement element) where T : UIElement
-        {
-
-
-            var parent = VisualTreeHelper.GetParent(element); // as FrameworkElement;
-            while (parent != null)
-            {
-                if (parent is T)
-                    return parent as T;
-                parent = VisualTreeHelper.GetParent(parent);
-                /*
-                if (parent is FrameworkElement fe)
-                    parent = fe.Parent as FrameworkElement;
-                else
-                    parent = null;
-                */
-            }
-            return default;
-        }
-
-        public static string AsDataTemplateXaml(this Type templateType)
-        {
-            if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
-                throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
-            string markup = string.Empty;
-            //if (dataType is null)
-            markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
-            //if (dataType.Namespace == typeof(Type).Namespace)
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" xmlns:tlocal=\"using:{templateType.Namespace}\" xmlns:system=\"using:System\" x:DataType=\"system:{dataType.Name}\"><tlocal:{templateType.Name} /></DataTemplate>";
-            //else
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:tlocal=\"using:{templateType.Namespace}\" \n\t xmlns:dlocal=\"using:{dataType.Namespace}\" \n\t x:DataType=\"dlocal:{dataType.Name}\"> \n\t\t<tlocal:{templateType.Name} /> \n</DataTemplate>";
-            // System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDataTemplate: markup: " + markup);
-            //template.
-            return markup;
-        }
-
-        public static DataTemplate AsDataTemplate(this Type templateType)
-        {
-            try
-            {
-                if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
-                    throw new Exception("Cannot convert type [" + templateType + "] into DataTemplate");
-                var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
-                //System.Diagnostics.Trace.WriteLine($"AsDataTemplate : [{markup}]");
-                var template = (DataTemplate)XamlReader.Load(markup);
-                //template.
-                return template;
-            }
-            catch (Exception e)
-            {
-                //System.Console.WriteLine($"EXCEPTION [{e.Message}] [{e.StackTrace}]");
-                System.Diagnostics.Trace.WriteLine($"EXCEPTION [{e.Message}] [{e.StackTrace}]");
-            }
-            return null;
-        }
-
-#if __WASM__  // out of commission
-        public static UIElement GetFirstDescendent(this FrameworkElement element)
-        {
-            var enumerator = element.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                //System.Console.WriteLine($"UIElementExtensions. enum.cur [{enumerator}] [{enumerator.Current.GetType()}] [{enumerator.Current.GetType().BaseType}]");
-                if (enumerator.Current is UIElement fe)
-                {
-                    //System.Console.WriteLine($"UIElementExtensions. fe [{fe.GetHtmlAttribute("style")}]");
-                    /*
-                    foreach (var property in fe.GetProperties())
-                    {
-                        System.Console.WriteLine($"UIElementExtensions. property [{property.Name}] [{property.PropertyType}] [{property}] [{fe.GetPropertyValue(property.Name)}]");
-                    }
-                    */
-                    return fe;
-                }
-            }
-            //System.Console.WriteLine($"UIElementExtensions. NOTHING");
-            return null;
-        }
-#endif
-
-        public static DependencyObject FindChildByName(this DependencyObject parent, string ControlName)
-        {
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is FrameworkElement && ((FrameworkElement)child).Name == ControlName)
-                    return child;
-
-                var FindResult = FindChildByName(child, ControlName);
-                if (FindResult != null)
-                    return FindResult;
-            }
-
-            return null;
-        }
-
-        public static List<T> FindChildren<T>(this DependencyObject parent) where T : DependencyObject
-        {
-            var results = new List<T>();
-            FindChildren(results, parent);
-            return results;
-        }
-
-        internal static void FindChildren<T>(List<T> results, DependencyObject startNode)
-          where T : DependencyObject
-        {
-            int count = VisualTreeHelper.GetChildrenCount(startNode);
-            for (int i = 0; i < count; i++)
-            {
-                DependencyObject current = VisualTreeHelper.GetChild(startNode, i);
-                if ((current.GetType()).Equals(typeof(T)) || (current.GetType().GetTypeInfo().IsSubclassOf(typeof(T))))
-                {
-                    T asType = (T)current;
-                    results.Add(asType);
-                }
-                FindChildren<T>(results, current);
-            }
+            FindChildrenInternal(results, current, strictTypeCheck);
         }
     }
 }

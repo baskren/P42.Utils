@@ -1,25 +1,76 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+/// <summary>
+/// Platform delegates for LongRunningTask
+/// </summary>
+public interface ILongRunningTask
 {
-    public interface ILongRunningTask
-    {
-        Task<T> RunAsync<T>(Func<T> function, Func<T> expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Task<T> RunAsync<T>(Func<T> func, Func<T>? cancellationAction = null);
 
-        Task<T> RunAsync<T>(Func<Task<T>> function, Func<T> expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Task<T> RunAsync<T>(Func<Task<T>> func, Func<T>? cancellationAction = null);
 
-        Task<T> RunAsync<T>(Func<T> function, Func<Task<T>> expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Task<T> RunAsync<T>(Func<T> func, Func<Task<T>> cancellationAction);
 
-        Task<T> RunAsync<T>(Func<Task<T>> function, Func<Task<T>> expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Task<T> RunAsync<T>(Func<Task<T>> func, Func<Task<T>> cancellationAction);
 
 
-        Task RunAsync(Action action, Action expirationHandler = null);
+    
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="action"></param>
+    /// <param name="cancellationAction"></param>
+    Task RunAsync(Action action, Action? cancellationAction = null);
 
-        Task RunAsync(Func<Task> action, Action expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="action"></param>
+    /// <param name="cancellationAction"></param>
+    Task RunAsync(Action action, Func<Task> cancellationAction);
 
-        Task RunAsync(Action action, Func<Task> expirationHandler = null);
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    Task RunAsync(Func<Task> action, Action? cancellationAction = null);
 
-        Task RunAsync(Func<Task> action, Func<Task> expirationHandler = null);
-    }
+    /// <summary>
+    /// Start long-running background process
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="cancellationAction"></param>
+    Task RunAsync(Func<Task> action, Func<Task> cancellationAction);
 }

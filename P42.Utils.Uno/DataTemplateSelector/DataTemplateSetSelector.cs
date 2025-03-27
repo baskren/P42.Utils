@@ -3,251 +3,313 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml;
+using P42.Serilog.QuickLog;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// A DataTemplateSelector that uses DataTemplateSets in order to enable a little bit more function and, optionally, performance
+/// </summary>
+// ReSharper disable once UnusedType.Global
+public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, IDataTemplateSet>
 {
-    public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, DataTemplateSet>
+    #region Properties
+
+    /// <summary>
+    /// DataTemplate to be used if the data item is null
+    /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public INullDataTemplateSet NullTemplateSet { get; set; } = new DefaultNullDataTemplateSet();
+
+    /// <summary>
+    /// DataTemplate to be used if there isn't a matching DataTemplateSet stored in this DataTEemplateSelector
+    /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public INullDataTemplateSet NoMatchTemplateSet { get; set; } = new DefaultNullDataTemplateSet();
+
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public DataTemplateSetSelector()
     {
-        NullDataTemplateSet NullTemplateSet { get; set; } = new NullDataTemplateSet();
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>();
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>();
+    }
 
-        protected DataTemplateSet NoMatchTemplateSet { get; set; } = new NullDataTemplateSet();
+    /// <summary>
+    /// Constructor using external dictionary of type to DataTemplateSets
+    /// </summary>
+    /// <param name="itemTemplates"></param>
+    public DataTemplateSetSelector(Dictionary<Type, IDataTemplateSet> itemTemplates)
+    {
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>(itemTemplates);
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>();
+    }
 
-        Dictionary<Type, DataTemplateSet> CachedTemplates;
+    /// <summary>
+    /// Constructor using external DataTemplateSetSelector 
+    /// </summary>
+    /// <param name="selector"></param>
+    public DataTemplateSetSelector(DataTemplateSetSelector selector)
+    {
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>(selector.ItemTemplateSets);
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>(selector._cachedTemplates);
+    }
+    
+    #endregion
 
-        protected Dictionary<Type, DataTemplateSet> ItemTemplateSets;
+    
+    #region Fields
 
-        public DataTemplateSetSelector()
+    private readonly Dictionary<Type, IDataTemplateSet> _cachedTemplates;
+
+    protected readonly Dictionary<Type, IDataTemplateSet> ItemTemplateSets;
+
+    #endregion
+
+    
+    #region Get View / Get Template
+    /// <summary>
+    /// Gets a UIElement for given data item
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    // ReSharper disable once InconsistentNaming
+    public UIElement GetUIElement(object? item)
+    {
+        try
         {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>();
-            CachedTemplates = new Dictionary<Type, DataTemplateSet>();
+            var set = SelectDataTemplateSet(item);
+            var element = set.Constructor.Invoke();
+            return element;
         }
-
-        public DataTemplateSetSelector(Dictionary<Type, DataTemplateSet> itemTemplates)
+        catch (Exception e)
         {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>(itemTemplates);
-            CachedTemplates = new Dictionary<Type, DataTemplateSet>();
+            QLog.Error(e);
         }
+        return NoMatchTemplateSet.Constructor.Invoke();
+    }
 
-        public DataTemplateSetSelector(DataTemplateSetSelector selector)
-        {
-            ItemTemplateSets = new Dictionary<Type, DataTemplateSet>(selector.ItemTemplateSets);
-            CachedTemplates = new Dictionary<Type, DataTemplateSet>(selector.CachedTemplates);
-        }
+    protected override DataTemplate SelectTemplateCore(object? item, DependencyObject container)
+        => SelectDataTemplateSet(item).Template;
 
-        public UIElement GetUIElement(object item)
-        {
-            try
-            {
-                var set = SelectDataTemplateSet(item);
-                var element = set.Constructor.Invoke();
-                //System.Diagnostics.Debug.WriteLine($"DataTemplateSet.GetUIElement: [{stopwatch.ElapsedMilliseconds}] [{item}]");
-                return element;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine($"EXCEPTION: {e.Message}: {e.StackTrace}");
-                System.Console.WriteLine($"EXCEPTION: {e.Message}: {e.StackTrace}");
-            }
-            return null;
-        }
+    protected override DataTemplate SelectTemplateCore(object? item)
+        => SelectDataTemplateSet(item).Template;
 
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
-        {
-            //return base.SelectTemplateCore(item, container);
-            //System.Console.WriteLine($"SelectTemplateCore ENTER {item} {container}");
-            var result = SelectDataTemplateSet(item)?.Template;
-            //System.Console.WriteLine($"SelectTemplateCore EXIT {item} {container}");
-            return result;
-        }
+    /// <summary>
+    /// Find the DataTemplateSet for a given object
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    // ReSharper disable once MemberCanBeProtected.Global
+    public virtual IDataTemplateSet SelectDataTemplateSet(object? item)
+    {
+        if (item is null)
+            return NullTemplateSet;
 
-        protected override DataTemplate SelectTemplateCore(object item)
-        {
-            //System.Console.WriteLine($"SelectTemplateCore ENTER {item}");
-            var result = SelectDataTemplateSet(item)?.Template;
-            //System.Console.WriteLine($"SelectTemplateCore EXIT {item}");
-            return result;
-        }
+        var type = item.GetType();
+        if (_cachedTemplates.TryGetValue(type, out var templateSet))
+            return templateSet;
 
-        public virtual DataTemplateSet SelectDataTemplateSet(object item)
-        {
-            //System.Console.WriteLine($"SelectDataTemplateSet ENTER {item}");
-            var type = item?.GetType();
-            if (type is null)
-            {
-                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : A");
-                return NullTemplateSet;
-            }
-            if (CachedTemplates.TryGetValue(type, out DataTemplateSet templateSet))
-            {
-                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : B");
-                return templateSet;
-            }
-            if (SelectDataTemplateSetCore(type) is DataTemplateSet templateSetItem)
-            {
-                //System.Console.WriteLine($"SelectDataTemplateSet EXIT : C");
-                CachedTemplates.Add(type, templateSetItem);
-                return templateSetItem;
-            }
-            //System.Console.WriteLine($"SelectDataTemplateSet EXIT : D");
-            return null;
-        }
-
-        protected virtual DataTemplateSet SelectDataTemplateSetCore(Type type)
-        {
-            //System.Console.WriteLine($"SelectDataTemplateSetCore ENTER {type.Name}");
-            if (type is null)
-            {
-                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : A {type.Name}");
-                return NullTemplateSet;
-            }
-            //var typeString = type.ToString();
-            if (ItemTemplateSets.TryGetValue(type, out DataTemplateSet exactMatch))
-            {
-                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : B {type.Name}");
-                return exactMatch;
-            }
-            if (type.IsConstructedGenericType)
-            {
-                var genericSourceType = type.GetGenericTypeDefinition();
-                //var genericTypeString = genericSourceType.ToString();
-                if (ItemTemplateSets.TryGetValue(genericSourceType, out DataTemplateSet genericMatch))
-                {
-                    //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : C {type.Name}");
-                    return genericMatch;
-                }
-            }
-            var baseType = type.BaseType;
-            if (baseType != null)
-            {
-                var result = SelectDataTemplateSetCore(baseType);
-                //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : D {type.Name}");
-                return result;
-            }
-            //System.Console.WriteLine($"SelectDataTemplateSetCore EXIT : E {type.Name}");
+        if (SelectDataTemplateSetCore(type) is not { } templateSetItem)
             return NoMatchTemplateSet;
-        }
 
-        public DataTemplateSet this[Type key]
+        _cachedTemplates.Add(type, templateSetItem);
+        return templateSetItem;
+    }
+
+    protected virtual IDataTemplateSet? SelectDataTemplateSetCore(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        if (ItemTemplateSets.TryGetValue(type, out var exactMatch))
+            return exactMatch;
+
+        if (type.IsConstructedGenericType)
         {
-            get
-            {
-                if (key is null)
-                    return NullTemplateSet;
-                if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet value))
-                    return value;
-                return NoMatchTemplateSet;
-            }
-            set
-            {
-                if (value != null)
-                    ItemTemplateSets[key] = value;
-                else if (ItemTemplateSets.ContainsKey(key))
-                    ItemTemplateSets.Remove(key);
-            }
+            var genericSourceType = type.GetGenericTypeDefinition();
+            if (ItemTemplateSets.TryGetValue(genericSourceType, out var genericMatch))
+                return genericMatch;
         }
 
-        public int IndexOf(DataTemplateSet set)
+        var baseType = type.BaseType;
+        return baseType != null 
+            ? SelectDataTemplateSetCore(baseType) 
+            : null;
+    }
+    #endregion
+
+
+    #region IList / IDictionary support
+
+    /// <summary>
+    /// Dictionary of DataTemplateSets
+    /// </summary>
+    /// <param name="key"></param>
+    public IDataTemplateSet this[Type key]
+    {
+        get => ItemTemplateSets.GetValueOrDefault(key, NoMatchTemplateSet);
+        set => ItemTemplateSets[key] = value;
+    }
+
+    /// <summary>
+    /// Index of a particular DataTemplateSet
+    /// </summary>
+    /// <param name="set"></param>
+    /// <returns></returns>
+    public int IndexOf(IDataTemplateSet set)
+    {
+        var values = ItemTemplateSets.Values.ToArray();
+        return Array.IndexOf(values, set);
+    }
+
+
+    /// <summary>
+    /// DataTypes stored
+    /// </summary>
+    public ICollection<Type> Keys => ItemTemplateSets.Keys;
+
+    /// <summary>
+    /// DataTemplateSets stored
+    /// </summary>
+    public ICollection<IDataTemplateSet> Values => ItemTemplateSets.Values;
+
+    /// <summary>
+    /// Count of DataTemplateSets stored
+    /// </summary>
+    public int Count => ItemTemplateSets.Count;
+
+    /// <summary>
+    /// Is this mutable?
+    /// </summary>
+    public bool IsReadOnly => false;
+
+    /// <summary>
+    /// Add a DataTemplateSet
+    /// </summary>
+    /// <param name="set"></param>
+    public void Add(IDataTemplateSet set)
+        => Add(set.DataType, set);
+
+    /// <summary>
+    /// Add a DataTemplateSet
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="set"></param>
+    public virtual void Add(Type key, IDataTemplateSet set)
+        => ItemTemplateSets[key] = set;
+    
+
+    [Obsolete("Use Add<TDataType, TTemplateType>(Func<UIElement>? constructor), instead", true)]
+    // ReSharper disable UnusedParameter.Global
+    public void Add(Type key, Type value, Func<UIElement>? constructor = null)
+        => throw new NotSupportedException("Use Add<TDataType, TTemplateType>(constructor), instead");
+    // ReSharper restore UnusedParameter.Global
+
+    /// <summary>
+    /// Add a DataTemplateSet
+    /// </summary>
+    /// <param name="item"></param>
+    public void Add(KeyValuePair<Type, IDataTemplateSet> item)
+        => Add(item.Key, item.Value);
+
+    /// <summary>
+    /// Add a DataTemplateSet
+    /// </summary>
+    /// <param name="constructor"></param>
+    /// <typeparam name="TDataType"></typeparam>
+    /// <typeparam name="TTemplateType"></typeparam>
+    public void Add<TDataType, TTemplateType>(Func<UIElement>? constructor = null) where TTemplateType : FrameworkElement, new()
+        => Add(new DataTemplateSet<TDataType,TTemplateType>(constructor));
+    
+    /// <summary>
+    /// Clear all DataTemplateSets
+    /// </summary>
+    public void Clear()
+        => ItemTemplateSets.Clear();
+
+    /// <summary>
+    /// Is there a matching DataTemplateSet
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public bool Contains(KeyValuePair<Type, IDataTemplateSet> item)
+        => ItemTemplateSets.Contains(item);
+
+    /// <summary>
+    /// Is there a matching DataType?
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public bool ContainsKey(Type key)
+        => ItemTemplateSets.ContainsKey(key);
+
+    /// <summary>
+    /// Copy DataTemplateSets to an array, at index
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="arrayIndex"></param>
+    public void CopyTo(KeyValuePair<Type, IDataTemplateSet>[] array, int arrayIndex)
+        => ItemTemplateSets.ToArray().CopyTo(array, arrayIndex);
+
+    /// <summary>
+    /// Enumerator for DataType, DataTemplateSets KVP
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator<KeyValuePair<Type, IDataTemplateSet>> GetEnumerator()
+        => ItemTemplateSets.GetEnumerator();
+
+    /// <summary>
+    /// Remove DataTemplateSet for DataType
+    /// </summary>
+    /// <param name="key">DataType</param>
+    /// <returns></returns>
+    public bool Remove(Type key)
+        => ItemTemplateSets.Remove(key);
+    
+
+    /// <summary>
+    /// Remove kvp from DataTemplateSets
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public bool Remove(KeyValuePair<Type, IDataTemplateSet> item)
+    {
+        if (!TryGetValue(item.Key, out var value) || item.Value.TemplateType != value.TemplateType)
+            return false;
+
+        ItemTemplateSets.Remove(item.Key);
+        return true;
+    }
+
+    public bool TryGetValue(Type? key, out IDataTemplateSet value)
+    {
+        if (key is null)
         {
-            var values = ItemTemplateSets.Values.ToArray();
-            return Array.IndexOf(values, set);
+            value = NullTemplateSet;
+            return false;
         }
+        
+        if (ItemTemplateSets.TryGetValue(key, out var set))
+        {
+            value = set;
+            return true;
+        }
+        
+        value = NoMatchTemplateSet;
+        return false;
+    }
 
-
-        public ICollection<Type> Keys => ItemTemplateSets.Keys;
-
-        public ICollection<DataTemplateSet> Values => ItemTemplateSets.Values;
-
-        public int Count => ItemTemplateSets.Count;
-
-        public bool IsReadOnly => false;
-
-        public void Add(DataTemplateSet set)
-            => Add(set.DataType, set);
+    /// <summary>
+    /// Enumerator for DataTemplateSets
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator IEnumerable.GetEnumerator()
+        => ItemTemplateSets.Select(s => new KeyValuePair<Type, IDataTemplateSet>(s.Key, s.Value)).GetEnumerator();
+    
         
 
-        public virtual void Add(Type key, DataTemplateSet set)
-        {
-            if (key is null)
-            {
-                NullTemplateSet = new NullDataTemplateSet(set.TemplateType, set.Constructor);
-                if (set.Template != null)
-                    NullTemplateSet.Template = set.Template;
-                return;
-            }
-            if (set != null)
-                ItemTemplateSets[key] = set;
-            else if (ItemTemplateSets.ContainsKey(key))
-                ItemTemplateSets.Remove(key);
-        }
+    #endregion
 
-        public void Add(Type key, Type value, Func<UIElement> constructor = null)
-            => Add(key, new DataTemplateSet(key, value, constructor));
-
-        public void Add(KeyValuePair<Type, DataTemplateSet> item)
-            => Add(item.Key, item.Value);
-
-        public void Clear()
-            => ItemTemplateSets.Clear();
-
-        public bool Contains(KeyValuePair<Type, DataTemplateSet> item)
-            => ItemTemplateSets.Contains(item);
-
-        public bool ContainsKey(Type key)
-            => ItemTemplateSets.ContainsKey(key);
-
-        public void CopyTo(KeyValuePair<Type, DataTemplateSet>[] array, int arrayIndex)
-            => ItemTemplateSets.ToArray().CopyTo(array, arrayIndex);
-
-        public IEnumerator<KeyValuePair<Type, DataTemplateSet>> GetEnumerator()
-            => ItemTemplateSets.GetEnumerator();
-
-        public bool Remove(Type key)
-        {
-            if (key is null)
-            {
-                NullTemplateSet = new NullDataTemplateSet();
-                return true;
-            }
-            else if (ItemTemplateSets.ContainsKey(key))
-            {
-                ItemTemplateSets.Remove(key);
-                return true;
-            }
-            return false;
-        }
-
-        public bool Remove(KeyValuePair<Type, DataTemplateSet> item)
-        {
-            if (item.Key is null && NullTemplateSet.TemplateType == item.Value.TemplateType)
-            {
-                NullTemplateSet = new NullDataTemplateSet();
-                return true;
-            }
-            else if (TryGetValue(item.Key, out DataTemplateSet value) && item.Value.TemplateType == value.TemplateType)
-            {
-                ItemTemplateSets.Remove(item.Key);
-                return true;
-            }
-            return false;
-        }
-
-        public bool TryGetValue(Type key, out DataTemplateSet value)
-        {
-            if (key is null)
-            {
-                value = NullTemplateSet;
-                return true;
-            }
-            if (ItemTemplateSets.TryGetValue(key, out DataTemplateSet set))
-            {
-                value = set;
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => ItemTemplateSets.Select(s => new KeyValuePair<Type, DataTemplateSet>(s.Key, s.Value)).GetEnumerator();
-    }
 }

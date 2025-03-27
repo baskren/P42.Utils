@@ -1,11 +1,22 @@
-﻿namespace P42.Utils.Interfaces
+﻿namespace P42.Utils.Interfaces;
+
+/// <summary>
+/// Interface for IDiskSpace
+/// </summary>
+public interface IDiskSpace
 {
-    public interface IDiskSpace
-    {
-        ulong Free { get; }
+    /// <summary>
+    /// Available space
+    /// </summary>
+    ulong Free { get; }
 
-        ulong Size { get; }
+    /// <summary>
+    /// Total Space
+    /// </summary>
+    ulong Size { get; }
 
-        ulong Used { get; }
-    }
+    /// <summary>
+    /// Space used
+    /// </summary>
+    ulong Used { get; }
 }

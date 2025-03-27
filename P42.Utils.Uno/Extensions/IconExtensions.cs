@@ -1,20 +1,33 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+public static class IconExtensions
 {
-    public static class IconExtensions
-    {
-        public static IconElement AsIconElement(this IconSource source)
+    /// <summary>
+    /// Create an IconElement from an IconSource
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static IconElement? AsIconElement(this IconSource source)
+        => source switch
         {
-            if (source is BitmapIconSource bsource)
-                return new BitmapIcon { UriSource = bsource.UriSource, ShowAsMonochrome = bsource.ShowAsMonochrome };
-            if (source is FontIconSource fsource)
-                return new FontIcon { FontFamily = fsource.FontFamily, FontSize = fsource.FontSize, FontWeight = fsource.FontWeight, Glyph = fsource.Glyph, IsTextScaleFactorEnabled = fsource.IsTextScaleFactorEnabled, MirroredWhenRightToLeft = fsource.MirroredWhenRightToLeft };
-            if (source is PathIconSource psource)
-                return new PathIcon { Data = psource.Data };
-            if (source is SymbolIconSource ssource)
-                return new SymbolIcon { Symbol = ssource.Symbol };
-            return null;
-        }
-    }
+            BitmapIconSource bitmapIconSource => new BitmapIcon
+            {
+                UriSource = bitmapIconSource.UriSource, ShowAsMonochrome = bitmapIconSource.ShowAsMonochrome
+            },
+            FontIconSource fontIconSource => new FontIcon
+            {
+                FontFamily = fontIconSource.FontFamily,
+                FontSize = fontIconSource.FontSize,
+                FontWeight = fontIconSource.FontWeight,
+                Glyph = fontIconSource.Glyph,
+                IsTextScaleFactorEnabled = fontIconSource.IsTextScaleFactorEnabled,
+                MirroredWhenRightToLeft = fontIconSource.MirroredWhenRightToLeft
+            },
+            PathIconSource pathIconSource => new PathIcon { Data = pathIconSource.Data },
+            SymbolIconSource symbolIconSource => new SymbolIcon { Symbol = symbolIconSource.Symbol },
+            _ => null
+        };
+    
 }

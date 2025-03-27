@@ -22,7 +22,7 @@
 
 
   <!-- PLATFORM SPECIFIC SOURCE -->
-  <Import Condition="Exists('Directory.Build.PlatformFiles.targets')" Project="Directory.Build.PlatformFiles.targets" />
+  <Import Condition="Exists('DirectoryInfo.Build.PlatformFiles.targets')" Project="DirectoryInfo.Build.PlatformFiles.targets" />
 
 
   <!-- NUGET PACKAGE PROPERTIES -->
@@ -40,12 +40,12 @@
     <Message Text="======================== NOT WINDOWS ========================= " Condition=" !$(TargetFramework.Contains('windows')) " Importance="high" />
     <Message Text="========================== DESKTOP =========================== " Condition=" $(TargetFramework.Contains('desktop')) " Importance="high" />
     <Message Text="=========================== WASM ============================= " Condition=" $(TargetFramework.ToLower().Contains('wasm')) " Importance="high" />
-    <Message Text="=========================== .NET ============================= " Condition=" $(TargetFramework.ToLower().Equals('net8.0')) " Importance="high" />
+    <Message Text="=========================== .NET ============================= " Condition=" $(TargetFramework.ToLower().Equals('net9.0')) " Importance="high" />
     <Message Text="========================== ANDROID =========================== " Condition=" $(TargetFramework.Contains('android')) " Importance="high" />
     <Message Text="============================ IOS ============================= " Condition=" $(TargetFramework.Contains('ios')) " Importance="high" />
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
-  	<Message Text="  DotNetVersion:[net8.0]" Importance="high" />
+  	<Message Text="  DotNetVersion:[net9.0]" Importance="high" />
   	<Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
   	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
@@ -76,13 +76,16 @@
     <Message Text="  AndroidResource:[" Importance="high"/>
     <Message Text="      @(AndroidResource, '%0a      ')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
+    <Message Text="  Platforms:[" Importance="high"/>
+    <Message Text="      @(Platforms, '%0a      ')" Importance="high"/>
+    <Message Text="  ]" Importance="high"/>
     <Message Text="  NuGetPackageRoot:[$(NuGetPackageRoot)]" Importance="high" />
     <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
     <Message Text="  DebugSymbols:[$(DebugSymbols)]" Importance="high" />
     <Message Text="  Optimize:[$(Optimize)]" Importance="high" />
     <Message Text="  WindowsSdkPackageVersion:[$(WindowsSdkPackageVersion)]" Importance="high" />
-    <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]" />
-    <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]" />
+    <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]" Importance="high"  />
+    <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]" Importance="high"  />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

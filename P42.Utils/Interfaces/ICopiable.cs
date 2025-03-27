@@ -1,7 +1,14 @@
-﻿namespace P42.Utils
+﻿namespace P42.Utils;
+
+/// <summary>
+/// Interface for Copiable
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface ICopiable<in T>
 {
-	public interface ICopiable<T>
-	{
-		void PropertiesFrom(T other);
-	}
+    /// <summary>
+    /// Set this instances properties from other
+    /// </summary>
+    /// <param name="other"></param>
+    void PropertiesFrom(T other);
 }

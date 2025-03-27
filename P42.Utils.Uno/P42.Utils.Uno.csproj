@@ -1,27 +1,31 @@
 <Project Sdk="Uno.Sdk">
 
   <PropertyGroup>
+  <!--
      <TargetFrameworks>
-      net8.0-ios;
-      net8.0-maccatalyst;
-      net8.0-android
+      net9.0-ios;
+      net9.0-maccatalyst;
+      net9.0-android
     </TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
       $(TargetFrameworks);
-      net8.0-windows10.0.19041
+      net9.0-windows10.0.19041
     </TargetFrameworks>
     <TargetFrameworks>
       $(TargetFrameworks);
-      net8.0-browserwasm;
-      net8.0-desktop;
-      net8.0
+      net9.0-browserwasm;
+      net9.0-desktop;
+      net9.0
     </TargetFrameworks>
+    -->
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
     <UnoSingleProject>true</UnoSingleProject>
     <OutputType>Library</OutputType>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
 
     <!--
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
@@ -31,11 +35,19 @@
     <UnoFeatures></UnoFeatures>
     -->
 
-    <BuildInParallel>true</BuildInParallel>
+    <!-- Needed to reduce warnings when building with non-Windows OS -->
     <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
     <WinAppSdkBuildToolsVersion>10.0.22621.756</WinAppSdkBuildToolsVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks> 
+
+    <!-- DO WE NEED THE FOLLOWING ?
+    <ImplicitUsings>disable</ImplicitUsings>
+    <BuildInParallel>true</BuildInParallel>
     <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
+    -->
+
+    <!-- DELETE THE FOLLOWING    
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    -->
 
   </PropertyGroup>
 
@@ -59,5 +71,6 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
 
   </ItemGroup>
+
 
 </Project>

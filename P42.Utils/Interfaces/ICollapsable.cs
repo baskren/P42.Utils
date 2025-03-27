@@ -1,8 +1,17 @@
-﻿namespace P42.Utils
+﻿namespace P42.Utils;
+
+/// <summary>
+/// Collapsable interface
+/// </summary>
+public interface ICollapsable
 {
-    public interface ICollapsable
-    {
-        bool IsCollapsed { get; }
-        bool IsTemplate { get; }
-    }
+    /// <summary>
+    /// Is element collapsed
+    /// </summary>
+    bool IsCollapsed { get; }
+    
+    /// <summary>
+    /// Is element a template?
+    /// </summary>
+    bool IsTemplate { get; }
 }

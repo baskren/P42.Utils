@@ -2,13 +2,13 @@
 
 
   <PropertyGroup>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally> 
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
-  
+
   <!-- SHARED ITEMS -->
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    
+
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.0.9" />
     <!--
@@ -19,6 +19,7 @@
 
   <!-- PLATFORM ITEMS -->
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
+    <PackageReference Condition=" $(TargetFramework.Contains('-windows')) " Include="Microsoft.Graphics.Win2D"  Version="1.3.2" />
   </ItemGroup>
   <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
   </ItemGroup>

@@ -5,6 +5,13 @@ namespace P42.Utils.Uno;
 public static class AssetExtensions
 {
 
+    // TODO: Has the reason for this method been fixed in UNO?
+    
+    /// <summary>
+    /// Edit path to asset (particularly library assets) so that it works across all platforms
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns>Asset path for current platform</returns>
     public static string AssetPath(string path)
     {
         //return path;
@@ -12,28 +19,28 @@ public static class AssetExtensions
         var projectPath = path;
         const string prefix1 = "ms-appx://";
         if (projectPath.StartsWith(prefix1))
-            projectPath = projectPath.Substring(prefix1.Length);
+            projectPath = projectPath[prefix1.Length..];
         else
             return path;
 
         projectPath = projectPath.Replace('\\', '/').Replace("//", "/");
 
         var projectName = string.Empty;
-        var prefix2 = $"/Assets/";
-        if (projectPath.IndexOf(prefix2) is int index && index > -1)
+        const string prefix2 = "/Assets/";
+        if (projectPath.IndexOf(prefix2, StringComparison.InvariantCulture) is var index and > -1)
         {
             if (index > 0)
-                projectName = projectPath.Substring(0, index).Trim('/');
-            projectPath = projectPath.Substring(index + prefix2.Length);
+                projectName = projectPath[..index].Trim('/');
+            projectPath = projectPath[(index + prefix2.Length)..];
         }
 
-        Console.WriteLine($"projectName:projectPath = {projectName}:{projectPath}");
+        // Console.WriteLine($"projectName:projectPath = {projectName}:{projectPath}");
 
         var argument = string.Empty;
-        if (projectPath.IndexOf('#') is int argIndex && argIndex > -1)
+        if (projectPath.IndexOf('#') is var argIndex and > -1)
         {
-            argument = projectPath.Substring(argIndex + 1);
-            projectPath = projectPath.Substring(0, argIndex);
+            argument = projectPath[(argIndex + 1)..];
+            projectPath = projectPath[..argIndex];
         }
 
         Console.WriteLine($"projectName:projectPath#argument = {projectName}:{projectPath}#{argument}");
@@ -42,7 +49,7 @@ public static class AssetExtensions
 
 #if ANDROID
         useProjectPath = true;
-#elif !RELEASE && BROWSERWASM
+#elif BROWSERWASM
         useProjectPath = true;
 #elif !RELEASE && DESKTOP
         useProjectPath = true;
@@ -54,14 +61,15 @@ public static class AssetExtensions
         useProjectPath = true;
 #endif
 
-        var assetPath = (useProjectPath && !string.IsNullOrWhiteSpace(projectName))
+        var assetPath = useProjectPath && !string.IsNullOrWhiteSpace(projectName)
             ? $"/{projectName}/Assets/{projectPath}"
             : $"/Assets/{projectPath}";
 
-        var fullPath = Windows.ApplicationModel.Package.Current.InstalledPath + assetPath;
-        var assetUrl = $"ms-appx://{assetPath}" + (string.IsNullOrEmpty(argument)
+        // var fullPath = Windows.ApplicationModel.Package.Current.InstalledPath + assetPath;
+        var assetUrl = $"ms-appx://{assetPath}{(string.IsNullOrEmpty(argument)
             ? string.Empty
-            : "#" + argument);
+            : $"#{argument}")}";
+        
         Console.WriteLine($"assetPath: {assetUrl}");
         return assetUrl;
 

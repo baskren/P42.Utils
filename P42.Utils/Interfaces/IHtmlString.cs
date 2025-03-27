@@ -1,9 +1,15 @@
 ﻿
 
-namespace P42.Utils
+namespace P42.Utils;
+
+/// <summary>
+/// Interface for HtmlString
+/// </summary>
+public interface IHtmlString
 {
-    public interface IHtmlString
-    {
-        string ToHtml();
-    }
+    /// <summary>
+    /// Convert object to HTML string
+    /// </summary>
+    /// <returns></returns>
+    string ToHtml();
 }

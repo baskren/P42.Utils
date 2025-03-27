@@ -1,121 +1,131 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace P42.Utils
+namespace P42.Utils;
+
+/// <summary>
+/// Keyed collection (like dictionary but keys are provided by items) that is observable
+/// </summary>
+/// <typeparam name="TKey"></typeparam>
+/// <typeparam name="TItem"></typeparam>
+public class ObservableKeyedCollection<TKey, TItem> : KeyedCollection<TKey, TItem>, INotifyCollectionChanged where TKey : notnull
 {
+    // Overrides a lot of methods that can cause collection change
     /// <summary>
-    /// Keyed collection (like dictionary but keys are provided by items) that is observable
+    /// Set item at index
     /// </summary>
-    /// <typeparam name="TKey"></typeparam>
-    /// <typeparam name="TItem"></typeparam>
-    public class ObservableKeyedCollection<TKey, TItem> : KeyedCollection<TKey, TItem>, INotifyCollectionChanged
+    /// <param name="index"></param>
+    /// <param name="item"></param>
+    protected override void SetItem(int index, TItem item)
     {
-        // Overrides a lot of methods that can cause collection change
-        /// <summary>
-        /// Set item at index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="item"></param>
-        protected override void SetItem(int index, TItem item)
-        {
-            if (index < 0 || index > Count)
-                return;
-            if (index == Count)
-            {
-                base.SetItem(index, item);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
-            }
-            else
-            {
-                var oldItem = base[index];
-                base.SetItem(index, item);
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, oldItem, index));
-            }
-        }
-
-        /// <summary>
-        /// Insert item at index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="item"></param>
-        protected override void InsertItem(int index, TItem item)
-        {
-            base.InsertItem(index, item);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-        }
-
-        /// <summary>
-        /// Clear items
-        /// </summary>
-        protected override void ClearItems()
-        {
-            var oldItems = this.ToList();
-            base.ClearItems();
-            Dictionary?.Clear();
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        /// <summary>
-        /// Remove item at index
-        /// </summary>
-        /// <param name="index"></param>
-        protected override void RemoveItem(int index)
-        {
-            var item = this[index];            
-            base.RemoveItem(index);
-            if (TryGetKey(item, out var key))
-                Dictionary?.Remove(key);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
-        }
-
-        /// <summary>
-        /// Called when item(s) added or removed from collection
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-            => CollectionChanged?.Invoke(this, e);
+        if (index < 0 || index > Count)
+            return;
         
-        #region INotifyCollectionChanged Members
-        /// <summary>
-        /// Event fired when collection has changed
-        /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        #endregion
-
-        /// <summary>
-        /// Method to get key for item : MUST OVERRIDE!!!
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        protected override TKey GetKeyForItem(TItem item)
+        if (index == Count)
         {
-            if (Dictionary != null &&  Dictionary.TryGetKey(item, out TKey key))
-                return (TKey)key;
-            throw new System.Exception("No key for item");
+            base.SetItem(index, item);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
         }
-
-        public virtual bool TryGetKey(TItem item, out TKey key)
+        else
         {
-            if (Dictionary != null)
-                return Dictionary.TryGetKey(item, out key);
-            key = default;
-            return false;
-        } 
-
-        /// <summary>
-        /// Test if item with key is in collection
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public virtual bool ContainsKey(TKey key)
-        {
-            return Dictionary?.ContainsKey(key) ?? false;
+            var oldItem = base[index];
+            base.SetItem(index, item);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, oldItem, index));
         }
     }
 
-}
+    /// <summary>
+    /// Insert item at index
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="item"></param>
+    protected override void InsertItem(int index, TItem item)
+    {
+        base.InsertItem(index, item);
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
+    }
 
+    /// <summary>
+    /// Clear items
+    /// </summary>
+    protected override void ClearItems()
+    {
+        var oldItems = this.ToList();
+        base.ClearItems();
+        Dictionary?.Clear();
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+    }
+
+    /// <summary>
+    /// Remove item at index
+    /// </summary>
+    /// <param name="index"></param>
+    protected override void RemoveItem(int index)
+    {
+        var item = this[index];            
+        base.RemoveItem(index);
+        if (TryGetKey(item, out var key))
+            Dictionary?.Remove(key);
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+    }
+
+    /// <summary>
+    /// Called when item(s) added or removed from collection
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        => _collectionChanged.RaiseEvent(this, e, nameof(CollectionChanged));
+        
+    #region INotifyCollectionChanged Members
+    
+    readonly AsyncAwaitBestPractices.WeakEventManager _collectionChanged = new();
+    /// <summary>
+    /// Event fired when collection has changed
+    /// </summary>
+    public event NotifyCollectionChangedEventHandler? CollectionChanged
+    {
+        add => _collectionChanged.AddEventHandler(value);
+        remove => _collectionChanged.RemoveEventHandler(value);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Method to get key for item : MUST OVERRIDE!!!
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    protected override TKey GetKeyForItem(TItem item)
+    {
+        if (Dictionary != null &&  Dictionary.TryGetKey(item, out var key))
+            return key ?? throw new Exception("Null key found for item.");
+        throw new Exception("No key for item");
+    }
+
+    // ReSharper disable once MemberCanBeProtected.Global
+    /// <summary>
+    /// Reverse lookup 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public virtual bool TryGetKey(TItem item, [MaybeNullWhen(false)]  out TKey key)
+    {
+        key = default;
+        return Dictionary?.TryGetKey(item, out key) ?? false;
+    } 
+
+    /// <summary>
+    /// Test if item with key is in collection
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public virtual bool ContainsKey(TKey key)
+        => Dictionary?.ContainsKey(key) ?? false;
+    
+}

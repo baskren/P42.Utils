@@ -1,39 +1,44 @@
-﻿namespace P42.Utils.Uno
+﻿namespace P42.Utils.Uno;
+
+/// <summary>
+/// P42.Utils.Uno Underline span.
+/// </summary>
+internal class UnderlineSpan : Span, ICopiable<UnderlineSpan>
 {
-	/// <summary>
-	/// P42.Utils.Uno Underline span.
-	/// </summary>
-	class UnderlineSpan : Span, ICopiable<UnderlineSpan>
-	{
-		internal const string SpanKey = "Underline";
+    internal const string SpanKey = "Underline";
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
-		/// </summary>
-		/// <param name="start">Start.</param>
-		/// <param name="end">End.</param>
-		public UnderlineSpan (int start, int end) : base (start, end) {
-			//Color = color;
-			//Style = style;
-			Key = SpanKey;
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
+    /// </summary>
+    /// <param name="start">Start.</param>
+    /// <param name="end">End.</param>
+    /// <param name="id">optional</param>
+    public UnderlineSpan (int start, int end, string id = "") : base (start, end, id) 
+    {
+        //Color = color;
+        //Style = style;
+        Key = SpanKey;
+    }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
-		/// </summary>
-		/// <param name="span">Span.</param>
-		public UnderlineSpan (UnderlineSpan span) : this (span.Start, span.End) {
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="P42.Utils.Uno.UnderlineSpan"/> class.
+    /// </summary>
+    /// <param name="span">Span.</param>
+    public UnderlineSpan (UnderlineSpan span) : this (span.Start, span.End) { }
 
-		public void PropertiesFrom(UnderlineSpan source)
-		{
-			base.PropertiesFrom(source);
-		}
+    /// <summary>
+    /// Copy properties from a source span.
+    /// </summary>
+    /// <param name="source"></param>
+    public void PropertiesFrom(UnderlineSpan source)
+        => base.PropertiesFrom(source);
+    
 
-		public override Span Copy()
-		{
-			return new UnderlineSpan(Start, End);
-		}
-	}
+    /// <summary>
+    /// Creates a copy of the span.
+    /// </summary>
+    /// <returns></returns>
+    public override Span Copy()
+        => new UnderlineSpan(Start, End);
+    
 }
-

@@ -1,6 +1,8 @@
-﻿namespace P42.Utils
+﻿namespace P42.Utils;
+
+/// <summary>
+/// Interface for IJsonReadWriteable
+/// </summary>
+public interface IJsonReadWriteable : IJsonReadable, IJsonWriteable
 {
-    public interface IJsonReadWriteable : IJsonReadable, IJsonWriteable
-    {
-    }
 }

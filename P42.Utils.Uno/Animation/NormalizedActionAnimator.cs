@@ -3,55 +3,76 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Animation;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// Simple, Normalized, 1D animation path generator
+/// </summary>
+/// <param name="timeSpan">Duration</param>
+/// <param name="action">action(x), called to apply animation</param>
+/// <param name="easingFunction">x = f(t), applied to animation</param>
+/// <param name="delta">true: pass change in easing function value to action(); false: pass current easing function value to action()</param>
+public class NormalizedActionAnimator(
+    TimeSpan timeSpan,
+    Action<double> action,
+    EasingFunctionBase? easingFunction = null,
+    bool delta = false)
 {
-    public class NormalizedActionAnimator
+    /// <summary>
+    /// How long should the animation last?
+    /// </summary>
+    public TimeSpan TimeSpan { get; private set; } = timeSpan;
+
+    /// <summary>
+    /// What form should the animation path take
+    /// </summary>
+    public EasingFunctionBase? EasingFunction { get; private set; } = easingFunction;
+
+    /// <summary>
+    /// Where the animation is applied
+    /// </summary>
+    public Action<double> Action { get; private set; } = action;
+
+    /// <summary>
+    /// Time stamp of animation start
+    /// </summary>
+    protected DateTime StartTime;
+
+    /// <summary>
+    /// true: pass change in easing function value to action(); false: pass current easing function value to action()
+    /// </summary>
+    public bool Delta { get; private set; } = delta;
+
+    /// <summary>
+    /// easing function value in previous iteration
+    /// </summary>
+    private double _lastValue;
+
+
+    public async Task RunAsync(CancellationToken cancellationToken = default)
     {
-        public TimeSpan TimeSpan { get; private set; }
-
-        public EasingFunctionBase EasingFunction { get; private set; }
-
-        public Action<double> Action { get; private set; }
-
-        protected DateTime StartTime;
-
-        double lastValue;
-
-        public bool Delta { get; private set; }
-
-        public NormalizedActionAnimator(TimeSpan timeSpan, Action<double> action, EasingFunctionBase easingFunction = null, bool delta = false)
+        StartTime = DateTime.Now;
+        double normalTime;
+        _lastValue = 0;
+        do
         {
-            Delta = delta;
-            TimeSpan = timeSpan;
-            EasingFunction = easingFunction;
-            Action = action;
-        }
-
-        public async Task RunAsync(CancellationToken cancellationToken = default)
-        {
-            StartTime = DateTime.Now;
-            double normalTime;
-            lastValue = 0;
-            do
+            await Task.Delay(20, cancellationToken);
+            normalTime = Math.Min((DateTime.Now - StartTime).TotalMilliseconds / TimeSpan.TotalMilliseconds,1.0);
+            var easedValue = EasingFunction?.Ease(normalTime) ?? normalTime;
+            var value = Value(easedValue);
+            if (Delta)
             {
-                await Task.Delay(20);
-                normalTime = Math.Min((DateTime.Now - StartTime).TotalMilliseconds / TimeSpan.TotalMilliseconds,1.0);
-                var normalValue = EasingFunction?.Ease(normalTime) ?? normalTime;
-                var value = Value(normalValue);
-                if (Delta)
-                {
-                    this?.Action(value - lastValue);
-                    lastValue = value;
-                }
-                else
-                    this?.Action(value);
+                Action(value - _lastValue);
+                _lastValue = value;
             }
-            while (normalTime < 1.0 && !cancellationToken.IsCancellationRequested);
+            else
+                Action(value);
         }
+        while (normalTime < 1.0 && !cancellationToken.IsCancellationRequested);
+    }
 
-        protected virtual double Value(double normalValue)
-        {
-            return normalValue;
-        }
+    protected virtual double Value(double easedValue)
+    {
+        return easedValue;
     }
 }

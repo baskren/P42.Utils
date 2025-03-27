@@ -1,144 +1,176 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.IO;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace P42.Utils.Uno
+namespace P42.Utils.Uno;
+
+/// <summary>
+/// Help with debugging
+/// </summary>
+// ReSharper disable once UnusedType.Global
+public static class DebugExtensions
 {
-    public static class DebugExtensions
+    /// <summary>
+    /// Write ContentControl properties to a StringWriter
+    /// </summary>
+    /// <param name="control"></param>
+    /// <param name="writer"></param>
+    /// <returns></returns>
+    public static StringWriter LogProperties(this ContentControl control, StringWriter? writer = null)
     {
-        public static void DebugLogProperties(this ContentControl control)
-        {
-            /*
-            Debug.WriteLine("\t ContentTemplate: " + control.ContentTemplate);
-            Debug.WriteLine("\t Content: " + control.Content);
-            Debug.WriteLine("\t ContentTemplateRoot: " + control.ContentTemplateRoot);
-            */
-            DebugLogProperties((Control)control);
-        }
+        writer ??= new StringWriter();
+        writer.WriteLine("ContentControl: ");
+        writer.WriteLine($"\t ContentTemplate: {control.ContentTemplate}");
+        writer.WriteLine($"\t Content: {control.Content}");
+        writer.WriteLine($"\t ContentTemplateRoot: {control.ContentTemplateRoot}");
+        return LogProperties((Control)control, writer);
+    }
 
-        public static void DebugLogProperties(this Control control)
-        {
-            /*
-            Debug.WriteLine("\t Padding: " + control.Padding);
-            Debug.WriteLine("\t IsTabStop: " + control.IsTabStop);
-            Debug.WriteLine("\t IsEnabled: " + control.IsEnabled);
-            Debug.WriteLine("\t HorizontalContentAlignment: " + control.HorizontalContentAlignment);
-            Debug.WriteLine("\t Foreground: " + control.Foreground);
-            Debug.WriteLine("\t FontWeight: " + control.FontWeight);
-            Debug.WriteLine("\t FontStyle: " + control.FontStyle);
-            Debug.WriteLine("\t FontStretch: " + control.FontStretch);
-            Debug.WriteLine("\t FontSize: " + control.FontSize);
-            Debug.WriteLine("\t FontFamily: " + control.FontFamily);
-            Debug.WriteLine("\t TabIndex: " + control.TabIndex);
-            Debug.WriteLine("\t CharacterSpacing: " + control.CharacterSpacing);
-            Debug.WriteLine("\t BorderThickness: " + control.BorderThickness);
-            Debug.WriteLine("\t BorderBrush: " + control.BorderBrush);
-            Debug.WriteLine("\t TabNavigation: " + control.TabNavigation);
-            Debug.WriteLine("\t Background: " + control.Background);
-            Debug.WriteLine("\t VerticalControlAlignment: " + control.VerticalContentAlignment);
-            Debug.WriteLine("\t Template: " + control.Template);
-            Debug.WriteLine("\t FocusState: " + control.FocusState);
-            Debug.WriteLine("\t IsTextScaleFactorEnabled: " + control.IsTextScaleFactorEnabled);
-            Debug.WriteLine("\t UseSystemFocusVisuals: " + control.UseSystemFocusVisuals);
-            Debug.WriteLine("\t XYFocusUp: " + control.XYFocusUp);
-            Debug.WriteLine("\t XYFocusRight: " + control.XYFocusRight);
-            Debug.WriteLine("\t XYFocusLeft: " + control.XYFocusLeft);
-            Debug.WriteLine("\t XYFocusDown: " + control.XYFocusDown);
-            Debug.WriteLine("\t RequiresPointer: " + control.RequiresPointer);
-            Debug.WriteLine("\t IsFocusEngagementEnabled: " + control.IsFocusEngagementEnabled);
-            Debug.WriteLine("\t IsFocusEngaged: " + control.IsFocusEngaged);
-            Debug.WriteLine("\t ElementSoundMode: " + control.ElementSoundMode);
-            Debug.WriteLine("\t DefaultStyleResourceUri: " + control.DefaultStyleResourceUri);
-            Debug.WriteLine("\t CornerRadius: " + control.CornerRadius);
-            Debug.WriteLine("\t BackgroundSizing: " + control.BackgroundSizing);
-            */
-            DebugLogProperties((FrameworkElement)control);
-        }
+    /// <summary>
+    /// Write Control properties to a StringWriter
+    /// </summary>
+    /// <param name="control"></param>
+    /// <param name="writer"></param>
+    /// <returns></returns>
+    public static StringWriter LogProperties(this Control control, StringWriter? writer = null)
+    {
+        writer ??= new StringWriter();
+        writer.WriteLine("Control: ");
+        writer.WriteLine($"\t Padding: {control.Padding}");
+        writer.WriteLine($"\t IsTabStop: {control.IsTabStop}");
+        writer.WriteLine($"\t IsEnabled: {control.IsEnabled}");
+        writer.WriteLine($"\t HorizontalContentAlignment: {control.HorizontalContentAlignment}");
+        writer.WriteLine($"\t Foreground: {control.Foreground}");
+        writer.WriteLine($"\t FontWeight: {control.FontWeight}");
+        writer.WriteLine($"\t FontStyle: {control.FontStyle}");
+        writer.WriteLine($"\t FontStretch: {control.FontStretch}");
+        writer.WriteLine($"\t FontSize: {control.FontSize}");
+        writer.WriteLine($"\t FontFamily: {control.FontFamily}");
+        writer.WriteLine($"\t TabIndex: {control.TabIndex}");
+        writer.WriteLine($"\t CharacterSpacing: {control.CharacterSpacing}");
+        writer.WriteLine($"\t BorderThickness: {control.BorderThickness}");
+        writer.WriteLine($"\t BorderBrush: {control.BorderBrush}");
+        writer.WriteLine($"\t TabNavigation: {control.TabNavigation}");
+        writer.WriteLine($"\t Background: {control.Background}");
+        writer.WriteLine($"\t VerticalControlAlignment: {control.VerticalContentAlignment}");
+        writer.WriteLine($"\t Template: {control.Template}");
+        writer.WriteLine($"\t FocusState: {control.FocusState}");
+        writer.WriteLine($"\t IsTextScaleFactorEnabled: {control.IsTextScaleFactorEnabled}");
+        writer.WriteLine($"\t UseSystemFocusVisuals: {control.UseSystemFocusVisuals}");
+        writer.WriteLine($"\t XYFocusUp: {control.XYFocusUp}");
+        writer.WriteLine($"\t XYFocusRight: {control.XYFocusRight}");
+        writer.WriteLine($"\t XYFocusLeft: {control.XYFocusLeft}");
+        writer.WriteLine($"\t XYFocusDown: {control.XYFocusDown}");
+        writer.WriteLine($"\t RequiresPointer: {control.RequiresPointer}");
+        writer.WriteLine($"\t IsFocusEngagementEnabled: {control.IsFocusEngagementEnabled}");
+        writer.WriteLine($"\t IsFocusEngaged: {control.IsFocusEngaged}");
+        writer.WriteLine($"\t ElementSoundMode: {control.ElementSoundMode}");
+        writer.WriteLine($"\t DefaultStyleResourceUri: {control.DefaultStyleResourceUri}");
+        writer.WriteLine($"\t CornerRadius: {control.CornerRadius}");
+        writer.WriteLine($"\t BackgroundSizing: {control.BackgroundSizing}");
+        
+        return LogProperties((FrameworkElement)control, writer);
+    }
 
-        public static void DebugLogProperties(this FrameworkElement element)
-        {
-            /*
-            Debug.WriteLine("\t ActualHeight: " + element.ActualHeight);
-            Debug.WriteLine("\t ActualTheme: " + element.ActualTheme);
-            Debug.WriteLine("\t ActualWidth: " + element.ActualWidth);
-            Debug.WriteLine("\t AllowFocusOnInteraction: " + element.AllowFocusOnInteraction);
-            Debug.WriteLine("\t AllowFocusOnDisabled: " + element.AllowFocusWhenDisabled);
-            Debug.WriteLine("\t BaseUri: " + element.BaseUri);
-            Debug.WriteLine("\t DataContext: " + element.DataContext);
-            Debug.WriteLine("\t FlowDirection: " + element.FlowDirection);
-            Debug.WriteLine("\t FocusVisualMargin: " + element.FocusVisualMargin);
-            Debug.WriteLine("\t FocusVisualPrimaryBrush: " + element.FocusVisualPrimaryBrush);
-            Debug.WriteLine("\t FocusVisualPrimaryThickness: " + element.FocusVisualPrimaryThickness);
-            Debug.WriteLine("\t FocusVisualSecondaryBrush: " + element.FocusVisualSecondaryBrush);
-            Debug.WriteLine("\t FocusVisualSecondaryThickness: " + element.FocusVisualSecondaryThickness);
-            Debug.WriteLine("\t Height: " + element.Height);
-            Debug.WriteLine("\t HorizontalAlignment: " + element.HorizontalAlignment);
-            Debug.WriteLine("\t IsLoaded: " + element.IsLoaded);
-            Debug.WriteLine("\t Language: " + element.Language);
-            Debug.WriteLine("\t Margin: " + element.Margin);
-            Debug.WriteLine("\t MaxHeight: " + element.MaxHeight);
-            Debug.WriteLine("\t MaxWidth: " + element.MaxWidth);
-            Debug.WriteLine("\t MinHeight: " + element.MinHeight);
-            Debug.WriteLine("\t MinWidth: " + element.MinWidth);
-            Debug.WriteLine("\t Name: " + element.Name);
-            Debug.WriteLine("\t Parent: " + element.Parent);
-            Debug.WriteLine("\t RequestedTheme: " + element.RequestedTheme);
-            Debug.WriteLine("\t Resources: " + element.Resources);
-            Debug.WriteLine("\t Style: " + element.Style);
-            Debug.WriteLine("\t Tag: " + element.Tag);
-            Debug.WriteLine("\t Triggers: " + element.Triggers);
-            Debug.WriteLine("\t VerticalAlignment: " + element.VerticalAlignment);
-            Debug.WriteLine("\t Width: " + element.Width);
-            */
-            DebugLogProperties((UIElement)element);
-        }
+    /// <summary>
+    /// Write FrameworkElement properties to a StringWriter
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="writer"></param>
+    /// <returns></returns>
+    public static StringWriter LogProperties(this FrameworkElement element, StringWriter? writer = null)
+    {
+        writer ??= new StringWriter();
+        writer.WriteLine("FrameworkElement: ");
+        writer.WriteLine($"\t ActualHeight: {element.ActualHeight}");
+        writer.WriteLine($"\t ActualTheme: {element.ActualTheme}");
+        writer.WriteLine($"\t ActualWidth: {element.ActualWidth}");
+        writer.WriteLine($"\t AllowFocusOnInteraction: {element.AllowFocusOnInteraction}");
+        writer.WriteLine($"\t AllowFocusOnDisabled: {element.AllowFocusWhenDisabled}");
+        writer.WriteLine($"\t BaseUri: {element.BaseUri}");
+        writer.WriteLine($"\t DataContext: {element.DataContext}");
+        writer.WriteLine($"\t FlowDirection: {element.FlowDirection}");
+        writer.WriteLine($"\t FocusVisualMargin: {element.FocusVisualMargin}");
+        writer.WriteLine($"\t FocusVisualPrimaryBrush: {element.FocusVisualPrimaryBrush}");
+        writer.WriteLine($"\t FocusVisualPrimaryThickness: {element.FocusVisualPrimaryThickness}");
+        writer.WriteLine($"\t FocusVisualSecondaryBrush: {element.FocusVisualSecondaryBrush}");
+        writer.WriteLine($"\t FocusVisualSecondaryThickness: {element.FocusVisualSecondaryThickness}");
+        writer.WriteLine($"\t Height: {element.Height}");
+        writer.WriteLine($"\t HorizontalAlignment: {element.HorizontalAlignment}");
+        writer.WriteLine($"\t IsLoaded: {element.IsLoaded}");
+        writer.WriteLine($"\t Language: {element.Language}");
+        writer.WriteLine($"\t Margin: {element.Margin}");
+        writer.WriteLine($"\t MaxHeight: {element.MaxHeight}");
+        writer.WriteLine($"\t MaxWidth: {element.MaxWidth}");
+        writer.WriteLine($"\t MinHeight: {element.MinHeight}");
+        writer.WriteLine($"\t MinWidth: {element.MinWidth}");
+        writer.WriteLine($"\t Name: {element.Name}");
+        writer.WriteLine($"\t Parent: {element.Parent}");
+        writer.WriteLine($"\t RequestedTheme: {element.RequestedTheme}");
+        writer.WriteLine($"\t Resources: {element.Resources}");
+        writer.WriteLine($"\t Style: {element.Style}");
+        writer.WriteLine($"\t Tag: {element.Tag}");
+        writer.WriteLine($"\t Triggers: {element.Triggers}");
+        writer.WriteLine($"\t VerticalAlignment: {element.VerticalAlignment}");
+        writer.WriteLine($"\t Width: {element.Width}");
+        
+        return LogProperties((UIElement)element, writer);
+    }
 
 
-        public static void DebugLogProperties(this UIElement element)
-        {
-            /*
-            Debug.WriteLine("\t AccessKey: " + element.AccessKey);
-            Debug.WriteLine("\t AccessKeyScopeOwner: " + element.AccessKeyScopeOwner);
-            //Debug.WriteLine("\t ActualOffset: " + element.ActualOffset);
-            //Debug.WriteLine("\t ActualSize: " + element.ActualSize);
-            Debug.WriteLine("\t AllowDrop: " + element.AllowDrop);
-            Debug.WriteLine("\t CacheMode: " + element.CacheMode);
-            Debug.WriteLine("\t CanBeScrollAnchor: " + element.CanBeScrollAnchor);
-            Debug.WriteLine("\t CanDrag: " + element.CanDrag);
-            Debug.WriteLine("\t CenterPoint: " + element.CenterPoint);
-            Debug.WriteLine("\t Clip: " + element.Clip);
-            Debug.WriteLine("\t CompositeMode: " + element.CompositeMode);
-            Debug.WriteLine("\t ContextFlyout: " + element.ContextFlyout);
-            Debug.WriteLine("\t DesiredSize: " + element.DesiredSize);
-            Debug.WriteLine("\t HighContrastAdjustment: " + element.HighContrastAdjustment);
-            Debug.WriteLine("\t IsAccessKeyScope: " + element.IsAccessKeyScope);
-            Debug.WriteLine("\t IsDoubleTapEnabled: " + element.IsDoubleTapEnabled);
-            Debug.WriteLine("\t IsHitTestEnabled: " + element.IsHitTestVisible);
-            Debug.WriteLine("\t IsHoldingEnabled: " + element.IsHoldingEnabled);
-            Debug.WriteLine("\t IsRightTapEnabled: " + element.IsRightTapEnabled);
-            Debug.WriteLine("\t IsTapEnabled: " + element.IsTapEnabled);
-            Debug.WriteLine("\t KeyboardAcceleratorPlacementMode: " + element.KeyboardAcceleratorPlacementMode);
-            Debug.WriteLine("\t KeyboardAcceleratorPlacementTarget: " + element.KeyboardAcceleratorPlacementTarget);
-            Debug.WriteLine("\t KeyboardAccelerators: " + element.KeyboardAccelerators);
-            Debug.WriteLine("\t KeyTipHorizontalOffset: " + element.KeyTipHorizontalOffset);
-            Debug.WriteLine("\t KeyTipPlacementMode: " + element.KeyTipPlacementMode);
-            Debug.WriteLine("\t KeyTipTarget: " + element.KeyTipTarget);
-            Debug.WriteLine("\t KeyTipVerticalOffset: " + element.KeyTipVerticalOffset);
-            Debug.WriteLine("\t Lights: " + element.Lights);
-            Debug.WriteLine("\t ManipulationMode: " + element.ManipulationMode);
-            Debug.WriteLine("\t Opacity: " + element.Opacity);
-            Debug.WriteLine("\t OpacityTransition: " + element.OpacityTransition);
-            Debug.WriteLine("\t RenderSize: " + element.RenderSize);
-            Debug.WriteLine("\t Rotation: " + element.Rotation);
-            Debug.WriteLine("\t RotationAxis: " + element.RotationAxis);
-            Debug.WriteLine("\t Scale: " + element.Scale);
-            //Debug.WriteLine("\t Shadow: " + element.Shadow);
-            Debug.WriteLine("\t TabFocusNavigation: " + element.TabFocusNavigation);
-            Debug.WriteLine("\t Translation: " + element.Translation);
-            //Debug.WriteLine("\t UIContext: " + element.UIContext);
-            Debug.WriteLine("\t UseLayoutRounding: " + element.UseLayoutRounding);
-            Debug.WriteLine("\t Visibility: " + element.Visibility);
-            //Debug.WriteLine("\t XamlRoot: " + element.XamlRoot);
-            */
-        }
+    /// <summary>
+    /// Write UIElement properties to a StringWriter
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="writer"></param>
+    /// <returns></returns>
+    public static StringWriter LogProperties(this UIElement element, StringWriter? writer = null)
+    {
+        writer ??= new StringWriter();
+        writer.WriteLine("UIElement: ");
+        writer.WriteLine($"\t AccessKey: {element.AccessKey}");
+        writer.WriteLine($"\t AccessKeyScopeOwner: {element.AccessKeyScopeOwner}");
+        writer.WriteLine($"\t ActualOffset: {element.ActualOffset}");
+        writer.WriteLine($"\t ActualSize: {element.ActualSize}");
+        writer.WriteLine($"\t AllowDrop: {element.AllowDrop}");
+        writer.WriteLine($"\t CacheMode: {element.CacheMode}");
+        writer.WriteLine($"\t CanBeScrollAnchor: {element.CanBeScrollAnchor}");
+        writer.WriteLine($"\t CanDrag: {element.CanDrag}");
+        writer.WriteLine($"\t CenterPoint: {element.CenterPoint}");
+        writer.WriteLine($"\t Clip: {element.Clip}");
+        writer.WriteLine($"\t CompositeMode: {element.CompositeMode}");
+        writer.WriteLine($"\t ContextFlyout: {element.ContextFlyout}");
+        writer.WriteLine($"\t DesiredSize: {element.DesiredSize}");
+        writer.WriteLine($"\t HighContrastAdjustment: {element.HighContrastAdjustment}");
+        writer.WriteLine($"\t IsAccessKeyScope: {element.IsAccessKeyScope}");
+        writer.WriteLine($"\t IsDoubleTapEnabled: {element.IsDoubleTapEnabled}");
+        writer.WriteLine($"\t IsHitTestEnabled: {element.IsHitTestVisible}");
+        writer.WriteLine($"\t IsHoldingEnabled: {element.IsHoldingEnabled}");
+        writer.WriteLine($"\t IsRightTapEnabled: {element.IsRightTapEnabled}");
+        writer.WriteLine($"\t IsTapEnabled: {element.IsTapEnabled}");
+        writer.WriteLine($"\t KeyboardAcceleratorPlacementMode: {element.KeyboardAcceleratorPlacementMode}");
+        writer.WriteLine($"\t KeyboardAcceleratorPlacementTarget: {element.KeyboardAcceleratorPlacementTarget}");
+        writer.WriteLine($"\t KeyboardAccelerators: {element.KeyboardAccelerators}");
+        writer.WriteLine($"\t KeyTipHorizontalOffset: {element.KeyTipHorizontalOffset}");
+        writer.WriteLine($"\t KeyTipPlacementMode: {element.KeyTipPlacementMode}");
+        writer.WriteLine($"\t KeyTipTarget: {element.KeyTipTarget}");
+        writer.WriteLine($"\t KeyTipVerticalOffset: {element.KeyTipVerticalOffset}");
+        writer.WriteLine($"\t Lights: {element.Lights}");
+        writer.WriteLine($"\t ManipulationMode: {element.ManipulationMode}");
+        writer.WriteLine($"\t Opacity: {element.Opacity}");
+        writer.WriteLine($"\t OpacityTransition: {element.OpacityTransition}");
+        writer.WriteLine($"\t RenderSize: {element.RenderSize}");
+        writer.WriteLine($"\t Rotation: {element.Rotation}");
+        writer.WriteLine($"\t RotationAxis: {element.RotationAxis}");
+        writer.WriteLine($"\t Scale: {element.Scale}");
+        writer.WriteLine($"\t Shadow: {element.Shadow}");
+        writer.WriteLine($"\t TabFocusNavigation: {element.TabFocusNavigation}");
+        writer.WriteLine($"\t Translation: {element.Translation}");
+        // writer.WriteLine("\t UIContext: " + element.UIContext);
+        writer.WriteLine($"\t UseLayoutRounding: {element.UseLayoutRounding}");
+        writer.WriteLine($"\t Visibility: {element.Visibility}");
+        writer.WriteLine($"\t XamlRoot: {element.XamlRoot}");
+        
+        return writer;
     }
 }

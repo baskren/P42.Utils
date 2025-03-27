@@ -2,7 +2,7 @@
 {
     interface IProcess
     {
-        ulong Memory();
+        ulong Memory(string caller = "", string callerFile = "", int callerLineNumber = 0);
 
     }
 }
