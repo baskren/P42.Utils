@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net9.0</TargetFrameworks>
-	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);netstandard2.0</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <!--
     <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
+    -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
