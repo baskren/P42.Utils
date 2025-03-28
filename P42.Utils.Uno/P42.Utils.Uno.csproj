@@ -30,12 +30,13 @@
     <!-- DO WE NEED THE FOLLOWING ?
     <ImplicitUsings>disable</ImplicitUsings>
     <BuildInParallel>true</BuildInParallel>
-    <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
     -->
 
-    <!-- DELETE THE FOLLOWING    
+    <!-- NEEDED FOR DisplayHelper.winui.cs -->    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    -->
+
+    <!-- NEEDED BECAUSE WINAPPSDK PROJECT IS USING MICROSOFT.GRAPHICS.Win2D -->
+    <Platforms  Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">AnyCPU;ARM64;X86;X64</Platforms>
 
   </PropertyGroup>
 

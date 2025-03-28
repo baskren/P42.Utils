@@ -6,7 +6,7 @@ namespace P42.Utils.Uno;
 
 public static partial class DisplayHelper
 {
-    public static DisplayMetrics? GetDisplayMetricsForWindow(Microsoft.UI.Xaml.Window window)
+    public static DisplayMetrics? GetDisplayMetricsForWindow(Window window)
     {
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
         var monitor = MonitorFromWindow(hwnd, 2); // MonitorFromWindow flags: 2 = MONITOR_DEFAULTTONEAREST
@@ -30,14 +30,14 @@ public static partial class DisplayHelper
 
     }
 
-    public static uint GetCurrentDpi(Microsoft.UI.Xaml.Window window)
+    public static uint GetCurrentDpi(Window window)
     {
         // Get the window handle (HWND) for the WinUI 3 window.
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
         return GetDpiForWindow(hwnd);
     }
 
-    public static (uint dpiX, uint dpiY) GetDpiForCurrentMonitor(Microsoft.UI.Xaml.Window window)
+    public static (uint dpiX, uint dpiY) GetDpiForCurrentMonitor(Window window)
     {
         const int MDT_EFFECTIVE_DPI = 0;
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
@@ -61,23 +61,24 @@ public static partial class DisplayHelper
         return screenWidth >= screenHeight ? "Landscape" : "Portrait";
     }
 
-    [LibraryImport("User32.dll")]
-    private static extern partial uint GetDpiForWindow(IntPtr hwnd);
     
-    [LibraryImport("Shcore.dll")]
-    private static extern partial int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+    [DllImport("User32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hwnd);
+    
+    [DllImport("Shcore.dll")]
+    private static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 
-    [LibraryImport("User32.dll")]
-    private static extern partial IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+    [DllImport("User32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
 
-    [LibraryImport("User32.dll")]
-    private static extern partial int GetSystemMetrics(int nIndex);
+    [DllImport("User32.dll")]
+    private static extern int GetSystemMetrics(int nIndex);
 
-    [LibraryImport("User32.dll")]
-    private static extern partial bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+    [DllImport("User32.dll")]
+    private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
 
-    [LibraryImport("User32.dll")]
-    private static extern partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+    [DllImport("User32.dll")]
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
     private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData);
 

@@ -116,13 +116,5 @@ public static class AvailableFonts
 #endif
     }
 
-#if !HAS_UNO                           
 
-        [System.Runtime.InteropServices.DllImport("DWriteCore.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        public static extern DWrite.HRESULT DWriteCoreCreateFactory(DWrite.DWRITE_FACTORY_TYPE factoryType, ref Guid iid, out IntPtr factory);
-
-        [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-        public static extern int GetUserDefaultLocaleName(System.Text.StringBuilder lpLocaleName, int cchLocaleName);
-        public const int LOCALE_NAME_MAX_LENGTH = 85;
-#endif
 }

@@ -105,26 +105,9 @@ public static class DeviceDisplay
     public static DisplayMetrics MainDisplayInfo
         => IsMainDisplayInfoTrusted ? _currentMetrics : DefaultMetrics;
     
-    #if WINDOWS
-    private static DisplayMetrics GetMainDisplayInfo(DisplayInformation? di = null)
-    {
-        try
-        {
-            if (DisplayHelper.GetDisplayMetricsForWindow(Platform.Window) is {} metrics}
-            {
-                IsMainDisplayInfoTrusted = true;
-                return metrics;
-            }
-        }
-        catch (Exception)
-        {
-            IsMainDisplayInfoTrusted = false;
-            return DefaultMetrics;
-        }
-    }
-    
-    
-    #else
+    public static DisplayMetrics QueryMainDisplayInfo()
+        => GetMainDisplayInfo();
+
     /// <summary>
     /// Get metrics for main display
     /// </summary>
@@ -134,59 +117,37 @@ public static class DeviceDisplay
     {
         try
         {
+#if WINDOWS
+            if (di is not null)
+            {
+                var result = di.ToDisplayMetrics();
+                IsMainDisplayInfoTrusted = true;
+                return result;
+            }
+            if (DisplayHelper.GetDisplayMetricsForWindow(Platform.MainWindow) is { } metrics)
+            {
+
+                IsMainDisplayInfoTrusted = true;
+                return metrics;
+            }
+#else
             di ??= MainThread.Invoke(DisplayInformation.GetForCurrentView);
-
-            var rotation = CalculateRotation(di);
-            var perpendicular = rotation is DisplayRotation.Rotation90 or DisplayRotation.Rotation270;
-            
-            var w = di.ScreenWidthInRawPixels;
-            var h = di.ScreenHeightInRawPixels;
-
+            var result = di.ToDisplayMetrics();
             IsMainDisplayInfoTrusted = true;
-            
-            return new DisplayMetrics(
-                width: perpendicular ? h : w,
-                height: perpendicular ? w : h,
-                density: di.LogicalDpi / 96.0,
-                orientation: CalculateOrientation(di),
-                rotation: rotation);
+            return result;
+#endif
 
         }
         catch (Exception)
         {
-            IsMainDisplayInfoTrusted = false;
-            return DefaultMetrics;
         }
-    }
-    #endif
+        IsMainDisplayInfoTrusted = false;
+        return DefaultMetrics;
 
-    
+    }
+
+
     #region supporting methods
-    /// <summary>
-    /// Only used to filter out redundant OnMainDisplayInfoChanged calls
-    /// </summary>
-    /// <param name="metrics"></param>
-    private static void SetCurrent(DisplayMetrics metrics)
-        => _currentMetrics = new DisplayMetrics(
-            metrics.Width, 
-            metrics.Height, 
-            metrics.Density, 
-            metrics.Orientation,
-            metrics.Rotation);
-    
-
-    private static void OnMainDisplayInfoChanged(DisplayMetrics metrics)
-        => OnMainDisplayInfoChanged(new DisplayInfoChangedEventArgs(metrics)).SafeFireAndForget(ex => QLog.Error(ex));
-
-    private static async Task OnMainDisplayInfoChanged(DisplayInfoChangedEventArgs e)
-    {
-        if (_currentMetrics.Equals(e.DisplayMetrics))
-            return;
-
-        SetCurrent(e.DisplayMetrics);
-        await Task.Delay(500); // this is to allow AppWindow.SafeMargin() to be accurate
-        MainDisplayInfoChangedEventManager.RaiseEvent(e, nameof(MainDisplayInfoChanged));
-    }
 
     private static bool _listeningToMetrics;
     private static void StartScreenMetricsListeners()
@@ -244,40 +205,25 @@ public static class DeviceDisplay
         var metrics = GetMainDisplayInfo(di);
         OnMainDisplayInfoChanged(metrics);
     }
-    
-    private static DisplayOrientation CalculateOrientation(DisplayInformation di)
-        => di.CurrentOrientation switch
-            {
-                DisplayOrientations.Landscape or DisplayOrientations.LandscapeFlipped => DisplayOrientation.Landscape,
-                DisplayOrientations.Portrait or DisplayOrientations.PortraitFlipped => DisplayOrientation.Portrait,
-                _ => DisplayOrientation.Unknown
-            };
-        
 
-    private static DisplayRotation CalculateRotation(DisplayInformation di)
-        => di.NativeOrientation switch
-            {
-                DisplayOrientations.Portrait => di.CurrentOrientation switch
-                {
-                    DisplayOrientations.Landscape => DisplayRotation.Rotation90,
-                    DisplayOrientations.Portrait => DisplayRotation.Rotation0,
-                    DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation270,
-                    DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation180,
-                    _ => DisplayRotation.Unknown
-                },
-                DisplayOrientations.Landscape => di.CurrentOrientation switch
-                {
-                    DisplayOrientations.Landscape => DisplayRotation.Rotation0,
-                    DisplayOrientations.Portrait => DisplayRotation.Rotation270,
-                    DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation180,
-                    DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation90,
-                    _ => DisplayRotation.Unknown
-                },
-                _ => DisplayRotation.Unknown
-            };
-        
+    private static void OnMainDisplayInfoChanged(DisplayMetrics metrics)
+        => OnMainDisplayInfoChanged(new DisplayInfoChangedEventArgs(metrics)).SafeFireAndForget(ex => QLog.Error(ex));
+
+    private static async Task OnMainDisplayInfoChanged(DisplayInfoChangedEventArgs e)
+    {
+        if (_currentMetrics.Equals(e.DisplayMetrics))
+            return;
+
+        SetCurrent(e.DisplayMetrics);
+        await Task.Delay(500); // this is to allow AppWindow.SafeMargin() to be accurate
+        MainDisplayInfoChangedEventManager.RaiseEvent(e, nameof(MainDisplayInfoChanged));
+    }
+
+    private static void SetCurrent(DisplayMetrics metrics)
+    => _currentMetrics = metrics.Copy();
+
     #endregion
-    
+
 }
 
 public class DisplayInfoChangedEventArgs(DisplayMetrics displayMetrics) : EventArgs

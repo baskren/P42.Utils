@@ -1,9 +1,12 @@
 using System;
 using Uno;
+using Windows.Graphics.Display;
 
 namespace P42.Utils.Uno;
 
+#if HAS_UNO
 [Preserve(AllMembers = true)]
+#endif
 public readonly struct DisplayMetrics(
     double width,
     double height,
@@ -45,4 +48,60 @@ public readonly struct DisplayMetrics(
 
     public override string ToString() =>
         $"{nameof(Height)}: {Height}, {nameof(Width)}: {Width}, {nameof(Density)}: {Density}, {nameof(Orientation)}: {Orientation}, {nameof(Rotation)}: {Rotation}";
+
+    public DisplayMetrics Copy()
+        => new DisplayMetrics(Width, Height, Density, Orientation, Rotation);
+    
+}
+
+internal static class DisplayInformationExtensions
+{
+    public static DisplayMetrics ToDisplayMetrics(this DisplayInformation di)
+    {
+        var rotation = CalculateRotation(di);
+        var perpendicular = rotation is DisplayRotation.Rotation90 or DisplayRotation.Rotation270;
+
+        var w = di.ScreenWidthInRawPixels;
+        var h = di.ScreenHeightInRawPixels;
+
+        return new DisplayMetrics(
+            width: perpendicular ? h : w,
+            height: perpendicular ? w : h,
+            density: di.LogicalDpi / 96.0,
+            orientation: CalculateOrientation(di),
+            rotation: rotation);
+
+    }
+
+    private static DisplayOrientation CalculateOrientation(DisplayInformation di)
+    => di.CurrentOrientation switch
+    {
+        DisplayOrientations.Landscape or DisplayOrientations.LandscapeFlipped => DisplayOrientation.Landscape,
+        DisplayOrientations.Portrait or DisplayOrientations.PortraitFlipped => DisplayOrientation.Portrait,
+        _ => DisplayOrientation.Unknown
+    };
+
+
+    private static DisplayRotation CalculateRotation(DisplayInformation di)
+        => di.NativeOrientation switch
+        {
+            DisplayOrientations.Portrait => di.CurrentOrientation switch
+            {
+                DisplayOrientations.Landscape => DisplayRotation.Rotation90,
+                DisplayOrientations.Portrait => DisplayRotation.Rotation0,
+                DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation270,
+                DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation180,
+                _ => DisplayRotation.Unknown
+            },
+            DisplayOrientations.Landscape => di.CurrentOrientation switch
+            {
+                DisplayOrientations.Landscape => DisplayRotation.Rotation0,
+                DisplayOrientations.Portrait => DisplayRotation.Rotation270,
+                DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation180,
+                DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation90,
+                _ => DisplayRotation.Unknown
+            },
+            _ => DisplayRotation.Unknown
+        };
+
 }

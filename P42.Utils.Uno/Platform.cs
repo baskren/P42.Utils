@@ -123,7 +123,7 @@ public static class Platform
         // Environment.PlatformTimer = new Timer();
         Environment.PlatformPathLoader = PlatformPathLoader;
         DiskSpace.PlatformDiskSpace = new DeviceDisk();
-        P42.Utils.Process.PlatformProcess = new Process();
+        P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
         MainThread = Thread.CurrentThread;
         MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
