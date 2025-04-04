@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Foundation;
@@ -240,4 +240,5 @@ public static class UIElementExtensions
             FindChildrenInternal(results, current, strictTypeCheck);
         }
     }
+
 }

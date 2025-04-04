@@ -210,25 +210,63 @@ public static class FileSystemExtensions
     /// <summary>
     /// Is FileSystemItem potentially writable
     /// </summary>
-    /// <param name="fileSystemInfo"></param>
+    /// <param name="file"></param>
     /// <param name="tryForceOverwrite"></param>
     /// <returns>false if exists and tryForceOverwrite is false</returns>
-    public static bool WritePossible(this FileSystemInfo fileSystemInfo, bool tryForceOverwrite)
+    public static bool WritePossible(this FileInfo file, bool tryForceOverwrite)
     {
-        ArgumentNullException.ThrowIfNull(fileSystemInfo);
-
         try
         {
-            if (fileSystemInfo.Exists)
-                return tryForceOverwrite && fileSystemInfo.HasWritePermission();
+            var dir = new DirectoryInfo(file.FullName);
+            if (dir.Exists) 
+                return false;
+
+            if (file.Exists)
+            {
+                if (file.Attributes.HasFlag(FileAttributes.ReadOnly))
+                    return false;
+
+                return tryForceOverwrite && file.HasWritePermission();
+            }
+
+            if (file.Parent() is  DirectoryInfo parentDir) 
+                return WritePossible(parentDir, tryForceOverwrite);
+
         }
         catch (Exception e)
         {
             QLog.Error(e);
-            return true;
         }
         
-        return true;
+        return false;
+    }
+
+    public static bool WritePossible(this DirectoryInfo dir, bool tryForceOverwrite)
+    {
+        try
+        {
+            var file = new FileInfo(dir.FullName);
+            if (file.Exists)
+                return false;
+
+            if (dir.Exists)
+            {
+                if (dir.Attributes.HasFlag(FileAttributes.ReadOnly))
+                    return false;
+
+                return tryForceOverwrite && dir.HasWritePermission();
+            }
+
+            if (dir.Parent() is DirectoryInfo parentDir)
+                return WritePossible(parentDir, tryForceOverwrite);
+
+        }
+        catch (Exception e)
+        {
+            QLog.Error(e);
+        }
+
+        return false;
     }
 
     #region File Name Legality

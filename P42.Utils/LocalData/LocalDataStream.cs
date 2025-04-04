@@ -22,9 +22,9 @@ public class LocalDataStream : LocalData<System.IO.Stream>
     /// <returns>false if item is not already in local data store</returns>
     public override bool TryRecallItem(out System.IO.Stream? item, ItemKey key)
     {
-        if (System.IO.File.Exists(key.Path))
+        if (System.IO.File.Exists(key.FullPath))
         {
-            item = System.IO.File.OpenRead(key.Path);
+            item = System.IO.File.OpenRead(key.FullPath);
             return true;
         }
         
@@ -38,8 +38,8 @@ public class LocalDataStream : LocalData<System.IO.Stream>
     /// <param name="key"></param>
     /// <returns>null if not available</returns>
     public override async Task<System.IO.Stream?> RecallOrPullItemAsync(ItemKey key)
-        => await key.TryRecallOrPullItemAsync() && System.IO.File.Exists(key.Path)
-            ? System.IO.File.OpenRead(key.Path)
+        => await key.TryRecallOrPullItemAsync() && System.IO.File.Exists(key.FullPath)
+            ? System.IO.File.OpenRead(key.FullPath)
             : null;
 
     #endregion
@@ -56,7 +56,7 @@ public class LocalDataStream : LocalData<System.IO.Stream>
     /// <exception cref="System.IO.IOException"></exception>
     public override void StoreItem(System.IO.Stream? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -93,7 +93,7 @@ public class LocalDataStream : LocalData<System.IO.Stream>
     /// <param name="wipeOld"></param>
     public override async Task StoreItemAsync(System.IO.Stream? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 

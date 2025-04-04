@@ -15,6 +15,7 @@ public static class Environment
     
     internal static Type? PlatformLongRunningTaskType { get; set; }
 
+    /*
     /// <summary>
     /// Gets or sets the main thread identifier.
     /// </summary>
@@ -35,13 +36,12 @@ public static class Environment
 
     // TODO: Migrate from P42.Utils.Uno?
     
-    /*
     /// <summary>
     /// EmbeddedResourceResolver 
     /// </summary>
     [Obsolete("Use P42.Uno/AppResources/EmbeddedResourceExtensions.FindAssembly instead.", true)]
     public static Func<string, Assembly, Assembly>? EmbeddedResourceAssemblyResolver { get; }
-    */
+   
 
     /// <summary>
     /// Initialization
@@ -50,6 +50,8 @@ public static class Environment
     {
         MainThreadId = System.Environment.CurrentManagedThreadId;
     }
+
+    */
 
     /// <summary>
     /// Gets the operating system.

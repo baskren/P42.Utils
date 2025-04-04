@@ -33,6 +33,10 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
         get => _instanceIdentifier ?? throw new ArgumentNullException(nameof(InstanceIdentifier));
         protected set
         {
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
+
+            if (value == _instanceIdentifier) return;
+
             if (!string.IsNullOrWhiteSpace(_instanceIdentifier))
                 throw new Exception($"Cannot change InstanceIdentifier of {GetType().Name}");
 
@@ -105,7 +109,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
             _initializedProperties.Add(propertyName);
 
         var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        LocalData.Text.TryStoreItem(json, TagItemKey(propertyName));
+        LocalData.Text.StoreItem(json, TagItemKey(propertyName));
         return true;
     }
 
@@ -126,7 +130,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
             _initializedProperties.Add(propertyName);
 
         var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        LocalData.Text.TryStoreItem(json, TagItemKey(propertyName));
+        LocalData.Text.StoreItem(json, TagItemKey(propertyName));
 
     }
 }

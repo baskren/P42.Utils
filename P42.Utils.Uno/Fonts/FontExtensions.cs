@@ -84,7 +84,7 @@ internal static class FontExtensions
                 var item = P42.Utils.LocalData.ResourceItemKey.Get(resourceId, FontCache, appAssembly);
                 if (item.TryRecallOrPullItem())
                 {
-                    localStoragePath = item.Path;
+                    localStoragePath = item.FullPath;
                     uri = item.AppDataUrl;
                 }
             }
@@ -102,7 +102,7 @@ internal static class FontExtensions
                     if (!item.TryRecallOrPullItem())
                         continue;
 
-                    localStoragePath = item.Path;
+                    localStoragePath = item.FullPath;
                     uri = item.AppDataUrl;
                     break;
                 }

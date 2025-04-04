@@ -44,7 +44,8 @@ public static class DirectoryExtensions
         if (fullPath.Length > 260)
             throw new ArgumentException("Full path is too long.", nameof(fullPath));
 
-        var parts = fullPath.Split('/', '\\').ToList();
+        // var isRooted = fullPath.StartsWith("/") || fullPath.StartsWith('\\');
+        var parts = fullPath.Trim('/','\\').Split('/', '\\').ToList();
         for (var i = 0; i < parts.Count;)
         {
             var part = parts[i];
@@ -61,12 +62,29 @@ public static class DirectoryExtensions
         }
 
         if (parts.Count > 0 && exceptLast)
-            parts.RemoveAt(parts.Count - 1);
+            parts.RemoveLast();
         
-        foreach (var part in parts)
+        for (var i = 0; i < parts.Count; i++)
         {
+            var part = parts[i];
+
             if (!part.IsLegalFileName())
-                throw new ArgumentException($"Illegal characters are not allowed. Part [{part}] of fullPath [{fullPath}] ", nameof(fullPath));
+            {
+                var isAndroid = OperatingSystem.IsAndroid();
+                var isBrowser = OperatingSystem.IsBrowser();
+                var isFreeBsd = OperatingSystem.IsFreeBSD();
+                var isIos = OperatingSystem.IsIOS();
+                var isLinux = OperatingSystem.IsLinux();
+                var isMacCat = OperatingSystem.IsMacCatalyst();
+                var isMacOs = OperatingSystem.IsMacOS();
+                var isTvOs = OperatingSystem.IsTvOS();
+                var isWasi = OperatingSystem.IsWasi();
+                var isWatchOS = OperatingSystem.IsWatchOS();
+                var isWindows = OperatingSystem.IsWindows();
+
+                if (!OperatingSystem.IsWindows() || i != 0 || part.Length != 2 || !char.IsLetter(part[0]) || part[1] != ':')
+                    throw new ArgumentException($"Illegal characters are not allowed. Part [{part}] of fullPath [{fullPath}] ", nameof(fullPath));
+            }
             path = Path.Combine(path, part);
             directoryInfo = new DirectoryInfo(path);
             if (!directoryInfo.Exists)

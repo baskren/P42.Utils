@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
@@ -22,25 +23,30 @@ public class LocalDataStreamWriter : LocalData<System.IO.StreamWriter>
     /// <returns>false if item is not already in local data store</returns>
     public override bool TryRecallItem(out System.IO.StreamWriter? item, ItemKey key)
     {
-        if (LocalDataStream.Instance.TryRecallItem(out var stream, key) && stream is not null)
+        try
         {
-            item = new System.IO.StreamWriter(stream);
+            item = new System.IO.StreamWriter(key.FullPath);
             return true;
         }
-        
+        catch (Exception ex)
+        {
+            QLog.Error(ex);
+        }
+
         item = null;
         return false;
     }
-    
+
     /// <summary>
     /// Gets or downloads item to LocalData store and returns a StreamWriter pointing to it 
     /// </summary>
     /// <param name="key"></param>
     /// <returns>null if not available</returns>
     public override async Task<System.IO.StreamWriter?> RecallOrPullItemAsync(ItemKey key)
-        => await LocalDataStream.Instance.RecallOrPullItemAsync(key) is {} stream
-            ? new System.IO.StreamWriter(stream)
-            : null;
+    {
+        await Task.CompletedTask;
+        return new System.IO.StreamWriter(key.FullPath);
+    }
     #endregion
 
     

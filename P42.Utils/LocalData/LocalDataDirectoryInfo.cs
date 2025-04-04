@@ -25,9 +25,9 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
     /// <returns>false if not in local data store</returns>
     public override bool TryRecallItem(out System.IO.DirectoryInfo? item, ItemKey key)
     {
-        if (System.IO.Directory.Exists(key.Path))
+        if (System.IO.Directory.Exists(key.FullPath))
         {
-            item = new System.IO.DirectoryInfo(key.Path);
+            item = new System.IO.DirectoryInfo(key.FullPath);
             return true;
         }
 
@@ -37,14 +37,14 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
 
     public override async Task<System.IO.DirectoryInfo?> RecallOrPullItemAsync(ItemKey key)
     {
-        if (!DirectoryExtensions.IsSupportedPackageExtension(key.Path))
+        if (!DirectoryExtensions.IsSupportedPackageExtension(key.FullPath))
         {
-            if (System.IO.Directory.Exists(key.Path))
-                return new System.IO.DirectoryInfo(key.Path);
+            if (System.IO.Directory.Exists(key.FullPath))
+                return new System.IO.DirectoryInfo(key.FullPath);
             throw new Exception($"Key [{key}] is not already stored and does not have supported package extension");
         }
         
-        var packagePath = key.Path;
+        var packagePath = key.FullPath;
         foreach (var unpackager in DirectoryExtensions.Unpackagers)
         {
             if (packagePath.EndsWith(unpackager.Key, StringComparison.OrdinalIgnoreCase))
@@ -53,11 +53,11 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
         if (System.IO.Directory.Exists(packagePath))
             return new System.IO.DirectoryInfo(packagePath);
 
-        if (!await key.TryRecallOrPullItemAsync() || !System.IO.File.Exists(key.Path))
+        if (!await key.TryRecallOrPullItemAsync() || !System.IO.File.Exists(key.FullPath))
             throw new Exception($"Source file for Key [{key}] cannot be retrieved");
         
         // Unpack package file and return directory
-        if (await DirectoryExtensions.UnpackArchiveAsync(packagePath, key.Path) is { } unpackedFolderPath && !string.IsNullOrEmpty(unpackedFolderPath) && System.IO.Directory.Exists(unpackedFolderPath))
+        if (await DirectoryExtensions.UnpackArchiveAsync(packagePath, key.FullPath) is { } unpackedFolderPath && !string.IsNullOrEmpty(unpackedFolderPath) && System.IO.Directory.Exists(unpackedFolderPath))
             return new System.IO.DirectoryInfo(unpackedFolderPath);
 
         return null;
@@ -77,7 +77,7 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
     /// <exception cref="System.IO.IOException"></exception>
     public override void StoreItem(System.IO.DirectoryInfo? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var dir = new System.IO.DirectoryInfo(key.Path);
+        var dir = new System.IO.DirectoryInfo(key.FullPath);
         if (!dir.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{dir.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -95,7 +95,7 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
     /// <param name="wipeOld"></param>
     public override async Task StoreItemAsync(System.IO.DirectoryInfo? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var dir = new System.IO.DirectoryInfo(key.Path);
+        var dir = new System.IO.DirectoryInfo(key.FullPath);
         if (!dir.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{dir.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -115,7 +115,7 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
     /// <returns>true on success</returns>
     public static async Task<bool> TryStorePackageAsync(System.IO.FileInfo packageFile, ItemKey key, bool wipeOld = true)
     {
-        var dir = new System.IO.DirectoryInfo(key.Path);
+        var dir = new System.IO.DirectoryInfo(key.FullPath);
         if (!dir.WritePossible(wipeOld))
             return false;
 
@@ -130,7 +130,7 @@ public class LocalDataDirectoryInfo : LocalData<System.IO.DirectoryInfo>
             if (dir.Exists && wipeOld)
                 dir.Delete(true);
             
-            await DirectoryExtensions.UnpackArchiveAsync(packageFile.FullName, key.Path);
+            await DirectoryExtensions.UnpackArchiveAsync(packageFile.FullName, key.FullPath);
             return true;
         }
         catch (Exception e)

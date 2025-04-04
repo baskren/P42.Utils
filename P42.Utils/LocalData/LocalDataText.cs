@@ -25,14 +25,14 @@ public class LocalDataText : LocalData<string>
     public override bool TryRecallItem(out string? item, ItemKey key)
     {
         item = null;
-        if (!System.IO.File.Exists(key.Path))
+        if (!System.IO.File.Exists(key.FullPath))
             return false;
 
         Semaphore.Wait();
 
         try
         {
-            item = System.IO.File.ReadAllText(key.Path);
+            item = System.IO.File.ReadAllText(key.FullPath);
             return true;
         }
         catch (Exception e)
@@ -54,13 +54,13 @@ public class LocalDataText : LocalData<string>
     /// <returns></returns>
     public override async Task<string?> RecallOrPullItemAsync(ItemKey key)
     {
-        if (!await key.TryRecallOrPullItemAsync() || !System.IO.File.Exists(key.Path))
+        if (!await key.TryRecallOrPullItemAsync() || !System.IO.File.Exists(key.FullPath))
             return null;
 
         await Semaphore.WaitAsync();
         try
         {
-            return await System.IO.File.ReadAllTextAsync(key.Path);
+            return await System.IO.File.ReadAllTextAsync(key.FullPath);
         }
         catch (Exception e)
         {
@@ -87,7 +87,7 @@ public class LocalDataText : LocalData<string>
     /// <exception cref="System.IO.IOException"></exception>
     public override void StoreItem(string? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -120,7 +120,7 @@ public class LocalDataText : LocalData<string>
     /// <param name="wipeOld"></param>
     public override async Task StoreItemAsync(string? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
         

@@ -74,7 +74,7 @@ public static class ObservableCollectionExtensions
 
         while (collection.Count > newOrder.Count)
         {
-            collection.RemoveAt(collection.Count - 1);
+            collection.TryRemoveLast();
         }
     }
 }

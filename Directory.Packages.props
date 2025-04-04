@@ -7,5 +7,9 @@
   -->
   <ItemGroup>
     <PackageVersion Include="P42.Utils.Uno" Version="$(UnoVersion)" />
+
+    <!-- UNIT TESTING -->
+    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="1.33.0-dev.11" />
+    <PackageVersion Include="Shouldly" Version="4.3.0" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 namespace P42.Utils;
@@ -25,9 +25,9 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
     /// <returns>true if exists</returns>
     public override bool TryRecallItem(out System.IO.FileInfo? item, ItemKey key)
     {
-        if (System.IO.File.Exists(key.Path))
+        if (System.IO.File.Exists(key.FullPath))
         {
-            item = new System.IO.FileInfo(key.Path);
+            item = new System.IO.FileInfo(key.FullPath);
             return true;
         }
         
@@ -41,8 +41,8 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
     /// <param name="key"></param>
     /// <returns>null if not available</returns>
     public override async Task<System.IO.FileInfo?> RecallOrPullItemAsync(ItemKey key)
-        => await key.TryRecallOrPullItemAsync() && System.IO.File.Exists(key.Path)
-            ? new System.IO.FileInfo(key.Path)
+        => await key.TryRecallOrPullItemAsync() && System.IO.File.Exists(key.FullPath)
+            ? new System.IO.FileInfo(key.FullPath)
             : null;
 
     #endregion
@@ -59,7 +59,7 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
     /// <exception cref="System.IO.IOException"></exception>
     public override void StoreItem(System.IO.FileInfo? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -70,7 +70,7 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
             if (file.Exists && wipeOld)
                 file.Delete();
 
-            sourceItem?.CopyTo(key.Path, wipeOld);
+            sourceItem?.CopyTo(key.FullPath, wipeOld);
         }
         catch (Exception e)
         {
@@ -91,7 +91,7 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
     /// <param name="wipeOld"></param>
     public override async Task StoreItemAsync(System.IO.FileInfo? sourceItem, ItemKey key, bool wipeOld = true)
     {
-        var file = new System.IO.FileInfo(key.Path);
+        var file = new System.IO.FileInfo(key.FullPath);
         if (!file.WritePossible(wipeOld))
             throw new System.IO.IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
 
@@ -102,7 +102,7 @@ public class LocalDataFileInfo : LocalData<System.IO.FileInfo>
             if (file.Exists && wipeOld)
                 file.Delete();
 
-            sourceItem?.CopyTo(key.Path, wipeOld);
+            sourceItem?.CopyTo(key.FullPath, wipeOld);
         }
         catch (Exception e)
         {

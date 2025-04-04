@@ -17,7 +17,7 @@ public static class Platform
     /// <exception cref="Exception"></exception>
     public static Application Application
     {
-        get => _application ?? throw new Exception("P42.Utils.Uno.Platform.Application not set");
+        get => _application ?? throw new NotInitializedException();
         private set => _application = value;
     }
     #endregion
@@ -34,13 +34,13 @@ public static class Platform
     /// <exception cref="Exception"></exception>
     public static Window MainWindow
     {
-        get => _mainWindow ?? throw new Exception("P42.Utils.Uno.Platform.Window not set");
+        get => _mainWindow ?? throw new NotInitializedException();
         private set => _mainWindow = value; 
     }
 
     public static Frame Frame 
         => MainWindow.Content as Frame
-           ?? throw new Exception("P42.Utils.Uno.Platform.MainWindow.Current not a Frame");
+           ?? throw new NotInitializedException();
     #endregion
     
     #region MainThread / MainThreadDispatchQueue
@@ -51,7 +51,7 @@ public static class Platform
     /// <exception cref="Exception"></exception>
     public static Thread MainThread
     {
-        get => _mainThread ?? throw new Exception("P42.Utils.Uno.Platform.MainThread not set"); 
+        get => _mainThread ?? throw new NotInitializedException(); 
         private set => _mainThread = value;
     }
 
@@ -62,7 +62,7 @@ public static class Platform
     /// <exception cref="Exception"></exception>
     public static Microsoft.UI.Dispatching.DispatcherQueue MainThreadDispatchQueue
     {
-        get => _mainThreadDispatchQueue ?? throw new Exception("Platform.MainThreadDispatchQueue not set"); 
+        get => _mainThreadDispatchQueue ?? throw new NotInitializedException(); 
         private set => _mainThreadDispatchQueue = value;
     }
     #endregion
@@ -74,9 +74,8 @@ public static class Platform
     #endregion
 
     #region Assembly
-    private static System.Reflection.Assembly? _assembly;
     [Obsolete("Is this still needed?", true)]
-    public static System.Reflection.Assembly Assembly => _assembly ??= typeof(Platform).Assembly;
+    public static System.Reflection.Assembly Assembly => throw new NotImplementedException();
     #endregion
 
     #region Font Families
@@ -116,10 +115,8 @@ public static class Platform
     public static void Init(Application application, Window window)
     {
         Application = application;
-#pragma warning disable CS0618 // Type or member is obsolete
         MainWindow = window;
-#pragma warning restore CS0618 // Type or member is obsolete
-        Environment.Init();
+        // Environment.Init();
         // Environment.PlatformTimer = new Timer();
         Environment.PlatformPathLoader = PlatformPathLoader;
         DiskSpace.PlatformDiskSpace = new DeviceDisk();
@@ -137,4 +134,9 @@ public static class Platform
         Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
     }
 
+}
+
+public class NotInitializedException : Exception 
+{
+    public NotInitializedException() : base("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()") { }
 }

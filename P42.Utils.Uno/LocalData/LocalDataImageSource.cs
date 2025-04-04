@@ -52,16 +52,16 @@ public class LocalDataImageSource : LocalData<ImageSource>
 
     private ImageSource GetItemSource(Stream stream, ItemKey key)
     {
-        if (key.Path.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-            key.Path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-            key.Path.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+        if (key.FullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+            key.FullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+            key.FullPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
         {
             var bitmapImage = new BitmapImage();
             bitmapImage.SetSource(stream.AsRandomAccessStream());
             return bitmapImage;
         }
 
-        if (key.Path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+        if (key.FullPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
         {
             return MainThread.Invoke(async() =>
             {

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -214,11 +215,11 @@ public abstract class LocalData
     /// <returns></returns>
     public static List<string> List(ItemKey key)
     {
-        if (System.IO.File.Exists(key.Path))
-            return [key.Path];
+        if (System.IO.File.Exists(key.FullPath))
+            return [key.FullPath];
 
-        if (System.IO.Directory.Exists(key.Path))
-            return System.IO.Directory.EnumerateFiles(key.Path, "*", System.IO.SearchOption.AllDirectories).ToList();
+        if (System.IO.Directory.Exists(key.FullPath))
+            return System.IO.Directory.EnumerateFiles(key.FullPath, "*", System.IO.SearchOption.AllDirectories).ToList();
         
         return [];
     }
@@ -228,7 +229,7 @@ public abstract class LocalData
 
     #region ItemKey
 
-    public abstract class ItemKey(string path, string? folderPath, Assembly assembly)
+    public abstract class ItemKey(string fullPath, string? folderPath, Assembly assembly) : IEquatable<ItemKey>
     {
         /// <summary>
         /// Used to compartmentalize items by assembly (default: current application assembly)
@@ -243,7 +244,7 @@ public abstract class LocalData
         /// <summary>
         /// File system path to item
         /// </summary>
-        public string Path { get; } = path;
+        public string FullPath { get; } = fullPath;
 
         /// <summary>
         /// "ms-appdata://" path to item
@@ -252,16 +253,20 @@ public abstract class LocalData
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(Path) || !Path.StartsWith(PlatformFolder))
+                if (string.IsNullOrWhiteSpace(FullPath) || !FullPath.StartsWith(PlatformFolder))
                     return string.Empty;
 
-                var localPathFragment = Path[PlatformFolder.Length..].Replace('\\', '/').Trim('/');
+                var localPathFragment = FullPath[PlatformFolder.Length..].Replace('\\', '/').Trim('/');
                 return $"ms-appdata:///local/{localPathFragment}";
 
             }
         }
-        
-        
+
+        /// <summary>
+        /// "ms-appdata://" Uri to item
+        /// </summary>
+        public Uri AppDataUri => new Uri(AppDataUrl);
+
 
         protected static string CleanKey(string key)
         {
@@ -275,13 +280,13 @@ public abstract class LocalData
         /// Gets path to folder used for local data store.
         /// </summary>
         /// <param name="assembly"></param>
-        /// <param name="folderPath"></param>
+        /// <param name="folder"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected static string PathForFolderPathAndAssembly(string? folderPath, Assembly assembly)
+        protected static string FullPathForFolderAndAssembly(string? folder, Assembly assembly)
         {
-            folderPath = folderPath?.Trim('/').Trim('\\') ?? string.Empty;
-            return System.IO.Path.Combine(StoreFolderName, assembly.Name(), folderPath);
+            folder = folder?.Trim('/').Trim('\\') ?? string.Empty;
+            return System.IO.Path.Combine(StorePath, assembly.Name(), folder);
         }
 
         /// <summary>
@@ -294,18 +299,18 @@ public abstract class LocalData
         /// <summary>
         /// Is the item stored locally?
         /// </summary>
-        public bool Exists => System.IO.File.Exists(Path) || System.IO.Directory.Exists(Path);
-        
+        public bool Exists => System.IO.File.Exists(FullPath) || System.IO.Directory.Exists(FullPath);
+
         /// <summary>
         /// Is the item stored as a directory?
         /// </summary>
-        public bool IsDirectory => System.IO.Directory.Exists(Path);
-        
+        public bool IsDirectory => System.IO.Directory.Exists(FullPath);
+
         /// <summary>
         /// Is the item stored as a file?
         /// </summary>
-        public bool IsFile => System.IO.File.Exists(Path);
-        
+        public bool IsFile => System.IO.File.Exists(FullPath);
+
         /// <summary>
         /// Is the item available from the source?
         /// </summary>
@@ -313,42 +318,109 @@ public abstract class LocalData
         /// <exception cref="NotImplementedException"></exception>
         public virtual Task<bool> IsSourceAvailableAsync() => throw new NotImplementedException();
 
-
+        /// <summary>
+        /// Attempt to recall or pull the item from source
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual Task<bool> TryRecallOrPullItemAsync() => throw new NotImplementedException();
 
+        /// <summary>
+        /// Clear item
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        public void Clear()
+        {
+            if (!Exists) return;
+            if (IsDirectory)
+                Directory.Delete(FullPath, true);
+            else if (IsFile)
+                File.Delete(FullPath);
+            else
+                throw new Exception($"Unknown file type for Itemkey [{this}]");
+        }
+
+        /// <summary>
+        /// Try clear item
+        /// </summary>
+        /// <returns></returns>
+        public bool TryClear()
+        {
+            if (!Exists) return false;
+
+            try
+            {
+                Clear();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
+        public virtual bool Equals(ItemKey? other)
+        {
+            if (other is null)
+                return false;
+
+            return FullPath == other.FullPath && Assembly == other.Assembly && FolderPath == other.FolderPath;
+        }
+
+        public static bool operator ==(ItemKey? left, ItemKey? right)
+        {
+            if (ReferenceEquals(left, right)) return true;
+            if (left is null || right is null) return false;
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ItemKey? left, ItemKey? right) => !(left == right);
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not ItemKey other)
+                return false;
+            return Equals(other);
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(FullPath, Assembly, FolderPath);
+        
     }
 
     public class TagItemKey : ItemKey
     {
         public string Tag { get; }
 
-        public static TagItemKey Get(string tag, string? folderPath = null, Assembly? assembly = null)
+        public static TagItemKey Get(string tag, string folderPath, Assembly assembly)
         {
-            tag = CleanKey(tag);
-            var givenAssembly = assembly;
-            assembly =  EmbeddedResourceExtensions.FindAssembly(tag, givenAssembly);
-            if (assembly is null)
-                throw new ArgumentException( $"Cannot find resourceId [{tag}] in provided assembly [{givenAssembly?.Name() ?? "null"}]");
-            
-            var rootPath = System.IO.Path.Combine(PathForFolderPathAndAssembly(folderPath, assembly), tag);
+            if (string.IsNullOrWhiteSpace(tag))
+                throw new ArgumentOutOfRangeException(nameof(tag));
+
+            tag = CleanKey(tag);            
+            var rootPath = FullPathForFolderAndAssembly(folderPath, assembly);
             if (!DirectoryExtensions.TryGetOrCreateDirectory(rootPath, out var rootDirectory))
                 throw new Exception($"Cannot create folder [{rootPath}] for P42.Utils.LocalData");
             
-            var path = rootDirectory.FullName ?? throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
-            if (path.Length >= 260)
-                throw new Exception($"Path [{path}] too long [{path.Length}] for P42.Utils.LocalData");
+            if (string.IsNullOrWhiteSpace(rootDirectory.FullName))
+                throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
 
-            return new TagItemKey(path, tag, folderPath, assembly);
+            var fullPath = System.IO.Path.Combine(rootPath, tag);
+            if (fullPath.Length >= 260)
+                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
+
+            return new TagItemKey(tag, fullPath, folderPath, assembly);
 
         }
 
-        private TagItemKey(string path, string tag, string? folderPath, Assembly assembly) : base(path, folderPath, assembly)
+        private TagItemKey(string tag, string fullPath, string? folderPath, Assembly assembly) : base(fullPath, folderPath, assembly)
         {
             Tag = tag;
         }
         
         public override string ToString()
-            => $"Tag: {Tag}; FolderPath: {FolderPath}; {base.ToString()}";
+            => $"Tag: {Tag}; {base.ToString()}";
         
         /// <summary>
         /// Is the item available from the source?
@@ -358,8 +430,19 @@ public abstract class LocalData
         
         
         public override Task<bool> TryRecallOrPullItemAsync()
-            => Task.FromResult(System.IO.Directory.Exists(Path) || System.IO.File.Exists(Path));
-        
+            => Task.FromResult(System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath));
+
+        public override bool Equals(ItemKey? other)
+        {
+            if (other is not TagItemKey)
+                return false;
+
+            return base.Equals(other);
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(Tag, base.GetHashCode());
+
     }
     
     public class ResourceItemKey : ItemKey
@@ -368,25 +451,31 @@ public abstract class LocalData
         
         public static ResourceItemKey Get(string resourceId, string? folderPath = null, Assembly? assembly = null) 
         {
+            if (string.IsNullOrWhiteSpace(resourceId))
+                throw new ArgumentOutOfRangeException(nameof(resourceId));
+
             resourceId = CleanKey(resourceId);
             var givenAssembly = assembly;
             assembly =  EmbeddedResourceExtensions.FindAssembly(resourceId, givenAssembly);
             if (assembly is null)
                 throw new ArgumentException( $"Cannot find resourceId [{resourceId}] in provided assembly [{givenAssembly?.Name() ?? "null"}]");
-            
-            var rootPath = System.IO.Path.Combine(PathForFolderPathAndAssembly(folderPath, assembly), resourceId);
+
+            var rootPath = FullPathForFolderAndAssembly(folderPath, assembly);
             if (!DirectoryExtensions.TryGetOrCreateDirectory(rootPath, out var rootDirectory))
                 throw new Exception($"Cannot create folder [{rootPath}] for P42.Utils.LocalData");
-            
-            var path = rootDirectory.FullName ?? throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
-            if (path.Length >= 260)
-                throw new Exception($"Path [{path}] too long [{path.Length}] for P42.Utils.LocalData");
 
-            return new ResourceItemKey(path, resourceId, folderPath, assembly);
+            if (string.IsNullOrWhiteSpace(rootDirectory.FullName))
+                throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
+
+            var fullPath = System.IO.Path.Combine(rootPath, resourceId);
+            if (fullPath.Length >= 260)
+                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
+
+            return new ResourceItemKey(resourceId, fullPath, folderPath, assembly);
         }
 
-        private ResourceItemKey(string path, string resourceId, string? folderPath, Assembly assembly) : 
-            base(path, folderPath, assembly)
+        private ResourceItemKey(string resourceId, string fullPath, string? folderPath, Assembly assembly) : 
+            base(fullPath, folderPath, assembly)
         {
             ResourceId = resourceId;
         }
@@ -396,7 +485,7 @@ public abstract class LocalData
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => $"Resource: {ResourceId}; FolderPath: {FolderPath}; {base.ToString()}";
+            => $"Resource: {ResourceId}; {base.ToString()}";
         
         /// <summary>
         /// Is the item available from the source?
@@ -404,10 +493,9 @@ public abstract class LocalData
         /// <returns></returns>
         public override Task<bool> IsSourceAvailableAsync() => Task.FromResult(Assembly.Exists(ResourceId));
         
-        
         public override async Task<bool> TryRecallOrPullItemAsync()
         {
-            if (System.IO.Directory.Exists(Path) || System.IO.File.Exists(Path))
+            if (System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath))
                 return true;
         
             if (EmbeddedResourceExtensions.FindAssemblyAndStream(ResourceId, Assembly) is not {} resource)
@@ -415,12 +503,12 @@ public abstract class LocalData
 
             try
             {
-                await using var destinationStream = new System.IO.FileStream(Path, System.IO.FileMode.Create);
+                await using var destinationStream = new System.IO.FileStream(FullPath, System.IO.FileMode.Create);
                 await Semaphore.WaitAsync();
                 await resource.DisposableStream.CopyToAsync(destinationStream);
 
                 var buildDateTime = Assembly.GetBuildTime();
-                System.IO.File.SetLastWriteTime(Path, buildDateTime);
+                System.IO.File.SetLastWriteTime(FullPath, buildDateTime);
             }
             catch (Exception ex)
             {
@@ -438,7 +526,7 @@ public abstract class LocalData
         
         public virtual bool TryRecallOrPullItem()
         {
-            if (System.IO.Directory.Exists(Path) || System.IO.File.Exists(Path))
+            if (System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath))
                 return true;
         
             if (EmbeddedResourceExtensions.FindAssemblyAndStream(ResourceId, Assembly) is not {} resource)
@@ -446,12 +534,12 @@ public abstract class LocalData
 
             try
             {
-                using var destinationStream = new System.IO.FileStream(Path, System.IO.FileMode.Create);
+                using var destinationStream = new System.IO.FileStream(FullPath, System.IO.FileMode.Create);
                 Semaphore.Wait();
                 resource.DisposableStream.CopyTo(destinationStream);
 
                 var buildDateTime = Assembly.GetBuildTime();
-                System.IO.File.SetLastWriteTime(Path, buildDateTime);
+                System.IO.File.SetLastWriteTime(FullPath, buildDateTime);
             }
             catch (Exception ex)
             {
@@ -466,6 +554,17 @@ public abstract class LocalData
             resource.DisposableStream.Dispose();
             return true;
         }
+
+        public override bool Equals(ItemKey? other)
+        {
+            if (other is not ResourceItemKey)
+                return false;
+
+            return base.Equals(other);
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(ResourceId, base.GetHashCode());
 
     }
 
@@ -491,7 +590,7 @@ public abstract class LocalData
             assembly ??= AssemblyExtensions.GetApplicationAssembly();
 
             var root = HttpUtility.UrlDecode(sourceUri.Host);
-            var localPath = HttpUtility.UrlDecode(sourceUri.LocalPath);
+            var storeSubPath = HttpUtility.UrlDecode(sourceUri.LocalPath);
 
             if (rootUri is not null)
             {
@@ -500,25 +599,29 @@ public abstract class LocalData
                         $"SourceUri [{sourceUri}] does not start with RootUri [{rootUri}]for P42.Utils.LocalData");
                 root = HttpUtility.UrlDecode(rootUri.AbsoluteUri);
                 var relativeUri = sourceUri.AbsoluteUri[rootUri.AbsoluteUri.Length..];
-                localPath = HttpUtility.UrlDecode(relativeUri);
+                storeSubPath = HttpUtility.UrlDecode(relativeUri);
             }
 
-            var rootPath = UriRootFolderPath(root, folderPath, assembly);
-            var path = System.IO.Path.Combine(rootPath, localPath);
-            if (path.Length >= 260)
-                throw new Exception($"Path [{path}] too long [{path.Length}] for P42.Utils.LocalData");
+            var rootPath = RootFolderPath(root, folderPath, assembly);
+            var fullPath = System.IO.Path.Combine(rootPath, storeSubPath);
+            if (fullPath.Length >= 260)
+                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
-            if (!DirectoryExtensions.TryGetOrCreateDirectory(path, out var itemParent, true))
-                throw new Exception($"Cannot create folder [{rootPath}] for P42.Utils.LocalData");
+            var parentPath = System.IO.Path.GetDirectoryName(fullPath);
+            if (string.IsNullOrWhiteSpace(parentPath))
+                throw new Exception($"Cannot get path for parent of {fullPath}");
+            
+            if (!DirectoryExtensions.TryGetOrCreateDirectory(parentPath, out var itemParent, true))
+                throw new Exception($"Cannot create folder [{parentPath}] for P42.Utils.LocalData");
 
             if (itemParent.FullName is null)
-                throw new Exception($"Cannot get itemParent.FullName for [{path}] in P42.Utils.LocalData");
+                throw new Exception($"Cannot get itemParent.FullName for [{fullPath}] in P42.Utils.LocalData");
 
-            return new UriItemKey(path, localPath, sourceUri, rootUri, folderPath, assembly);
+            return new UriItemKey(sourceUri, rootUri, storeSubPath, fullPath, folderPath, assembly);
         }
 
-        private UriItemKey(string path, string localPath, Uri sourceUri, Uri? rootUri, string? folderPath,
-            Assembly assembly) : base(path,
+        private UriItemKey(Uri sourceUri, Uri? rootUri, string localPath, string fullPath, string? folderPath,
+            Assembly assembly) : base(fullPath,
             folderPath, assembly)
         {
             SourceUri = sourceUri;
@@ -526,7 +629,7 @@ public abstract class LocalData
             LocalPath = localPath;
         }
 
-        private static string UriRootFolderPath(string root, string? folderPath, Assembly assembly)
+        private static string RootFolderPath(string root, string? folderPath, Assembly assembly)
         {
             if (!ItemUriRootLookup.TryGetValue(root, out var itemGuid) || string.IsNullOrWhiteSpace(itemGuid))
             {
@@ -534,7 +637,7 @@ public abstract class LocalData
                 ItemUriRootLookup[root] = itemGuid;
             }
 
-            return System.IO.Path.Combine(PathForFolderPathAndAssembly(folderPath, assembly), itemGuid);
+            return System.IO.Path.Combine(FullPathForFolderAndAssembly(folderPath, assembly), itemGuid);
         }
 
         /// <summary>
@@ -583,7 +686,7 @@ public abstract class LocalData
                         DateTimeStyles.AssumeUniversal, out var lastModified))
                     lastModified = DateTime.MinValue;
 
-                if (System.IO.Directory.Exists(Path))
+                if (System.IO.Directory.Exists(FullPath))
                 {
                     // Can't get file from server
                     Console.WriteLine($"Status Code: {headerResponse.StatusCode}");
@@ -592,12 +695,12 @@ public abstract class LocalData
 
                     // Current ETag matches stored ETag
                     if (!string.IsNullOrWhiteSpace(currentETag) &&
-                        ETagLookup.TryGetValue(Path, out var localETag) &&
+                        ETagLookup.TryGetValue(FullPath, out var localETag) &&
                         currentETag == localETag)
                         return true;
 
                     // Current server date-time matches local date-time 
-                    var localWrite = System.IO.Directory.GetLastWriteTime(Path);
+                    var localWrite = System.IO.Directory.GetLastWriteTime(FullPath);
                     if (lastModified != DateTime.MinValue && localWrite >= lastModified)
                         return true;
                 }
@@ -608,15 +711,15 @@ public abstract class LocalData
                 try
                 {
                     await Semaphore.WaitAsync();
-                    await System.IO.File.WriteAllBytesAsync(Path, bytes);
+                    await System.IO.File.WriteAllBytesAsync(FullPath, bytes);
 
                     if (lastModified != DateTime.MinValue)
-                        System.IO.File.SetLastWriteTime(Path, lastModified);
+                        System.IO.File.SetLastWriteTime(FullPath, lastModified);
                 }
                 catch (Exception e)
                 {
                     QLog.Error(e, "UriItemKey write exception");
-                    return System.IO.Directory.Exists(Path);
+                    return System.IO.Directory.Exists(FullPath);
                 }
                 finally
                 {
@@ -624,24 +727,35 @@ public abstract class LocalData
                 }
 
                 if (string.IsNullOrEmpty(currentETag))
-                    ETagLookup.Remove(Path);
+                    ETagLookup.Remove(FullPath);
                 else
-                    ETagLookup[Path] = currentETag;
+                    ETagLookup[FullPath] = currentETag;
 
                 return true;
             }
             catch (Exception ex)
             {
                 QLog.Error(ex, "UriItemKey download exception");
-                return System.IO.Directory.Exists(Path);
+                return System.IO.Directory.Exists(FullPath);
             }
 
         }
 
+        public override bool Equals(ItemKey? other)
+        {
+            if (other is not UriItemKey)
+                return false;
+            return base.Equals(other);
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(SourceUri, RootUri, base.GetHashCode());
+
+
     }
 
     #endregion
-    
+
 
     #region Clear
 
@@ -670,14 +784,14 @@ public abstract class LocalData
     /// <returns>true if any items cleared</returns>
     public static bool Clear(DateTime dateTime, ItemKey key)
     {
-        if (string.IsNullOrWhiteSpace(key.Path))
+        if (string.IsNullOrWhiteSpace(key.FullPath))
             return false;
         
-        if (!key.Path.StartsWith(StorePath))
-            throw new Exception($"Key [{key.Path}] does not start with P42.Utils.LocalData StorePath");
+        if (!key.FullPath.StartsWith(StorePath))
+            throw new Exception($"Key [{key.FullPath}] does not start with P42.Utils.LocalData StorePath");
         
-        var parts = key.Path.Split(['/','\\'], StringSplitOptions.RemoveEmptyEntries);
-        var parentPath = key.Path[..^parts.Last().Length];
+        var parts = key.FullPath.Split(['/','\\'], StringSplitOptions.RemoveEmptyEntries);
+        var parentPath = key.FullPath[..^parts.Last().Length];
         var parentFolder = new System.IO.DirectoryInfo(parentPath);
         if (!parentFolder.Exists)
             return false;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -9,7 +9,7 @@ namespace P42.Utils.Uno;
 /// <summary>
 /// Extensions for manipulating Windows.UI.Color, Microsoft.UI.Color, System.Drawing.Color, and Brush objects
 /// </summary>
-internal static class ColorExtensions
+public static class ColorExtensions
 {
     /// <summary>
     /// Given a background color, return a high contrast foreground color
@@ -54,7 +54,7 @@ internal static class ColorExtensions
     /// </summary>
     /// <param name="color"></param>
     /// <returns></returns>
-    public static System.Drawing.Color ToSystemDrawingColor(this Color color)
+    public static System.Drawing.Color ToSystemDrawingColor(this Windows.UI.Color color)
         => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 
     /// <summary>
@@ -70,7 +70,7 @@ internal static class ColorExtensions
     /// </summary>
     /// <param name="color"></param>
     /// <returns></returns>
-    public static Brush ToBrush(this Color color)
+    public static Brush ToBrush(this Windows.UI.Color color)
         => new SolidColorBrush(color);
 
     /// <summary>

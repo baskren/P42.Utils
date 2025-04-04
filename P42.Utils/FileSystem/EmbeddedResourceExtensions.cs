@@ -120,7 +120,7 @@ public static class EmbeddedResourceExtensions
     public static Assembly? FindAssembly(string resourceId, Assembly? assembly = null)
     {
         var result = FindAssemblyAndStream(resourceId, assembly);
-        result?.DisposableStream.Dispose();
+        result?.DisposableStream?.Dispose();
         return result?.Assembly;
     }
 
@@ -175,9 +175,21 @@ public static class EmbeddedResourceExtensions
                 return null;
 
             EmbeddedResourceNames[assembly] = names;
+
+            var nameB = names.FirstOrDefault(n => n.EndsWith(resourceId));
+            if (!string.IsNullOrWhiteSpace (nameB))
+            {
+                if (assembly.GetManifestResourceStream(nameB) is { } stream)
+                    return (stream, assembly);
+            }
+
+            return null;
+
+                /*
             return names.FirstOrDefault(n => n.EndsWith(resourceId)) is {} nameB && !string.IsNullOrWhiteSpace(nameB) && assembly.GetManifestResourceStream(nameB) is {} streamB
                 ? (streamB, assembly) 
                 : null;
+                */
         }
         else
         {
