@@ -22,7 +22,7 @@ public static class EmbeddedResourceExtensions
     /// </summary>
     /// <param name="resourceId">ResourceId</param>
     /// <returns>true on success</returns>
-    public static bool Exists(string resourceId)
+    public static bool EmbeddedResourceExists(string resourceId)
         => FindAssembly(resourceId) is not null;
 
     /// <summary>

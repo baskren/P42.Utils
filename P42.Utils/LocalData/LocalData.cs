@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using P42.Serilog.QuickLog;
+using static P42.Utils.LocalData;
 
 namespace P42.Utils;
 
@@ -20,53 +21,23 @@ namespace P42.Utils;
 /// <summary>
 /// base for storage/recall of items in local data store for common caching scenarios
 /// </summary>
-public abstract class LocalData
+public abstract partial class LocalData
 {
-
-    #region Format Implementations
-
-    /// <summary>
-    /// Directory handler for LocalData store
-    /// </summary>
-    public static LocalDataDirectoryInfo DirectoryInfo => LocalDataDirectoryInfo.Instance;
-
-    /// <summary>
-    /// File handler for LocalData store
-    /// </summary>
-    public static LocalDataFileInfo FileInfo => LocalDataFileInfo.Instance;
-
-    /// <summary>
-    /// TextHandler for LocalData store
-    /// </summary>
-    public static LocalDataText Text => LocalDataText.Instance;
-
-    /// <summary>
-    /// Stream handler for LocalData store
-    /// </summary>
-    public static LocalDataStream Stream => LocalDataStream.Instance;
-
-    /// <summary>
-    /// StreamReader handler for LocalData store
-    /// </summary>
-    public static LocalDataStreamReader StreamReader => LocalDataStreamReader.Instance;
-
-    /// <summary>
-    /// StreamWriter handler for LocalData store
-    /// </summary>
-    public static LocalDataStreamWriter StreamWriter => LocalDataStreamWriter.Instance;
-
-    #endregion
-
     
     #region Fields
 
-    public static readonly SemaphoreSlim Semaphore = new (1, 1);
+    internal static readonly SemaphoreSlim Semaphore = new (1, 1);
     
-    private static readonly JsonSerializerSettings JsonSerializationSettings = new()
+    private static readonly JsonSerializerSettings JsonSerializatingSettings = new()
     {
         TypeNameHandling = TypeNameHandling.All,
         Formatting = Formatting.Indented,
         ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+    };
+
+    private static JsonSerializerSettings JsonDeserializingSettings = new JsonSerializerSettings
+    {
+        TypeNameHandling = TypeNameHandling.Auto
     };
 
 
@@ -80,9 +51,9 @@ public abstract class LocalData
     private static string PlatformFolder => Environment.ApplicationLocalFolderPath;
 #pragma warning restore CS0618 // Type or member is obsolete
     private const string StoreFolderName = "P42.Utils.LocalDataStore";
-    private static readonly string StorePath = System.IO.Path.Combine(PlatformFolder, StoreFolderName);
-    private static readonly string ItemUriRootLookupPath = System.IO.Path.Combine(StorePath, nameof(ItemUriRootLookup));
-    private static readonly string ETagLookupPath = System.IO.Path.Combine(StorePath, nameof(ETagLookup));
+    private static readonly string StorePath = Path.Combine(PlatformFolder, StoreFolderName);
+    private static readonly string ItemUriRootLookupPath = Path.Combine(StorePath, nameof(ItemUriRootLookup));
+    private static readonly string ETagLookupPath = Path.Combine(StorePath, nameof(ETagLookup));
 
     // ReSharper disable StaticMemberInGenericType
     private static readonly ObservableConcurrentDictionary<string, string> ItemUriRootLookup;
@@ -112,16 +83,16 @@ public abstract class LocalData
         if (version is null)
             throw new Exception("Cannot get Version for P42.Utils.LocalData");
 
-        var versionFilePath = System.IO.Path.Combine(platformFolder.FullName, "P42.Utils.LocalData.version.txt");
+        var versionFilePath = Path.Combine(platformFolder.FullName, "P42.Utils.LocalData.version.txt");
 
         if (!DirectoryExtensions.TryGetOrCreateDirectory(StorePath, out var storeFolder))
             throw new Exception($"Cannot create StoreFolder [{StorePath}] forP42.Utils.LocalData");
         if (storeFolder is null)
             throw new Exception($"Cannot get StoreFolder [{StorePath}] for P42.Utils.LocalData");
 
-        if (System.IO.File.Exists(versionFilePath))
+        if (File.Exists(versionFilePath))
         {
-            var oldVersion = System.IO.File.ReadAllText(versionFilePath);
+            var oldVersion = File.ReadAllText(versionFilePath);
             if (!string.IsNullOrWhiteSpace(oldVersion) && oldVersion != version.ToString())
             {
                 storeFolder.Delete(true);
@@ -129,18 +100,18 @@ public abstract class LocalData
             }
         }
 
-        System.IO.File.WriteAllText(versionFilePath, version.ToString());
+        File.WriteAllText(versionFilePath, version.ToString());
 
-        if (System.IO.File.Exists(ItemUriRootLookupPath) &&
-            System.IO.File.ReadAllText(ItemUriRootLookupPath) is { } urJson &&
+        if (File.Exists(ItemUriRootLookupPath) &&
+            File.ReadAllText(ItemUriRootLookupPath) is { } urJson &&
             !string.IsNullOrWhiteSpace(urJson) &&
             JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(urJson) is { } uriLookup)
             ItemUriRootLookup = uriLookup;
         else
             ItemUriRootLookup = new ObservableConcurrentDictionary<string, string>();
         
-        if (System.IO.File.Exists(ETagLookupPath) &&
-            System.IO.File.ReadAllText(ETagLookupPath) is { } etagJson &&
+        if (File.Exists(ETagLookupPath) &&
+            File.ReadAllText(ETagLookupPath) is { } etagJson &&
             !string.IsNullOrWhiteSpace(etagJson) &&
             JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(etagJson) is { } etagLookup)
             ETagLookup = etagLookup;
@@ -160,7 +131,7 @@ public abstract class LocalData
             await Semaphore.WaitAsync();
             try
             {
-                await System.IO.File.WriteAllTextAsync(ETagLookupPath, json);
+                await File.WriteAllTextAsync(ETagLookupPath, json);
             }
             catch (Exception ex)
             {
@@ -186,7 +157,7 @@ public abstract class LocalData
             await Semaphore.WaitAsync();
             try
             {
-                await System.IO.File.WriteAllTextAsync(ItemUriRootLookupPath, json);
+                await File.WriteAllTextAsync(ItemUriRootLookupPath, json);
             }
             catch (Exception ex)
             {
@@ -213,13 +184,13 @@ public abstract class LocalData
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public static List<string> List(ItemKey key)
+    public static List<string> List(Item key)
     {
-        if (System.IO.File.Exists(key.FullPath))
+        if (File.Exists(key.FullPath))
             return [key.FullPath];
 
-        if (System.IO.Directory.Exists(key.FullPath))
-            return System.IO.Directory.EnumerateFiles(key.FullPath, "*", System.IO.SearchOption.AllDirectories).ToList();
+        if (Directory.Exists(key.FullPath))
+            return Directory.EnumerateFiles(key.FullPath, "*", SearchOption.AllDirectories).ToList();
         
         return [];
     }
@@ -229,12 +200,12 @@ public abstract class LocalData
 
     #region ItemKey
 
-    public abstract class ItemKey(string fullPath, string? folderPath, Assembly assembly) : IEquatable<ItemKey>
+    public abstract class Item(string fullPath, string? folderPath, Assembly? assembly) : IEquatable<Item>
     {
         /// <summary>
         /// Used to compartmentalize items by assembly (default: current application assembly)
         /// </summary>
-        public Assembly Assembly { get; } = assembly;
+        public Assembly? Assembly { get; } = assembly;
 
         /// <summary>
         /// FolderPath (used to further compartmentalize items (default: null)
@@ -283,10 +254,10 @@ public abstract class LocalData
         /// <param name="folder"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected static string FullPathForFolderAndAssembly(string? folder, Assembly assembly)
+        protected static string FullPathForFolderAndAssembly(string? folder, Assembly? assembly)
         {
             folder = folder?.Trim('/').Trim('\\') ?? string.Empty;
-            return System.IO.Path.Combine(StorePath, assembly.Name(), folder);
+            return Path.Combine(StorePath, assembly?.Name() ?? string.Empty, folder);
         }
 
         /// <summary>
@@ -294,36 +265,23 @@ public abstract class LocalData
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => $"FolderPath: {FolderPath}; Assembly: {Assembly.Name()}";
+            => $"FolderPath: {FolderPath}; Assembly: {Assembly?.Name()??"no assembly"}";
 
         /// <summary>
         /// Is the item stored locally?
         /// </summary>
-        public bool Exists => System.IO.File.Exists(FullPath) || System.IO.Directory.Exists(FullPath);
+        public bool Exists => File.Exists(FullPath) || Directory.Exists(FullPath);
 
         /// <summary>
         /// Is the item stored as a directory?
         /// </summary>
-        public bool IsDirectory => System.IO.Directory.Exists(FullPath);
+        public bool IsDirectory => Directory.Exists(FullPath);
 
         /// <summary>
         /// Is the item stored as a file?
         /// </summary>
-        public bool IsFile => System.IO.File.Exists(FullPath);
+        public bool IsFile => File.Exists(FullPath);
 
-        /// <summary>
-        /// Is the item available from the source?
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual Task<bool> IsSourceAvailableAsync() => throw new NotImplementedException();
-
-        /// <summary>
-        /// Attempt to recall or pull the item from source
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual Task<bool> TryRecallOrPullItemAsync() => throw new NotImplementedException();
 
         /// <summary>
         /// Clear item
@@ -360,7 +318,7 @@ public abstract class LocalData
         }
 
 
-        public virtual bool Equals(ItemKey? other)
+        public virtual bool Equals(Item? other)
         {
             if (other is null)
                 return false;
@@ -368,73 +326,114 @@ public abstract class LocalData
             return FullPath == other.FullPath && Assembly == other.Assembly && FolderPath == other.FolderPath;
         }
 
-        public static bool operator ==(ItemKey? left, ItemKey? right)
+        public static bool operator ==(Item? left, Item? right)
         {
             if (ReferenceEquals(left, right)) return true;
             if (left is null || right is null) return false;
             return left.Equals(right);
         }
 
-        public static bool operator !=(ItemKey? left, ItemKey? right) => !(left == right);
+        public static bool operator !=(Item? left, Item? right) => !(left == right);
 
         public override bool Equals(object? obj)
         {
-            if (obj is not ItemKey other)
+            if (obj is not Item other)
                 return false;
             return Equals(other);
         }
 
         public override int GetHashCode()
             => HashCode.Combine(FullPath, Assembly, FolderPath);
-        
+
+
+        /// <summary>
+        /// Presents the Item as a WebView2.Source Uri
+        /// NOTE: If Item is a .zip, .tar, .tag.gz, or .tgz file, it will unpackage the file and return the default HTML file 
+        /// </summary>
+        /// <param name="searchPatterns">files names, searched in package, to be html source.  Default: ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]</param>
+        /// <returns></returns>
+        public async Task<Uri?> WebViewSource(params string[] searchPatterns)
+        {
+            if (!DirectoryExtensions.IsSupportedPackageExtension(FullPath))
+                return AppDataUri;
+
+            if (await this.UnpackAsync() is not DirectoryInfo dir)
+                return null;
+
+            var enumOpt = new EnumerationOptions
+            {
+                MatchCasing = MatchCasing.CaseInsensitive,
+                RecurseSubdirectories = false,
+                MaxRecursionDepth = 1
+            };
+
+            string[] priorityFiles = searchPatterns.Length == 0
+                ? ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]
+                : searchPatterns;
+
+            FileInfo? PrioritySearch(EnumerationOptions opt)
+            {
+                foreach (var fileName in priorityFiles)
+                    if (dir.GetFiles(fileName, opt)?.FirstOrDefault() is FileInfo fileInfo)
+                        return fileInfo;
+                return null;
+            }
+
+            if (PrioritySearch(enumOpt) is FileInfo f0)
+                return new Uri(f0.FullName);
+
+            enumOpt.RecurseSubdirectories = true;
+            if (PrioritySearch(enumOpt) is FileInfo f1)
+                return new Uri(f1.FullName);
+
+            return null;
+        }
+
+
     }
 
-    public class TagItemKey : ItemKey
+    public class TagItem : Item
     {
         public string Tag { get; }
 
-        public static TagItemKey Get(string tag, string folderPath, Assembly assembly)
+        public static TagItem Get(string tag, string folderPath, Assembly assembly)
         {
-            if (string.IsNullOrWhiteSpace(tag))
-                throw new ArgumentOutOfRangeException(nameof(tag));
+            if (string.IsNullOrEmpty(tag))
+                throw new ArgumentNullException(nameof(tag));
+            return InternalGet(tag, folderPath, assembly);
+        }
 
-            tag = CleanKey(tag);            
+        internal static TagItem InternalGet(string tag, string folderPath, Assembly? assembly = null) // `Assembly? assembly = null` is here to facility Clear() being applied to everything.
+        {
+            tag = CleanKey(tag);
             var rootPath = FullPathForFolderAndAssembly(folderPath, assembly);
             if (!DirectoryExtensions.TryGetOrCreateDirectory(rootPath, out var rootDirectory))
                 throw new Exception($"Cannot create folder [{rootPath}] for P42.Utils.LocalData");
-            
+
             if (string.IsNullOrWhiteSpace(rootDirectory.FullName))
                 throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
 
-            var fullPath = System.IO.Path.Combine(rootPath, tag);
+            var fullPath = Path.Combine(rootPath, tag);
             if (fullPath.Length >= 260)
                 throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
-            return new TagItemKey(tag, fullPath, folderPath, assembly);
+            return new TagItem(tag, fullPath, folderPath, assembly);
 
         }
 
-        private TagItemKey(string tag, string fullPath, string? folderPath, Assembly assembly) : base(fullPath, folderPath, assembly)
+
+        private TagItem(string tag, string fullPath, string folderPath, Assembly? assembly) : base(fullPath, folderPath, assembly)
         {
             Tag = tag;
         }
-        
+
         public override string ToString()
             => $"Tag: {Tag}; {base.ToString()}";
-        
-        /// <summary>
-        /// Is the item available from the source?
-        /// </summary>
-        /// <returns></returns>
-        public override Task<bool> IsSourceAvailableAsync() => Task.FromResult(false);
-        
-        
-        public override Task<bool> TryRecallOrPullItemAsync()
-            => Task.FromResult(System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath));
 
-        public override bool Equals(ItemKey? other)
+
+        public override bool Equals(Item? other)
         {
-            if (other is not TagItemKey)
+            if (other is not TagItem)
                 return false;
 
             return base.Equals(other);
@@ -444,12 +443,115 @@ public abstract class LocalData
             => HashCode.Combine(Tag, base.GetHashCode());
 
     }
-    
-    public class ResourceItemKey : ItemKey
+
+
+    /// <summary>
+    /// Item that comes from a source 
+    /// </summary>
+    /// <param name="fullPath"></param>
+    /// <param name="folderPath"></param>
+    /// <param name="assembly"></param>
+    public abstract class AsynchronousSourcedItem(string fullPath, string? folderPath, Assembly assembly) : Item(fullPath, folderPath, assembly)
+    {
+        /// <summary>
+        /// Is the item available from the source?
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public abstract Task<bool> IsSourceAvailableAsync();
+
+
+        public abstract Task ForcePullAsync();
+
+        /// <summary>
+        /// Attempt to pull the item from source
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<bool> TryForcePullAsync()
+        {
+            try
+            {
+                await ForcePullAsync();
+                return true;
+            }
+            catch (Exception) { }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempt to recall or pull the item from source
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<bool> TryAssurePulledAsync()
+        {
+            if (Exists)
+                return true;
+
+            return await TryForcePullAsync();
+        }
+        
+    }
+
+    /// <summary>
+    /// Item that comes from a source 
+    /// </summary>
+    /// <param name="fullPath"></param>
+    /// <param name="folderPath"></param>
+    /// <param name="assembly"></param>
+    public abstract class SynchronousSourcedItem(string fullPath, string? folderPath, Assembly assembly) : AsynchronousSourcedItem(fullPath, folderPath, assembly)
+    {
+        /// <summary>
+        /// Is the item available from the source?
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public abstract bool IsSourceAvailable();
+
+
+        public abstract void ForcePull();
+
+        /// <summary>
+        /// Attempt to pull the item from source
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool TryForcePull()
+        {
+            try
+            {
+                ForcePull();
+                return true;
+            }
+            catch (Exception) { }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempt to recall or pull the item from source
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool TryAssurePulled()
+        {
+            if (Exists)
+                return true;
+
+            return TryForcePull();
+        }
+
+    }
+
+
+
+    public class ResourceItem : SynchronousSourcedItem
     {
         public string ResourceId { get; }
         
-        public static ResourceItemKey Get(string resourceId, string? folderPath = null, Assembly? assembly = null) 
+        public static ResourceItem Get(string resourceId, string? folderPath = null, Assembly? assembly = null) 
         {
             if (string.IsNullOrWhiteSpace(resourceId))
                 throw new ArgumentOutOfRangeException(nameof(resourceId));
@@ -467,14 +569,14 @@ public abstract class LocalData
             if (string.IsNullOrWhiteSpace(rootDirectory.FullName))
                 throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
 
-            var fullPath = System.IO.Path.Combine(rootPath, resourceId);
+            var fullPath = Path.Combine(rootPath, resourceId);
             if (fullPath.Length >= 260)
                 throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
-            return new ResourceItemKey(resourceId, fullPath, folderPath, assembly);
+            return new ResourceItem(resourceId, fullPath, folderPath, assembly);
         }
 
-        private ResourceItemKey(string resourceId, string fullPath, string? folderPath, Assembly assembly) : 
+        private ResourceItem(string resourceId, string fullPath, string? folderPath, Assembly assembly) : 
             base(fullPath, folderPath, assembly)
         {
             ResourceId = resourceId;
@@ -491,29 +593,41 @@ public abstract class LocalData
         /// Is the item available from the source?
         /// </summary>
         /// <returns></returns>
-        public override Task<bool> IsSourceAvailableAsync() => Task.FromResult(Assembly.Exists(ResourceId));
-        
-        public override async Task<bool> TryRecallOrPullItemAsync()
+        public override Task<bool> IsSourceAvailableAsync() => Task.FromResult(IsSourceAvailable());
+
+        /// <summary>
+        /// Is the item available from the source
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsSourceAvailable() => Assembly?.Exists(ResourceId) ?? false;
+
+        /// <summary>
+        /// Pull the resource asynchronously
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public override async Task ForcePullAsync()
         {
-            if (System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath))
-                return true;
-        
+
+            if (Assembly is null) throw new ArgumentNullException(nameof(Assembly));    
+
             if (EmbeddedResourceExtensions.FindAssemblyAndStream(ResourceId, Assembly) is not {} resource)
-                return false;
+                throw new Exception($"EmbeddedResource not found for LocalData.ResourceItem [{this}]");
+
+            await Semaphore.WaitAsync();
 
             try
             {
-                await using var destinationStream = new System.IO.FileStream(FullPath, System.IO.FileMode.Create);
-                await Semaphore.WaitAsync();
+                await using var destinationStream = new FileStream(FullPath, FileMode.Create);
                 await resource.DisposableStream.CopyToAsync(destinationStream);
 
                 var buildDateTime = Assembly.GetBuildTime();
-                System.IO.File.SetLastWriteTime(FullPath, buildDateTime);
+                File.SetLastWriteTime(FullPath, buildDateTime);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                QLog.Error(ex);
-                return false;
+                throw;
             }
             finally
             {
@@ -521,30 +635,28 @@ public abstract class LocalData
             }
 
             await resource.DisposableStream.DisposeAsync();
-            return true;
         }
-        
-        public virtual bool TryRecallOrPullItem()
+
+        public override void ForcePull()
         {
-            if (System.IO.Directory.Exists(FullPath) || System.IO.File.Exists(FullPath))
-                return true;
-        
-            if (EmbeddedResourceExtensions.FindAssemblyAndStream(ResourceId, Assembly) is not {} resource)
-                return false;
+            if (Assembly is null) throw new ArgumentNullException(nameof(Assembly));
+
+            if (EmbeddedResourceExtensions.FindAssemblyAndStream(ResourceId, Assembly) is not { } resource)
+                throw new Exception($"EmbeddedResource not found for LocalData.ResourceItem [{this}]");
+
+            Semaphore.Wait();
 
             try
             {
-                using var destinationStream = new System.IO.FileStream(FullPath, System.IO.FileMode.Create);
-                Semaphore.Wait();
+                using var destinationStream = new FileStream(FullPath, FileMode.Create);
                 resource.DisposableStream.CopyTo(destinationStream);
 
                 var buildDateTime = Assembly.GetBuildTime();
-                System.IO.File.SetLastWriteTime(FullPath, buildDateTime);
+                File.SetLastWriteTime(FullPath, buildDateTime);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                QLog.Error(ex);
-                return false;
+                throw;
             }
             finally
             {
@@ -552,12 +664,11 @@ public abstract class LocalData
             }
 
             resource.DisposableStream.Dispose();
-            return true;
         }
 
-        public override bool Equals(ItemKey? other)
+        public override bool Equals(Item? other)
         {
-            if (other is not ResourceItemKey)
+            if (other is not ResourceItem)
                 return false;
 
             return base.Equals(other);
@@ -568,7 +679,7 @@ public abstract class LocalData
 
     }
 
-    public class UriItemKey : ItemKey
+    public class UriItem : AsynchronousSourcedItem
     {
         public Uri SourceUri { get; }
 
@@ -584,7 +695,7 @@ public abstract class LocalData
         /// <param name="folderPath"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        public static UriItemKey Get(Uri sourceUri, Uri? rootUri = null, string? folderPath = null,
+        public static UriItem Get(Uri sourceUri, Uri? rootUri = null, string? folderPath = null,
             Assembly? assembly = null)
         {
             assembly ??= AssemblyExtensions.GetApplicationAssembly();
@@ -603,11 +714,11 @@ public abstract class LocalData
             }
 
             var rootPath = RootFolderPath(root, folderPath, assembly);
-            var fullPath = System.IO.Path.Combine(rootPath, storeSubPath);
+            var fullPath = Path.Combine(rootPath, storeSubPath);
             if (fullPath.Length >= 260)
                 throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
-            var parentPath = System.IO.Path.GetDirectoryName(fullPath);
+            var parentPath = Path.GetDirectoryName(fullPath);
             if (string.IsNullOrWhiteSpace(parentPath))
                 throw new Exception($"Cannot get path for parent of {fullPath}");
             
@@ -617,10 +728,10 @@ public abstract class LocalData
             if (itemParent.FullName is null)
                 throw new Exception($"Cannot get itemParent.FullName for [{fullPath}] in P42.Utils.LocalData");
 
-            return new UriItemKey(sourceUri, rootUri, storeSubPath, fullPath, folderPath, assembly);
+            return new UriItem(sourceUri, rootUri, storeSubPath, fullPath, folderPath, assembly);
         }
 
-        private UriItemKey(Uri sourceUri, Uri? rootUri, string localPath, string fullPath, string? folderPath,
+        private UriItem(Uri sourceUri, Uri? rootUri, string localPath, string fullPath, string? folderPath,
             Assembly assembly) : base(fullPath,
             folderPath, assembly)
         {
@@ -637,7 +748,7 @@ public abstract class LocalData
                 ItemUriRootLookup[root] = itemGuid;
             }
 
-            return System.IO.Path.Combine(FullPathForFolderAndAssembly(folderPath, assembly), itemGuid);
+            return Path.Combine(FullPathForFolderAndAssembly(folderPath, assembly), itemGuid);
         }
 
         /// <summary>
@@ -668,7 +779,7 @@ public abstract class LocalData
             }
         }
         
-        public override async Task<bool> TryRecallOrPullItemAsync()
+        public override async Task<bool> ForcePullAsync()
         {
             try
             {
@@ -686,7 +797,7 @@ public abstract class LocalData
                         DateTimeStyles.AssumeUniversal, out var lastModified))
                     lastModified = DateTime.MinValue;
 
-                if (System.IO.Directory.Exists(FullPath))
+                if (Directory.Exists(FullPath))
                 {
                     // Can't get file from server
                     Console.WriteLine($"Status Code: {headerResponse.StatusCode}");
@@ -700,7 +811,7 @@ public abstract class LocalData
                         return true;
 
                     // Current server date-time matches local date-time 
-                    var localWrite = System.IO.Directory.GetLastWriteTime(FullPath);
+                    var localWrite = Directory.GetLastWriteTime(FullPath);
                     if (lastModified != DateTime.MinValue && localWrite >= lastModified)
                         return true;
                 }
@@ -711,15 +822,14 @@ public abstract class LocalData
                 try
                 {
                     await Semaphore.WaitAsync();
-                    await System.IO.File.WriteAllBytesAsync(FullPath, bytes);
+                    await File.WriteAllBytesAsync(FullPath, bytes);
 
                     if (lastModified != DateTime.MinValue)
-                        System.IO.File.SetLastWriteTime(FullPath, lastModified);
+                        File.SetLastWriteTime(FullPath, lastModified);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    QLog.Error(e, "UriItemKey write exception");
-                    return System.IO.Directory.Exists(FullPath);
+                    throw;
                 }
                 finally
                 {
@@ -733,17 +843,16 @@ public abstract class LocalData
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                QLog.Error(ex, "UriItemKey download exception");
-                return System.IO.Directory.Exists(FullPath);
+                throw;
             }
 
         }
 
-        public override bool Equals(ItemKey? other)
+        public override bool Equals(Item? other)
         {
-            if (other is not UriItemKey)
+            if (other is not UriItem)
                 return false;
             return base.Equals(other);
         }
@@ -764,7 +873,7 @@ public abstract class LocalData
     /// </summary>
     /// <param name="key">omit to clear all</param>
     /// <returns>true if any items cleared</returns>
-    public static bool Clear(ItemKey key)
+    public static bool Clear(Item? key = null)
         => Clear(DateTime.Now, key);
 
     /// <summary>
@@ -773,7 +882,7 @@ public abstract class LocalData
     /// <param name="timeSpan">only items equal to or older than</param>
     /// <param name="key">omit to clear all</param>
     /// <returns>true if any items cleared</returns>
-    public static bool Clear(TimeSpan timeSpan, ItemKey key)
+    public static bool Clear(TimeSpan timeSpan, Item? key = null)
         => Clear(DateTime.Now - timeSpan, key);
 
     /// <summary>
@@ -782,8 +891,10 @@ public abstract class LocalData
     /// <param name="dateTime">only items equal to or older than</param>
     /// <param name="key">omit to clear all</param>
     /// <returns>true if any items cleared</returns>
-    public static bool Clear(DateTime dateTime, ItemKey key)
+    public static bool Clear(DateTime dateTime, Item? key = null)
     {
+        key ??= TagItem.InternalGet(string.Empty, string.Empty, null);
+
         if (string.IsNullOrWhiteSpace(key.FullPath))
             return false;
         
@@ -792,7 +903,7 @@ public abstract class LocalData
         
         var parts = key.FullPath.Split(['/','\\'], StringSplitOptions.RemoveEmptyEntries);
         var parentPath = key.FullPath[..^parts.Last().Length];
-        var parentFolder = new System.IO.DirectoryInfo(parentPath);
+        var parentFolder = new DirectoryInfo(parentPath);
         if (!parentFolder.Exists)
             return false;
 
@@ -824,47 +935,41 @@ public abstract class LocalData
     }
 
     #endregion
-    
+
 
     #region Serialize / Deserialize
-    
+
     /// <summary>
     /// Load serialized object from app local storage
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="item"></param>
     /// <param name="defaultValue"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T? Deserialize<T>(ItemKey key, T? defaultValue = default)
+    public static T? Deserialize<T>(Item item, T? defaultValue = default)
     {
-        if (!Text.TryRecallItem(out var text, key) || string.IsNullOrWhiteSpace(text))
+        if (!item.TryRecallText(out var text) || string.IsNullOrWhiteSpace(text))
             return defaultValue;
 
-        return JsonConvert.DeserializeObject<T>(text, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
+        return JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
     }
 
     /// <summary>
     /// Load serialized object from app local storage
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="item"></param>
     /// <param name="result"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns>false on fail</returns>
-    public static bool TryDeserialize<T>(ItemKey key, out T? result)
+    public static bool TryDeserialize<T>(Item item, out T? result)
     {
         result = default;
-        if (!Text.TryRecallItem(out var text, key) || string.IsNullOrWhiteSpace(text))
+        if (!item.TryRecallText(out var text) || string.IsNullOrWhiteSpace(text))
             return false;
 
         try
         {
-            result = JsonConvert.DeserializeObject<T>(text, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto
-            });
+            result = JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
             return true;
         }
         catch (Exception e)
@@ -877,110 +982,58 @@ public abstract class LocalData
     /// <summary>
     /// Deserializes item from local data store unless not there or ItemKey.Source is more up to date.  Then, first pulls item from ItemKey source before deserializing.
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="item"></param>
     /// <param name="defaultValue"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static async Task<T?> RecallOrPullAndDeserializeAsync<T>(ItemKey key, T? defaultValue = default)
+    public static async Task<T?> AssureAndDeserializeAsync<T>(AsynchronousSourcedItem item, T? defaultValue = default)
     {
-        return await Text.RecallOrPullItemAsync(key) is {} 
-            ? Deserialize(key, defaultValue)
+        return await item.AssureSourcedTextAsync() is {} 
+            ? Deserialize(item, defaultValue)
             : defaultValue;
     }
 
     /// <summary>
-    /// Attempt to serialize object to app local storage
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj"></param>
-    /// <param name="key"></param>
-    /// <returns>true on success</returns>
-    public static void Serialize<T>(T? obj, ItemKey key)
-    {
-        var json = JsonConvert.SerializeObject(obj, JsonSerializationSettings);
-        Text.StoreItem(json, key);
-    }
-
-    /// <summary>
-    /// Attempt to serialize object to app local storage
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj"></param>
-    /// <param name="key"></param>
-    /// <returns>true on success</returns>
-    public static async Task<bool> TrySerializeAsync<T>(T obj, ItemKey key)
-    {
-        try
-        {
-            var json = JsonConvert.SerializeObject(obj, JsonSerializationSettings);
-            return await Text.TryStoreItemAsync(json, key);
-        }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-            return false;
-        }
-    }
-    
-    #endregion
-    
-}
-
-public abstract class LocalData<T> : LocalData
-{
-
-    #region Recall Item
-
-    /// <summary>
-    /// Try to recall item from local data store.
+    /// Deserializes item from local data store unless not there or ItemKey.Source is more up to date.  Then, first pulls item from ItemKey source before deserializing.
     /// </summary>
     /// <param name="item"></param>
-    /// <param name="key"></param>
-    /// <returns>null if not already in local data store</returns>
-    public abstract bool TryRecallItem(out T? item, ItemKey key);
+    /// <param name="defaultValue"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T? AssureAndDeserialize<T>(SynchronousSourcedItem item, T? defaultValue = default)
+    {
+        return item.AssureSourcedText() is { }
+            ? Deserialize(item, defaultValue)
+            : defaultValue;
+    }
+
 
     /// <summary>
-    /// Recalls item from local data store unless not there or ItemKey.Source is more up to date.  Then pulls item from ItemKey source.
+    /// Attempt to serialize object to app local storage
     /// </summary>
-    /// <param name="key"></param>
-    /// <returns>null if item not available</returns>
-    public abstract Task<T?> RecallOrPullItemAsync(ItemKey key);
-    
-    #endregion
-
-
-    #region Store
-
-    /// <summary>
-    /// StoreItem in LocalData store
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="key"></param>
-    /// <param name="wipeOld"></param>
-    /// <exception cref="System.IO.IOException"></exception>
-    public abstract void StoreItem(T? sourceItem, ItemKey key, bool wipeOld = true);
-    
-    /// <summary>
-    /// Store item in LocalData store
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="key"></param>
-    /// <param name="wipeOld"></param>
-    public abstract Task StoreItemAsync(T? sourceItem, ItemKey key, bool wipeOld = true);
-
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="key"></param>
-    /// <param name="wipeOld"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj"></param>
+    /// <param name="item"></param>
     /// <returns>true on success</returns>
-    public virtual bool TryStoreItem(T? sourceItem, ItemKey key, bool wipeOld = true)
+    public static void Serialize<T>(T? obj, Item item)
+    {
+        var json = JsonConvert.SerializeObject(obj, JsonSerializatingSettings);
+        item.StoreText(json);
+    }
+
+    /// <summary>
+    /// Attempt to serialize object to app local storage
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj"></param>
+    /// <param name="item"></param>
+    /// <returns>true on success</returns>
+    public static async Task<bool> TrySerializeAsync<T>(T obj, Item item)
     {
         try
         {
-            StoreItem(sourceItem, key, wipeOld);
-            return true;
+            var json = JsonConvert.SerializeObject(obj, JsonSerializatingSettings);
+            return await item.TryStoreTextAsync(json);
         }
         catch (Exception ex)
         {
@@ -989,29 +1042,9 @@ public abstract class LocalData<T> : LocalData
         }
     }
     
-    
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="key"></param>
-    /// <param name="wipeOld"></param>
-    /// <returns>true on success</returns>
-    public virtual async Task<bool> TryStoreItemAsync(T? sourceItem, ItemKey key, bool wipeOld = true)
-    {
-        try
-        {
-            await StoreItemAsync(sourceItem, key, wipeOld);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-        }
-        
-        return false;
-    }
-    
     #endregion
     
 }
+
+
+

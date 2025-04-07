@@ -25,15 +25,15 @@ internal class A02_P42_Utils_CacheableNotifiablePropertyObject
             => _instanceName = instanceName;
     }
 
-    const string MyName = "rumpelstiltskin";
+    const string TestString = "rumpelstiltskin";
 
 #if !BROWSERWASM  // IntersessionCaching fails in WASM
     [TestMethod]
     public void A00_IntersessionCaching()
     {
         // Test if values are stored between app sessions
-        var cacheable = new MyTestCacheableNotifiablePropertyObjectClass($"{nameof(MyTestCacheableNotifiablePropertyObjectClass)}.000");
-        if (cacheable.MyName != MyName)
+        var cacheable = new MyTestCacheableNotifiablePropertyObjectClass("Instance.000");
+        if (cacheable.MyName != TestString)
             throw new Exception("Should ONLY fail upon first run of test on a given platform.  Except WASM, if you see two times in a row, there is an error.");
     }
 #endif
@@ -41,21 +41,21 @@ internal class A02_P42_Utils_CacheableNotifiablePropertyObject
     [TestMethod]
     public void A01_SetGet()
     {
-        var cacheable0 = new MyTestCacheableNotifiablePropertyObjectClass($"{nameof(MyTestCacheableNotifiablePropertyObjectClass)}.000");
-        cacheable0.MyName = MyName;
-        cacheable0.MyName.ShouldBe(MyName);
+        var cacheable0 = new MyTestCacheableNotifiablePropertyObjectClass("Instance.000");
+        cacheable0.MyName = TestString;
+        cacheable0.MyName.ShouldBe(TestString);
     }
 
     [TestMethod]
     public void A02_InstanceSeparation()
     {
-        var cacheable1 = new MyTestCacheableNotifiablePropertyObjectClass($"{nameof(MyTestCacheableNotifiablePropertyObjectClass)}.001");
-        cacheable1.MyName.ShouldNotBe(MyName);
+        var cacheable1 = new MyTestCacheableNotifiablePropertyObjectClass("Instance.001");
+        cacheable1.MyName.ShouldNotBe(TestString);
         var guid = Guid.NewGuid().ToString();
         cacheable1.MyName = guid;
         cacheable1.MyName.ShouldBe(guid);
 
-        var cacheable0 = new MyTestCacheableNotifiablePropertyObjectClass($"{nameof(MyTestCacheableNotifiablePropertyObjectClass)}.000");
-        cacheable0.MyName.ShouldBe(MyName);
+        var cacheable0 = new MyTestCacheableNotifiablePropertyObjectClass("Instance.000");
+        cacheable0.MyName.ShouldBe(TestString);
     }
 }

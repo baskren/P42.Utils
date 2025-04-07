@@ -81,8 +81,8 @@ internal static class FontExtensions
             var appAsmName = appAssembly.GetName().Name;
             if (targetAsmNameA == appAsmName || targetAsmNameB == appAsmName)
             {
-                var item = P42.Utils.LocalData.ResourceItemKey.Get(resourceId, FontCache, appAssembly);
-                if (item.TryRecallOrPullItem())
+                var item = P42.Utils.LocalData.ResourceItem.Get(resourceId, FontCache, appAssembly);
+                if (Task.Run(item.TryAssurePulledAsync).Result)
                 {
                     localStoragePath = item.FullPath;
                     uri = item.AppDataUrl;
@@ -98,8 +98,8 @@ internal static class FontExtensions
                     if (asmName != targetAsmNameA && asmName != targetAsmNameB)
                         continue;
 
-                    var item =  P42.Utils.LocalData.ResourceItemKey.Get(resourceId, FontCache, asm);
-                    if (!item.TryRecallOrPullItem())
+                    var item =  P42.Utils.LocalData.ResourceItem.Get(resourceId, FontCache, asm);
+                    if (!Task.Run(item.TryAssurePulledAsync).Result)
                         continue;
 
                     localStoragePath = item.FullPath;

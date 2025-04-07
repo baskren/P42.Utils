@@ -1,4 +1,4 @@
-﻿// <copyright file="WildcardMatch.cs" company="H.A. Sullivan">
+// <copyright file="WildcardMatch.cs" company="H.A. Sullivan">
 // Copyright (c) 2016 All Rights Reserved
 // </copyright>
 // <author>H.A. Sullivan</author>
@@ -39,7 +39,8 @@ namespace P42.Utils;
 public static class WildcardMatch
 {
     /// <summary>
-    /// Tests for equality using '*' and '?' wildcard characters
+    /// Tests for equality using '*' and '?' wildcard characters.  
+    /// Note, for files, try using MatchType property of the EnumerationOptions argument of DirectoryInfo.GetFiles();
     /// </summary>
     /// <param name="text"></param>
     /// <param name="wildcardString"></param>

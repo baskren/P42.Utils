@@ -47,7 +47,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
     [JsonIgnore]
     private readonly List<string> _initializedProperties = [];
 
-    private LocalData.TagItemKey TagItemKey(string propertyName) => LocalData.TagItemKey.Get(propertyName, Path.Combine(GetType().Name, InstanceIdentifier), GetType().Assembly);
+    private LocalData.TagItem TagItemKey(string propertyName) => LocalData.TagItem.Get(propertyName, Path.Combine(GetType().Name, InstanceIdentifier), GetType().Assembly);
         
     
     /// <summary>
@@ -68,7 +68,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
         if (_initializedProperties.Contains(propertyName))
             return GetValue(defaultValue, propertyName);
 
-        if (LocalData.Text.TryRecallItem(out var json, TagItemKey(propertyName)) && !string.IsNullOrEmpty(json))
+        if (TagItemKey(propertyName).TryRecallText(out var json) && !string.IsNullOrEmpty(json))
         {
             try
             {
@@ -109,7 +109,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
             _initializedProperties.Add(propertyName);
 
         var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        LocalData.Text.StoreItem(json, TagItemKey(propertyName));
+        TagItemKey(propertyName).StoreText(json);
         return true;
     }
 
@@ -130,7 +130,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
             _initializedProperties.Add(propertyName);
 
         var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        LocalData.Text.StoreItem(json, TagItemKey(propertyName));
+        TagItemKey(propertyName).StoreText(json);
 
     }
 }

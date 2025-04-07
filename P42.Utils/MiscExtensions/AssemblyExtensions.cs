@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -81,7 +81,6 @@ public static class AssemblyExtensions
         throw new NullReferenceException("Could not get application assembly.");
     }
 
-    
     /// <summary>
     /// List all  assemblies in application's domain
     /// </summary>
@@ -104,61 +103,6 @@ public static class AssemblyExtensions
     /// <returns>assembly</returns>
     public static Assembly GetAssembly(this Type type)
         => type.GetTypeInfo().Assembly;
-
-    /// <summary>
-    /// Does an EmbeddedResource existing in assembly?
-    /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="resourceId"></param>
-    /// <returns></returns>
-    public static bool EmbeddedResourceExists(this Assembly assembly, string resourceId)
-        => assembly.GetManifestResourceNames().Any(res => res == resourceId);
-    
-
-    /// <summary>
-    /// Copy an EmbeddedResource to a file at path
-    /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="resourceId"></param>
-    /// <param name="path"></param>
-    public static void TryCopyResource(this Assembly assembly, string resourceId, string path)
-    {
-        if (assembly.GetManifestResourceStream(resourceId) is not { } stream)
-        {
-            QLog.Error($"Unable to find embedded resource {resourceId}");
-            return;
-        }
-
-        stream.CopyToPath(path);
-        stream.Dispose();
-    }
-
-    
-    /// <summary>
-    /// Find an assembly that contains an EmbeddedResource matching ResourceId
-    /// </summary>
-    /// <param name="resourceId"></param>
-    /// <param name="assembly"></param>
-    /// <returns></returns>
-    [Obsolete("MultiResource is deprecated, please use EmbeddedResourceExtensions.FindAssemblyForResource instead.", true)]
-    public static Assembly? FindAssemblyForMultiResource(string resourceId, Assembly? assembly = null)
-    {
-        if (assembly?.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) ?? false)
-            return assembly;
-        
-        if (resourceId.IndexOf(".Resources.", StringComparison.Ordinal) is var index and > 0)
-        {
-            var assemblyName = resourceId[..index];
-            assembly = GetAssemblyByName(assemblyName);
-            if (assembly?.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) ?? false)
-                return assembly;
-        }
-        
-        assembly = Assembly.GetExecutingAssembly();
-        return assembly.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)) 
-            ? assembly 
-            : GetAssemblies().FirstOrDefault(asm => !asm.IsDynamic && asm.GetManifestResourceNames().Any(id => id.StartsWith(resourceId, StringComparison.Ordinal)));
-    }
 
     /// <summary>
     /// Gets time at which assembly was built

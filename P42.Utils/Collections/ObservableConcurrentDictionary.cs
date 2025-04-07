@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
@@ -104,6 +104,9 @@ public class ObservableConcurrentDictionary<TKey, TValue> :
     /// <returns>Whether the update was successful.</returns> 
     private void UpdateWithNotification(TKey key, TValue value)
     {
+        TryRemoveWithNotification(key, out var _);
+        TryAddWithNotification(key, value);
+        /* Since when was NotifyCollectionChangedAction.Relace not supported in the constructor???
         _dictionary[key] = value;
         foreach (var (index,pair) in _dictionary.WithIndex())
         {
@@ -115,7 +118,7 @@ public class ObservableConcurrentDictionary<TKey, TValue> :
             NotifyObserversOfChange(args);
             return;
         }
-
+        */
     }
 
     #region ICollection<KeyValuePair<TKey,TValue>> Members 

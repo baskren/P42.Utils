@@ -367,4 +367,7 @@ public static class DirectoryExtensions
     /// <returns></returns>
     public static StringWriter FolderTree(this DirectoryInfo directoryInfo, StringWriter writer, int depth = 1)
         => FolderTree(directoryInfo.FullName, writer, depth);
+
+ 
+    
 }
