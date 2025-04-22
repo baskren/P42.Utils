@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -61,6 +62,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
+    [Obsolete("Use relavent TryParse, instead")]
     public static bool IsNumeric(this string s)
         => s.All(c => char.IsDigit(c) || c == '.' || c == '-');
     
@@ -192,7 +194,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public static uint ToHex(char c)
+    public static uint ToHex(this char c)
     {
         ushort num = c;
         if (num is >= 48 and <= 57)
@@ -203,10 +205,10 @@ public static class StringExtensions
         if (num is >= 97 and <= 102)
             return (uint)(num - 97 + 10);
 
-        return 0u;
+        throw new ArgumentOutOfRangeException($"Char [{c}] cannot be converted to hex");
     }
 
-    [Obsolete("This method is obsolete and will be removed in future versions.")]
+    [Obsolete("OBSOLETE: Use byte.Parse(), insttead.", true)]
     public static uint ToHex(string str)
         => str.Aggregate<char, uint>(0, (current, c) => (current << 4) + ToHex(c));
     
@@ -220,7 +222,7 @@ public static class StringExtensions
     /// <param name="precision"></param>
     /// <param name="si"></param>
     /// <returns></returns>
-    public static string HumanReadableBytes(double number, int precision = 2, bool si = false)
+    public static string HumanReadableBytes(double number, int precision = 2, bool si = false, bool thouSeparators = true)
     {
         // unit's number of bytes
         var unit = si ? 1000 : 1024;
@@ -228,13 +230,15 @@ public static class StringExtensions
         // suffix counter
         var i = 0;
         // as long as we're bigger than a unit, keep going
-        while (number > unit)
+        while (number >= unit)
         {
             number /= unit;
             i++;
         }
+
+        var format = "#." + new string('#', precision);
         // apply precision and current suffix
-        return Math.Round(number, precision) + Suffixes[i] + (si ? "" : "i");
+        return  Math.Round(number, precision).ToString(format) + Suffixes[i] + (si ? "" : "i");
     }
 
 }

@@ -15,6 +15,7 @@ public static class Environment
     
     internal static Type? PlatformLongRunningTaskType { get; set; }
 
+    internal static readonly Assembly Assembly = typeof(Environment).Assembly;
     /*
     /// <summary>
     /// Gets or sets the main thread identifier.

@@ -41,17 +41,39 @@
     <UnoFeatures>
         Toolkit;
     </UnoFeatures>
+    <Platforms>AnyCPU;x86;x64;ARM64</Platforms>
   </PropertyGroup>
 
 
-    <PropertyGroup Condition=" $(TargetFramework.Contains('-windows'))">
-        <DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+    <PropertyGroup>
+      <!--  Persistent local storage for WASM
+      <WasmShellEnableIDBFS>true</WasmShellEnableIDBFS>
+      -->
+      <DefineConstants Condition=" $(TargetFramework.Contains('-windows'))">$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+      <DefineConstants Condition=" '$(BuildingInsideVisualStudio)' == 'true' ">$(DefineConstants);VisualStudioBuild</DefineConstants>
     </PropertyGroup>
 
 
     <ItemGroup>
       <EmbeddedResource Include="Resources\**" />
     </ItemGroup>
+
+
+
+    <ItemGroup>
+      <!--
+      <Content Include="Platforms\WebAssembly\wwwroot\p42_utils_uno_A00_beep_processor.js" />
+      -->
+      <Content Include="Platforms\WebAssembly\wwwroot\sine-processor.js" />
+    </ItemGroup>
+
+    <!--
+    <ItemGroup>
+      <Content Include="Platforms\WebAssembly\wwwroot\p42_utils_uno_A00_beep_processor.js">
+        <IsDefaultItem>true</IsDefaultItem>
+      </Content>
+    </ItemGroup>
+    -->
     
     <ItemGroup>
         <!-- https://github.com/unoplatform/uno.ui.runtimetests.engine  -->

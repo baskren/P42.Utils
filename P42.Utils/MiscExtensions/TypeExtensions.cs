@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +56,15 @@ public static class TypeExtensions
         
         return castable;
     }
+
+    /// <summary>
+    /// Can type From be cast to type T?
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="from"></param>
+    /// <returns></returns>
+    public static bool IsCastableTo<T>(this Type from)
+        => IsCastableTo(from, typeof(T));
     
     /// <summary>
     /// A qualified class name, consistent between platforms

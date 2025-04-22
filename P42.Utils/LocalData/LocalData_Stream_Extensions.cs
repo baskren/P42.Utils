@@ -142,6 +142,7 @@ public static class LocalData_Stream_Extensions
             if (sourceItem is null)
                 return;
 
+            item.AssureParentDirectory();
             using var fileStream = file.OpenWrite();
             sourceItem.CopyTo(fileStream);
         }
@@ -178,6 +179,7 @@ public static class LocalData_Stream_Extensions
             if (sourceItem is null)
                 return;
 
+            item.AssureParentDirectory();
             await using var fileStream = file.OpenWrite();
             await sourceItem.CopyToAsync(fileStream);
         }

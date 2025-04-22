@@ -141,7 +141,10 @@ public static class LocalData_Text_Extensions
                 file.Delete();
 
             if (text != null)
+            {
+                item.AssureParentDirectory();
                 File.WriteAllText(file.FullName, text);
+            }
         }
         catch (Exception) { throw; }
         finally { LocalData.Semaphore.Release(); }
@@ -167,7 +170,10 @@ public static class LocalData_Text_Extensions
                 file.Delete();
 
             if (text != null)
+            {
+                item.AssureParentDirectory();
                 await File.WriteAllTextAsync(file.FullName, text);
+            }
         }
         catch (Exception) { throw; }
         finally { LocalData.Semaphore.Release(); }

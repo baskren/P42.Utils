@@ -125,7 +125,7 @@ public static class LocalData_ImageSource_Extensions
                 });
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -11,7 +11,18 @@ public static class IStorageExtensions
     /// </summary>
     /// <param name="folder"></param>
     /// <returns></returns>
-    public static string FolderTree(IStorageFolder folder)
+    public static string FolderTree(this IStorageFolder folder)
         => DirectoryExtensions.FolderTree(folder.Path);
     
+    /// <summary>
+    /// Clear the contents of an IStorageFolder
+    /// </summary>
+    /// <param name="parentFolder"></param>
+    /// <returns></returns>
+    public static async Task DeleteChildrenAsync(this IStorageFolder parentFolder)
+    {
+        var items = await parentFolder.GetItemsAsync();
+        foreach (var child in items)
+            await child.DeleteAsync();
+    }
 }

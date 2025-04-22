@@ -110,64 +110,57 @@ public static class EmbeddedResourceExtensions
 
     }
 
-
-    /// <summary>
-    /// Finds the assembly that contains an embedded resource matching the resourceId
-    /// </summary>
-    /// <param name="resourceId"></param>
-    /// <param name="assembly">optional</param>
-    /// <returns></returns>
-    public static Assembly? FindAssembly(string resourceId, Assembly? assembly = null)
+    public class EmbeddedResourceHandle(Stream stream, string resourceId, Assembly assembly)
     {
-        var result = FindAssemblyAndStream(resourceId, assembly);
-        result?.DisposableStream?.Dispose();
-        return result?.Assembly;
+        public Stream DisposableStream { get; } = stream;
+        public string ResourceId { get; } = resourceId;
+        public Assembly Assembly { get; } = assembly;
     }
 
     /// <summary>
     /// Finds assembly and EmbeddedResource stream for resourceId
     /// </summary>
-    /// <param name="resourceId"></param>
+    /// <param name="resourceIdTail">Tail search is resourceIdTail starts with '.' character, otherwise exact match search</param>
     /// <param name="assembly"></param>
     /// <returns>null if not found</returns>
-    public static (Stream DisposableStream, Assembly Assembly)? FindAssemblyAndStream(string resourceId, Assembly? assembly = null)
+    public static EmbeddedResourceHandle? FindAssemblyResourceIdAndStream(string resourceIdTail, Assembly? assembly = null)
     {
-        if (string.IsNullOrWhiteSpace(resourceId))
+        if (string.IsNullOrWhiteSpace(resourceIdTail))
             return null;
 
         if (assembly == null)
         {
-            if (resourceId[0] != '.')
+            if (resourceIdTail[0] != '.')
             {
-                var index = resourceId.IndexOf(".Resources.", StringComparison.Ordinal);
+                var index = resourceIdTail.IndexOf(".Resources.", StringComparison.Ordinal);
                 if (index > 0)
                 {
-                    var assemblyName = resourceId[..index];
+                    var assemblyName = resourceIdTail[..index];
                     if (AssemblyExtensions.GetAssemblyByName(assemblyName) is { } asmA
-                        && FindAssemblyAndStream(resourceId, asmA) is {} resultA)
+                        && FindAssemblyResourceIdAndStream(resourceIdTail, asmA) is {} resultA)
                         return resultA;
                 }
             }
             
             assembly = AssemblyExtensions.GetApplicationAssembly();
-            if (FindAssemblyAndStream(resourceId, assembly) is { } resultB)
+            if (FindAssemblyResourceIdAndStream(resourceIdTail, assembly) is { } resultB)
                     return resultB;
               
             foreach (var asmB in AssemblyExtensions.GetAssemblies())
             {
                 if (asmB.IsSystemAssembly() || asmB.IsDynamic)
                     continue;
-                if (FindAssemblyAndStream(resourceId, asmB) is {} resultC)
+                if (FindAssemblyResourceIdAndStream(resourceIdTail, asmB) is {} resultC)
                     return resultC;
             }
             
         }
         
-        if (resourceId[0] == '.')
+        if (resourceIdTail[0] == '.')
         {
             if (EmbeddedResourceNames.TryGetValue(assembly, out var names))
-                return names.FirstOrDefault(n => n.EndsWith(resourceId)) is {} nameA && !string.IsNullOrWhiteSpace(nameA) && assembly.GetManifestResourceStream(nameA) is { } streamA
-                    ? (streamA, assembly) 
+                return names.FirstOrDefault(n => n.EndsWith(resourceIdTail)) is {} nameA && !string.IsNullOrWhiteSpace(nameA) && assembly.GetManifestResourceStream(nameA) is { } streamA
+                    ? new EmbeddedResourceHandle(streamA, nameA, assembly) 
                     : null;
             
             names = assembly.GetManifestResourceNames();
@@ -176,11 +169,11 @@ public static class EmbeddedResourceExtensions
 
             EmbeddedResourceNames[assembly] = names;
 
-            var nameB = names.FirstOrDefault(n => n.EndsWith(resourceId));
+            var nameB = names.FirstOrDefault(n => n.EndsWith(resourceIdTail));
             if (!string.IsNullOrWhiteSpace (nameB))
             {
                 if (assembly.GetManifestResourceStream(nameB) is { } stream)
-                    return (stream, assembly);
+                    return new EmbeddedResourceHandle(stream, nameB, assembly);
             }
 
             return null;
@@ -195,8 +188,8 @@ public static class EmbeddedResourceExtensions
         {
 
             if (EmbeddedResourceNames.TryGetValue(assembly, out var names))
-                return names.Contains(resourceId) && assembly.GetManifestResourceStream(resourceId) is { } streamA
-                    ? (streamA, assembly) 
+                return names.Contains(resourceIdTail) && assembly.GetManifestResourceStream(resourceIdTail) is { } streamA
+                    ? new EmbeddedResourceHandle(streamA, resourceIdTail, assembly) 
                     : null;
             
             names = assembly.GetManifestResourceNames();
@@ -204,21 +197,47 @@ public static class EmbeddedResourceExtensions
                 return null;
 
             EmbeddedResourceNames[assembly] = names;
-            return names.Contains(resourceId) && assembly.GetManifestResourceStream(resourceId) is { } streamB
-                ? (streamB, assembly) 
+            return names.Contains(resourceIdTail) && assembly.GetManifestResourceStream(resourceIdTail) is { } streamB
+                ? new EmbeddedResourceHandle(streamB, resourceIdTail, assembly) 
                 : null;
         }
         
     }
 
     /// <summary>
-    /// Finds a stream for EmbeddedResourceId
+    /// Finds the assembly that contains an embedded resource matching the resourceId
     /// </summary>
-    /// <param name="resourceId"></param>
+    /// <param name="resourceIdTail">Tail search is resourceIdTail starts with '.' character, otherwise exact match search</param>
     /// <param name="assembly">optional</param>
     /// <returns></returns>
-    public static Stream? FindStream(string resourceId, Assembly? assembly = null)
-        => FindAssemblyAndStream(resourceId, assembly)?.DisposableStream;    
+    public static Assembly? FindAssembly(string resourceIdTail, Assembly? assembly = null)
+    {
+        var result = FindAssemblyResourceIdAndStream(resourceIdTail, assembly);
+        result?.DisposableStream?.Dispose();
+        return result?.Assembly;
+    }
+
+    /// <summary>
+    /// Finds the ResourceId that matches the (possible) tail 
+    /// </summary>
+    /// <param name="resourceIdTail">Tail search is resourceIdTail starts with '.' character, otherwise exact match search</param>
+    /// <param name="assembly"></param>
+    /// <returns></returns>
+    public static string? FindResourceId(string resourceIdTail, Assembly? assembly = null)
+    {
+        var result = FindAssemblyResourceIdAndStream(resourceIdTail, assembly);
+        result?.DisposableStream?.Dispose();
+        return result?.ResourceId;
+    }
+
+    /// <summary>
+    /// Finds a stream for EmbeddedResourceId
+    /// </summary>
+    /// <param name="resourceIdTail">Tail search is resourceIdTail starts with '.' character, otherwise exact match search</param>
+    /// <param name="assembly">optional</param>
+    /// <returns></returns>
+    public static Stream? FindStream(string resourceIdTail, Assembly? assembly = null)
+        => FindAssemblyResourceIdAndStream(resourceIdTail, assembly)?.DisposableStream;    
     
     /// <summary>
     /// Attempts to get text from matching EmbeddedResourceId

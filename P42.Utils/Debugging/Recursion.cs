@@ -101,6 +101,7 @@ public static class Recursion
         var fileName = $"{DateTime.Now:yyyyMMdd'T'HHmmss}.txt";
         var filePath = Path.Combine(FolderPath, fileName);
         var stackTrace = System.Environment.StackTrace;
+        DirectoryExtensions.GetOrCreateParentDirectory(fileName);
         File.WriteAllText(filePath, stackTrace);
 
         if (RecursionDetected is null)

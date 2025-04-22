@@ -35,6 +35,13 @@ public static class DirectoryExtensions
     /// <exception cref="Exception"></exception>
     public static DirectoryInfo GetOrCreateDirectory(string fullPath, bool exceptLast = false)
     {
+        var dpath = exceptLast 
+            ? Path.GetDirectoryName(fullPath) 
+            : fullPath;
+
+        if (Directory.Exists(dpath))
+            return new DirectoryInfo(dpath);
+
         var path = $"{Path.DirectorySeparatorChar}";
         var directoryInfo = new DirectoryInfo(path);
 
@@ -70,6 +77,7 @@ public static class DirectoryExtensions
 
             if (!part.IsLegalFileName())
             {
+                /*
                 var isAndroid = OperatingSystem.IsAndroid();
                 var isBrowser = OperatingSystem.IsBrowser();
                 var isFreeBsd = OperatingSystem.IsFreeBSD();
@@ -81,7 +89,7 @@ public static class DirectoryExtensions
                 var isWasi = OperatingSystem.IsWasi();
                 var isWatchOS = OperatingSystem.IsWatchOS();
                 var isWindows = OperatingSystem.IsWindows();
-
+                */
                 if (!OperatingSystem.IsWindows() || i != 0 || part.Length != 2 || !char.IsLetter(part[0]) || part[1] != ':')
                     throw new ArgumentException($"Illegal characters are not allowed. Part [{part}] of fullPath [{fullPath}] ", nameof(fullPath));
             }
@@ -94,6 +102,14 @@ public static class DirectoryExtensions
         return directoryInfo;
     }
 
+    /// <summary>
+    /// Return DirectoryInfo Info for path, creating if it doesn't exist
+    /// </summary>
+    /// <param name="directoryInfo"></param>
+    /// <param name="exceptLast"></param>
+    /// <returns></returns>
+    public static DirectoryInfo GetOrCreateDirectory(this FileSystemInfo info, bool exceptLast = false)
+        => GetOrCreateDirectory(info.FullName, exceptLast);
 
     /// <summary>
     /// Attempt to get or create a directory
@@ -117,6 +133,49 @@ public static class DirectoryExtensions
         }
         
     }
+
+    /// <summary>
+    /// Attempt to get or create a directory
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="resultDir"></param>
+    /// <param name="exceptLast"></param>
+    /// <returns></returns>
+    public static bool TryGetOrCreateDirectory(this FileSystemInfo info, out DirectoryInfo resultDir, bool exceptLast = false)
+        => TryGetOrCreateDirectory(info.FullName, out resultDir, exceptLast);
+
+    /// <summary>
+    /// Gets or creates parent directory for file at path
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    public static DirectoryInfo GetOrCreateParentDirectory(string filePath) => DirectoryExtensions.GetOrCreateDirectory(filePath, true);
+
+    /// <summary>
+    /// Attempt to get or create a directory
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
+    public static DirectoryInfo GetOrCreateParentDirectory(this FileSystemInfo info)
+        => GetOrCreateParentDirectory(info.FullName);
+
+
+    /// <summary>
+    /// Tries to get or create director for file at path
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="parentDirectory"></param>
+    /// <returns></returns>
+    public static bool TryGetOrCreateParentDirectory(string filePath, out DirectoryInfo parentDirectory) => DirectoryExtensions.TryGetOrCreateDirectory(filePath, out parentDirectory, true);
+
+    /// <summary>
+    /// Tries to get or create director for file at path
+    /// </summary>
+    /// <param name="fileInfo"></param>
+    /// <param name="parentDirectory"></param>
+    /// <returns></returns>
+    public static bool TryGetOrCreateParentDirectory(this FileSystemInfo fileInfo, out DirectoryInfo parentDirectory)
+        => TryGetOrCreateParentDirectory(fileInfo.FullName, out parentDirectory);
 
 
     /// <summary>

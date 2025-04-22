@@ -27,16 +27,16 @@ internal class A02_P42_Utils_CacheableNotifiablePropertyObject
 
     const string TestString = "rumpelstiltskin";
 
-#if !BROWSERWASM  // IntersessionCaching fails in WASM
+//#if !BROWSERWASM  // IntersessionCaching fails in WASM unless the following property is added to the Build Project:       <WasmShellEnableIDBFS>true</WasmShellEnableIDBFS>
     [TestMethod]
     public void A00_IntersessionCaching()
     {
         // Test if values are stored between app sessions
         var cacheable = new MyTestCacheableNotifiablePropertyObjectClass("Instance.000");
         if (cacheable.MyName != TestString)
-            throw new Exception("Should ONLY fail upon first run of test on a given platform.  Except WASM, if you see two times in a row, there is an error.");
+            throw new Exception("Should ONLY fail upon first run of test on a given platform.  If you see two times in a row, there is an error OR `<WasmShellEnableIDBFS>true</WasmShellEnableIDBFS>` was not added to Project's .csproj.");
     }
-#endif
+//#endif
 
     [TestMethod]
     public void A01_SetGet()

@@ -16,7 +16,7 @@ public class A04_LocalData_UrlItem
     private static readonly LocalData.UriItem UriItem = LocalData.UriItem.Get(SourceUri, RootUri);
     private static readonly LocalData.UriItem AltUriItem1 = LocalData.UriItem.Get(SourceUri, new Uri("https://raw.githubusercontent.com/cbracco/html5-test-page/refs/heads"));
     private static readonly LocalData.UriItem AltUriItem2 = LocalData.UriItem.Get(SourceUri, RootUri, "AltUris");
-    private static readonly LocalData.UriItem AltUriItem3 = LocalData.UriItem.Get(SourceUri, RootUri, assembly: typeof(P42.Utils.Uno.Platform).GetAssembly());
+    private static readonly LocalData.UriItem AltUriItem3 = LocalData.UriItem.Get(SourceUri, RootUri, assembly: typeof(P42.Utils.Uno.Platform).Assembly);
 
 
     [TestMethod]
@@ -35,10 +35,17 @@ public class A04_LocalData_UrlItem
     }
 
     [TestMethod]
-    public void A02_ClearAndPull()
+    public async Task A02_ClearAndPull()
     {
         UriItem.Clear();
         UriItem.Exists.ShouldBeFalse();
 
+        await UriItem.TryAssurePulledAsync();
+        UriItem.Exists.ShouldBeTrue();
+
+        var text = UriItem.RecallText();
+        text.ShouldStartWith("<!doctype html>");
     }
+
+
 }

@@ -10,6 +10,18 @@ public static class AssemblyExtensions
 {
     private static Assembly? _applicationAssembly;
 
+    private static DateTime WasmFakeDate = DateTime.Now;
+    private static readonly LocalData.TagItem WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
+
+    static AssemblyExtensions() 
+    {
+        if (WasmFakeDateItem.TryDeserialize<DateTime>(out var fakeDate))
+            WasmFakeDate = fakeDate;
+        else
+            WasmFakeDateItem.Serialize(WasmFakeDate);
+    }
+
+
     /// <summary>
     /// Safe version of Assembly.GetName().Name
     /// </summary>
@@ -95,14 +107,6 @@ public static class AssemblyExtensions
     /// <returns>matching assembly or null</returns>
     public static Assembly? GetAssemblyByName(string name)
         => GetAssemblies().FirstOrDefault(asm => asm.Name() == name);
-        
-    /// <summary>
-    /// Get assembly that contains type
-    /// </summary>
-    /// <param name="type">type</param>
-    /// <returns>assembly</returns>
-    public static Assembly GetAssembly(this Type type)
-        => type.GetTypeInfo().Assembly;
 
     /// <summary>
     /// Gets time at which assembly was built
@@ -110,23 +114,36 @@ public static class AssemblyExtensions
     /// <param name="assembly"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public static DateTime GetBuildTime(this Assembly assembly)
+    public static bool TryGetBuildTime(this Assembly assembly, out DateTime buildTime)
     {
-        if (assembly.Location is not string filePath)
-            throw new Exception($"Unable to get path to location of assembly [{assembly.FullName}].");
-        
+        buildTime = WasmFakeDate;
+
+        // WASM
+        if (string.IsNullOrWhiteSpace(assembly.Location))
+            return false;
+
+
         const int peHeaderOffset = 60;
         const int linkerTimestampOffset = 8;
 
-        var buffer = new byte[2048];
-        using var fs = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-        fs.ReadExactly(buffer, 0, buffer.Length);
+        try
+        {
+            var buffer = new byte[2048];
+            using var fs = new System.IO.FileStream(assembly.Location, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            fs.ReadExactly(buffer, 0, buffer.Length);
 
-        var headerOffset = BitConverter.ToInt32(buffer, peHeaderOffset);
-        var secondsSince1970 = BitConverter.ToInt32(buffer, headerOffset + linkerTimestampOffset);
-        var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var headerOffset = BitConverter.ToInt32(buffer, peHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, headerOffset + linkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        return epoch.AddSeconds(secondsSince1970).ToLocalTime();
+            buildTime = epoch.AddSeconds(secondsSince1970).ToLocalTime();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
+
 
 }

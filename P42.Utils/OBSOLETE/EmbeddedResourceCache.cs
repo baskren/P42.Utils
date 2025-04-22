@@ -33,7 +33,7 @@ public static class EmbeddedResourceCache
     public static Task<Stream> GetStreamAsync(string resourceId, Assembly? assembly = null, string? folderName = null)
         => throw new NotImplementedException();
 
-    [Obsolete("Use .TryGetAppDataUrl() or .LocalDataStoreToAppDataUrl() P42.Utils.LocalData, instead.")]
+    [Obsolete("Use .TryGetAppDataUrl() or .LocalDataToAppDataUrl() P42.Utils.LocalData, instead.")]
     public static string ApplicationUri(string resourceId, Assembly? assembly = null, string? folderName = null)
         => throw new NotImplementedException();
 

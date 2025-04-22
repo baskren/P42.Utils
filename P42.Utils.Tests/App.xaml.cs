@@ -17,6 +17,10 @@ public partial class App : Application
         this.InitializeComponent();
 
         Instance = this;
+
+#if WINDOWS && VisualStudioBuild
+        // P42.Utils.Uno.ApplicationExtensions.OpenConsoleWindow(this);  // this doesn't work in this app!
+#endif
     }
 
     public Window? MainWindow { get; private set; }

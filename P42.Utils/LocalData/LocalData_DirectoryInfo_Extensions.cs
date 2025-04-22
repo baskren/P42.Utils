@@ -125,6 +125,7 @@ public static class LocalData_DirectoryInfo_Extensions
             if (dir.Exists && wipeOld)
                 dir.Delete(true);
 
+            item.AssureParentDirectory();
             sourceItem?.Copy(dir, wipe: wipeOld);
         }
         catch (Exception) { throw; }
@@ -151,6 +152,7 @@ public static class LocalData_DirectoryInfo_Extensions
             if (dir.Exists && wipeOld)
                 dir.Delete(true);
 
+            item.AssureParentDirectory();
             await (sourceItem?.CopyAsync(dir, wipe: wipeOld) ?? Task.CompletedTask);
         }
         catch (Exception) { throw; }

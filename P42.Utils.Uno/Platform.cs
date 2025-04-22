@@ -1,4 +1,6 @@
 
+using System.Web;
+
 namespace P42.Utils.Uno;
 
 public static class Platform
@@ -112,12 +114,17 @@ public static class Platform
     public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
     #endregion
 
+    static bool _hasBeenInit;
     public static void Init(Application application, Window window)
     {
+        Console.WriteLine($"P42.Utils.Uno.Platform.Init A : hasBeenInit[{_hasBeenInit}]");
+        if (_hasBeenInit)
+            return;
+        _hasBeenInit = true;
+
         Application = application;
         MainWindow = window;
-        // Environment.Init();
-        // Environment.PlatformTimer = new Timer();
+
         Environment.PlatformPathLoader = PlatformPathLoader;
         DiskSpace.PlatformDiskSpace = new DeviceDisk();
         P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
@@ -125,6 +132,14 @@ public static class Platform
         MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
         NotifiableObject.BaseNotifiablePropertyObject.MainThreadAction = P42.Utils.Uno.MainThread.Invoke;
+
+        // DO WE NEED TO DO A RESET?
+        if (ResetRequested())
+        {
+            Console.WriteLine($"P42.Utils.Uno.Platform.Init B");
+            Task.Run(ResetAppStorage).Wait();
+            Console.WriteLine($"P42.Utils.Uno.Platform.Init C");
+        }
     }
 
     private static void PlatformPathLoader()
@@ -133,6 +148,75 @@ public static class Platform
         Environment.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
         Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
     }
+
+    private static bool ResetRequested()
+    {
+#if BROWSERWASM
+
+        // app path needs to be appended with the following, without quotes: "?ResetAppStorage="
+        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested A");
+
+        var fullUrlText = global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("window.location.href;");
+        var fullUrl = new Uri(fullUrlText);
+        var args = global::Uno.Extensions.UriExtensions.GetParameters(fullUrl);
+        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested B");
+        if (args.Keys.FirstOrDefault(k => k.Equals(nameof(ResetAppStorage), StringComparison.OrdinalIgnoreCase)) is not { } resetKey)
+            return false; 
+        var value = args[resetKey];
+        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested C");
+        return string.IsNullOrEmpty(value) || value.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+#elif __IOS__
+
+        SettingsObserver.StartListening();        
+        return Foundation.NSUserDefaults.StandardUserDefaults.BoolForKey(nameof(ResetAppStorage));
+#else
+        return false;
+#endif
+    }
+
+    public static async Task ResetAppStorage()
+    {
+        Console.WriteLine($"P42.Utils.Uno.Platform.ResetAppStorage A");
+        await ApplicationData.Current.LocalFolder.DeleteChildrenAsync();
+        await ApplicationData.Current.LocalCacheFolder.DeleteChildrenAsync();
+        await ApplicationData.Current.TemporaryFolder.DeleteChildrenAsync();
+        Console.WriteLine($"P42.Utils.Uno.Platform.ResetAppStorage B");
+
+#if __IOS__ || __MACCATALYST__
+        Foundation.NSUserDefaults.StandardUserDefaults.SetBool(false, nameof(ResetAppStorage));
+#elif BROWSERWASM
+        var fullUrlText = global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("window.location.href;");
+        var fullUrl = new Uri(fullUrlText);
+        var args = global::Uno.Extensions.UriExtensions.GetParameters(fullUrl);
+        if (args.Keys.FirstOrDefault(k => k.Equals(nameof(ResetAppStorage), StringComparison.OrdinalIgnoreCase)) is { } resetKey)
+            args.Keys.Remove(resetKey);
+        var builder = new UriBuilder(fullUrl);
+        var query = HttpUtility.ParseQueryString(builder.Query);
+        query.Remove(nameof(ResetAppStorage));
+        builder.Query = query.ToString();
+        var updatedUrl = builder.ToString();
+        global::Uno.Foundation.WebAssemblyRuntime.InvokeJS($"window.location.href={updatedUrl};");
+#endif
+    }
+
+
+#if __IOS__
+    public class SettingsObserver
+    {
+        
+        public static void StartListening()
+        {
+            Foundation.NSNotificationCenter.DefaultCenter.AddObserver(
+                Foundation.NSUserDefaults.DidChangeNotification,
+                (notification) =>
+                {
+                    if (Foundation.NSUserDefaults.StandardUserDefaults.BoolForKey(nameof(ResetAppStorage)))
+                        ResetAppStorage().Wait();
+                });
+        }
+    }
+#endif
 
 }
 

@@ -13,14 +13,6 @@ namespace P42.Utils;
 /// </summary>
 public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNotifiablePropertyObject
 {
-    private static readonly JsonSerializerSettings SerializerSettings = new()
-    {
-        Formatting = Formatting.Indented,
-        NullValueHandling = NullValueHandling.Ignore,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-        TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-        TypeNameHandling = TypeNameHandling.All
-    };
     
     private string? _instanceIdentifier;
     /// <summary>
@@ -46,10 +38,25 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
 
     [JsonIgnore]
     private readonly List<string> _initializedProperties = [];
-
-    private LocalData.TagItem TagItemKey(string propertyName) => LocalData.TagItem.Get(propertyName, Path.Combine(GetType().Name, InstanceIdentifier), GetType().Assembly);
-        
     
+    private LocalData.TagItem TagItemKey(string propertyName) => LocalData.TagItem.Get(propertyName, Path.Combine(GetType().Name, InstanceIdentifier), GetType().Assembly);
+
+    /// <summary>
+    /// Overrides Serialization Settings for Property
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="settings"></param>
+    public void SetJsonSerializatingSettings(string propertyName, JsonSerializerSettings settings)
+        => TagItemKey(propertyName).JsonSerializatingSettings = settings;
+
+    /// <summary>
+    /// Overrides Deserialization Settings for Proeprty
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="settings"></param>
+    public void SetJsonDeserializationSettings(string propertyName, JsonSerializerSettings settings)
+        => TagItemKey(propertyName).JsonDeserializingSettings = settings;
+
     /// <summary>
     /// Recall cached value (or default)
     /// </summary>
@@ -68,20 +75,8 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
         if (_initializedProperties.Contains(propertyName))
             return GetValue(defaultValue, propertyName);
 
-        if (TagItemKey(propertyName).TryRecallText(out var json) && !string.IsNullOrEmpty(json))
-        {
-            try
-            {
-                var value = JsonConvert.DeserializeObject<T>(json, SerializerSettings);
-                SetValue(value, propertyName);
-                _initializedProperties.Add(propertyName);
-                return value;
-            }
-            catch (Exception ex)
-            {
-                QLog.Error(ex);
-            }
-        }
+        if (TagItemKey(propertyName).TryDeserialize<T>(out var value))
+            return value;
 
         _initializedProperties.Add(propertyName);
         return GetValue(defaultValue, propertyName);
@@ -108,9 +103,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
         if (!_initializedProperties.Contains(propertyName))
             _initializedProperties.Add(propertyName);
 
-        var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        TagItemKey(propertyName).StoreText(json);
-        return true;
+        return TagItemKey(propertyName).TrySerialize(value);
     }
 
     /// <summary>
@@ -129,8 +122,7 @@ public class CacheableNotifiablePropertyObject : NotifiableObject.SelfBackedNoti
         if (!_initializedProperties.Contains(propertyName))
             _initializedProperties.Add(propertyName);
 
-        var json = JsonConvert.SerializeObject(value, SerializerSettings);
-        TagItemKey(propertyName).StoreText(json);
+        TagItemKey(propertyName).Serialize(value);
 
     }
 }

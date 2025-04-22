@@ -11,7 +11,12 @@
       net9.0-windows10.0.19041
 
     </TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    <!-- NEEDED TO GET -browserwasm TO BUILD USING BELOW WebView2 WORKAROUND -->
+    <TargetFrameworks Condition=" $(Platform) == 'AnyCPU' ">
+      $(TargetFrameworks);
+      net9.0-browserwasm
+    </TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
     <UnoSingleProject>true</UnoSingleProject>
     <OutputType>Library</OutputType>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
@@ -42,10 +47,19 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- NEEDED BECAUSE WINAPPSDK PROJECT IS USING MICROSOFT.GRAPHICS.Win2D -->
-    <Platforms  Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">AnyCPU;ARM64;X86;X64</Platforms>
+    <!--
+    <Platforms  Condition=" $(TargetFramework.Contains('-windows') ) ">AnyCPU;ARM64;X86;X64</Platforms>
+    -->
+
+    <!-- NEEDED FOR WebView2 ON Windows WORKAROUND : https://github.com/unoplatform/uno/issues/18552 -->
+    <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
+
+    <!-- Needed for Beep -->
+    <WasmShellEnableThreads>true</WasmShellEnableThreads>
 
   </PropertyGroup>
 
+  
 
   <!-- THIS NO LONGER NEEDED? -->
   <!--<Import Condition="Exists('Directory.Build.TargetPlatform.props')" Project="Directory.Build.TargetPlatform.props" />-->
@@ -67,5 +81,25 @@
 
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="WasmScripts\**\*.js" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Remove="WasmScripts\p42_utils_uno_beep.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="BlankPage1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="LocalDataSourcePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  
 </Project>

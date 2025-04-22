@@ -122,6 +122,7 @@ public static class LocalData_FileInfo_Extensions
             if (file.Exists && wipeOld)
                 file.Delete();
 
+            item.AssureParentDirectory();
             sourceItem?.CopyTo(item.FullPath, wipeOld);
         }
         catch (Exception) { throw; }
@@ -148,6 +149,7 @@ public static class LocalData_FileInfo_Extensions
             if (file.Exists && wipeOld)
                 file.Delete();
 
+            item.AssureParentDirectory();
             sourceItem?.CopyTo(item.FullPath, wipeOld);
         }
         catch (Exception) { throw; }

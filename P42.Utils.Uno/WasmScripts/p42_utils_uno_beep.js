@@ -1,0 +1,14 @@
+
+function p42_utils_uno_beep(frequency, duration) {
+    console.log("BEEP ENTER");
+    var audio = new Audio("data:audio/mpeg;base64,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");
+    console.log("BEEP 1");
+    audio.controls = true;
+    console.log("BEEP 2");
+    document.body.appendChild(audio);
+    console.log("BEEP 3");
+    audio.play();
+    console.log("BEEP 4");
+    document.body.removeChild(audio);
+    console.log("BEEP EXIT");
+}
