@@ -1,4 +1,4 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
 
@@ -39,6 +39,7 @@
     <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\P42.UnoTestRunner\P42.UnoTestRunner.csproj" />
     <ProjectReference Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
   </ItemGroup>

@@ -19,7 +19,7 @@ public partial class App : Application
         Instance = this;
 
 #if WINDOWS && VisualStudioBuild
-        // P42.Utils.Uno.ApplicationExtensions.OpenConsoleWindow(this);  // this doesn't work in this app!
+        //P42.Utils.Uno.ApplicationExtensions.OpenConsoleWindow(this);  // this doesn't work in this app!
 #endif
     }
 
@@ -32,6 +32,7 @@ public partial class App : Application
         MainWindow.UseStudio();
 #endif
 
+        //P42.Utils.Uno.Platform.Init(this, MainWindow);
 
         // Do not repeat app initialization when the Window already has content,
         // just ensure that the window is active

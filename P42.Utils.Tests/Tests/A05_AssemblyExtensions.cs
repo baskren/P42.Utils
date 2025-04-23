@@ -30,7 +30,7 @@ public class A05_AssemblyExtensions
     [TestMethod]
     public void A02_GetAssemblies()
     {
-        var assemblies = AssemblyExtensions.GetAssemblies();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         assemblies.ShouldContain(Assembly);
         assemblies.ShouldContain(typeof(P42.Utils.LocalData).Assembly);
         assemblies.ShouldContain(typeof(Microsoft.UI.Xaml.Application).Assembly);

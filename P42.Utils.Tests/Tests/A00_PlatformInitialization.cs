@@ -9,7 +9,7 @@ using P42.Utils.Uno;
 using Shouldly;
 using Uno.UI.RuntimeTests;
 
-namespace P42.Utils.Tests.Tests;
+namespace P42.Utils.Tests;
 
 [TestClass]
 internal class A00_PlatformInitialization

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shouldly;
 
-namespace P42.Utils.Tests.Tests;
+namespace P42.Utils.Tests;
 
 [TestClass]
 internal class A02_P42_Utils_CacheableNotifiablePropertyObject

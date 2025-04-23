@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace P42.Utils.Tests.Tests;
+namespace P42.Utils.Tests;
 
 [TestClass]
 internal class A01_TestOrderControl

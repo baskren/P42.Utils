@@ -11,5 +11,9 @@
     <!-- UNIT TESTING -->
     <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="1.33.0-dev.11" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.8.3" />
+    <PackageVersion Include="FluentAssertions" Version="8.2.0" />
+    <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
+    <PackageVersion Include="Uno.Core.Extensions.Disposables" Version="4.1.1" />
   </ItemGroup>
 </Project>

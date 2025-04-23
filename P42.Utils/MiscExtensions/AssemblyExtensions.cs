@@ -97,6 +97,7 @@ public static class AssemblyExtensions
     /// List all  assemblies in application's domain
     /// </summary>
     /// <returns>Assembly[]</returns>
+    [Obsolete("Use AppDomain.CurrentDomain.GetAssemblies(), instead")]
     public static Assembly[] GetAssemblies()
         => AppDomain.CurrentDomain.GetAssemblies();
 
@@ -106,7 +107,7 @@ public static class AssemblyExtensions
     /// <param name="name">name</param>
     /// <returns>matching assembly or null</returns>
     public static Assembly? GetAssemblyByName(string name)
-        => GetAssemblies().FirstOrDefault(asm => asm.Name() == name);
+        => AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(asm => asm.Name() == name);
 
     /// <summary>
     /// Gets time at which assembly was built

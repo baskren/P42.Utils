@@ -9,4 +9,16 @@ public sealed partial class MainPage : Page
         this.InitializeComponent();
 
     }
+
+    private async void runButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await P42.UnoTestRunner.TestRunner.Run();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
+    }
 }

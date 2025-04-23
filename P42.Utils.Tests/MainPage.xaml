@@ -10,11 +10,13 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock AutomationProperties.AutomationId="HelloTextBlock"
-          Text="Uno.UI.RuntimeTests.Engine!"
-          FontSize="50"
+        <Button x:Name="runButton"
+          Content="RUN"
+          FontSize="40"
           FontWeight="Bold"
-          HorizontalAlignment="Left" />
+          HorizontalAlignment="Left"
+          Click="runButton_Click"
+          />
         <runtimetests:UnitTestsControl Grid.Row="1"/>
     </Grid>
 </Page>

@@ -146,7 +146,7 @@ public static class EmbeddedResourceExtensions
             if (FindAssemblyResourceIdAndStream(resourceIdTail, assembly) is { } resultB)
                     return resultB;
               
-            foreach (var asmB in AssemblyExtensions.GetAssemblies())
+            foreach (var asmB in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (asmB.IsSystemAssembly() || asmB.IsDynamic)
                     continue;
