@@ -13,15 +13,25 @@ public partial class TestServices
 {
     public static class WindowHelper
     {
-        private static UIElement? _originalWindowContent;
-
         //public static XamlRoot? XamlRoot { get; set; }
 
-        public static bool IsXamlIsland { get; set; }
+        // public static bool IsXamlIsland { get; set; }
 
-        public static Microsoft.UI.Xaml.Window CurrentTestWindow { get; set; }
+        //public static Microsoft.UI.Xaml.Window CurrentTestWindow { get; set; }
+        public static Window CurrentTestWindow 
+            => UnitTestsUIContentHelper.CurrentTestWindow;
 
-        public static bool UseActualWindowRoot { get; set; }
+        //public static (UIElement control, Func<UIElement> getContent, Action<UIElement> setContent) EmbeddedTestRoot { get; set; }
+        public static (UIElement control, Func<UIElement?> getContent, Action<UIElement?> setContent) EmbeddedTestRoot 
+            => UnitTestsUIContentHelper.EmbeddedTestRoot;
+
+        //public static bool UseActualWindowRoot { get; set; }
+        public static bool UseActualWindowRoot
+        {  
+            get => UnitTestsUIContentHelper.UseActualWindowRoot; 
+            set => UnitTestsUIContentHelper.UseActualWindowRoot = value; 
+        }
+            
 
         /*
         public static UIElement WindowContent
@@ -52,24 +62,23 @@ public partial class TestServices
         }
         */
 
-        private static ContentControl? GetXamlIslandRootContentControl()
-        {
-            var islandContentRoot = EmbeddedTestRoot.control.XamlRoot!.Content!;
-            if (islandContentRoot is not ContentControl contentControl)
-                contentControl = (VisualTreeUtils.FindVisualChildByType<ContentControl>(islandContentRoot))!;
+        #region Content Swapping
+        private static UIElement? _originalWindowContent;
 
-            return contentControl;
-        }
-
-        public static void SaveOriginalWindowContent()
+        public static void SaveOriginalWindowContent() 
+            => UnitTestsUIContentHelper.SaveOriginalContent();
+            /*
         {
             _originalWindowContent = IsXamlIsland
                 ? GetXamlIslandRootContentControl()?.Content as UIElement
                 : CurrentTestWindow.Content;
             
         }
+            */
 
         public static void RestoreOriginalWindowContent()
+            => UnitTestsUIContentHelper.RestoreOriginalContent();
+            /*
         {
             if (_originalWindowContent != null)
             {
@@ -85,7 +94,17 @@ public partial class TestServices
             }
         }
 
-        public static (UIElement control, Func<UIElement> getContent, Action<UIElement> setContent) EmbeddedTestRoot { get; set; }
+        private static ContentControl? GetXamlIslandRootContentControl()
+        {
+            var islandContentRoot = EmbeddedTestRoot.control.XamlRoot!.Content!;
+            if (islandContentRoot is not ContentControl contentControl)
+                contentControl = (VisualTreeUtils.FindVisualChildByType<ContentControl>(islandContentRoot))!;
+
+            return contentControl;
+        }
+        */
+        #endregion
+
 
         /*
         public static UIElement? RootElement => 
@@ -96,12 +115,16 @@ public partial class TestServices
 
         // Dispatcher is a separate property, as accessing CurrentTestWindow.COntent when
         // not on the UI thread will throw an exception in WinUI.
-        public static UnitTestDispatcherCompat RootElementDispatcher => 
-            UseActualWindowRoot
+        public static UnitTestDispatcherCompat RootElementDispatcher
+            => UnitTestsUIContentHelper.RootElementDispatcher;
+        /*
+        => UseActualWindowRoot
             ? (CurrentTestWindow is { } 
                 ? UnitTestDispatcherCompat.From(CurrentTestWindow) 
                 : UnitTestDispatcherCompat.Instance)
             : UnitTestDispatcherCompat.From(EmbeddedTestRoot.control);
+        */
+
 
         /*
         internal static Page SetupSimulatedAppPage()

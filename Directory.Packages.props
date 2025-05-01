@@ -15,5 +15,6 @@
     <PackageVersion Include="FluentAssertions" Version="8.2.0" />
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Disposables" Version="4.1.1" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
   </ItemGroup>
 </Project>

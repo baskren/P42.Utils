@@ -12,7 +12,7 @@ using Windows.Networking;
 
 namespace P42.UnoTestRunner;
 
-internal record TestCase
+public record TestCase
 {
     public object?[] Parameters { get; init; } = Array.Empty<object>();
 
@@ -174,7 +174,7 @@ internal record TestCase
                     await resultingTask;
                 }
 
-                var consoleText = testClassInfo.ConsoleOutputRecorder.GetContentAndReset();
+                var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
 
                 if (test.ExpectedException is null)
                 {
@@ -199,7 +199,7 @@ internal record TestCase
                 if (e is TargetInvocationException tie)
                     e = tie.InnerException!;
 
-                var consoleText = testClassInfo.ConsoleOutputRecorder.GetContentAndReset();
+                var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
 
                 if (e is AssertInconclusiveException inconclusiveException)
                 {
@@ -249,7 +249,7 @@ internal record TestCase
             catch (Exception e)
             {
                 run.Failed++;
-                run.ReportTestResult(run, testName + " Cleanup", TimeSpan.Zero, TestResult.Failed, e, consoleText: testClassInfo.ConsoleOutputRecorder.GetContentAndReset());
+                run.ReportTestResult(run, testName + " Cleanup", TimeSpan.Zero, TestResult.Failed, e, consoleText: run.ConsoleOutputRedirector.GetContentAndReset());
             }
         }
 

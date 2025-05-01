@@ -1,0 +1,236 @@
+﻿<Page
+    x:Class="P42.UnoTestRunner.TestControlPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:P42.UnoTestRunner"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:reflection="using:System.Reflection"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    SizeChanged="Page_SizeChanged"
+  >
+
+  <Page.Resources>
+    <Style TargetType="Border">
+      <Setter Property="BorderThickness" Value="1,1,0,0" />
+      <Setter Property="Padding" Value="16" />
+      <Setter Property="BorderBrush" Value="{ThemeResource SystemControlHighlightChromeHighBrush}" />
+    </Style>
+
+    <Style TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!--
+    <DataTemplate x:Key="AssemblyTemplate" x:DataType="reflection:Assembly">
+      <TreeViewItem AutomationProperties.Name="{x:Bind FullName}"
+            ItemsSource="{x:Bind Children}" IsExpanded="True">
+        <StackPanel Orientation="Horizontal">
+          <Image Width="20" Source="../Assets/folder.png"/>
+          <TextBlock Margin="0,0,10,0"/>
+          <TextBlock Text="{x:Bind FullName}" />
+        </StackPanel>
+      </TreeViewItem>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ClassTemplate" x:DataType="local:UnitTestClassInfo">
+      <TreeViewItem AutomationProperties.Name="{x:Bind TestClassName}">
+        <StackPanel Orientation="Horizontal">
+          <FontIcon Glyph="&#xE8A5;" />
+          <TextBlock Margin="0,0,10,0"/>
+          <TextBlock Text="{x:Bind TestClassName}"/>
+        </StackPanel>
+      </TreeViewItem>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MethodTemplate" x:DataType="local:UnitTestMethodInfo">
+      <TreeViewItem AutomationProperties.Name="{x:Bind Name}">
+        <StackPanel Orientation="Horizontal">
+          <FontIcon Glyph="&#xE18A;" />
+          <TextBlock Margin="0,0,10,0"/>
+          <TextBlock Text="{x:Bind Name}"/>
+        </StackPanel>
+      </TreeViewItem>
+    </DataTemplate>
+
+
+    <local:TestTreeTemplateSelector x:Key="TestTreeTemplateSelector"
+        AssemblyTemplate="{StaticResource FolderTemplate}"
+        ClassTemplate="{StaticResource FileTemplate}"
+        MethodTemplate="{StaticResource MethodTemplate}" />
+    -->
+  </Page.Resources>
+
+  <Grid
+    x:Name="grid"
+    BorderBrush="{ThemeResource SystemControlHighlightChromeHighBrush}"
+    BorderThickness="0,0,1,1">
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition x:Name="row1" Height="auto" />
+      <RowDefinition x:Name="row2" Height="auto" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition x:Name="col1" Width="auto" />
+      <ColumnDefinition x:Name="col2" Width="auto" />
+    </Grid.ColumnDefinitions>
+
+    <Grid
+      x:Name="resultsGrid"
+      Grid.Row="0"
+      Grid.Column="1"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      BorderThickness="1"
+      BorderBrush="DarkGray">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="3*" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <Grid
+        x:Name="testOuputGrid"
+        >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Rectangle
+          Fill="#4888"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          />
+        <Button
+          x:Name="resultsCopyButton"
+          Content="COPY"
+          Margin="4"
+          Click="ResultsCopyButton_Click"
+          />
+        <ScrollViewer
+          Grid.Row="1"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          >
+          <TextBlock
+            x:Name="resultsTextBlock"
+            Margin="5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            />
+        </ScrollViewer>
+      </Grid>
+
+      <Grid
+        x:Name="consoleOutputGrid"
+        Grid.Row="1"
+        >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Rectangle
+          Fill="#4888"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          />
+        <TextBlock
+          Text="CONSOLE"
+          Margin="3"
+          />
+        <ScrollViewer
+          Grid.Row="1"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          >
+          <TextBlock
+            x:Name="consoleTextBlock"
+            Margin="5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            />
+        </ScrollViewer>
+      </Grid>
+
+    </Grid>
+
+
+    <Grid
+      x:Name="testsTreeGrid"
+      Grid.Row="0"
+      Grid.Column="2"
+      >
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <Button
+        x:Name="stopStartTestButton"
+        Content="RUN ⏵"
+        Margin="4"
+        Click="stopStartTestButton_Click"
+        />
+      <ScrollViewer
+        Grid.Row="1"
+        >
+        <TreeView
+          x:Name="testsTreeView"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          SelectionMode="Multiple"
+          />
+      </ScrollViewer>
+    </Grid>
+      
+
+    <!--  Column Grid Splitter  -->
+    <controls:GridSplitter Grid.Column="1"
+                               Width="16"
+                               HorizontalAlignment="Left"
+                               ResizeBehavior="BasedOnAlignment"
+                               ResizeDirection="Auto">
+      <controls:GridSplitter.RenderTransform>
+        <TranslateTransform X="-7.5" />
+      </controls:GridSplitter.RenderTransform>
+    </controls:GridSplitter>
+
+    <!--  Column Grid Splitter  -->
+    <controls:GridSplitter Grid.Column="2"
+                               Width="16"
+                               HorizontalAlignment="Left"
+                               ResizeBehavior="BasedOnAlignment"
+                               ResizeDirection="Auto">
+      <controls:GridSplitter.RenderTransform>
+        <TranslateTransform X="-7.5" />
+      </controls:GridSplitter.RenderTransform>
+    </controls:GridSplitter>
+
+
+    <!--  Column Grid Splitter  -->
+    <controls:GridSplitter Grid.Row="1"
+                               Height="16"
+                               VerticalAlignment="Top"
+                               ResizeBehavior="BasedOnAlignment"
+                               ResizeDirection="Auto">
+      <controls:GridSplitter.RenderTransform>
+        <TranslateTransform Y="-7.5" />
+      </controls:GridSplitter.RenderTransform>
+    </controls:GridSplitter>
+
+    <!--  Column Grid Splitter  -->
+    <controls:GridSplitter Grid.Row="2"
+                               Height="16"
+                               VerticalAlignment="Top"
+                               ResizeBehavior="BasedOnAlignment"
+                               ResizeDirection="Auto">
+      <controls:GridSplitter.RenderTransform>
+        <TranslateTransform Y="-7.5" />
+      </controls:GridSplitter.RenderTransform>
+    </controls:GridSplitter>
+
+
+  </Grid>
+  
+</Page>

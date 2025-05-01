@@ -117,7 +117,6 @@ public static class Platform
     static bool _hasBeenInit;
     public static void Init(Application application, Window window)
     {
-        Console.WriteLine($"P42.Utils.Uno.Platform.Init A : hasBeenInit[{_hasBeenInit}]");
         if (_hasBeenInit)
             return;
         _hasBeenInit = true;

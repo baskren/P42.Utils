@@ -21,7 +21,7 @@ public class UnitTestClassInfo
         Tests = tests ?? type.GetMethodsWithAttribute<TestMethodAttribute>();
         Initialize = initialize ?? type.GetMethodsWithAttribute<TestInitializeAttribute>().FirstOrDefault();
         Cleanup = cleanup ?? type.GetMethodsWithAttribute<TestCleanupAttribute>().FirstOrDefault();
-        Instance = Activator.CreateInstance(Type);
+        Instance = Activator.CreateInstance(Type)!;
 
     }
 
@@ -38,8 +38,5 @@ public class UnitTestClassInfo
     public override string ToString() => TestClassName;
 
     public object Instance { get;  }
-
-    ConsoleOutputRecorder? _outputRecorder;
-    internal ConsoleOutputRecorder ConsoleOutputRecorder => _outputRecorder ??= ConsoleOutputRecorder.Start();
 
 }

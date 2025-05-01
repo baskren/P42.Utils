@@ -9,11 +9,20 @@ using Microsoft.UI.Xaml;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Drawing;
+using System.Collections.ObjectModel;
 
 namespace P42.UnoTestRunner;
 
-internal class TestRun : INotifyPropertyChanged
+public class TestRun : INotifyPropertyChanged
 {
+    #region Properties
+    TestRunState _state = TestRunState.Pending;
+    public TestRunState State 
+    { 
+        get => _state;
+        internal set => SetValue(ref _state, value); 
+    }
+
     int _run;
     public int Run 
     { 
@@ -51,11 +60,94 @@ internal class TestRun : INotifyPropertyChanged
 
     public int RepeatLimit { get; } = 3;
 
-    public readonly List<TestCaseResult> TestResults = [];
+    ConsoleOutputRedirector? _redirector;
+    internal ConsoleOutputRedirector ConsoleOutputRedirector
+    {
+        get => _redirector ?? throw new Exception($"ConsoleRedirector not properly initilaized");
+        set => _redirector = value;
+    }
 
+    void ConsoleRedirectorStart()
+    {
+        if (_redirector != null)
+            throw new Exception("ConsoleRedirectorStop() not called");
+        ConsoleOutputRedirector = new ConsoleOutputRedirector();
+        ConsoleOutputRedirector.Start();
+    }
+
+    void ConsoleRedirectorStop()
+    {
+        ConsoleOutputRedirector?.Stop();
+        ConsoleOutputRedirector?.Dispose();
+        _redirector = null;
+    }
+
+
+    StringBuilder ResultLogBuilder = new();
+    public string ResultLog => ResultLogBuilder.ToString();
+
+    CancellationToken? _ct;
+    public CancellationToken CancellationToken 
+    {
+        get => _ct ??= new CancellationToken();
+        set
+        {
+            if (_ct is not null)
+                throw new InvalidOperationException($"Cannot reset cancellation token after test start");
+            _ct = value;
+        }
+    }
+    #endregion
+
+
+    #region Fields
+    public readonly ObservableCollection<TestCaseResult> TestResults = [];
+    #endregion
+
+
+    #region Events
     public event PropertyChangedEventHandler? PropertyChanged;
+    #endregion
 
-    public void ReportTestResult(TestRun run, string testName, TimeSpan duration, TestResult testResult, Exception? error = null, string? message = null, string? consoleText = null)
+
+
+    #region Public Methods
+
+    void InitiateTests()
+    {
+        State = TestRunState.Running;
+        ConsoleRedirectorStart();
+    }
+
+    void TerminateTests()
+    {
+        ConsoleRedirectorStop();
+        State = TestRunState.Completed;
+    }
+
+    public async Task ExecuteAsync()
+    {
+        InitiateTests();
+        await TestRunner.ExecuteTestsAsync(this);
+        TerminateTests();
+    }
+
+    public async Task ExecuteAsync(IEnumerable<UnitTestMethodInfo> testMethods)
+    {
+        InitiateTests();
+        await TestRunner.ExecuteTestsAsync(testMethods, this);
+        TerminateTests();
+    }
+
+    public async Task StopAsync()
+    {
+        while (State == TestRunState.Running)
+        {
+            await Task.Delay(500);
+        }
+    }
+
+    internal void ReportTestResult(TestRun run, string testName, TimeSpan duration, TestResult testResult, Exception? error = null, string? message = null, string? consoleText = null)
 
     {
         TestResults.Add(
@@ -68,28 +160,46 @@ internal class TestRun : INotifyPropertyChanged
             });
 
         var retriesText = run.CurrentRepeatCount != 0 ? $" (Retried {run.CurrentRepeatCount} time(s))" : "";
-        System.Diagnostics.Debug.WriteLine(GetTestResultIcon(testResult) + ' ' + testName + retriesText);
+        var line = GetTestResultIcon(testResult) + ' ' + testName + retriesText;
+        System.Diagnostics.Debug.WriteLine(line);
+        ResultLogBuilder.AppendLine(line);
 
         if (!string.IsNullOrWhiteSpace(message))
-            System.Diagnostics.Debug.WriteLine("  ..." + message);
+        { 
+            line = " ... " + message;
+            System.Diagnostics.Debug.WriteLine(line);
+            ResultLogBuilder.AppendLine(line);
+        }
 
         if (error is { })
         {
             var isFailed = testResult == TestResult.Failed || testResult == TestResult.Error;
-            System.Diagnostics.Debug.WriteLine("EXCEPTION> " + error.Message);
+            line = "EXECPTION> " + error.Message;
+            System.Diagnostics.Debug.WriteLine(line);
+            ResultLogBuilder.AppendLine(line);
 
             if (isFailed)
-                System.Diagnostics.Debug.WriteLine($"\t{testResult}: {testName} [{error.GetType()}] \n {error}\n\n");
+            {
+                line = $"\t{testResult}: {testName} [{error.GetType()}] \n {error}\n\n";
+                System.Diagnostics.Debug.WriteLine(line);
+                ResultLogBuilder.AppendLine(line);
+            }
 
         }
 
         if (!string.IsNullOrEmpty(consoleText))
         {
-            System.Diagnostics.Debug.WriteLine($"OUT> {consoleText}");
+            line = $"OUT> {consoleText}";
+            System.Diagnostics.Debug.WriteLine(line);
+            ResultLogBuilder.AppendLine(line);
         }
 
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ResultLog)));
     }
+    #endregion
 
+
+    #region Helpers
     private string GetTestResultIcon(TestResult testResult)
     {
         switch (testResult)
@@ -137,6 +247,7 @@ internal class TestRun : INotifyPropertyChanged
 
         return false;
     }
-
+    #endregion
 
 }
+;

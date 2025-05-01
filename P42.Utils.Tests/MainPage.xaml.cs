@@ -14,7 +14,7 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            await P42.UnoTestRunner.TestRunner.Run();
+            await P42.UnoTestRunner.TestRunner.ExecuteTestsAsync();
         }
         catch (Exception ex)
         {

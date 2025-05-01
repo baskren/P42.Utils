@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace P42.UnoTestRunner;
 
-internal record UnitTestMethodInfo
+public record UnitTestMethodInfo
 {
     public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(300);
     private readonly List<object?[]> _casesParameters;
@@ -130,4 +130,6 @@ internal record UnitTestMethodInfo
         }
     }
 
+    public override string ToString()
+        => Name;
 }

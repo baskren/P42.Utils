@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P42.UnoTestRunner;
 
-internal record TestCaseResult
+public record TestCaseResult
 {
     public TestResult TestResult { get; init; }
     public string? TestName { get; init; }

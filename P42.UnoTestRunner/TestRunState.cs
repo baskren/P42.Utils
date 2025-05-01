@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace P42.UnoTestRunner;
 
-public enum TestResult
+public enum TestRunState
 {
-    Passed,
-    Failed,
-    Error,
-    Skipped,
+    Pending,
+    Running,
+    Completed
 }

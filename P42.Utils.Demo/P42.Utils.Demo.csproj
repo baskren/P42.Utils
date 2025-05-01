@@ -39,6 +39,9 @@
     <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\P42.UnoTestRunner\P42.UnoTestRunner.csproj" />
     <ProjectReference Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />

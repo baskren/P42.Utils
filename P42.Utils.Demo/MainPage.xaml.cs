@@ -7,6 +7,6 @@ public sealed partial class MainPage : Page
         this.InitializeComponent();
 
 
-        P42.UnoTestRunner.TestRunnerExtensions.GetTestMethods();
+        //P42.UnoTestRunner.TestRunnerExtensions.GetTestMethods();
     }
 }
