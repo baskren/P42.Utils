@@ -12,26 +12,26 @@ namespace P42.Utils.Tests;
 [TestClass]
 public class A05_AssemblyExtensions
 {
-    Assembly? Assembly { get; set; }
-
     [TestMethod]
     public void A00_Init()
     {
-        Assembly = Assembly.GetExecutingAssembly();
-        Assembly.ShouldBe(GetType().Assembly);
+        var asm = Assembly.GetExecutingAssembly();
+        asm.ShouldBe(GetType().Assembly);
     }
 
     [TestMethod]
     public void A01_Name()
     {
-        Assembly.Name().ShouldBe("P42.Utils.Tests");
+        var asm = Assembly.GetExecutingAssembly();
+        asm.Name().ShouldBe("P42.Utils.Demo");
     }
 
     [TestMethod]
     public void A02_GetAssemblies()
     {
+        var asm = Assembly.GetExecutingAssembly();
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        assemblies.ShouldContain(Assembly);
+        assemblies.ShouldContain(asm);
         assemblies.ShouldContain(typeof(P42.Utils.LocalData).Assembly);
         assemblies.ShouldContain(typeof(Microsoft.UI.Xaml.Application).Assembly);
 #if HAS_UNO
@@ -42,18 +42,20 @@ public class A05_AssemblyExtensions
     [TestMethod]
     public void A03_GetAssemblyByName()
     {
-        var assembly = AssemblyExtensions.GetAssemblyByName("P42.Utils.Tests");
-        assembly.ShouldBe(Assembly);
+        var asm = Assembly.GetExecutingAssembly();
+        var assembly = AssemblyExtensions.GetAssemblyByName("P42.Utils.Demo");
+        assembly.ShouldBe(asm);
     }
 
     [TestMethod]
     public void A04_GetBuildTime()
     {
+        var asm = Assembly.GetExecutingAssembly();
 
 #if BROWSERWASM
-        Assembly.TryGetBuildTime(out var time).ShouldBeFalse();
+        asm.TryGetBuildTime(out var time).ShouldBeFalse();
 #else
-        Assembly.TryGetBuildTime(out var time).ShouldBeTrue();
+        asm.TryGetBuildTime(out var time).ShouldBeTrue();
 #endif
         time.ShouldNotBe(DateTime.MinValue);
         time.ShouldNotBe(DateTime.MaxValue);

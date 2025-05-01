@@ -1,6 +1,22 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
+      $(TargetFrameworks);
+      <!-- why this version? -->
+      <!--
+      net9.0-windows10.0.19041
+      -->
+      net9.0-windows10.0.26100
+
+    </TargetFrameworks>
+    <!-- NEEDED TO GET -browserwasm TO BUILD USING BELOW WebView2 WORKAROUND -->
+    <TargetFrameworks Condition=" $(Platform) == 'AnyCPU' ">
+      $(TargetFrameworks);
+      net9.0-browserwasm
+    </TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+
     <UnoSingleProject>true</UnoSingleProject>
     <OutputType>Library</OutputType>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
@@ -16,6 +32,8 @@
     <UnoFeatures>
       Toolkit;
     </UnoFeatures>
+    
+    <Platforms>AnyCPU;x86;ARM64;x64</Platforms>
 
   </PropertyGroup>
 

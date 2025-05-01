@@ -60,6 +60,7 @@ public class TestRun : INotifyPropertyChanged
 
     public int RepeatLimit { get; } = 3;
 
+    /*
     ConsoleOutputRedirector? _redirector;
     internal ConsoleOutputRedirector ConsoleOutputRedirector
     {
@@ -81,9 +82,10 @@ public class TestRun : INotifyPropertyChanged
         ConsoleOutputRedirector?.Dispose();
         _redirector = null;
     }
+    */
 
 
-    StringBuilder ResultLogBuilder = new();
+    public StringBuilder ResultLogBuilder = new();
     public string ResultLog => ResultLogBuilder.ToString();
 
     CancellationToken? _ct;
@@ -116,12 +118,12 @@ public class TestRun : INotifyPropertyChanged
     void InitiateTests()
     {
         State = TestRunState.Running;
-        ConsoleRedirectorStart();
+        //ConsoleRedirectorStart();
     }
 
     void TerminateTests()
     {
-        ConsoleRedirectorStop();
+        //ConsoleRedirectorStop();
         State = TestRunState.Completed;
     }
 
@@ -135,7 +137,7 @@ public class TestRun : INotifyPropertyChanged
     public async Task ExecuteAsync(IEnumerable<UnitTestMethodInfo> testMethods)
     {
         InitiateTests();
-        await TestRunner.ExecuteTestsAsync(testMethods, this);
+        await TestRunner.ExecuteRequestedTestsAsync(testMethods, this);
         TerminateTests();
     }
 
@@ -191,7 +193,7 @@ public class TestRun : INotifyPropertyChanged
         {
             line = $"OUT> {consoleText}";
             System.Diagnostics.Debug.WriteLine(line);
-            ResultLogBuilder.AppendLine(line);
+            //ResultLogBuilder.AppendLine(line);
         }
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ResultLog)));

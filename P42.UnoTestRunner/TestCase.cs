@@ -40,7 +40,8 @@ public record TestCase
         var canRetry = true;
         var testClassInfo = test.TestClassInfo;
         var instance = testClassInfo.Instance;
-        var testName = testClassInfo.TestClassName + '.' + test.Name;
+        //var testName = testClassInfo.TestClassName + '.' + test.Name;
+        var testName = test.Name;
         var fullTestName = testName + ToString();
 
         while (canRetry)
@@ -174,19 +175,19 @@ public record TestCase
                     await resultingTask;
                 }
 
-                var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
+                //var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
 
                 if (test.ExpectedException is null)
                 {
                     run.Succeeded++;
-                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Passed, consoleText: consoleText);
+                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Passed); //, consoleText: consoleText);
                 }
                 else
                 {
                     run.Failed++;
                     run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Failed,
-                        message: $"Test did not throw the excepted exception of type {test.ExpectedException.Name}",
-                        consoleText: consoleText);
+                        message: $"Test did not throw the excepted exception of type {test.ExpectedException.Name}");//,
+                        //consoleText: consoleText);
                 }
             }
             catch (Exception e)
@@ -199,12 +200,12 @@ public record TestCase
                 if (e is TargetInvocationException tie)
                     e = tie.InnerException!;
 
-                var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
+                //var consoleText = run.ConsoleOutputRedirector.GetContentAndReset();
 
                 if (e is AssertInconclusiveException inconclusiveException)
                 {
                     run.Ignored++;
-                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Skipped, message: e.Message, consoleText: consoleText);
+                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Skipped, message: e.Message);
                 }
                 else if (test.ExpectedException is null || !test.ExpectedException.IsInstanceOfType(e))
                 {
@@ -218,13 +219,13 @@ public record TestCase
                     else
                     {
                         run.Failed++;
-                        run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Failed, e, consoleText: consoleText);
+                        run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Failed, e); //, consoleText: consoleText);
                     }
                 }
                 else
                 {
                     run.Succeeded++;
-                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Passed, e, consoleText: consoleText);
+                    run.ReportTestResult(run, fullTestName, sw.Elapsed, TestResult.Passed, e);
                 }
             }
             finally
@@ -249,7 +250,7 @@ public record TestCase
             catch (Exception e)
             {
                 run.Failed++;
-                run.ReportTestResult(run, testName + " Cleanup", TimeSpan.Zero, TestResult.Failed, e, consoleText: run.ConsoleOutputRedirector.GetContentAndReset());
+                run.ReportTestResult(run, testName + " Cleanup", TimeSpan.Zero, TestResult.Failed, e);
             }
         }
 

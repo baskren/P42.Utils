@@ -90,7 +90,9 @@ public static class TestRunner
         return run;
     }
 
-    internal static async Task ExecuteTestsAsync(this Dictionary<Assembly, Dictionary<UnitTestClassInfo, IEnumerable<UnitTestMethodInfo>>> testTree, TestRun run)
+    internal static async Task ExecuteTestsAsync(
+        this Dictionary<Assembly, Dictionary<UnitTestClassInfo, IEnumerable<UnitTestMethodInfo>>> testTree, 
+        TestRun run)
     {
         foreach (var asm in testTree.Keys)
         {
@@ -98,24 +100,48 @@ public static class TestRunner
             {
                 if (run.CancellationToken.IsCancellationRequested)
                     return;
-
-                var testMethods = unitClassKvp.Value;
-                await testMethods.ExecuteTestsAsync(run);
+                await unitClassKvp.Key.ExecuteTestsAsync(run);
             }
         }
 
-
     }
+
+    internal static async Task ExecuteRequestedTestsAsync(this IEnumerable<UnitTestMethodInfo> requestedTests, TestRun run)
+    {
+        var requestedTestMethods = requestedTests.ToArray();
+        var testTree = GetTestTree();
+        foreach (var testAssembly in testTree.Keys)
+        {
+            var testClasses = testTree[testAssembly];
+            foreach (var testClass in testClasses.Keys)
+            {
+                var testMethods = testClasses[testClass].ToList();
+                for (int i = testMethods.Count - 1; i >= 0; i--)
+                {
+                    var testMethod = testMethods[i];
+                    if (requestedTestMethods.Any(rm => rm.Method == testMethod.Method))
+                        continue;
+                    testMethods.RemoveAt(i);
+                }
+
+                if (testMethods.Count == 0)
+                    testClasses.Remove(testClass);
+                else
+                    testClasses[testClass] = testMethods;
+            }
+
+            if (testTree[testAssembly].Count == 0)
+                testTree.Remove(testAssembly);
+        }
+
+        await testTree.ExecuteTestsAsync(run);
+    }
+
 
     internal static async Task ExecuteTestsAsync(this UnitTestClassInfo unitClass, TestRun run)
     {
-        var testMethods = GetTestMethods(unitClass);
-        await testMethods.ExecuteTestsAsync(run);
-    }
-
-    internal static async Task ExecuteTestsAsync(this IEnumerable<UnitTestMethodInfo> testMethods, TestRun run)
-    {
-        foreach (var testMethod in testMethods)
+        run.ResultLogBuilder.AppendLine($"[{unitClass.TestClassName}]");
+        foreach (var testMethod in GetTestMethods(unitClass))
             await testMethod.ExecuteTestAsync(run);
     }
 

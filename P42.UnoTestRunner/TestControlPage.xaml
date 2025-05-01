@@ -119,6 +119,7 @@
             Margin="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            FontFamily="Courier New"
             />
         </ScrollViewer>
       </Grid>
@@ -170,6 +171,7 @@
         x:Name="stopStartTestButton"
         Content="RUN ⏵"
         Margin="4"
+        IsEnabled="false"
         Click="stopStartTestButton_Click"
         />
       <ScrollViewer

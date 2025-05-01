@@ -94,7 +94,12 @@ public sealed partial class TestControlPage : Page
         foreach (var rootNode in nodeTree.Children)
             testsTreeView.RootNodes.Add(rootNode);
 
+        testsTreeView.SelectionChanged += TestsTreeView_SelectionChanged;
     }
+
+    private void TestsTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
+        => stopStartTestButton.IsEnabled = testsTreeView.SelectedNodes.Any();
+    
 
     private void OnConsoleContentChanged(object? sender, string e)
         => consoleTextBlock.Text = e;
@@ -107,12 +112,14 @@ public sealed partial class TestControlPage : Page
             return;
 
         var newAspect = args.NewSize.Width / args.NewSize.Height;
+        /*
         if (args.PreviousSize.Height > 0)
         {
             var oldAspect = args.PreviousSize.Width / args.PreviousSize.Height;
             if ((newAspect > 1) == (oldAspect > 1))
                 return;
         }
+        */
 
         if (newAspect > 1)
         {
@@ -121,11 +128,13 @@ public sealed partial class TestControlPage : Page
             Grid.SetRow(testsTreeGrid, 0);
             Grid.SetColumn(testsTreeGrid, 2);
 
+            resultsGrid.MaxWidth = args.NewSize.Width / 2;
             col1.MinWidth = 300;
             col2.MinWidth = 300;
             col1.Width = default;
             col2.Width = default;
 
+            row1.MaxHeight = default;
             row1.MinHeight = 0;
             row2.MinHeight = 0;
             row1.Height = GridLengthZero;
@@ -138,16 +147,20 @@ public sealed partial class TestControlPage : Page
             Grid.SetRow(testsTreeGrid, 2);
             Grid.SetColumn(testsTreeGrid, 0);
 
+            resultsGrid.MaxWidth = double.NaN;
             col1.MinWidth = 0;
             col2.MinWidth = 0;
             col1.Width = GridLengthZero;
             col2.Width = GridLengthZero;
 
+            row1.MaxHeight = args.NewSize.Height/2;
             row1.MinHeight = 200;
             row2.MinHeight = 200;
             row1.Height = default;
             row2.Height = default;
         }
+
+        System.Diagnostics.Debug.WriteLine($"col1.MaxWidth:[{col1.MaxWidth}]");
     }
 
     private async void stopStartTestButton_Click(object sender, RoutedEventArgs e)
