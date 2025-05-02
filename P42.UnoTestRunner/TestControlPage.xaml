@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:reflection="using:System.Reflection"
+    xmlns:utu="using:Uno.Toolkit.UI"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     SizeChanged="Page_SizeChanged"
@@ -27,7 +28,8 @@
   <Grid
     x:Name="grid"
     BorderBrush="{ThemeResource SystemControlHighlightChromeHighBrush}"
-    BorderThickness="0,0,1,1">
+    BorderThickness="0,0,1,1"
+    utu:SafeArea.Insets="Left,Top,Right,Bottom">
 
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
@@ -46,8 +48,7 @@
       Grid.Column="1"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch"
-      BorderThickness="1"
-      BorderBrush="DarkGray">
+      >
       <Grid.RowDefinitions>
         <RowDefinition x:Name="resultsGridRow0" Height="*" MinHeight="100"/>
         <RowDefinition x:Name="resultsGridRow1" Height="auto" MinHeight="100" />
@@ -59,6 +60,8 @@
       <Grid
         x:Name="testOuputGrid"
         MinHeight="100"
+        BorderBrush="Gray"
+        BorderThickness="1"
         >
         <Grid.RowDefinitions>
           <RowDefinition Height="auto" />
@@ -95,6 +98,8 @@
         x:Name="consoleOutputGrid"
         Grid.Row="1"
         MinHeight="100"
+        BorderBrush="Gray"
+        BorderThickness="1"
         >
         <Grid.RowDefinitions>
           <RowDefinition Height="auto" />
@@ -182,6 +187,19 @@
           SelectionMode="Multiple"
           />
       </ScrollViewer>
+
+      <Grid
+        x:Name="busyOverlay"
+        Grid.Row="1"
+        Visibility="Collapsed"
+        Background="#4888"
+        >
+        <ProgressRing
+          x:Name="progressRing"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          IsActive="False"/>
+      </Grid>
     </Grid>
       
 

@@ -88,14 +88,26 @@ public class TestRun : INotifyPropertyChanged
     public StringBuilder ResultLogBuilder = new();
     public string ResultLog => ResultLogBuilder.ToString();
 
-    CancellationToken? _ct;
-    public CancellationToken CancellationToken 
+    CancellationTokenSource? _cancellationTokenSource;
+    public CancellationTokenSource CancellationTokenSource
     {
-        get => _ct ??= new CancellationToken();
+        get => _cancellationTokenSource ??= new CancellationTokenSource();
         set
         {
-            if (_ct is not null)
-                throw new InvalidOperationException($"Cannot reset cancellation token after test start");
+            if (_cancellationTokenSource != null)
+                throw new InvalidOperationException($"Cannot reset CancellationTokenSource after test start");
+            _cancellationTokenSource = value;
+        }
+    }
+
+    CancellationToken? _ct;
+    internal CancellationToken CancellationToken
+    {
+        get => _ct ??= CancellationTokenSource.Token;
+        set
+        {
+            if ( _ct != null)
+                throw new InvalidOperationException($"Cannot reset CancellationToken after test start");
             _ct = value;
         }
     }
@@ -144,6 +156,7 @@ public class TestRun : INotifyPropertyChanged
 
     public async Task StopAsync()
     {
+        CancellationTokenSource.Cancel();
         while (State == TestRunState.Running)
         {
             await Task.Delay(500);

@@ -200,16 +200,38 @@ public sealed partial class TestControlPage : Page
         stopStartTestButton.IsEnabled = false;
         if (TestRun is not TestRun run || run.State != TestRunState.Running)
             RunTest();
-        else 
+        else
+        {
+            ProgressRingShowCancelling();
             await run.StopAsync();
+        }
 
         stopStartTestButton.IsEnabled = true;
+    }
+
+    void ProgressRingStart()
+    {
+        busyOverlay.Visibility = Visibility.Visible;
+        progressRing.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue);
+        progressRing.IsActive = true;
+    }
+
+    void ProgressRingStop()
+    {
+        busyOverlay.Visibility = Visibility.Collapsed;
+        progressRing.IsActive = false;
+    }
+
+    void ProgressRingShowCancelling()
+    {
+        progressRing.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Red);
     }
 
     async Task RunTest()
     {
         try
         {
+            ProgressRingStart();
             var selectedNodes = testsTreeView.SelectedNodes;
             var selectedTestNodes = selectedNodes.Where(n => !n.HasChildren).Select(n => n.Content);
             var selectedTests = selectedTestNodes.Cast<UnitTestMethodInfo>();
@@ -247,6 +269,7 @@ public sealed partial class TestControlPage : Page
         {
             TestRun.PropertyChanged -= OnTestRun_PropertyChanged;
             TestRun.State = TestRunState.Completed;
+            ProgressRingStop();
         }
     }
 
@@ -259,6 +282,7 @@ public sealed partial class TestControlPage : Page
             stopStartTestButton.Content = TestRun?.State == TestRunState.Running
                 ? "CANCEL"
                 : "RUN ⏵";
+
         }
     }
 
