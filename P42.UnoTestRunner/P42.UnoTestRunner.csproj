@@ -33,9 +33,6 @@
       Lottie;
     </UnoFeatures>
 
-    <!--
-    <Platforms>AnyCPU;x86;ARM64;x64</Platforms>
-    -->
 
   </PropertyGroup>
 
@@ -77,7 +74,9 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" />
   </ItemGroup>
+
   <ItemGroup>
+    <!-- WebView2 reference fail fix (required for both Release and Debug issues -->
     <PackageReference Include="Microsoft.Web.WebView2" />
   </ItemGroup>
 

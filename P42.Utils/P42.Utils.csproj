@@ -3,13 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-
-
-    <!-- NEEDED FOR WebView2 ON Windows WORKAROUND : https://github.com/unoplatform/uno/issues/18552 -->
-	<!--
-    <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
-	-->
-
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

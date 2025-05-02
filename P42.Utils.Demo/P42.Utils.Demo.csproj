@@ -56,7 +56,6 @@
     -->
     <UnoFeatures>
     </UnoFeatures>
-    <Platforms>AnyCPU;x86;ARM64;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
