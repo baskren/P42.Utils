@@ -26,7 +26,12 @@ public static partial class DeviceBeep
 #if BROWSERWASM
         await DeviceBeep.PlatformBeepAsync(frequency, duration);
 #else
+
+        if (!PlatformCanBeep())
+            return;
+
         Init();
+
         var tcs = new TaskCompletionSource<bool>();
         Queue?.Enqueue((frequency, duration, tcs));
         await tcs.Task;
@@ -78,10 +83,14 @@ public static partial class DeviceBeep
     }
 
 
-#if __IOS__ || __MACCATALYST__ || __ANDROID__ || WINDOWS || BROWSERWASM
+#if __IOS__ || __MACCATALYST__ || __ANDROID__ || WINDOWS || BROWSERWASM || DESKTOP
 #else
     static bool PlatformCanBeep() => false;
 
-    static Task PlatformBeepAsync(int freq, int duration) => Task.CompletedTask;
+    static Task PlatformBeepAsync(int freq, int duration) 
+    {
+        //Console.Beep(freq, duration);
+        return Task.CompletedTask;
+    }
 #endif
 }

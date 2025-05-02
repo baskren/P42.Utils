@@ -1,4 +1,4 @@
-#if WinAppSdk
+#if WinAppSdk || DESKTOP
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +12,9 @@ public static partial class DeviceBeep
 {
     private static bool PlatformCanBeep() => true;
 
-
-    [DllImport("kernel32.dll")]
-    static extern bool Beep(int frequency, int duration);
-
-
     private static async Task PlatformBeepAsync(int frequency, int duration)
     {
-        Beep(frequency, duration);
+        Console.Beep(frequency, duration);
         await Task.CompletedTask;
     }
 
