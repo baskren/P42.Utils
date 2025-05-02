@@ -8,7 +8,7 @@
   <ItemGroup>
 
     <!-- WebView2 reference fail fix (required for both Release and Debug issues -->
-    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2950-prerelease" />
+    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
 
 
     <!-- UNIT TESTING -->
