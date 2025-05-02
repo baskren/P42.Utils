@@ -33,6 +33,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="P42.NotifiableObject" Version="1.0.4" />
     <PackageReference Include="P42.Serilog.QuickLog" Version="1.0.9" />
+    <PackageReference Include="AsyncAwaitBestPractices" Version="9.0.0" />
   </ItemGroup>
 
 

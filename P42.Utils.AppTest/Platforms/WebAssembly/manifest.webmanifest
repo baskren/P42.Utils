@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "P42.Utils.AppTest",
+  "display": "standalone",
+  "name": "P42.Utils.AppTest",
+  "short_name": "P42.Utils.AppTest",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

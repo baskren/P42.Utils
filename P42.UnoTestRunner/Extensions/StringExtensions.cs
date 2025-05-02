@@ -103,11 +103,6 @@ internal static partial class StringExtensions
         return string.Format(CultureInfo.InvariantCulture, instance, array);
     }
 
-    /// <summary>
-    /// Removes all leading occurrences of <see cref="trimText"/> from the current System.String object
-    /// </summary>
-    /// <param name="trimText">A string to remove</param>
-    /// <returns>The string that remains after all occurrences of the <see cref="trimText"/> are removed from the start of the current string.</returns>
     public static string TrimStart(this string source, string trimText, bool ignoreCase = false)
     {
         if (!string.IsNullOrEmpty(trimText) && source.StartsWith(trimText, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
@@ -120,11 +115,6 @@ internal static partial class StringExtensions
         }
     }
 
-    /// <summary>
-    /// Removes all trailing occurrences of <see cref="trimText"/> from the current System.String object
-    /// </summary>
-    /// <param name="trimText">A string to remove</param>
-    /// <returns>The string that remains after all occurrences of the <see cref="trimText"/> are removed from the end of the current string.</returns>
     public static string TrimEnd(this string source, string trimText)
     {
         if (!string.IsNullOrEmpty(trimText) && source.EndsWith(trimText, StringComparison.Ordinal))

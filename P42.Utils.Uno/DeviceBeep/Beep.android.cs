@@ -50,15 +50,15 @@ public static partial class DeviceBeep
                 int bufferSize = AudioTrack.GetMinBufferSize(sampleRate, ChannelOut.Mono, Android.Media.Encoding.Pcm16bit);
 
                 var audioAttributes = new AudioAttributes.Builder()
-                    ?.SetUsage(AudioUsageKind.Media)
-                    ?.SetContentType(AudioContentType.Music)
-                    ?.Build();
+                    .SetUsage(AudioUsageKind.Media)!
+                    .SetContentType(AudioContentType.Music)!
+                    .Build()!;
 
                 var format = new AudioFormat.Builder()
-                    ?.SetSampleRate(sampleRate)
-                    ?.SetChannelMask(ChannelOut.Mono)
-                    ?.SetEncoding(Android.Media.Encoding.Pcm16bit)
-                    ?.Build();
+                    .SetSampleRate(sampleRate)!
+                    .SetChannelMask(ChannelOut.Mono)!
+                    .SetEncoding(Android.Media.Encoding.Pcm16bit)!
+                    .Build()!;
 
                 audioTrack = new AudioTrack.Builder()
                     .SetAudioAttributes(audioAttributes)

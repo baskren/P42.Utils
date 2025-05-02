@@ -63,7 +63,7 @@ public partial class TestServices
         */
 
         #region Content Swapping
-        private static UIElement? _originalWindowContent;
+        //private static UIElement? _originalWindowContent;
 
         public static void SaveOriginalWindowContent() 
             => UnitTestsUIContentHelper.SaveOriginalContent();

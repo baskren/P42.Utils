@@ -140,7 +140,7 @@ public static class AssemblyExtensions
             buildTime = epoch.AddSeconds(secondsSince1970).ToLocalTime();
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return false;
         }

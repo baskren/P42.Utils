@@ -129,7 +129,6 @@ public class TestRun : INotifyPropertyChanged
 
     void InitiateTests()
     {
-        TestApplication.Instance.ConsoleOutputRedirector.Reset();
         State = TestRunState.Running;
         //ConsoleRedirectorStart();
     }

@@ -37,7 +37,7 @@ public class UnitTestClassInfo
 
     public override string ToString() => TestClassName;
 
-    object _instance;
+    object? _instance;
     public object Instance 
     { 
         get => _instance ??= Activator.CreateInstance(Type)!;  

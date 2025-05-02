@@ -73,8 +73,8 @@ public partial class UnitTestDispatcherCompat
 #else
             var dispatchQueueType = typeof(_Impl);
             var mainGetter = dispatchQueueType.GetMethod("get_Main", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-            var mainValue = mainGetter.Invoke(null, null) as _Impl;
-            return new UnitTestDispatcherCompat(mainValue);
+            var mainValue = mainGetter!.Invoke(null, null) as _Impl;
+            return new UnitTestDispatcherCompat(mainValue!);
 #endif
         }
     }

@@ -1072,7 +1072,7 @@ public abstract partial class LocalData
                     if (lastModified != DateTime.MinValue)
                         File.SetLastWriteTime(FullPath, lastModified);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }
@@ -1088,7 +1088,7 @@ public abstract partial class LocalData
 
                 return true;
             }
-            catch (Exception ex1)
+            catch (Exception)
             {
                 throw;
             }

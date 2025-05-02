@@ -6,10 +6,9 @@
       $(TargetFrameworks);
       <!-- why this version? -->
       <!--
-      net9.0-windows10.0.26100
-      -->
       net9.0-windows10.0.19041
-
+      -->
+      net9.0-windows10.0.26100
     </TargetFrameworks>
     <!-- NEEDED TO GET -browserwasm TO BUILD USING BELOW WebView2 WORKAROUND -->
     <TargetFrameworks Condition=" $(Platform) == 'AnyCPU' ">

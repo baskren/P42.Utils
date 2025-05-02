@@ -6,15 +6,22 @@
     See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
   -->
   <ItemGroup>
-    <PackageVersion Include="P42.Utils.Uno" Version="$(UnoVersion)" />
-
+    
     <!-- UNIT TESTING -->
-    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="1.33.0-dev.11" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.8.3" />
     <PackageVersion Include="FluentAssertions" Version="8.2.0" />
+    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
+    <PackageVersion Include="AsyncAwaitBestPractices" Version="9.0.0" />
+
+    <!-- UNO RUNTIME ENGINE -->
+    <!--
+    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="1.33.0-dev.11" />
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Disposables" Version="4.1.1" />
-    <PackageVersion Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
+    -->
+
+    <PackageVersion Include="P42.Utils" Version="1.2.0" />
+    <PackageVersion Include="P42.Utils.Uno" Version="$(UnoVersion)" />
   </ItemGroup>
 </Project>

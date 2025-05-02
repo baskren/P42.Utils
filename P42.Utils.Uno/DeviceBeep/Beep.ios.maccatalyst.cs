@@ -19,10 +19,10 @@ public static partial class DeviceBeep
     static bool PlatformCanBeep() => true;
 
 
-    private static AVAudioEngine _audioEngine;
-    private static AVAudioPlayerNode _playerNode;
-    private static AVAudioPcmBuffer _buffer;
-    private static AVAudioFormat _audioFormat;
+    private static readonly AVAudioEngine _audioEngine;
+    private static readonly AVAudioPlayerNode _playerNode;
+    //private static AVAudioPcmBuffer _buffer;
+    private static readonly AVAudioFormat _audioFormat;
 
     static DeviceBeep()
     {
@@ -67,7 +67,7 @@ public static partial class DeviceBeep
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"EXECPTION: i=[{i}]");
+                        Console.WriteLine($"EXECPTION: i=[{ex}]");
                     }
                 }
             }

@@ -71,7 +71,7 @@ public static class TestRunner
 
             return testTypes.Select(t => new UnitTestClassInfo(t));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Enumerable.Empty<UnitTestClassInfo>();
         }

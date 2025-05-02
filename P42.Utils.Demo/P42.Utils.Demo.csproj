@@ -1,6 +1,28 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
+
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+    <!--
+    <TargetFrameworks>
+      net9.0-ios;
+    </TargetFrameworks>
+    <TargetFrameworks Condition=" !$([MSBuild]::IsOSPlatform('windows'))">
+      net9.0-android;
+      $(TargetFrameworks);
+      net9.0-maccatalyst;
+    </TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
+      $(TargetFrameworks);
+      net9.0-windows10.0.26100
+    </TargetFrameworks>
+    <TargetFrameworks Condition=" $(Platform) == 'AnyCPU' ">
+      $(TargetFrameworks);
+      net9.0-browserwasm
+    </TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+    -->
+
+
 
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -36,32 +58,18 @@
     </UnoFeatures>
     <Platforms>AnyCPU;x86;ARM64;x64</Platforms>
   </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Shouldly" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\P42.UnoTestRunner\P42.UnoTestRunner.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
-    <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Pages\BeepPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Pages\BeepPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Pages\LocalDataSourcePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils"  />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils.Uno" />
   </ItemGroup>
 
+  
 </Project>

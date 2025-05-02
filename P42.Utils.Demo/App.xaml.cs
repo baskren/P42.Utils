@@ -1,20 +1,21 @@
 using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml.Data;
 using P42.UnoTestRunner;
 using Uno.Resizetizer;
 
 namespace P42.Utils.Demo;
 
+[Bindable]
 public partial class App : TestApplication
 {
     /// <summary>
     /// Initializes the singleton application object. This is the first line of authored code
     /// executed, and as such is the logical equivalent of main() or WinMain().
     /// </summary>
-    public App()
+    public App() : base()
     {
         this.InitializeComponent();
-
         InitializeExceptionHandling();
     }
 
@@ -97,24 +98,16 @@ public partial class App : TestApplication
     private void InitializeExceptionHandling()
     {
         System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-        //System.AppDomain.CurrentDomain.FirstChanceException 
+        System.AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
         Microsoft.UI.Xaml.Application.Current.UnhandledException += CurrentApplication_UnhandledException;
-
-
 
         // https://learn.microsoft.com/en-us/windows/uwp/launch-resume/app-lifecycle
 
-        //Uno.UI.FeatureConfiguration.Font.IgnoreTextScaleFactor = true;        
+    }
 
-#if !HAS_UNO
-        //    Microsoft.AppCenter.AppCenter.Start("26a9ba96-cad0-4a72-9fb6-684db8c278cc",
-        //					   typeof(Microsoft.AppCenter.Analytics.Analytics), typeof(Microsoft.AppCenter.Crashes.Crashes));
-#elif __MACCATALYST__
-#elif __ANDROID__ || __IOS__
-		//Microsoft.AppCenter.AppCenter.Start("ios=bf2943fa-77a0-46b8-8706-cee3611137f4;android=9d95edf4-ef30-422d-97f1-6990e0ef3fcc",
-		//					   typeof(Microsoft.AppCenter.Analytics.Analytics), typeof(Microsoft.AppCenter.Crashes.Crashes));
-#endif
-
+    private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+    {
+        Console.WriteLine($"UNHANDLED APPLICATION EXCEPTION: {e.Exception}");
     }
 
     private void CurrentApplication_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)

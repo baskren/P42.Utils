@@ -15,8 +15,6 @@ public partial class TestApplication : Application
     static TestApplication? _instance;
     public static TestApplication Instance => _instance ?? throw new Exception("TestApplication.Instance called before being set");
 
-    public ConsoleOutputRedirector ConsoleOutputRedirector = new ConsoleOutputRedirector();
-
     Window? _mainWindow;
     public Window MainWindow
     {
@@ -32,7 +30,6 @@ public partial class TestApplication : Application
     public TestApplication()
     {
 
-        ConsoleOutputRedirector.Start();
         _instance = this;
     }
 

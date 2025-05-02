@@ -17,6 +17,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using AsyncAwaitBestPractices;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -74,6 +75,8 @@ public sealed partial class TestControlPage : Page
     #region Fields
 
     TestRun? TestRun;
+    ConsoleOutputRedirector? _consoleOutputRedirector;
+    public ConsoleOutputRedirector ConsoleOutputRedirector => _consoleOutputRedirector ??= new();
 
     #endregion
 
@@ -82,8 +85,6 @@ public sealed partial class TestControlPage : Page
     {
         Instance = this;
         this.InitializeComponent();
-
-        TestApplication.Instance.ConsoleOutputRedirector.ContentChanged += OnConsoleContentChanged;
 
         var testTree = TestRunner.GetTestTree();
 
@@ -95,6 +96,14 @@ public sealed partial class TestControlPage : Page
             testsTreeView.RootNodes.Add(rootNode);
 
         testsTreeView.SelectionChanged += TestsTreeView_SelectionChanged;
+
+        Loaded += TestControlPage_Loaded;
+    }
+
+    private void TestControlPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        ConsoleOutputRedirector.ContentChanged += OnConsoleContentChanged;
+        ConsoleOutputRedirector.Start();
     }
 
     private void TestsTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
@@ -199,7 +208,7 @@ public sealed partial class TestControlPage : Page
     {
         stopStartTestButton.IsEnabled = false;
         if (TestRun is not TestRun run || run.State != TestRunState.Running)
-            RunTest();
+            RunTest().SafeFireAndForget(async (ex) => await ShowExecption(ex));
         else
         {
             ProgressRingShowCancelling();
@@ -231,6 +240,7 @@ public sealed partial class TestControlPage : Page
     {
         try
         {
+            ConsoleOutputRedirector.Reset();
             ProgressRingStart();
             var selectedNodes = testsTreeView.SelectedNodes;
             var selectedTestNodes = selectedNodes.Where(n => !n.HasChildren).Select(n => n.Content);
@@ -242,33 +252,15 @@ public sealed partial class TestControlPage : Page
         }
         catch (Exception ex)
         {
-            var dialog = new ContentDialog();
-            var text = ex.ToString();
-            // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
-            dialog.XamlRoot = this.XamlRoot;
-            dialog.Title = "TEST RUN EXCEPTION";
-            dialog.PrimaryButtonText = string.IsNullOrWhiteSpace(text) ? "" : "COPY";
-            dialog.CloseButtonText = "CANCEL";
-            dialog.DefaultButton = ContentDialogButton.Close;
-            dialog.Content = new ScrollViewer
-            {
-                Content = new TextBlock { Text = text },
-            };
-
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-            {
-                if (string.IsNullOrWhiteSpace(text))
-                    return;
-                DataPackage dataPackage = new DataPackage();
-                dataPackage.SetText(text);
-                Clipboard.SetContent(dataPackage);
-
-            }
+            await ShowExecption(ex);
         }
         finally
         {
-            TestRun.PropertyChanged -= OnTestRun_PropertyChanged;
-            TestRun.State = TestRunState.Completed;
+            if (TestRun is not null)
+            {
+                TestRun.PropertyChanged -= OnTestRun_PropertyChanged;
+                TestRun.State = TestRunState.Completed;
+            }
             ProgressRingStop();
         }
     }
@@ -302,6 +294,33 @@ public sealed partial class TestControlPage : Page
         DataPackage dataPackage = new DataPackage();
         dataPackage.SetText(consoleTextBlock.Text);
         Clipboard.SetContent(dataPackage);
+
+    }
+
+    public async Task ShowExecption(Exception ex)
+    {
+        var dialog = new ContentDialog();
+        var text = ex.ToString();
+        // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+        dialog.XamlRoot = this.XamlRoot;
+        dialog.Title = "TEST RUN EXCEPTION";
+        dialog.PrimaryButtonText = string.IsNullOrWhiteSpace(text) ? "" : "COPY";
+        dialog.CloseButtonText = "CANCEL";
+        dialog.DefaultButton = ContentDialogButton.Close;
+        dialog.Content = new ScrollViewer
+        {
+            Content = new TextBlock { Text = text },
+        };
+
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.SetText(text);
+            Clipboard.SetContent(dataPackage);
+
+        }
 
     }
 }
