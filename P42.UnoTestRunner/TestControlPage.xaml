@@ -22,45 +22,6 @@
     <Style TargetType="TextBlock">
       <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
-
-    <!--
-    <DataTemplate x:Key="AssemblyTemplate" x:DataType="reflection:Assembly">
-      <TreeViewItem AutomationProperties.Name="{x:Bind FullName}"
-            ItemsSource="{x:Bind Children}" IsExpanded="True">
-        <StackPanel Orientation="Horizontal">
-          <Image Width="20" Source="../Assets/folder.png"/>
-          <TextBlock Margin="0,0,10,0"/>
-          <TextBlock Text="{x:Bind FullName}" />
-        </StackPanel>
-      </TreeViewItem>
-    </DataTemplate>
-
-    <DataTemplate x:Key="ClassTemplate" x:DataType="local:UnitTestClassInfo">
-      <TreeViewItem AutomationProperties.Name="{x:Bind TestClassName}">
-        <StackPanel Orientation="Horizontal">
-          <FontIcon Glyph="&#xE8A5;" />
-          <TextBlock Margin="0,0,10,0"/>
-          <TextBlock Text="{x:Bind TestClassName}"/>
-        </StackPanel>
-      </TreeViewItem>
-    </DataTemplate>
-
-    <DataTemplate x:Key="MethodTemplate" x:DataType="local:UnitTestMethodInfo">
-      <TreeViewItem AutomationProperties.Name="{x:Bind Name}">
-        <StackPanel Orientation="Horizontal">
-          <FontIcon Glyph="&#xE18A;" />
-          <TextBlock Margin="0,0,10,0"/>
-          <TextBlock Text="{x:Bind Name}"/>
-        </StackPanel>
-      </TreeViewItem>
-    </DataTemplate>
-
-
-    <local:TestTreeTemplateSelector x:Key="TestTreeTemplateSelector"
-        AssemblyTemplate="{StaticResource FolderTemplate}"
-        ClassTemplate="{StaticResource FileTemplate}"
-        MethodTemplate="{StaticResource MethodTemplate}" />
-    -->
   </Page.Resources>
 
   <Grid
@@ -88,11 +49,16 @@
       BorderThickness="1"
       BorderBrush="DarkGray">
       <Grid.RowDefinitions>
-        <RowDefinition Height="3*" />
-        <RowDefinition Height="*" />
+        <RowDefinition x:Name="resultsGridRow0" Height="*" MinHeight="100"/>
+        <RowDefinition x:Name="resultsGridRow1" Height="auto" MinHeight="100" />
       </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition x:Name="resultsGridCol0"  Width="*"  />
+        <ColumnDefinition x:Name="resultsGridCol1" Width="auto"  />
+      </Grid.ColumnDefinitions>
       <Grid
         x:Name="testOuputGrid"
+        MinHeight="100"
         >
         <Grid.RowDefinitions>
           <RowDefinition Height="auto" />
@@ -105,7 +71,7 @@
           />
         <Button
           x:Name="resultsCopyButton"
-          Content="COPY"
+          Content="COPY RESULTS"
           Margin="4"
           Click="ResultsCopyButton_Click"
           />
@@ -118,15 +84,17 @@
             x:Name="resultsTextBlock"
             Margin="5"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            VerticalAlignment="Top"
             FontFamily="Courier New"
             />
         </ScrollViewer>
+
       </Grid>
 
       <Grid
         x:Name="consoleOutputGrid"
         Grid.Row="1"
+        MinHeight="100"
         >
         <Grid.RowDefinitions>
           <RowDefinition Height="auto" />
@@ -137,23 +105,53 @@
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           />
-        <TextBlock
-          Text="CONSOLE"
-          Margin="3"
+        <Button
+          x:Name="copyConsoleButton"
+          Content="COPY CONSOLE"
+          Margin="4"
+          Click="copyConsoleButton_Click"
           />
         <ScrollViewer
           Grid.Row="1"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
+          VerticalScrollMode="Auto"
+          HorizontalScrollMode="Auto"
           >
           <TextBlock
             x:Name="consoleTextBlock"
             Margin="5"
+            MinHeight="20"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
+            VerticalAlignment="Top"
             />
         </ScrollViewer>
       </Grid>
+
+      <controls:GridSplitter
+        x:Name="consoleRowSplitter"
+        Grid.Row="1"
+        Height="16"
+        VerticalAlignment="Top"
+        ResizeBehavior="BasedOnAlignment"
+        ResizeDirection="Auto">
+        <controls:GridSplitter.RenderTransform>
+          <TranslateTransform Y="-7.5" />
+        </controls:GridSplitter.RenderTransform>
+      </controls:GridSplitter>
+
+      <controls:GridSplitter
+        x:Name="consoleColSplitter"
+        Grid.Column="1"
+        Width="16"
+        HorizontalAlignment="Left"
+        ResizeBehavior="BasedOnAlignment"
+        Visibility="Collapsed"
+        ResizeDirection="Auto">
+        <controls:GridSplitter.RenderTransform>
+          <TranslateTransform X="-7.5" />
+        </controls:GridSplitter.RenderTransform>
+      </controls:GridSplitter>
 
     </Grid>
 
@@ -210,7 +208,7 @@
     </controls:GridSplitter>
 
 
-    <!--  Column Grid Splitter  -->
+    <!--  Row Grid Splitter  -->
     <controls:GridSplitter Grid.Row="1"
                                Height="16"
                                VerticalAlignment="Top"
@@ -221,7 +219,7 @@
       </controls:GridSplitter.RenderTransform>
     </controls:GridSplitter>
 
-    <!--  Column Grid Splitter  -->
+    <!--  Row Grid Splitter  -->
     <controls:GridSplitter Grid.Row="2"
                                Height="16"
                                VerticalAlignment="Top"

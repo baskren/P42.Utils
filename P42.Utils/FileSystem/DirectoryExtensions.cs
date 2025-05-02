@@ -48,8 +48,8 @@ public static class DirectoryExtensions
         if (string.IsNullOrWhiteSpace(fullPath))
             throw new ArgumentNullException(nameof(fullPath));
 
-        if (fullPath.Length > 260)
-            throw new ArgumentException("Full path is too long.", nameof(fullPath));
+        //if (fullPath.Length > 260)
+        //    throw new ArgumentException("Full path is too long.", nameof(fullPath));
 
         // var isRooted = fullPath.StartsWith("/") || fullPath.StartsWith('\\');
         var parts = fullPath.Trim('/','\\').Split('/', '\\').ToList();

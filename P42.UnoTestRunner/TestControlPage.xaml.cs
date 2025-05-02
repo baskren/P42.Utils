@@ -106,6 +106,7 @@ public sealed partial class TestControlPage : Page
     
 
     GridLength GridLengthZero = new GridLength(0);
+    GridLength GridLengthStar = new GridLength(1, GridUnitType.Star);
     private void Page_SizeChanged(object sender, SizeChangedEventArgs args)
     {
         if (args.NewSize.Height <= 0)
@@ -129,16 +130,31 @@ public sealed partial class TestControlPage : Page
             Grid.SetColumn(testsTreeGrid, 2);
 
             resultsGrid.MaxWidth = args.NewSize.Width / 2;
+            resultsGridCol0.Width = GridLengthStar;
+            resultsGridCol1.Width = GridLengthZero;
+            resultsGridRow0.Height = new GridLength(3 * args.NewSize.Height / 4);
+            resultsGridRow1.Height = new GridLength(args.NewSize.Height / 4);
             col1.MinWidth = 300;
             col2.MinWidth = 300;
             col1.Width = default;
             col2.Width = default;
 
-            row1.MaxHeight = default;
+            resultsGrid.MaxHeight = double.MaxValue;
             row1.MinHeight = 0;
             row2.MinHeight = 0;
             row1.Height = GridLengthZero;
             row2.Height = GridLengthZero;
+
+            consoleRowSplitter.Visibility = Visibility.Visible;
+            consoleColSplitter.Visibility = Visibility.Collapsed;
+
+            Grid.SetRow(consoleOutputGrid, 1);
+            Grid.SetColumn(consoleOutputGrid, 0);
+
+            resultsGridRow0.MinHeight = 100;
+            resultsGridRow1.MinHeight = 100;
+            resultsGridCol0.MinWidth = 0;
+            resultsGridCol1.MinWidth = 0;
         }
         else
         {
@@ -147,17 +163,33 @@ public sealed partial class TestControlPage : Page
             Grid.SetRow(testsTreeGrid, 2);
             Grid.SetColumn(testsTreeGrid, 0);
 
-            resultsGrid.MaxWidth = double.NaN;
+            resultsGrid.MaxWidth = double.MaxValue;
+            resultsGridCol0.Width = new GridLength(args.NewSize.Width / 2);
+            resultsGridCol1.Width = new GridLength(args.NewSize.Width / 2);
+            resultsGridRow0.Height = GridLengthStar;
+            resultsGridRow1.Height = GridLengthZero;
             col1.MinWidth = 0;
             col2.MinWidth = 0;
             col1.Width = GridLengthZero;
             col2.Width = GridLengthZero;
 
-            row1.MaxHeight = args.NewSize.Height/2;
+            resultsGrid.MaxHeight = args.NewSize.Height/2;
             row1.MinHeight = 200;
             row2.MinHeight = 200;
             row1.Height = default;
             row2.Height = default;
+
+            consoleRowSplitter.Visibility = Visibility.Collapsed;
+            consoleColSplitter.Visibility = Visibility.Visible;
+
+            Grid.SetRow(consoleOutputGrid, 0);
+            Grid.SetColumn(consoleOutputGrid, 1);
+
+            resultsGridRow0.MinHeight = 0;
+            resultsGridRow1.MinHeight = 0;
+            resultsGridCol0.MinWidth = 100;
+            resultsGridCol1.MinWidth = 100;
+
         }
 
         System.Diagnostics.Debug.WriteLine($"col1.MaxWidth:[{col1.MaxWidth}]");
@@ -185,23 +217,36 @@ public sealed partial class TestControlPage : Page
             TestRun = new TestRun();
             TestRun.PropertyChanged += OnTestRun_PropertyChanged;
             await TestRun.ExecuteAsync(selectedTests);
-            TestRun.PropertyChanged -= OnTestRun_PropertyChanged;
         }
         catch (Exception ex)
         {
             var dialog = new ContentDialog();
-
+            var text = ex.ToString();
             // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
             dialog.XamlRoot = this.XamlRoot;
             dialog.Title = "TEST RUN EXCEPTION";
-            dialog.CloseButtonText = "Cancel";
+            dialog.PrimaryButtonText = string.IsNullOrWhiteSpace(text) ? "" : "COPY";
+            dialog.CloseButtonText = "CANCEL";
             dialog.DefaultButton = ContentDialogButton.Close;
             dialog.Content = new ScrollViewer
             {
-                Content = new TextBlock { Text = ex.ToString() },
+                Content = new TextBlock { Text = text },
             };
 
-            await dialog.ShowAsync();
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return;
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.SetText(text);
+                Clipboard.SetContent(dataPackage);
+
+            }
+        }
+        finally
+        {
+            TestRun.PropertyChanged -= OnTestRun_PropertyChanged;
+            TestRun.State = TestRunState.Completed;
         }
     }
 
@@ -224,6 +269,16 @@ public sealed partial class TestControlPage : Page
         DataPackage dataPackage = new DataPackage();
         dataPackage.SetText(resultsTextBlock.Text);
         Clipboard.SetContent(dataPackage);
+    }
+
+    private void copyConsoleButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(consoleTextBlock.Text))
+            return;
+        DataPackage dataPackage = new DataPackage();
+        dataPackage.SetText(consoleTextBlock.Text);
+        Clipboard.SetContent(dataPackage);
+
     }
 }
 

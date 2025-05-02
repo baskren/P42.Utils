@@ -63,11 +63,18 @@ public static class TestRunner
 
     public static IEnumerable<UnitTestClassInfo> GetTestClasses(Assembly asm)
     {
-        var testTypes = asm.GetTypes()
-            .Where(t => t.GetCustomAttribute<TestClassAttribute>() != null)
-            .OrderBy(t => t.Name).ToArray();
+        try
+        {
+            var testTypes = asm.GetTypes()
+                .Where(t => t.GetCustomAttribute<TestClassAttribute>() != null)
+                .OrderBy(t => t.Name).ToArray();
 
-        return testTypes.Select(t => new UnitTestClassInfo(t));
+            return testTypes.Select(t => new UnitTestClassInfo(t));
+        }
+        catch (Exception ex)
+        {
+            return Enumerable.Empty<UnitTestClassInfo>();
+        }
     }
 
     public static IEnumerable<UnitTestMethodInfo> GetTestMethods(UnitTestClassInfo testClass)

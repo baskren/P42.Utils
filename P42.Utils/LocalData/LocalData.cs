@@ -614,8 +614,8 @@ public abstract partial class LocalData
                 throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
 
             var fullPath = Path.Combine(rootPath, tag);
-            if (fullPath.Length >= 260)
-                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
+            //if (fullPath.Length >= 260)
+            //    throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
             return new TagItem(tag, fullPath, folderPath, assembly);
 
@@ -808,8 +808,8 @@ public abstract partial class LocalData
                 throw new Exception($"Cannot get rootDirectory.FullName for rootPath [{rootPath}] in P42.Utils.LocalData");
 
             var fullPath = Path.Combine(rootPath, resourceId);
-            if (fullPath.Length >= 260)
-                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
+            //if (fullPath.Length >= 260)
+            //    throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
             return new ResourceItem(resourceId, fullPath, folderPath, assembly);
         }
@@ -956,8 +956,8 @@ public abstract partial class LocalData
 
             var rootPath = RootFolderPath(root, folderPath, assembly);
             var fullPath = Path.Combine(rootPath, storeSubPath);
-            if (fullPath.Length >= 260)
-                throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
+            //if (fullPath.Length >= 260)
+            //    throw new Exception($"Path [{fullPath}] too long [{fullPath.Length}] for P42.Utils.LocalData");
 
             var parentPath = Path.GetDirectoryName(fullPath);
             if (string.IsNullOrWhiteSpace(parentPath))
