@@ -6,7 +6,11 @@
     See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
   -->
   <ItemGroup>
-    
+
+    <!-- WebView2 reference fail fix (required for both Release and Debug issues -->
+    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.2950-prerelease" />
+
+
     <!-- UNIT TESTING -->
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.8.3" />
