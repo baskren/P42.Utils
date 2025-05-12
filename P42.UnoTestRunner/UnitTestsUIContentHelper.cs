@@ -18,7 +18,7 @@ namespace P42.UnoTestRunner;
 
 public static class UnitTestsUIContentHelper
 {
-    public static Window CurrentTestWindow => TestApplication.Instance.MainWindow;
+    public static Window CurrentTestWindow => TestApplication.MainWindow ?? throw new Exception("TestApplication.Instance.MainWindow not set");
 
     //internal static (UIElement Control, Func<UIElement?> GetContent, Action<UIElement?> SetContent) EmbeddedTestRoot { get; set; }
     internal static (UIElement Control, Func<UIElement?> GetContent, Action<UIElement?> SetContent) EmbeddedTestRoot

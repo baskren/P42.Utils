@@ -77,7 +77,6 @@ public sealed partial class TestControlPage : Page
     TestRun? TestRun;
     ConsoleOutputRedirector? _consoleOutputRedirector;
     public ConsoleOutputRedirector ConsoleOutputRedirector => _consoleOutputRedirector ??= new();
-
     #endregion
 
 
@@ -111,7 +110,7 @@ public sealed partial class TestControlPage : Page
     
 
     private void OnConsoleContentChanged(object? sender, string e)
-        => consoleTextBlock.Text = e;
+        => MainThread.Invoke(() => consoleTextBlock.Text = e);
     
 
     GridLength GridLengthZero = new GridLength(0);
@@ -208,7 +207,7 @@ public sealed partial class TestControlPage : Page
     {
         stopStartTestButton.IsEnabled = false;
         if (TestRun is not TestRun run || run.State != TestRunState.Running)
-            RunTest().SafeFireAndForget(async (ex) => await ShowExecption(ex));
+            RunTest().SafeFireAndForget(ex => ShowException(ex));
         else
         {
             ProgressRingShowCancelling();
@@ -252,7 +251,7 @@ public sealed partial class TestControlPage : Page
         }
         catch (Exception ex)
         {
-            await ShowExecption(ex);
+            ShowException(ex);
         }
         finally
         {
@@ -268,12 +267,13 @@ public sealed partial class TestControlPage : Page
     private void OnTestRun_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(TestRun.ResultLog))
-            resultsTextBlock.Text = TestRun?.ResultLog;
+            MainThread.Invoke(() => resultsTextBlock.Text = TestRun?.ResultLog);
         else if (e.PropertyName == nameof(TestRun.State))
         {
+            MainThread.Invoke(() => 
             stopStartTestButton.Content = TestRun?.State == TestRunState.Running
                 ? "CANCEL"
-                : "RUN ⏵";
+                : "RUN ⏵");
 
         }
     }
@@ -297,31 +297,33 @@ public sealed partial class TestControlPage : Page
 
     }
 
-    public async Task ShowExecption(Exception ex)
+    public void ShowException(Exception ex)
     {
-        var dialog = new ContentDialog();
-        var text = ex.ToString();
-        // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
-        dialog.XamlRoot = this.XamlRoot;
-        dialog.Title = "TEST RUN EXCEPTION";
-        dialog.PrimaryButtonText = string.IsNullOrWhiteSpace(text) ? "" : "COPY";
-        dialog.CloseButtonText = "CANCEL";
-        dialog.DefaultButton = ContentDialogButton.Close;
-        dialog.Content = new ScrollViewer
+        MainThread.Invoke(async () =>
         {
-            Content = new TextBlock { Text = text },
-        };
+            var dialog = new ContentDialog();
+            var text = ex.ToString();
+            // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Title = "TEST RUN EXCEPTION";
+            dialog.PrimaryButtonText = string.IsNullOrWhiteSpace(text) ? "" : "COPY";
+            dialog.CloseButtonText = "CANCEL";
+            dialog.DefaultButton = ContentDialogButton.Close;
+            dialog.Content = new ScrollViewer
+            {
+                Content = new TextBlock { Text = text },
+            };
 
-        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return;
-            DataPackage dataPackage = new DataPackage();
-            dataPackage.SetText(text);
-            Clipboard.SetContent(dataPackage);
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return;
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.SetText(text);
+                Clipboard.SetContent(dataPackage);
 
-        }
-
+            }
+        });
     }
 }
 

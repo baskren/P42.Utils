@@ -77,7 +77,7 @@
 
   <ItemGroup>
     <!-- WebView2 reference fail fix (required for both Release and Debug issues -->
-    <PackageReference Include="Microsoft.Web.WebView2" />
+    <PackageReference  Condition="$(TargetFramework.Contains('-windows'))" Include="Microsoft.Web.WebView2" />
   </ItemGroup>
 
 </Project>

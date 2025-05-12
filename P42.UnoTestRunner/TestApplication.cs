@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Data;
 
 
@@ -15,8 +16,8 @@ public partial class TestApplication : Application
     static TestApplication? _instance;
     public static TestApplication Instance => _instance ?? throw new Exception("TestApplication.Instance called before being set");
 
-    Window? _mainWindow;
-    public Window MainWindow
+    static Window? _mainWindow;
+    static public Window MainWindow
     {
         get => _mainWindow ?? throw new Exception("TestApplication.TestWindow called before being set.  Did you override OnLaunched and then forget to call base.OnLaunched() or forget to remove declaration of 'MainWindow' from App.xaml.cs ?");
         set
@@ -27,9 +28,34 @@ public partial class TestApplication : Application
         }
     }
 
+    static Thread? _mainThread;
+    static public Thread MainThread
+    {
+        get => _mainThread ?? throw new Exception("TestApplication.MainThread called before being set.");
+        set
+        {
+            if (_mainThread is not null)
+                throw new Exception("TestApplication.MainThread is a singleton and cannot be reset");
+            _mainThread = value;
+        }
+    }
+
+    static DispatcherQueue? _mainThreadDispatchQueue;
+    static public DispatcherQueue MainThreadDispatchQueue
+    {
+        get => _mainThreadDispatchQueue ?? throw new Exception("TestApplication.MainThreadDispatchQueue not set");
+        set
+        {
+            if (_mainThreadDispatchQueue is not null)
+                throw new Exception("TestApplication.MainThreadDispatchQueue cannot be reset");
+            _mainThreadDispatchQueue = value;
+        }
+    }
+
     public TestApplication()
     {
-
+        MainThread = Thread.CurrentThread;
+        MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         _instance = this;
     }
 

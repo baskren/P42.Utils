@@ -12,6 +12,9 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        P42.UnoTestRunner.TestApplication.MainThread = Thread.CurrentThread;
+        P42.UnoTestRunner.TestApplication.MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
         InitializeExceptionHandling();
         _instance = this;
         this.InitializeComponent();
@@ -37,7 +40,7 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        MainWindow = new Window();
+        P42.UnoTestRunner.TestApplication.MainWindow = MainWindow = new Window();
 #if DEBUG
         MainWindow.UseStudio();
 #endif
@@ -149,7 +152,7 @@ public partial class App : Application
     private void InitializeExceptionHandling()
     {
         System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-        System.AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+        //System.AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
         Microsoft.UI.Xaml.Application.Current.UnhandledException += CurrentApplication_UnhandledException;
 
         // https://learn.microsoft.com/en-us/windows/uwp/launch-resume/app-lifecycle
@@ -158,7 +161,7 @@ public partial class App : Application
 
     private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
     {
-        Console.WriteLine($"UNHANDLED APPLICATION EXCEPTION: {e.Exception}");
+        Console.WriteLine($"FIRST CHANCE APPLICATION EXCEPTION: {e.Exception}");
     }
 
     private void CurrentApplication_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
