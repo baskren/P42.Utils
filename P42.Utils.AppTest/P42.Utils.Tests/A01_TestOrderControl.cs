@@ -13,7 +13,7 @@ public class A01_TestOrderControl
     [TestMethod]
     public void A()
     {
-        Assert.IsNotNull(App.Instance?.MainWindow);
+        Assert.IsNotNull(P42.UnoTestRunner.TestApplication.MainWindow);
         try
         {
             _ = P42.Utils.Uno.Platform.Application;

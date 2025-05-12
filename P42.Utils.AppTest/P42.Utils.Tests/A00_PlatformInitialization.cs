@@ -28,16 +28,16 @@ public class A00_PlatformInitialization
     [RunsOnUIThread]
     public void A01_TestInitialize()
     {
-        Assert.IsNotNull(App.Instance?.MainWindow);
-        P42.Utils.Uno.Platform.Init(App.Instance!, App.Instance!.MainWindow!);
+        Assert.IsNotNull(TestApplication.MainWindow);
+        P42.Utils.Uno.Platform.Init(Application.Current, TestApplication.MainWindow!);
     }
 
     [TestMethod]
     [RunsOnUIThread]
     public void A02_P42_Utils_Uno_Platform_Properties()
     {
-        P42.Utils.Uno.Platform.Application.ShouldBe(App.Instance!);
-        P42.Utils.Uno.Platform.MainWindow.ShouldBe(App.Instance!.MainWindow);
+        P42.Utils.Uno.Platform.Application.ShouldBe(Application.Current);
+        P42.Utils.Uno.Platform.MainWindow.ShouldBe(TestApplication.MainWindow);
         Thread.CurrentThread.ShouldBe(P42.Utils.Uno.Platform.MainThread);
         Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().ShouldBe(P42.Utils.Uno.Platform.MainThreadDispatchQueue);
     }

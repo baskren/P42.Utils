@@ -1,8 +1,9 @@
-<Application x:Class="P42.Utils.AppTest.App"
+﻿<testRunner:TestApplication x:Class="P42.Utils.AppTest.App"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+       xmlns:testRunner="using:P42.UnoTestRunner"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <Application.Resources>
+  <testRunner:TestApplication.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <!-- Load WinUI resources -->
@@ -12,6 +13,6 @@
       <!-- Add resources here -->
 
     </ResourceDictionary>
-  </Application.Resources>
+  </testRunner:TestApplication.Resources>
 
-</Application>
+</testRunner:TestApplication>

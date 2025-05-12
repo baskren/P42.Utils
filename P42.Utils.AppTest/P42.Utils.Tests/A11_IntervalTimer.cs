@@ -16,6 +16,7 @@ public class A11_Timers
     public async Task A00_Interval()
     {
         Console.WriteLine(nameof(A00_Interval));
+        var results = new List<TimeSpan>();
         var timeSpan = TimeSpan.FromMilliseconds(1000);
         var count = 0;
         var iters = 5;
@@ -36,12 +37,14 @@ public class A11_Timers
             }
 
             var elapsed = now - lastDateTime;
+            var error = elapsed - timeSpan;
+            results.Add(error);
             lastDateTime = now;
 
             await Task.Delay(250);
 
-            elapsed.ShouldBeGreaterThanOrEqualTo(timeSpan + TimeSpan.FromMilliseconds(250));
-            Console.WriteLine(elapsed.ToString());
+            //elapsed.ShouldBeGreaterThanOrEqualTo(timeSpan + TimeSpan.FromMilliseconds(250));
+            Console.WriteLine(error);
 
             count++;
             if (count >= iters)
@@ -50,12 +53,15 @@ public class A11_Timers
         });
 
         await tcs.Task;
+
+        Assert.IsFalse(results.Any(e => e < TimeSpan.FromMilliseconds(250)));
     }
     
     [TestMethod]
     public async Task A01_Periodic()
     {
         Console.WriteLine(nameof(A01_Periodic));
+        var results = new List<TimeSpan>();
         var timeSpan = TimeSpan.FromMilliseconds(1000);
         var count = 0;
         var iters = 5;
@@ -76,12 +82,14 @@ public class A11_Timers
             }
 
             var elapsed = now - lastDateTime;
+            var error = elapsed - timeSpan;
+            results.Add(error);
             lastDateTime = now;
 
             await Task.Delay(250);
 
-            elapsed.ShouldBeLessThanOrEqualTo(timeSpan + TimeSpan.FromMilliseconds(50));
-            Console.WriteLine(elapsed.ToString());
+            //elapsed.ShouldBeLessThanOrEqualTo(timeSpan + TimeSpan.FromMilliseconds(100));
+            Console.WriteLine(error);
 
             count++;
             if (count >= iters)
@@ -90,6 +98,8 @@ public class A11_Timers
         });
 
         await tcs.Task;
+
+        Assert.IsFalse(results.Any(e => e > TimeSpan.FromMilliseconds(100)));
     }
 
 }

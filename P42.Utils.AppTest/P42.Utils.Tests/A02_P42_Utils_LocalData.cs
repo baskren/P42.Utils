@@ -11,7 +11,7 @@ namespace P42.Utils.AppTest;
 [TestClass]
 public class A02_P42_Utils_CacheableNotifiablePropertyObject
 {
-    public class MyTestCacheableNotifiablePropertyObjectClass : P42.Utils.CacheableNotifiablePropertyObject
+    public class MyTestCacheableNotifiablePropertyObjectClass : global::P42.Utils.CacheableNotifiablePropertyObject
     {
         private readonly string _instanceName;
 

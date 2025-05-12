@@ -4,7 +4,7 @@ using Uno.Resizetizer;
 
 namespace P42.Utils.AppTest;
 
-public partial class App : Application
+public partial class App : global::P42.UnoTestRunner.TestApplication
 {
     /// <summary>
     /// Initializes the singleton application object. This is the first line of authored code
@@ -12,19 +12,20 @@ public partial class App : Application
     /// </summary>
     public App()
     {
-        P42.UnoTestRunner.TestApplication.MainThread = Thread.CurrentThread;
-        P42.UnoTestRunner.TestApplication.MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        //P42.UnoTestRunner.TestApplication.MainThread = Thread.CurrentThread;
+        //P42.UnoTestRunner.TestApplication.MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
         InitializeExceptionHandling();
-        _instance = this;
+        //_instance = this;
         this.InitializeComponent();
     }
 
-    static App? _instance;
-    public static App Instance => _instance ?? throw new Exception("TestApplication.Instance called before being set");
+    //static App? _instance;
+    //public static App Instance => _instance ?? throw new Exception("TestApplication.Instance called before being set");
 
     public UnoTestRunner.ConsoleOutputRedirector ConsoleOutputRedirector = new UnoTestRunner.ConsoleOutputRedirector();
 
+    
     Window? _mainWindow;
     public Window MainWindow
     {
@@ -37,7 +38,7 @@ public partial class App : Application
         }
     }
 
-
+    /*
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         P42.UnoTestRunner.TestApplication.MainWindow = MainWindow = new Window();
@@ -71,7 +72,9 @@ public partial class App : Application
         // Ensure the current window is active
         MainWindow.Activate();
     }
+    */
 
+    /*
     /// <summary>
     /// Invoked when Navigation to a certain page fails
     /// </summary>
@@ -81,6 +84,7 @@ public partial class App : Application
     {
         throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
     }
+    */
 
     /// <summary>
     /// Configures global Uno Platform logging
