@@ -4,6 +4,8 @@ namespace P42.Utils.Uno;
 
 public class ThicknessConverter : IValueConverter
 {
+    public static readonly ThicknessConverter Instance = new ThicknessConverter();
+
     private static readonly Thickness Zero = new(0);
     internal ThicknessConverter() { }
 
@@ -31,9 +33,16 @@ public class ThicknessConverter : IValueConverter
             {
                 var parts = s.Split(',');
                 List<double> values = [];
-                foreach (var part in parts)
+                for (int i = 0; i < parts.Length; i++)
                 {
-                    if (double.TryParse(part.Remove('"').Trim(), out var val))
+                    var part = parts[i];
+                    if (string.IsNullOrWhiteSpace(part))
+                        continue;
+                    if (part.Contains('"'))
+                        part = part.Replace("\"", "");
+                    part = part.Trim();
+
+                    if (double.TryParse(part, out var val))
                         values.Add(val);
                     else
                         values.Add(0);

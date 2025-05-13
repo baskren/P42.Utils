@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,9 +14,8 @@ public static class AppWindow
     /// <summary>
     /// Size of AppWindow
     /// </summary>
-    /// <param name="element"></param>
     /// <returns></returns>
-    public static Size Size(FrameworkElement element)
+    public static Size Size()
     {
         // Doesn't work in Uno because we're using this before Microsoft.UI.Xaml.Window.Current is null
         //var windowWidth = ((Frame)Microsoft.UI.Xaml.Window.Current.Content).ActualWidth;
