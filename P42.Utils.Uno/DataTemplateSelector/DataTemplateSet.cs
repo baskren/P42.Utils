@@ -20,7 +20,7 @@ public interface IDataTemplateSet
 /// <param name="dataType"></param>
 /// <param name="templateType"></param>
 /// <param name="constructor">recommended constructor lambda for improved performance</param>
-public abstract class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> constructor) : IDataTemplateSet
+public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> constructor) : IDataTemplateSet
 {
     /// <summary>
     /// Type that will be bound to Template 
@@ -54,8 +54,8 @@ public abstract class DataTemplateSet(Type dataType, Type templateType, Func<UIE
 /// default: () => (FrameworkElement)(templateType is null ? new NullView() : Activator.CreateInstance(templateType))</param>
 /// <typeparam name="TData">Type for Data</typeparam>
 /// <typeparam name="TTemplate">Type of DataTemplate</typeparam>
-public class DataTemplateSet<TData, TTemplate>(Func<UIElement>? constructor = null) 
-    : DataTemplateSet(typeof(TData), typeof(TTemplate), constructor ?? Activator.CreateInstance<TTemplate>)  
+public class DataTemplateSet<TData, TTemplate>(Func<TTemplate>? constructor = null) 
+    : DataTemplateSet(typeof(TData), typeof(TTemplate), constructor ??= () => new())  
     where TTemplate : FrameworkElement, new();
 
 public interface INullDataTemplateSet : IDataTemplateSet;
@@ -67,8 +67,8 @@ public interface INullDataTemplateSet : IDataTemplateSet;
 /// <param name="constructor">>recommended constructor lambda for improved performance.
 /// default: () => (FrameworkElement)(templateType is null ? new NullView() : Activator.CreateInstance(templateType))</param>
 /// <typeparam name="TTemplate">Type for DataTemplate</typeparam>
-public class NullDataTemplateSet<TTemplate>(Func<UIElement>? constructor = null)
-    : DataTemplateSet<NullView, TTemplate>(constructor ?? Activator.CreateInstance<TTemplate>), INullDataTemplateSet
+public class NullDataTemplateSet<TTemplate>(Func<TTemplate>? constructor = null)
+    : DataTemplateSet<NullView, TTemplate>(constructor ??= () => new()), INullDataTemplateSet
     where TTemplate : FrameworkElement, new();
 
 /// <summary>

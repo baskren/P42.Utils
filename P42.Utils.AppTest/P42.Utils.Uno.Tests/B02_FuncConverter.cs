@@ -10,7 +10,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B03_FuncConverter
+internal class B02_FuncConverter
 {
     [TestMethod]
     public void A01_Convert()

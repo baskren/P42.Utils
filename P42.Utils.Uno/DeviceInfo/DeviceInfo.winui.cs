@@ -1,36 +1,68 @@
-﻿#if __WINUI__ 
+#if WINDOWS 
 using System;
 using System.Diagnostics;
 using Microsoft.UI.Xaml.Media.Animation;
+using P42.Serilog.QuickLog;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 
-namespace Xamarin.Essentials;
+namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
-    private static readonly EasClientDeviceInformation deviceInfo;
-    private static string systemProductName;
+    private static string GetManufacturer() => EasDeviceInfo.SystemManufacturer;
 
-    static DeviceInfo()
+    private static string GetModel()
     {
-        deviceInfo = new EasClientDeviceInformation();
         try
         {
-            systemProductName = deviceInfo.SystemProductName;
+            var data = ExecuteCommand("wmic computersystem get model");
+            return data.Replace("\r", "").Replace("\n", "").Replace("Model", "").Trim();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Unable to get system product name. {ex.Message}");
+            QLog.Warning(ex, "wmic computersystem get model");
         }
+
+        return EasDeviceInfo.SystemProductName;
     }
 
-    private static string GetModel() => deviceInfo.SystemProductName;
+    private static string GetDeviceName()
+    {
+        try
+        {
+            var data = ExecuteCommand("wmic computersystem get name");
+            return data.Replace("\r", "").Replace("\n", "").Replace("Name", "").Trim();
+        }
+        catch (Exception ex)
+        {
+            QLog.Warning(ex, "wmic computersystem get name");
+        }
 
-    private static string GetManufacturer() => deviceInfo.SystemManufacturer;
+        return EasDeviceInfo.FriendlyName;
+    }
 
-    private static string GetDeviceName() => deviceInfo.FriendlyName;
+    private static string GetDeviceId()
+    {
+        try
+        {
+            var data = ExecuteCommand("wmic csproduct get uuid");
+            data = data.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
+            if (IsValidId(data)) 
+                return data;
+
+        }
+        catch (Exception ex)
+        {
+            QLog.Warning(ex, "mic computersystem get uuid");
+        }
+
+        return EasDeviceInfo.Id.ToString();
+    }
+
+    private static bool GetIsEmulator() => false;
     
+
 }
 #endif

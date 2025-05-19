@@ -85,14 +85,6 @@ internal static class DisplayInformationExtensions
     private static DisplayRotation CalculateRotation(DisplayInformation di)
         => di.NativeOrientation switch
         {
-            DisplayOrientations.Portrait => di.CurrentOrientation switch
-            {
-                DisplayOrientations.Landscape => DisplayRotation.Rotation90,
-                DisplayOrientations.Portrait => DisplayRotation.Rotation0,
-                DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation270,
-                DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation180,
-                _ => DisplayRotation.Unknown
-            },
             DisplayOrientations.Landscape => di.CurrentOrientation switch
             {
                 DisplayOrientations.Landscape => DisplayRotation.Rotation0,
@@ -101,7 +93,14 @@ internal static class DisplayInformationExtensions
                 DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation90,
                 _ => DisplayRotation.Unknown
             },
-            _ => DisplayRotation.Unknown
+            _ => di.CurrentOrientation switch
+            {
+                DisplayOrientations.Landscape => DisplayRotation.Rotation90,
+                DisplayOrientations.Portrait => DisplayRotation.Rotation0,
+                DisplayOrientations.LandscapeFlipped => DisplayRotation.Rotation270,
+                DisplayOrientations.PortraitFlipped => DisplayRotation.Rotation180,
+                _ => DisplayRotation.Unknown
+            }
         };
 
 }

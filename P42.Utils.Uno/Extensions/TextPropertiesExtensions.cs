@@ -20,7 +20,7 @@ public static class TextPropertiesExtensions
         if (DefaultFontSizes.TryGetValue(type, out var cachedSize))
             return cachedSize;
 
-        var obj = Activator.CreateInstance<T>();
+        var obj = new T();
         if (obj is null)
             throw new Exception($"Cannot create a default text object of type {type}");
 

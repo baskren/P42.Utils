@@ -222,7 +222,7 @@ public static class StringExtensions
     /// <param name="precision"></param>
     /// <param name="si"></param>
     /// <returns></returns>
-    public static string HumanReadableBytes(double number, int precision = 2, bool si = false, bool thouSeparators = true)
+    public static string HumanReadableBytes(this double number, int precision = 2, bool si = false, bool thouSeparators = true)
     {
         // unit's number of bytes
         var unit = si ? 1000 : 1024;
@@ -241,4 +241,22 @@ public static class StringExtensions
         return  Math.Round(number, precision).ToString(format) + Suffixes[i] + (si ? "" : "i");
     }
 
+    /// <summary>
+    /// Convert number of bytes to human-readable value
+    /// </summary>
+    /// <param name="number"></param>
+    /// <param name="precision"></param>
+    /// <param name="si"></param>
+    /// <returns></returns>
+    public static string HumanReadableBytes(this ulong num, int precision = 2, bool si = false, bool thouSeparators = true)
+        => HumanReadableBytes((double)num, precision, si, thouSeparators);
+
+    /// <summary>
+    /// Gets the first non null or whitespace entry from an IEnumerable
+    /// </summary>
+    /// <param name="values"></param>
+    /// <param name="onFail">value returned if none found</param>
+    /// <returns>string.Empty if none found</returns>
+    public static string FirstNotNullOrWhiteSpace(this IEnumerable<string?> values, string onFail = "")
+        => values.FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)) ?? onFail;
 }

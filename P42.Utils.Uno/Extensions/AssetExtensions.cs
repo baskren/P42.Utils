@@ -14,6 +14,7 @@ public static class AssetExtensions
     /// <returns>Asset path for current platform</returns>
     public static string AssetPath(string path)
     {
+
         //return path;
 
         var projectPath = path;

@@ -8,12 +8,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B04_StringToPathConverter
+internal class B03_StringToPathConverter
 {
     [TestMethod]
     public void A01_Placeholder()
     {
-        Console.WriteLine($"Add tests to {nameof(B04_StringToPathConverter)} when available");
+        Console.WriteLine($"Add tests to {nameof(B03_StringToPathConverter)} when available");
     }
 
 

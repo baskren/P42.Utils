@@ -110,7 +110,11 @@ public sealed partial class TestControlPage : Page
     
 
     private void OnConsoleContentChanged(object? sender, string e)
-        => MainThread.Invoke(() => consoleTextBlock.Text = e);
+        => MainThread.Invoke(() =>
+        {
+            consoleTextBlock.Text = e;
+            consoleScrollViewer.ChangeView(null, consoleScrollViewer.ScrollableHeight, null);
+        });
     
 
     GridLength GridLengthZero = new GridLength(0);
@@ -267,7 +271,11 @@ public sealed partial class TestControlPage : Page
     private void OnTestRun_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(TestRun.ResultLog))
-            MainThread.Invoke(() => resultsTextBlock.Text = TestRun?.ResultLog);
+            MainThread.Invoke(() =>
+            { 
+                resultsTextBlock.Text = TestRun?.ResultLog;
+                resultsScrollViewer.ChangeView(null, resultsScrollViewer.ScrollableHeight, null);
+            });
         else if (e.PropertyName == nameof(TestRun.State))
         {
             MainThread.Invoke(() => 

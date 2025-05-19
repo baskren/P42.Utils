@@ -1,4 +1,6 @@
-﻿namespace P42.Utils.Interfaces;
+using System.Threading.Tasks;
+
+namespace P42.Utils.Interfaces;
 
 /// <summary>
 /// Interface for IDiskSpace
@@ -8,15 +10,15 @@ public interface IDiskSpace
     /// <summary>
     /// Available space
     /// </summary>
-    ulong Free { get; }
+    Task<ulong> FreeAsync();
 
     /// <summary>
     /// Total Space
     /// </summary>
-    ulong Size { get; }
+    Task<ulong> SizeAsync();
 
     /// <summary>
     /// Space used
     /// </summary>
-    ulong Used { get; }
+    Task<ulong> UsedAsync();
 }

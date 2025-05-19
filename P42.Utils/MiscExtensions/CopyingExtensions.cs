@@ -23,9 +23,9 @@ public static class CopyingExtensions
     /// <param name="source"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T Copy<T>(this T source) where T : ICopiable<T>
+    public static T Copy<T>(this T source) where T : ICopiable<T>, new()
     {
-        if (Activator.CreateInstance<T>() is not { } result)
+        if (new T() is not { } result)
             throw new NotSupportedException($"Copying from {source.GetType()} is not supported.");
         
         result.PropertiesFrom(source);

@@ -8,6 +8,7 @@
   <!-- SHARED ITEMS -->
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Markdig" Version="0.41.1" />
 
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.2.0" />

@@ -1,10 +1,10 @@
-﻿#if __MACOS__
+#if MACOS
 using System;
 using System.Runtime.InteropServices;
 using Foundation;
 using ObjCRuntime;
 
-namespace Xamarin.Essentials
+namespace P42.Utils.Uno
 {
     public static partial class DeviceInfo
     {

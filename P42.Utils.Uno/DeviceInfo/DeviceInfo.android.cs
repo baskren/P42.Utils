@@ -1,4 +1,4 @@
-﻿#if __ANDROID__
+#if __ANDROID__
 using System;
 using Android.OS;
 
@@ -6,23 +6,40 @@ namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
-    private static string GetModel() => Build.Model ?? string.Empty;
+    private static string GetManufacturer()
+        => !string.IsNullOrEmpty(DeviceInfo.Make)
+            ? DeviceInfo.Make
+            : !string.IsNullOrWhiteSpace(EasDeviceInfo.SystemManufacturer)
+                ? EasDeviceInfo.SystemManufacturer
+                : string.Empty;
 
-    private static string GetManufacturer() => Build.Manufacturer ?? string.Empty;
+    private static string GetModel()
+        => !string.IsNullOrWhiteSpace(Build.Model)
+            ?Build.Model
+            : !string.IsNullOrWhiteSpace(EasDeviceInfo.SystemProductName)
+                ? EasDeviceInfo.SystemProductName
+                : string.Empty;
 
-    
-    private static string? _deviceName;
     private static string GetDeviceName()
     {
-        if (!string.IsNullOrWhiteSpace(_deviceName))
-            return _deviceName;
         // DEVICE_NAME added in System.Global in API level 25
         // https://developer.android.com/reference/android/provider/Settings.Global#DEVICE_NAME
-        _deviceName = Android.Provider.Settings.Global.GetString(Android.App.Application.Context.ContentResolver, "device_name");
-        if (string.IsNullOrWhiteSpace(_deviceName))
-            _deviceName = Model;
-        return _deviceName;
+        var name = Android.Provider.Settings.Global
+            .GetString(Android.App.Application.Context.ContentResolver, "device_name");
+
+        return !string.IsNullOrEmpty(name)
+            ? name
+            : !string.IsNullOrWhiteSpace(EasDeviceInfo.FriendlyName)
+                ? EasDeviceInfo.FriendlyName
+                : string.Empty;
     }
+
+
+    private static string GetDeviceId()
+        => Android.Provider.Settings.Secure
+                .GetString(Android.App.Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+
+    private static string GetOS() => OperatingSystem.Android.ToString();
 
     private static bool _isEmulatorSet;
     private static bool _isEmulator;
@@ -77,6 +94,7 @@ public static partial class DeviceInfo
         _isEmulatorSet = true;
         return _isEmulator;
     }
+
 
 }
 #endif

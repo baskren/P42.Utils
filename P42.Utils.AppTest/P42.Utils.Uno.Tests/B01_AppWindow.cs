@@ -4,7 +4,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class B02_AppWindow
+public class B01_AppWindow
 {
     [TestMethod]
     public void A01_Size()
@@ -25,6 +25,7 @@ public class B02_AppWindow
     [TestMethod]
     public void A03_CurrentFrame()
     {
+        ushort x = ushort.MaxValue;
         var frame = Uno.AppWindow.CurrentFrame;
         frame.Content.GetType().ShouldBe(typeof(P42.UnoTestRunner.TestControlPage));
     }

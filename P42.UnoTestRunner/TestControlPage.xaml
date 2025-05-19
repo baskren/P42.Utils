@@ -79,13 +79,14 @@
           Click="ResultsCopyButton_Click"
           />
         <ScrollViewer
+          x:Name="resultsScrollViewer"
           Grid.Row="1"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
+          Padding="5"
           >
           <TextBlock
             x:Name="resultsTextBlock"
-            Margin="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             FontFamily="Courier New"
@@ -117,15 +118,16 @@
           Click="copyConsoleButton_Click"
           />
         <ScrollViewer
+          x:Name="consoleScrollViewer"
           Grid.Row="1"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           VerticalScrollMode="Auto"
           HorizontalScrollMode="Auto"
+          Padding="5"
           >
           <TextBlock
             x:Name="consoleTextBlock"
-            Margin="5"
             MinHeight="20"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"

@@ -86,6 +86,6 @@ public class ThicknessConverter : IValueConverter
         if (targetType == typeof(bool))
             return !thickness.Equals(fallback);
         
-        throw new ArgumentException($"Cannot convert {value} to {targetType}");
+        throw new ArgumentException($"Cannot convert {value.GetType()}:[{value}] to {targetType}");
     }
 }

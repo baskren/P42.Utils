@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Web.WebView2.Core;
 using P42.UnoTestRunner;
@@ -181,6 +182,7 @@ public class A03_LocalData_ResourceItem
     [RunsOnUIThread]
     public async Task A12_WebView2_Source()
     {
+        /*
         var rect = new Microsoft.UI.Xaml.Shapes.Rectangle
         {
             Fill = Microsoft.UI.Colors.Pink.ToBrush(),
@@ -188,11 +190,13 @@ public class A03_LocalData_ResourceItem
             Height = 500
         };
         Grid.SetRow(rect, 1);
+        */
         var wv2 = new WebView2
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch,
         };
+        /*
         Grid.SetRow(wv2, 1);
 
         var button = new Button
@@ -207,10 +211,12 @@ public class A03_LocalData_ResourceItem
         grid.Children.Add(rect);
         grid.Children.Add(button);
         grid.Children.Add(wv2);
-        UnitTestsUIContentHelper.Content = grid;
+        */
+        UnitTestsUIContentHelper.Content = wv2;
 
 #if !BROWSERWASM
-        await UnitTestsUIContentHelper.WaitForLoaded(grid);
+        //await UnitTestsUIContentHelper.WaitForLoaded(grid);
+        await UnitTestsUIContentHelper.WaitForLoaded(wv2);
         await UnitTestsUIContentHelper.WaitForIdle();
 #endif
 
@@ -251,7 +257,7 @@ public class A03_LocalData_ResourceItem
 
 
 
-         await wv2.EnsureCoreWebView2Async();
+        await wv2.EnsureCoreWebView2Async();
 
         wv2.NavigationCompleted += Wv2_NavigationCompleted;
         wv2.CoreProcessFailed += Wv2_CoreProcessFailed;

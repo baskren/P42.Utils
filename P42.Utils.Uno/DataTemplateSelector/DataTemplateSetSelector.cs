@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using P42.Serilog.QuickLog;
+using Windows.UI.Notifications;
 
 namespace P42.Utils.Uno;
 
@@ -25,7 +27,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// DataTemplate to be used if there isn't a matching DataTemplateSet stored in this DataTEemplateSelector
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public INullDataTemplateSet NoMatchTemplateSet { get; set; } = new DefaultNullDataTemplateSet();
+    public INullDataTemplateSet? NoMatchTemplateSet { get; set; }
 
 
     /// <summary>
@@ -76,19 +78,21 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <param name="item"></param>
     /// <returns></returns>
     // ReSharper disable once InconsistentNaming
-    public UIElement GetUIElement(object? item)
+    public UIElement? GetUIElement(object? item)
     {
+        UIElement? element = null;
         try
         {
             var set = SelectDataTemplateSet(item);
-            var element = set.Constructor.Invoke();
+            element = set?.Constructor?.Invoke();
             return element;
         }
         catch (Exception e)
         {
             QLog.Error(e);
         }
-        return NoMatchTemplateSet.Constructor.Invoke();
+
+        return element;
     }
 
     protected override DataTemplate SelectTemplateCore(object? item, DependencyObject container)
@@ -189,8 +193,8 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// Add a DataTemplateSet
     /// </summary>
     /// <param name="set"></param>
-    public void Add(IDataTemplateSet set)
-        => Add(set.DataType, set);
+    public DataTemplateSetSelector Add(IDataTemplateSet set)
+    { Add(set.DataType, set); return this; }
 
     /// <summary>
     /// Add a DataTemplateSet
@@ -199,12 +203,23 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <param name="set"></param>
     public virtual void Add(Type key, IDataTemplateSet set)
         => ItemTemplateSets[key] = set;
-    
 
-    [Obsolete("Use Add<TDataType, TTemplateType>(Func<UIElement>? constructor), instead", true)]
+    [Obsolete("Use .Add<TDataType, TTemplateType>(Func<UIElement>? constructor), instead", true)]
+    public DataTemplateSetSelector Add(Type dataType, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type templateType, Func<UIElement> constructor)
+    {
+        Add(new DataTemplateSet(dataType, templateType, constructor));
+        return this;
+    }
+
+
+    [Obsolete("Use .Add<TDataType, TTemplateType>(Func<UIElement>? constructor), instead", true)]
     // ReSharper disable UnusedParameter.Global
-    public void Add(Type key, Type value, Func<UIElement>? constructor = null)
-        => throw new NotSupportedException("Use Add<TDataType, TTemplateType>(constructor), instead");
+    public DataTemplateSetSelector Add(Type dataType, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type templateType)
+    {
+        var constructor = () => (UIElement)Activator.CreateInstance(templateType);            
+        Add(new DataTemplateSet(dataType, templateType, constructor));
+        return this;
+    }
     // ReSharper restore UnusedParameter.Global
 
     /// <summary>
@@ -220,9 +235,14 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <param name="constructor"></param>
     /// <typeparam name="TDataType"></typeparam>
     /// <typeparam name="TTemplateType"></typeparam>
-    public void Add<TDataType, TTemplateType>(Func<UIElement>? constructor = null) where TTemplateType : FrameworkElement, new()
-        => Add(new DataTemplateSet<TDataType,TTemplateType>(constructor));
+    public DataTemplateSetSelector Add<TDataType, TTemplateType>(Func<TTemplateType>? constructor = null) where TTemplateType : FrameworkElement, new()
+    {
+        Add(new DataTemplateSet<TDataType, TTemplateType>(constructor));
+        return this;
+    }
     
+
+
     /// <summary>
     /// Clear all DataTemplateSets
     /// </summary>

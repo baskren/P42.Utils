@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
+using System.Threading.Tasks;
+using Microsoft.VisualBasic.CompilerServices;
 using P42.Utils.Interfaces;
 
 namespace P42.Utils;
@@ -13,16 +14,16 @@ public static class DiskSpace
     /// <summary>
     /// Free disk space
     /// </summary>
-    public static ulong Free => PlatformDiskSpace?.Free ?? throw new IncompleteInitialization();
+    public static Task<ulong> FreeAsync() => PlatformDiskSpace?.FreeAsync() ?? throw new IncompleteInitialization();
 
     /// <summary>
     /// Total disk space
     /// </summary>
-    public static ulong Size => PlatformDiskSpace?.Size ?? throw new IncompleteInitialization();
+    public static Task<ulong> SizeAsync() => PlatformDiskSpace?.SizeAsync() ?? throw new IncompleteInitialization();
 
     /// <summary>
     /// Used disk space
     /// </summary>
-    public static ulong Used => PlatformDiskSpace?.Used ?? throw new IncompleteInitialization();
+    public static Task<ulong> UsedAsync => PlatformDiskSpace?.UsedAsync() ?? throw new IncompleteInitialization();
 
 }
