@@ -91,7 +91,7 @@ public static class Environment
     /// Where is app data stored?
     /// </summary>
     /// <exception cref="IncompleteInitialization"></exception>
-    internal static string ApplicationLocalFolderPath
+    public static string ApplicationLocalFolderPath
     {
         get
         {
@@ -111,7 +111,7 @@ public static class Environment
     /// Where is app data cached?
     /// </summary>
     /// <exception cref="IncompleteInitialization"></exception>
-    internal static string ApplicationLocalCacheFolderPath
+    public static string ApplicationLocalCacheFolderPath
     {
         get
         {
@@ -131,7 +131,7 @@ public static class Environment
     /// Where is temp storage?
     /// </summary>
     /// <exception cref="IncompleteInitialization"></exception>
-    internal static string ApplicationTemporaryFolderPath
+    public static string ApplicationTemporaryFolderPath
     {
         get
         {

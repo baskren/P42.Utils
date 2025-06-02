@@ -11,14 +11,19 @@ public static class AssemblyExtensions
     private static Assembly? _applicationAssembly;
 
     private static DateTime WasmFakeDate = DateTime.Now;
-    private static readonly LocalData.TagItem WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
+    //private static readonly LocalData.TagItem WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
 
     static AssemblyExtensions() 
     {
-        if (WasmFakeDateItem.TryDeserialize<DateTime>(out var fakeDate))
-            WasmFakeDate = fakeDate;
-        else
-            WasmFakeDateItem.Serialize(WasmFakeDate);
+        if (System.OperatingSystem.IsBrowser())
+        {
+            var WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
+
+            if (WasmFakeDateItem.TryDeserialize<DateTime>(out var fakeDate))
+                WasmFakeDate = fakeDate;
+            else
+                WasmFakeDateItem.Serialize(WasmFakeDate);
+        }
     }
 
 

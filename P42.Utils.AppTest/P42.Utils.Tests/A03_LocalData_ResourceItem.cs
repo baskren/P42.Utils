@@ -73,16 +73,17 @@ public class A03_LocalData_ResourceItem
     [TestMethod]
     public async Task A04_VerifyAppDataUri()
     {
-        var file = await StorageFile.GetFileFromApplicationUriAsync(ResourceItem.AppDataUri);
-        var content = await FileIO.ReadTextAsync(file);
+        var path = await ResourceItem.AppDataUri.GetFilePathAsync();
+        path.ShouldNotBeNullOrWhiteSpace();
+        var content = await System.IO.File.ReadAllTextAsync(path);
+
         content.ShouldBe(ExpectedContent);
     }
 
     [TestMethod]
     public async Task A05_VerifyFullPath()
     {
-        var file = await StorageFile.GetFileFromPathAsync(ResourceItem.FullPath);
-        var content = await FileIO.ReadTextAsync(file);
+        var content = await System.IO.File.ReadAllTextAsync(ResourceItem.FullPath);
         content.ShouldBe(ExpectedContent);
     }
 
@@ -228,8 +229,7 @@ public class A03_LocalData_ResourceItem
 
         var asmName = GetType().Assembly.Name();    
         resource.AppDataUri.ShouldBe(new Uri($"ms-appdata:///local/{typeof(LocalData).Assembly.Name()}.{nameof(LocalData)}/{asmName}/{asmName}.Resources.html5-test-page.html"));
-        var file = await StorageFile.GetFileFromApplicationUriAsync(resource.AppDataUri);
-        var content = await FileIO.ReadTextAsync(file);
+        var content = await System.IO.File.ReadAllTextAsync(resource.FullPath);
         content.ShouldBe(html);
 
 

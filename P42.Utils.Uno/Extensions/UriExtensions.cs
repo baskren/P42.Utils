@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices;
+using Uno.Extensions;
 
 namespace P42.Utils.Uno;
 public static class UriExtensions
@@ -14,11 +15,11 @@ public static class UriExtensions
     /// </summary>
     /// <param name="uri"></param>
     /// <returns>null on failure</returns>
-    public static async Task<StorageFile?> TryAsStorageFileAsync(this Uri uri)
+    public static async Task<StorageFile?> TryGetStorageFileAsync(this Uri uri)
     {
         try
         {
-            return await uri.AsStorageFileAsync();
+            return await uri.GetStorageFileAsync();
         }
         catch (Exception)
         {
@@ -31,7 +32,7 @@ public static class UriExtensions
     /// </summary>
     /// <param name="uri"></param>
     /// <returns></returns>
-    public static async Task<StorageFile> AsStorageFileAsync(this Uri uri)
+    public static async Task<StorageFile> GetStorageFileAsync(this Uri uri)
     {
         if (uri.Scheme.StartsWith("file", StringComparison.OrdinalIgnoreCase)) 
             return await StorageFile.GetFileFromPathAsync(uri.AbsolutePath);
@@ -44,8 +45,8 @@ public static class UriExtensions
     /// </summary>
     /// <param name="uri"></param>
     /// <returns>null on failure</returns>
-    public static StorageFile AsStorageFile(this Uri uri)
-        => uri.AsStorageFileAsync().GetAwaiter().GetResult();
+    public static StorageFile GetStorageFile(this Uri uri)
+        => uri.GetStorageFileAsync().GetAwaiter().GetResult();
 
     /// <summary>
     /// Converts most local uris ("file:/", "ms-appdata:/", "ms-appx:" uris to a StorageFile
@@ -54,11 +55,11 @@ public static class UriExtensions
     /// <param name="uri"></param>
     /// <param name="storageFile"></param>
     /// <returns></returns>
-    public static bool TryAsStorageFile(this Uri uri, [MaybeNullWhen(false)] out StorageFile storageFile)
+    public static bool TryGetStorageFile(this Uri uri, [MaybeNullWhen(false)] out StorageFile storageFile)
     {
         try
         {
-            storageFile = uri.AsStorageFile();
+            storageFile = uri.GetStorageFile();
             return true;
         }
         catch (Exception)
@@ -67,4 +68,41 @@ public static class UriExtensions
             return false;
         }
     }
+
+    public static async Task<string?> GetFilePathAsync(this Uri uri)
+    {
+        try
+        {
+            if (await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri) is not StorageFile storageFile)
+                return null;
+            return storageFile.Path;
+        }
+        catch (Exception)
+        {
+            // because we're an Unpackaged WinAppSdk app?
+            if (uri.IsFile)
+                return uri.AbsolutePath;
+            if (uri.IsAppData())
+            {
+                var segments = uri.Segments.ToList();
+                segments.RemoveRange(0, 2);
+                var dir = uri.Segments[1].ToLower() switch
+                {
+                    "local/" => Environment.ApplicationLocalFolderPath,
+                    "temp/" => Environment.ApplicationTemporaryFolderPath,
+                    _ => throw new Exception($"invalid root folder [{uri}]")
+                };
+                return Path.Combine(dir, string.Join("", segments));
+            }
+
+            throw;
+        }
+
+    }
+
+    static bool IsAppData(this Uri uri)
+        => uri.Scheme.Equals("ms-appdata", StringComparison.OrdinalIgnoreCase);
+
+    static bool IsLocalResource(this Uri uri)
+        => uri.Scheme.Equals("ms-appx", StringComparison.OrdinalIgnoreCase);
 }

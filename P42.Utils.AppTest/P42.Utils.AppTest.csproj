@@ -34,6 +34,8 @@
     -->
     <UnoFeatures>
       SkiaRenderer;
+      Toolkit;
+      WebView;
     </UnoFeatures>
 
     <!-- REQUIRED FOR INTER-SESSION STORAGE -->
@@ -41,36 +43,6 @@
 
 
   </PropertyGroup>
-
-
-  <!-- NEEDED FOR WebView2 ON Windows WORKAROUND : https://github.com/unoplatform/uno/issues/18552 -->
-  <PropertyGroup  Condition=" $(TargetFramework.Contains('-windows')) ">
-    <!-- Workaround for https://github.com/unoplatform/uno/issues/18552 -->
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-x86'">x86</PlatformTarget>
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-x64'">x64</PlatformTarget>
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-arm64'">arm64</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Condition="$(TargetFramework.Contains('-windows'))" Include="Microsoft.Web.WebView2" />
-  </ItemGroup>
-  <ItemGroup Condition=" $([MSBuild]::IsOSPlatform('windows')) AND $(TargetFramework.Contains('-desktop')) ">
-
-    <!-- DOES NOT WORK
-        <PackageReference Include="Microsoft.Web.WebView2" Aliases="WpfWebView" />
-        -->
-
-    <!-- THE FOLLOWING TWO REFERENCES WORK -->
-    <Reference Include="Microsoft.Web.WebView2.Core">
-      <HintPath>$(NugetPackageRoot)microsoft.web.webview2\1.0.3179.45\lib_manual\netcoreapp3.0\Microsoft.Web.WebView2.Core.dll</HintPath>
-      <Aliases>WpfWebView</Aliases>
-    </Reference>
-
-    <Reference Include="Microsoft.Web.WebView2.Wpf">
-      <HintPath>$(NugetPackageRoot)microsoft.web.webview2\1.0.3179.45\lib_manual\net5.0-windows10.0.17763.0\Microsoft.Web.WebView2.Wpf.dll</HintPath>
-      <Aliases>WpfWebView</Aliases>
-    </Reference>
-
-  </ItemGroup>
 
 
 

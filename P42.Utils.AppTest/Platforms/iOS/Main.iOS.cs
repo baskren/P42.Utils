@@ -1,16 +1,12 @@
 using UIKit;
+using Uno.UI.Hosting;
+using P42.Utils.AppTest;
 
-namespace P42.Utils.AppTest.iOS;
+App.InitializeLogging();
 
-public class EntryPoint
-{
-    // This is the main entry point of the application.
-    public static void Main(string[] args)
-    {
-        App.InitializeLogging();
+var host = UnoPlatformHostBuilder.Create()
+    .App(() => new App())
+    .UseAppleUIKit()
+    .Build();
 
-        // if you want to use a different Application Delegate class from "AppDelegate"
-        // you can specify it here.
-        UIApplication.Main(args, null, typeof(App));
-    }
-}
+host.Run();

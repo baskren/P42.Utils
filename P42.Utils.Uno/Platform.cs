@@ -143,9 +143,31 @@ public static class Platform
 
     private static void PlatformPathLoader()
     {
-        Environment.ApplicationLocalFolderPath = ApplicationData.Current.LocalFolder.Path;
-        Environment.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
-        Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
+        try
+        {
+            Environment.ApplicationLocalFolderPath = ApplicationData.Current.LocalFolder.Path;
+            Environment.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
+            Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
+        }
+        catch (Exception)
+        {
+            try
+            {
+                var asm = AssemblyExtensions.GetApplicationAssembly();
+                var assemblyName = asm.Name();
+                // Unpackaged WinUI3 App
+                Environment.ApplicationLocalFolderPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), assemblyName);
+                Directory.CreateDirectory(Environment.ApplicationLocalFolderPath);
+                Environment.ApplicationLocalCacheFolderPath = Path.Combine(Environment.ApplicationLocalFolderPath, "Cache");
+                Directory.CreateDirectory(Environment.ApplicationLocalCacheFolderPath);
+                Environment.ApplicationTemporaryFolderPath = Path.Combine(Path.GetTempPath(), assemblyName);
+                Directory.CreateDirectory(Environment.ApplicationTemporaryFolderPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 
     private static bool ResetRequested()
