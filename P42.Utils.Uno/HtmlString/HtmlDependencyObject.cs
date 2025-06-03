@@ -410,8 +410,8 @@ internal partial class HtmlDependencyObject : DependencyObject
             (
                 textBlock.FontFamily,
                 textBlock.FontSize, 
-                textBlock.FontWeight.Weight >= Microsoft.UI.Text.FontWeights.Bold.Weight,
-                textBlock.FontStyle != FontStyle.Normal,
+                (short)Microsoft.UI.Text.FontWeights.Normal.Weight,
+                false,
                 textColor: textBlock.Foreground is SolidColorBrush brush
                     ? brush.Color
                     : ColorExtensions.AppColor("SystemColorWindowTextColor") //(Color)Application.Current.Resources["SystemBaseHighColor"]
@@ -420,8 +420,8 @@ internal partial class HtmlDependencyObject : DependencyObject
         var mathMetaFont = new MetaFont
             (
                 Platform.MathFontFamily, 
-                baseMetaFont.Size, 
-                baseMetaFont.Bold,
+                baseMetaFont.Size,
+                (short)Microsoft.UI.Text.FontWeights.Normal.Weight,
                 baseMetaFont.Italic, 
                 "",
                 "",
@@ -468,8 +468,13 @@ internal partial class HtmlDependencyObject : DependencyObject
                         var size = ((FontSizeSpan)span).Size;
                         metaFonts[i].Size = size < 0 ? metaFonts[i].Size * -size : size;
                         break;
-                    case BoldSpan.SpanKey: // Bold span // TextElement.FontWeight (Thin, ExtraLight, Light, SemiLight, Normal, Medium, SemiBold, Bold, ExtraBold, Black, ExtraBlack)
-                        metaFonts[i].Bold = true;
+                    case FontWeightSpan.SpanKey: // Bold span // TextElement.FontWeight (Thin, ExtraLight, Light, SemiLight, Normal, Medium, SemiBold, Bold, ExtraBold, Black, ExtraBlack)
+                        if (span is  FontWeightSpan fwp)
+                        {
+                            metaFonts[i].FontWeight = (short) (fwp.IsRelativeToParent 
+                                ? metaFonts[i].FontWeight + fwp.Weight
+                                : fwp.Weight);
+                        }
                         break;
                     case ItalicsSpan.SpanKey: // Italic span // TextElement.FontStyle (Normal, Italic, Oblique)
                         metaFonts[i].Italic = true;
@@ -514,6 +519,7 @@ internal partial class HtmlDependencyObject : DependencyObject
         // run through MetaFonts to see if we need to set new Font attributes
         var lastMetaFont = baseMetaFont;
         var startIndex = 0;
+        var lastFontWeight = lastMetaFont.FontWeight;
         for (var i = 0; i < metaFonts.Count; i++)
         {
             var metaFont = metaFonts[i];
@@ -524,6 +530,7 @@ internal partial class HtmlDependencyObject : DependencyObject
             if (i > 0) // && lastMetaFont != baseMetaFont)
                 AddInline(textBlock, lastMetaFont, newText, startIndex, i - startIndex);
             lastMetaFont = metaFont;
+            lastFontWeight = lastMetaFont.FontWeight;
             startIndex = i;
         }
         AddInline(textBlock, lastMetaFont, newText, startIndex, newText.Length - startIndex);
@@ -562,7 +569,7 @@ internal partial class HtmlDependencyObject : DependencyObject
             {
                 Text = text.Substring(startIndex, length),
                 FontSize = metaFont.Size,
-                FontWeight = metaFont.Bold ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal,
+                FontWeight = new FontWeight((ushort)metaFont.FontWeight),
                 FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal
                 // Foreground = new SolidColorBrush(Colors.Blue),
             };
@@ -576,7 +583,7 @@ internal partial class HtmlDependencyObject : DependencyObject
         {
             Text = text.Substring(startIndex, length),
             FontSize = metaFont.Size,
-            FontWeight = metaFont.Bold ? Microsoft.UI.Text.FontWeights.Bold : Microsoft.UI.Text.FontWeights.Normal,
+            FontWeight = new FontWeight((ushort)metaFont.FontWeight),
             FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal,
             Foreground = new SolidColorBrush(metaFont.TextColor)
         };

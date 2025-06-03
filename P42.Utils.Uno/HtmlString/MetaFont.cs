@@ -3,7 +3,7 @@ using Windows.UI;
 
 namespace P42.Utils.Uno;
 
-internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size, bool bold = false, bool italic = false)
+internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size, short fontWeight = 400, bool italic = false)
 {
     #region Properties
 
@@ -13,7 +13,8 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
 
     public bool Italic = italic;
 
-    public bool Bold = bold;
+    //public bool Bold = bold;
+    public short FontWeight = fontWeight;
 
     public FontBaseline Baseline = FontBaseline.Normal;
 
@@ -32,7 +33,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
 
     #region Construction
 
-    public MetaFont(MetaFont f) : this (f.Family, f.Size, f.Bold, f.Italic)
+    public MetaFont(MetaFont f) : this (f.Family, f.Size, f.FontWeight, f.Italic)
     {
         Baseline = f.Baseline;
         Action = f.Action?.Copy();
@@ -41,7 +42,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
         Underline = f.Underline;
         Strikethrough = f.Strikethrough;
     }
-    public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, bool bold = false, bool italic = false, string id = "", string href = "", Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, bold, italic)
+    public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, short fontWeight = 400, bool italic = false, string id = "", string href = "", Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, fontWeight, italic)
     {
         if (!string.IsNullOrEmpty(id) || !string.IsNullOrEmpty(href))
             Action = new MetaFontAction(href, id);
@@ -49,6 +50,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
         BackgroundColor = backgroundColor;
         Underline = underline;
         Strikethrough = strikethrough;
+
     }
 
     #endregion
@@ -66,7 +68,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
 
         if (Math.Abs(Size - other.Size) > 0.01)
             return false;
-        if (Bold != other.Bold)
+        if (FontWeight != other.FontWeight)
             return false;
         if (Italic != other.Italic)
             return false;
@@ -87,7 +89,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
 
     public override int GetHashCode()
     {
-        var hash = HashCode.Combine(Family, Size, Bold, Italic, Baseline, Action, TextColor, BackgroundColor);
+        var hash = HashCode.Combine(Family, Size, FontWeight, Italic, Baseline, Action, TextColor, BackgroundColor);
         return HashCode.Combine(hash, Underline, Strikethrough);
     }
     #endregion

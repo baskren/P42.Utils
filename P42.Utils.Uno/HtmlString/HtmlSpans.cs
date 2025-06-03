@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Text;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace P42.Utils.Uno;
 
@@ -344,17 +345,54 @@ internal class HtmlSpans : List<Span>
 
     private void ProcessHtml()
     {
+        try
+        {
+            InnerProcessHtml();
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.ToString());
+            Console.WriteLine(e.ToString());
+            throw;
+        }
+    }
+
+    private void InnerProcessHtml()
+    {
         _unmarkedText.Clear();
         if (string.IsNullOrWhiteSpace(Text))
             return;
         // remove previously Translated spans
         Clear();
 
-        var text = Text;
-
         var tags = new List<Tag>();
         var index = 0;
         Tag? lastTag = null;
+
+        int blockQuoteDepth = 0;
+        var listIndexes = new List<int>();
+
+        var sb = new StringBuilder();
+        bool inCode= false;
+
+        for (int i=0; i < Text.Length; i++)
+        {
+            var next = Text.SubstringRange(i, 5);
+            if (next == "<code")
+                inCode = true;
+            else if (next == "</cod")
+            {
+                if (Text[i-1] == '\n')
+                    sb.Append("\n");
+                else
+                    sb.Append(' ');
+                inCode = false;
+            }
+
+            if (Text[i] != '\n' || inCode)
+                sb.Append(Text[i]);
+        }
+        var text = sb.ToString();
 
         for (var i = 0; i < text.Length; i++)
         {
@@ -375,6 +413,116 @@ internal class HtmlSpans : List<Span>
                         {
                             tagText = restText[..nextClose];
                             leap = nextClose + 1;
+
+                            var trimTagText = tagText.ToLower().Trim();
+                            if (c1 == '/')
+                            {
+                                if (trimTagText == "/p")
+                                {
+                                    if (!IsListNext(restText))
+                                    text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\">\n </font>");
+                                }
+                                else if (trimTagText == "/blockquote")
+                                    blockQuoteDepth--;
+                                else if (trimTagText.StartsWith("/h") && char.IsDigit(trimTagText[2]))
+                                {
+                                    var value = trimTagText[2] - 48;
+                                    if (value >= 0 && value <= 6)
+                                    {
+                                        var size = value switch
+                                        {
+                                            1 => 1 + 0.67,
+                                            2 => 1.5 + 0.75,
+                                            3 => 2.2,
+                                            4 => 2,
+                                            5 => 1.8,
+                                            6 => 1.8
+                                        };
+                                        if (value == 1)
+                                        {
+                                            if (!IsListNext(restText))
+                                                text = text.Insert(i + 1 + leap, "<font size=\"0.5em\">\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n</font>\n");
+                                            else
+                                                text = text.Insert(i + 1 + leap, "<font size=\"0.5em\">\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</font>");
+
+                                        }
+                                        else if (value == 2)
+                                        {
+                                            if (!IsListNext(restText))
+                                                text = text.Insert(i + 1 + leap, "<font size=\"0.25em\">\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n</font>\n");
+                                            else
+                                                text = text.Insert(i + 1 + leap, "<font size=\"0.25em\">\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</font>");
+
+                                        }
+                                        else if (!IsListNext(restText))
+                                            text = text.Insert(i + 1 + leap, $"\n<font size=\"{size}em\">\n </font>");
+                                    }
+                                }
+                                else if (trimTagText is "/ul" or "/ol")
+                                {
+                                    listIndexes.TryRemoveLast();
+                                    if (listIndexes.Count == 0)
+                                        text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\">\n </font>");
+                                }
+                                else if (trimTagText == "/li")
+                                {
+                                }
+
+                                else if (trimTagText is "/code")
+                                {
+                                    text = text.Insert(i, " ");
+                                    i += 1;
+                                    //nextClose++;
+                                    //nextOpen++;
+                                    //leap++;
+                                }
+                            }
+                            else if (trimTagText.StartsWith("blockquote"))
+                            {
+                                blockQuoteDepth++;
+                                text = text.Insert(i + 1 + leap, $"{String.Concat(Enumerable.Repeat(" | ", blockQuoteDepth))}");
+                            }
+                            else if (trimTagText.StartsWith("code"))
+                            {
+                                text = text.Insert(i + 1 + leap, " ");
+                            }
+                            else if (trimTagText.StartsWith("ul"))
+                                listIndexes.Add(-1);
+                            else if (trimTagText.StartsWith("ol"))
+                            {
+                                if (trimTagText.IndexOf("start=") is int startArgIndex && startArgIndex > -1)
+                                {
+                                    var argStart = startArgIndex + trimTagText.Substring(startArgIndex).IndexOf('"')+1;
+                                    var length = trimTagText.Substring(argStart).IndexOf('"');
+                                    var arg = trimTagText.Substring(argStart, length);
+                                    if (int.TryParse(arg, out var value))
+                                        listIndexes.Add(value);
+                                    else
+                                        listIndexes.Add(1);
+                                }
+                                else
+                                    listIndexes.Add(1);
+                            }
+                            else if (trimTagText.StartsWith("li"))
+                            {
+                                var currentListIndent = listIndexes.Count - 1;
+                                if (currentListIndent < 0)
+                                    break;
+                                var block = text.SubstringRange(i - 11, 11);
+                                var newLine = "\n<font size=\"0.5em\">\n </font>";
+                                var tabs = String.Concat(Enumerable.Repeat("<sp> <sp> ", listIndexes.Count));
+                                var mark = listIndexes[currentListIndent] < 1
+                                    ? currentListIndent switch
+                                    {
+                                        0 => "•",
+                                        1 => "⚬",
+                                        _ => "▪",
+                                    }
+                                    : $"{listIndexes[currentListIndent]++}.";
+                                //text = text.Insert(i + 1 + leap, $"\n<font size=\"0.5em\">\n </font>");
+
+                                text = text.Insert(i + 1 + leap, $"{newLine}{tabs}{mark} <sp>");
+                            }
                         }
 
                     }
@@ -426,13 +574,6 @@ internal class HtmlSpans : List<Span>
                     if (tags.Count > 0 && tags.Last( t => t.Name == tagText) is var tag)
                     {
                         tags.Remove(tag);
-                        /*
-                        if (tag.Name == "p" && lastTag.HasValue && lastTag.Value.Name == "p")
-                        {
-                            var endTag = text.IndexOf('>', i);
-                                text = text.Insert(endTag + 1, "<br/>");
-                        }
-                        */
                         ProcessTag(tag, index);
                         lastTag = tag;
                     }
@@ -481,6 +622,22 @@ internal class HtmlSpans : List<Span>
             ProcessTag(t, index);
     }
 
+    private string NextTag(string text)
+    {
+        var start = text.IndexOf('<');
+        if (start < 0) return text;
+        var remainder = text.Substring(start);
+        var end = remainder.IndexOf('>');
+        if (end < 0) return text;
+        return remainder.Substring(1, end-1);
+    }
+
+    private bool IsListNext(string text)
+    {
+        var nextTag = NextTag(text).Split(' ')[0].ToLower().Trim();
+        return nextTag is "ul" or "ol" or "li" or "/ul" or "/ol" or "/li";
+    }
+
     private void ProcessTag(Tag tag, int index)
     {
         if (tag.Start >= index)
@@ -490,10 +647,34 @@ internal class HtmlSpans : List<Span>
         Span span;
         switch (tag.Name)
         {
+            case "h1":
+                Add(new FontSizeSpan(tag.Start, index - 1, -2));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
+            case "h2":
+                Add(new FontSizeSpan(tag.Start, index - 1, -1.5f));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
+            case "h3":
+                Add(new FontSizeSpan(tag.Start, index - 1, -1.17f));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
+            case "h4":
+                Add(new FontSizeSpan(tag.Start, index - 1, -1));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
+            case "h5":
+                Add(new FontSizeSpan(tag.Start, index - 1, -0.83f));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
+            case "h6":
+                Add(new FontSizeSpan(tag.Start, index - 1, -0.75f));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
+                break;
             case "strong":
             case "b":
-                span = new BoldSpan(tag.Start, index - 1);
-                Add(span);
+                Add(new FontWeightSpan(tag.Start, index - 1, Microsoft.UI.Text.FontWeights.Bold));
+                Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
                 break;
             case "em":
             case "i":
@@ -583,6 +764,17 @@ internal class HtmlSpans : List<Span>
                 span = new HyperlinkSpan(tag.Start, index - 1, href, id);
                 Add(span);
                 break;
+            case "p":
+                break;
+            case "blockquote":
+                break;
+            case "code":
+                Add(new BackgroundColorSpan(tag.Start, index - 1, Microsoft.UI.Colors.Gray.WithAlpha(0.5)));
+                break;
+            case "sp":
+                break;
+            default:
+                break;
         }
         // process  attributes
         foreach (var attr in tag.Attributes)
@@ -616,14 +808,42 @@ internal class HtmlSpans : List<Span>
                             Add(span);
                             break;
                         case "font-weight":
-                            if (parts[1].ToLower() == "bold")
                             {
-                                span = new BoldSpan(tag.Start, index - 1);
-                                Add(span);
-                            }
-                            else
-                            {
-                                throw new FormatException($"style=\"font-Weight: {parts[1]};\" not supported");
+                                try
+                                {
+                                    var weightText = parts[1].Trim().Replace(" ", "").ToLower();
+                                    short weight = weightText switch
+                                    {
+                                        "bolder" => 100,
+                                        "lighter" => -100,
+                                        "thin" => 100,
+                                        "extralight" => 200,
+                                        "ultralight" => 200,
+                                        "light" => 300,
+                                        "semilight" => 350,
+                                        "normal" => 400,
+                                        "regular" => 400,
+                                        "medium" => 500,
+                                        "semibold" => 600,
+                                        "demibold" => 600,
+                                        "bold" => 700,
+                                        "extrabold" => 800,
+                                        "ultrabold" => 800,
+                                        "black" => 900,
+                                        "heavy" => 900,
+                                        "extrablack" => 950,
+                                        "ultrablack" => 950,
+                                        _ => short.Parse(weightText)
+                                    };
+                                    var relative = weightText is "bolder" or "lighter";
+                                    span = new FontWeightSpan(tag.Start, index - 1, weight, relative);
+                                    Add(span);
+
+                                }
+                                catch (Exception)
+                                {
+                                    throw new FormatException($"style=\"font-Weight: {parts[1]};\" not supported");
+                                }
                             }
                             break;
                         case "font-style":

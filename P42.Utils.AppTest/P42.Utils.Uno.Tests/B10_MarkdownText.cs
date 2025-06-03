@@ -164,6 +164,9 @@ internal class B10_MarkdownText
 
         textBlock.Markdown(markdown);
 
-        UnitTestsUIContentHelper.Content = textBlock;
+        UnitTestsUIContentHelper.Content = new ScrollViewer()
+        {
+            Content = textBlock
+        };
     }
 }

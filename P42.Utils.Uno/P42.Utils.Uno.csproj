@@ -28,9 +28,9 @@
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
-    <!--
-    <UnoFeatures></UnoFeatures>
-    -->
+    <UnoFeatures>
+      WebView;
+    </UnoFeatures>
 
     <!-- Needed to reduce warnings when building with non-Windows OS : Can this be deleted because we're using Conditional TargetFrameworks? -->
     <!--
@@ -42,7 +42,7 @@
     <BuildInParallel>true</BuildInParallel>
     -->
 
-    <!-- NEEDED FOR DisplayHelper.winui.cs -->    
+    <!-- NEEDED FOR DisplayHelper.winui.cs and Beep.io.maccatalyst -->    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- NEEDED BECAUSE WINAPPSDK PROJECT IS USING MICROSOFT.GRAPHICS.Win2D -->
@@ -57,37 +57,7 @@
   </PropertyGroup>
 
 
-  <!-- NEEDED FOR WebView2 ON Windows WORKAROUND : https://github.com/unoplatform/uno/issues/18552 -->
-  <PropertyGroup Condition=" $(TargetFramework.Contains('-windows')) " >
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-x86'">x86</PlatformTarget>
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-x64'">x64</PlatformTarget>
-    <PlatformTarget Condition=" '$(PlatformTarget)' == '' AND $(Platform) == 'AnyCPU' AND '$(NETCoreSdkRuntimeIdentifier)' == 'win-arm64'">arm64</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Condition="$(TargetFramework.Contains('-windows'))" Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
-  </ItemGroup>
 
-
-
-  <!-- THIS NO LONGER NEEDED? -->
-  <!--<Import Condition="Exists('Directory.Build.TargetPlatform.props')" Project="Directory.Build.TargetPlatform.props" />-->
-
-
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-    <!--
-    If you encounter this error message:
-
-      error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
-      Please update to a newer .NET SDK in order to reference this assembly.
-
-    This means that the two packages below must be aligned with the "build" version number of
-    the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
-    must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
-    -->
-    <!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
-
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="WasmScripts\**\*.js" />
@@ -97,17 +67,11 @@
     <EmbeddedResource Remove="WasmScripts\p42_utils_uno_beep.js" />
   </ItemGroup>
 
+  <!--
   <ItemGroup>
-    <Page Update="BlankPage1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="LocalDataSourcePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+  -->
 
   
 </Project>

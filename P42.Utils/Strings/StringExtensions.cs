@@ -93,6 +93,17 @@ public static class StringExtensions
                ? s[^count..] 
                : s;    
 
+    public static string SubstringRange(this string s, int startIndex, int length = 1)
+    {
+        if (s.Length <= startIndex)
+            return string.Empty;
+
+        if (s.Length > startIndex + length)
+            return s.Substring(startIndex, length);
+
+        return s[startIndex..];
+    }
+
     /// <summary>
     /// Replacement characters to for smooth serialization
     /// </summary>
