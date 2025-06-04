@@ -578,8 +578,8 @@ internal partial class HtmlDependencyObject : DependencyObject
                 Text = text.Substring(startIndex, length),
                 FontSize = metaFont.Size,
                 FontWeight = new FontWeight((ushort)metaFont.FontWeight),
-                FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal
-                // Foreground = new SolidColorBrush(Colors.Blue),
+                FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal,
+                //Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue),
             };
 
             DecorateRun(textBlock, linkRun, metaFont, startIndex, length);
@@ -643,6 +643,11 @@ internal partial class HtmlDependencyObject : DependencyObject
         if (TextBlockExtensions.TextDecorationsPresent && metaFont.Underline)
             ApplyTextDecorations(run, Decoration.Underline);
 
+        if (metaFont.IsActiveAction)
+        {
+            run.TextDecorations = TextDecorations.None;
+            run.Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue);
+        }
     }
 
 }

@@ -471,6 +471,14 @@ internal class HtmlSpans : List<Span>
                                 {
                                     text = text.Insert(i + 1 + leap, " | ");
                                 }
+                                else if (trimTagText is "/dt" or "/dd")
+                                {
+                                    text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\"> </font>");
+                                }
+                                else if (trimTagText is "/dl")
+                                {
+                                    text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\"> </font>");
+                                }
                                 else if (trimTagText is "/code")
                                 {
                                     text = text.Insert(i, " ");
@@ -523,6 +531,10 @@ internal class HtmlSpans : List<Span>
 
                                 text = text.Insert(i + 1 + leap, $"{newLine}{tabs}{mark} <sp>");
                             }
+                            else if (trimTagText.StartsWith("dd"))
+                            {
+                                text = text.Insert(i + 1 + leap, $" <sp>\t<sp>");
+                            }
                         }
 
                     }
@@ -545,13 +557,13 @@ internal class HtmlSpans : List<Span>
                             var escText = restText[..nextClose];
                             leap = nextClose + 1;
 
-                            if (escText[1] == '#')
+                            if (escText[0] == '#')
                             {
-                                var start = 2;
+                                var start = 1;
                                 var numBase = 10;
-                                if (char.ToLower(escText[2]) == 'x')
+                                if (char.ToLower(escText[1]) == 'x')
                                 {
-                                    start = 3;
+                                    start = 2;
                                     numBase = 16;
                                 }
                                 unicodeInt = Convert.ToInt32(escText[start..], numBase);
@@ -678,8 +690,7 @@ internal class HtmlSpans : List<Span>
                 break;
             case "em":
             case "i":
-                span = new ItalicsSpan(tag.Start, index - 1);
-                Add(span);
+                Add(new ItalicsSpan(tag.Start, index - 1));
                 break;
             case "sub":
                 span = new SubscriptSpan(tag.Start, index - 1);
@@ -766,6 +777,10 @@ internal class HtmlSpans : List<Span>
                 }
                 span = new HyperlinkSpan(tag.Start, index - 1, href, id);
                 Add(span);
+                break;
+            case "dt":
+                Add(new ItalicsSpan(tag.Start, index - 1));
+                Add(new FontWeightSpan(tag.Start, index - 1, Microsoft.UI.Text.FontWeights.Bold));
                 break;
             case "p":
                 break;
