@@ -21,6 +21,7 @@ public partial class MarkDownControl : HtmlControl
         set { SetValue(MarkdownTextProperty, value); }
     }
 
+    protected override string HtmlBody => $@"<div class=""markdown-body"" id = ""{HtmlContentId}""><p>CONTENT GOES HERE</p></ div>";
 
     string StyleSheetReourceId => "P42.Utils.Uno.Resources.github-markdown.css";
     #endregion
@@ -43,11 +44,8 @@ public partial class MarkDownControl : HtmlControl
 
     public MarkDownControl()
     {
-        var resource = P42.Utils.EmbeddedResourceExtensions.FindAssemblyResourceIdAndStream(StyleSheetReourceId, GetType().Assembly)
-                        ?? throw new ArgumentException($"Cannot find resourceId [{StyleSheetReourceId}] in provided assembly [{GetType().Assembly?.Name() ?? "null"}]");
-        var styleCss = resource.DisposableStream.ReadToEnd();
-        resource.DisposableStream.Dispose();
-        StyleSheets.Add(styleCss);
+        if (EmbeddedResourceExtensions.TryGetText(out var css, StyleSheetReourceId, GetType().Assembly))
+            StyleSheets.Add(css);
     }
 
     #region Event Handlers
@@ -67,10 +65,8 @@ public partial class MarkDownControl : HtmlControl
 
     public void LoadMarkdownFromResource(string resourceId, Assembly? asm = null)
     {
-        var resource = P42.Utils.EmbeddedResourceExtensions.FindAssemblyResourceIdAndStream(resourceId, asm) 
-            ?? throw new ArgumentException($"Cannot find resourceId [{resourceId}] in provided assembly [{asm?.Name() ?? "null"}]");
-        MarkdownText = resource.DisposableStream.ReadToEnd();
-        resource.DisposableStream.Dispose();
+        if (EmbeddedResourceExtensions.TryGetText(out var value, resourceId, asm))
+            MarkdownText = value;
     }
 
     #endregion

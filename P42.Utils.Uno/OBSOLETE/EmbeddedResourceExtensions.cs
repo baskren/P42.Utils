@@ -6,7 +6,7 @@ using System.Reflection;
 using Microsoft.UI.Xaml;
 
 namespace P42.Utils.Uno;
-
+/*
 /// <summary>
 /// Embedded Resource extension methods
 /// </summary>
@@ -28,3 +28,4 @@ public static class EmbeddedResourceExtensions
         => throw new NotImplementedException();
     
 }
+*/

@@ -268,6 +268,25 @@ public static class EmbeddedResourceExtensions
         }
     }
 
+    public static bool TryGetBytes(out byte[] value,  string resourceId, Assembly? assembly = null)
+    {
+        value = [];
+        using var stream = FindStream(resourceId, assembly);
+        if (stream == null)
+            return false;
+
+        try
+        {
+            value = stream.ReadBytes();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            QLog.Error(ex);
+            return false;
+        }
+    }
+
     /// <summary>
     /// Attempt to get and deserialize EmbeddedResource as type T
     /// </summary>

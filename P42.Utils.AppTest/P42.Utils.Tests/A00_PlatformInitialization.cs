@@ -14,14 +14,18 @@ namespace P42.Utils.AppTest;
 [TestClass]
 public class A00_PlatformInitialization
 {
+    static bool hasBeenRunBefore;
     static int Count;
 
     [TestMethod]
-    public async Task A00_TestUninitialized()
+    public void A00_TestUninitialized()
     {
         // un comment before pushing!
-        Assert.ThrowsException<P42.Utils.Uno.NotInitializedException>(() => _ = P42.Utils.Uno.Platform.Application);
-        await Task.CompletedTask;
+        if (!hasBeenRunBefore)
+            Assert.ThrowsException<P42.Utils.Uno.NotInitializedException>(() => _ = P42.Utils.Uno.Platform.Application);
+        else
+            Assert.IsNotNull(P42.Utils.Uno.Platform.Application);
+        hasBeenRunBefore = true;
     }
 
     [TestMethod]

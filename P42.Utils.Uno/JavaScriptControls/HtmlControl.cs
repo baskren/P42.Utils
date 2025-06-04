@@ -14,7 +14,7 @@ namespace P42.Utils.Uno;
 public abstract partial class HtmlControl : UserControl
 {
     #region Properties
-    protected virtual string HtmlBody => $@"<div class=""markdown-body"" id = ""{HtmlContentId}""><p>CONTENT GOES HERE</p></ div>";
+    protected virtual string HtmlBody => throw new NotImplementedException();
 
     bool _isBodyLoaded;
     public bool IsBodyLoaded 
@@ -38,7 +38,7 @@ public abstract partial class HtmlControl : UserControl
 
     #region Fields
     protected readonly string HtmlContentId = "content-" + Guid.NewGuid().ToString();
-    private readonly WebView2 internalWebView;
+    protected readonly WebView2 InternalWebView;
     #endregion
 
 
@@ -49,15 +49,21 @@ public abstract partial class HtmlControl : UserControl
 
     public HtmlControl()
     {
-        Content = internalWebView = new WebView2
+        Content = InternalWebView = new WebView2
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch,
         };
-        internalWebView.DefaultBackgroundColor = Colors.Transparent;
-        internalWebView.NavigationCompleted += OnNavigationCompleted;
+        InternalWebView.DefaultBackgroundColor = Colors.Transparent;
+        InternalWebView.NavigationCompleted += OnNavigationCompleted;
+        InternalWebView.WebMessageReceived += OnWebViewMessageReceived;
 
         Loaded += OnControlLoaded;
+    }
+
+    protected virtual void OnWebViewMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+    {
+        
     }
 
     private async void OnControlLoaded(object sender, RoutedEventArgs e)
@@ -67,37 +73,38 @@ public abstract partial class HtmlControl : UserControl
     {
         StringBuilder sb = new StringBuilder();
         foreach (var stylesheet in StyleSheets)
-            sb.Append($"\t\t<style type=\"text/css\" >{stylesheet}</style>\n");
+            sb.Append($"\t\t<style type=\"text/css\" >\n{stylesheet}\n\t\t</style>\n");
         var styleSheets = sb.ToString();
 
         sb.Clear();
         foreach (var script in Scripts)
-            sb.Append($"\t\t<script type=\"text/javascript\">{script}</script>\n");
+            sb.Append($"\t\t<script type=\"text/javascript\">\n{script}\n\t\t</script>\n");
         var scripts = sb.ToString();
 
         sb.Clear();
         sb.Append("<html>\n\t<head>\n");
         sb.Append(styleSheets);
         sb.Append(scripts);
-        sb.Append($@"</head>
-     <body>
+        sb.Append($@"
+    </head>
+    <body>
         <div class=""markdown-body"">
          {HtmlBody}
         </div>
     </ body>
-    </ html>
+</ html>
 ");
         var html = sb.ToString();
-        await internalWebView.EnsureCoreWebView2Async();
-        internalWebView.NavigateToString(html);
+        await InternalWebView.EnsureCoreWebView2Async();
+        InternalWebView.NavigateToString(html);
     }
 
     private async void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
     {
 #if __ANDROID__
-        var wv = internalWebView.GetType()
+        var wv = InternalWebView.GetType()
             .GetField("_webView", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            .GetValue(internalWebView) as Android.Webkit.WebView;
+            .GetValue(InternalWebView) as Android.Webkit.WebView;
         wv.SetBackgroundColor(Android.Graphics.Color.Transparent);
 #endif
 
@@ -117,6 +124,7 @@ public abstract partial class HtmlControl : UserControl
             var colorString = $"#{color.R.ToString("X")}{color.G.ToString("X")}{color.B.ToString("X")}";
             Console.WriteLine($"Color {colorString}");
             var colorScript = $@"document.getElementById('{HtmlContentId}').style.color = '{colorString}';";
+            System.Diagnostics.Debug.WriteLine("UpdateBodyFromScript: [A]");
             await InvokeScriptAsync(colorScript);
         }
 
@@ -127,11 +135,13 @@ public abstract partial class HtmlControl : UserControl
             var colorString = $"#{color.R.ToString("X")}{color.G.ToString("X")}{color.B.ToString("X")}";
             Console.WriteLine($"Color {colorString}");
             var colorScript = $@"document.getElementById('{HtmlContentId}').style.background-color = '{colorString}';";
+            System.Diagnostics.Debug.WriteLine("UpdateBodyFromScript: [B]");
             await InvokeScriptAsync(colorScript);
         }
 
         
         var script = $@"document.getElementById('{HtmlContentId}').innerHTML = {contentScript};";
+        System.Diagnostics.Debug.WriteLine("UpdateBodyFromScript: [C]");
         await InvokeScriptAsync(script);
 
     }
@@ -139,8 +149,8 @@ public abstract partial class HtmlControl : UserControl
     public async Task<string> InvokeScriptAsync(string scriptToRun, bool resizeAfterScript = true)
     {
         //var source = new CancellationTokenSource();
-        System.Diagnostics.Debug.WriteLine($"SCRIPT: {scriptToRun}");
-        var result = await internalWebView.ExecuteScriptAsync(scriptToRun).AsTask();
+        //System.Diagnostics.Debug.WriteLine($"SCRIPT: {scriptToRun}");
+        var result = await InternalWebView.ExecuteScriptAsync(scriptToRun).AsTask();
         if (resizeAfterScript)
         {
             await ResizeToContent();
@@ -153,6 +163,7 @@ public abstract partial class HtmlControl : UserControl
     public async Task ResizeToContent()
     {
         var documentRoot = $"document.getElementById('{HtmlContentId}')";
+        System.Diagnostics.Debug.WriteLine("ResizeToContent:");
         var heightString = await InvokeScriptAsync($"{documentRoot}.scrollHeight.toString()",
             false);
         int height;
