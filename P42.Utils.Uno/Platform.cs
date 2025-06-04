@@ -94,6 +94,11 @@ public static class Platform
     /// </summary>
     public static Microsoft.UI.Xaml.Media.FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI#Regular");
 
+    private static Microsoft.UI.Xaml.Media.FontFamily? _variantsFontFamily;
+    // Variants don't work on UNO
+    public static Microsoft.UI.Xaml.Media.FontFamily VariantsFontFamily => _variantsFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Calibri");
+    //public static Microsoft.UI.Xaml.Media.FontFamily VariantsFontFamily => _variantsFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/ScriptVariants.ttf#ScriptVariants");
+
 
     static Microsoft.UI.Xaml.Media.FontFamily? _serifFontFamily;
     public static Microsoft.UI.Xaml.Media.FontFamily SerifFontFamily => _serifFontFamily ??=

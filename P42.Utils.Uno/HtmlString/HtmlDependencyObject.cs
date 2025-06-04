@@ -602,22 +602,27 @@ internal partial class HtmlDependencyObject : DependencyObject
 
         switch (metaFont.Baseline)
         {
-            case FontBaseline.Numerator:
-            case FontBaseline.Superscript:
-                run.FontFamily = Platform.SansSerifFontFamily;
-                Typography.SetVariants(run, FontVariants.Superscript);
-                break;
-            case FontBaseline.Denominator:
-            case FontBaseline.Subscript:
-                run.FontFamily = Platform.SansSerifFontFamily;
-                Typography.SetVariants(run, FontVariants.Subscript);
-                break;
             case FontBaseline.Normal:
                 if (metaFont.Family != null)
                     run.FontFamily = metaFont.Family;
                 break;
+#if WINDOWS
+
+            // FontVariants don't work in UNO
+
+            case FontBaseline.Numerator:
+            case FontBaseline.Superscript:
+                run.FontFamily = Platform.VariantsFontFamily;
+                Typography.SetVariants(run, FontVariants.Superscript);
+                break;
+            case FontBaseline.Denominator:
+            case FontBaseline.Subscript:
+                run.FontFamily = Platform.VariantsFontFamily;
+                Typography.SetVariants(run, FontVariants.Subscript);
+                break;
             default:
                 throw new ArgumentException($"Unsupported FontBaseline: {metaFont.Baseline}");
+#endif
         }
 
         if (!metaFont.BackgroundColor.IsDefaultOrTransparent())
