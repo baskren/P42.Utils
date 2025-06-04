@@ -128,6 +128,8 @@ public static class EmbeddedResourceExtensions
         if (string.IsNullOrWhiteSpace(resourceIdTail))
             return null;
 
+        resourceIdTail = resourceIdTail.Replace(" ", "_").Replace("/", ".").Replace("\\", ".");
+
         if (assembly == null)
         {
             if (resourceIdTail[0] != '.')

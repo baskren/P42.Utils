@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Markdig;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using P42.UnoTestRunner;
 using P42.Utils.Uno;
@@ -12,8 +13,39 @@ namespace P42.Utils.AppTest;
 [TestClass]
 internal class B10_MarkdownText
 {
+
+
+    string? _markdownSample;
+    string MarkdownSample
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(_markdownSample))
+                return _markdownSample;
+            var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md", assembly: GetType().Assembly);
+            item.TryAssurePulled();
+            _markdownSample = item.RecallText();
+            return _markdownSample;
+        }
+    }
+
+    string? _markdownCss;
+    string MarkdownCss
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(_markdownCss))
+                return _markdownCss;
+            var item = P42.Utils.LocalData.ResourceItem.Get(".github-markdown.css", assembly: GetType().Assembly);
+            item.TryAssurePulled();
+            _markdownCss = item.RecallText();
+            return _markdownCss;
+
+        }
+    }
+
     [TestMethod]
-    public void A01_Bold()
+    public void A01_TextBlock()
     {
         var textBlock = new TextBlock
         {
@@ -21,167 +53,19 @@ internal class B10_MarkdownText
 
         };
 
-
-        var markdown = """
-            # h1 Heading 8-)
-            ## h2 Heading
-            ### h3 Heading
-            #### h4 Heading
-            ##### h5 Heading
-            ###### h6 Heading
-
-
-            ## Horizontal Rules
-
-            ___
-
-            ---
-
-            ***
-
-
-            ## Typographic replacements
-
-            Enable typographer option to see result.
-
-            (c) (C) (r) (R) (tm) (TM) (p) (P) +-
-
-            test.. test... test..... test?..... test!....
-
-            !!!!!! ???? ,,  -- ---
-
-            "Smartypants, double quotes" and 'single quotes'
-
-
-            ## Emphasis
-
-            **This is bold text**
-
-            __This is bold text__
-
-            *This is italic text*
-
-            _This is italic text_
-
-            ~~Strikethrough~~
-
-
-            ## Blockquotes
-
-
-            > Blockquotes can also be nested...
-            >> ...by using additional greater-than signs right next to each other...
-            > > > ...or with spaces between arrows.
-
-
-            ## Lists
-
-            Unordered
-
-            + Create a list by starting a line with `+`, `-`, or `*`
-            + Sub-lists are made by indenting 2 spaces:
-              - Marker character change forces new list start:
-                * Ac tristique libero volutpat at
-                + Facilisis in pretium nisl aliquet
-                - Nulla volutpat aliquam velit
-            + Very easy!
-
-            Ordered
-
-            1. Lorem ipsum dolor sit amet
-            2. Consectetur adipiscing elit
-            3. Integer molestie lorem at massa
-
-
-            1. You can use sequential numbers...
-            1. ...or keep all the numbers as `1.`
-
-            Start numbering with offset:
-
-            57. foo
-            1. bar
-
-            ## Task List
-
-            - [ ] plan
-            - [ ] code
-            - [ ] test
-            - [ ] deploy
-
-            ## Code
-
-            Inline `code`
-
-            Indented code
-
-                // Some comments
-                line 1 of code
-                line 2 of code
-                line 3 of code
-
-
-            Block code "fences"
-
-            ```
-            Sample text here...
-            ```
-
-            Syntax highlighting
-
-            ``` js
-            var foo = function (bar) {
-              return bar++;
-            };
-
-            console.log(foo(5));
-            ```
-
-            ## Tables
-
-            | Option | Description |
-            | ------ | ----------- |
-            | data   | path to data files to supply the data that will be passed into templates. |
-            | engine | engine to be used for processing templates. Handlebars is the default. |
-            | ext    | extension to be used for dest files. |
-
-            Right aligned columns
-
-            | Option | Description |
-            | ------:| -----------:|
-            | data   | path to data files to supply the data that will be passed into templates. |
-            | engine | engine to be used for processing templates. Handlebars is the default. |
-            | ext    | extension to be used for dest files. |
-
-
-            ## Links
-
-            [link text](http://dev.nodeca.com)
-
-            [link with title](http://nodeca.github.io/pica/demo/ "title text!")
-
-            Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
-
-            
-            """;
-        
-
-        textBlock.FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable");
-
-
-        var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md");
-        item.TryAssurePulled();
-        markdown = item.RecallText();
-
-        textBlock.Markdown(markdown);
-
-        //var html = "<p>😎</p>";
-        //textBlock.Html(html);
-
-        //textBlock.Text = $"[{textBlock.FontFamily.Source}]<hr /><p><strong>Advertisement 😃</strong></p><ul><li>\r\n<font size=\"0.5em\">\r\n </font><sp> <sp> • <sp><strong><a href=\"https://nodeca.github.io/pica/demo/\">pica</a></strong> - high quality and fast imageresize in browser.</li><li>\r\n<font size=\"0.5em\">\r\n </font><sp> <sp> • <sp><strong><a href=\"https://github.com/nodeca/babelfish/\">babelfish</a></strong> - developer friendlyi18n with plurals support and easy syntax.</li></ul>\r\n<font size=\"1em\">\r\n </font><p>You will like those projects!</p>\r\n<font size=\"1em\">\r\n </font><hr /><p>😎</p>\r\n<font size=\"1em\">\r\n </font><h1 id=\"h1-heading-x\">h1 Heading x 😎</h1><font size=\"0.5em\">";
+        textBlock.Markdown(MarkdownSample);
 
         UnitTestsUIContentHelper.Content = new ScrollViewer()
         {
             Content = textBlock
         };
+    }
+
+    [TestMethod]
+    public void A02_MarkdownControl()
+    {
+        var control = new P42.Utils.Uno.MarkDownControl();
+        control.MarkdownText = MarkdownSample;
+        UnitTestsUIContentHelper.Content = control;
     }
 }
