@@ -582,6 +582,7 @@ internal partial class HtmlDependencyObject : DependencyObject
                 // Foreground = new SolidColorBrush(Colors.Blue),
             };
 
+            DecorateRun(textBlock, linkRun, metaFont, startIndex, length);
             link.Inlines.Add(linkRun);
             textBlock.Inlines.Add(link);
             return;
@@ -596,7 +597,14 @@ internal partial class HtmlDependencyObject : DependencyObject
             Foreground = new SolidColorBrush(metaFont.TextColor)
         };
 
+        DecorateRun(textBlock, run, metaFont, startIndex, length);
+        textBlock.Inlines.Add(run);
+            
 
+    }
+
+    private static void DecorateRun(TextBlock textBlock, Run run, MetaFont metaFont, int startIndex, int length)
+    {
         if (TextBlockExtensions.TextDecorationsPresent && metaFont.Strikethrough)
             ApplyTextDecorations(run, Decoration.Strikethrough);
 
@@ -628,17 +636,13 @@ internal partial class HtmlDependencyObject : DependencyObject
         if (!metaFont.BackgroundColor.IsDefaultOrTransparent())
             textBlock.ApplyBackgroundColor(metaFont.BackgroundColor, startIndex, length);
 
-        run.Foreground = metaFont.TextColor != default 
-            ? new SolidColorBrush(metaFont.TextColor) 
+        run.Foreground = metaFont.TextColor != default
+            ? new SolidColorBrush(metaFont.TextColor)
             : new SolidColorBrush((Color)Application.Current.Resources["SystemBaseHighColor"]);
-        
+
         if (TextBlockExtensions.TextDecorationsPresent && metaFont.Underline)
             ApplyTextDecorations(run, Decoration.Underline);
-        textBlock.Inlines.Add(run);
-            
 
     }
-
-
 
 }

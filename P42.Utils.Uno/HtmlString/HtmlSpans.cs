@@ -458,7 +458,7 @@ internal class HtmlSpans : List<Span>
                                             text = text.Insert(i + 1 + leap, $"\n<font size=\"{size}em\">\n </font>");
                                     }
                                 }
-                                else if (trimTagText is "/ul" or "/ol")
+                                else if (trimTagText is "/ul" or "/ol" or "/tr")
                                 {
                                     listIndexes.TryRemoveLast();
                                     if (listIndexes.Count == 0)
@@ -467,7 +467,10 @@ internal class HtmlSpans : List<Span>
                                 else if (trimTagText == "/li")
                                 {
                                 }
-
+                                else if (trimTagText is "/td" or "/th")
+                                {
+                                    text = text.Insert(i + 1 + leap, " | ");
+                                }
                                 else if (trimTagText is "/code")
                                 {
                                     text = text.Insert(i, " ");
@@ -698,6 +701,9 @@ internal class HtmlSpans : List<Span>
             case "ins":
                 span = new UnderlineSpan(tag.Start, index - 1);
                 Add(span);
+                break;
+            case "mark":
+                Add(new BackgroundColorSpan(tag.Start, index - 1, Microsoft.UI.Colors.Yellow.WithAlpha(0.5)));
                 break;
             case "font":
                 foreach (var attr in tag.Attributes)
