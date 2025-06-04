@@ -168,9 +168,9 @@ internal class B10_MarkdownText
         textBlock.FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable");
 
 
-        //var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md");
-        //item.TryAssurePulled();
-        //var markdown = item.RecallText();
+        var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md");
+        item.TryAssurePulled();
+        markdown = item.RecallText();
 
         textBlock.Markdown(markdown);
 
