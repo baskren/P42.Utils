@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A02_P42_Utils_CacheableNotifiablePropertyObject
+public class A03_LocalData
 {
     public class MyTestCacheableNotifiablePropertyObjectClass : global::P42.Utils.CacheableNotifiablePropertyObject
     {

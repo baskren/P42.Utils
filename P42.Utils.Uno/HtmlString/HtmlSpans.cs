@@ -419,8 +419,8 @@ internal class HtmlSpans : List<Span>
                             {
                                 if (trimTagText == "/p")
                                 {
-                                    if (!IsListNext(restText))
-                                    text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\">\n </font>");
+                                    //if (!IsListNext(restText))
+                                    //text = text.Insert(i + 1 + leap, $"\n<font size=\"1em\">\n </font>");
                                 }
                                 else if (trimTagText == "/blockquote")
                                     blockQuoteDepth--;

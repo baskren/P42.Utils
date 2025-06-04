@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A04_LocalData_UrlItem
+public class A05_LocalData_UrlItem
 {
     private static readonly Uri SourceUri = new Uri("https://raw.githubusercontent.com/cbracco/html5-test-page/refs/heads/master/index.html");
     private static readonly Uri RootUri = new Uri("https://raw.githubusercontent.com/cbracco/html5-test-page/refs/heads/master/");

@@ -10,7 +10,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A11_Timers
+public class A12_Timers
 {
     [TestMethod]
     public async Task A00_Interval()

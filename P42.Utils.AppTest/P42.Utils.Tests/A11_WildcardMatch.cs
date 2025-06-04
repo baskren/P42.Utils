@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A10_WildcardMatch
+public class A11_WildcardMatch
 {
 
     [TestMethod]

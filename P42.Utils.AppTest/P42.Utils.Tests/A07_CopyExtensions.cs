@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A06_CopyExtensions
+public class A07_CopyExtensions
 {
     public class Person : ICopiable<Person>
     {

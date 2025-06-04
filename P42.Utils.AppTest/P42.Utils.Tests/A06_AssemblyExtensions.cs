@@ -10,7 +10,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A05_AssemblyExtensions
+public class A06_AssemblyExtensions
 {
     [TestMethod]
     public void A00_Init()

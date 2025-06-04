@@ -351,6 +351,7 @@ internal partial class HtmlDependencyObject : DependencyObject
                 ? textBlock.FontSize
                 : textBlock.DefaultFontSize();
 
+        System.Diagnostics.Debug.WriteLine($"SetAndFormatText : [{textBlock.Text}] [{newSpansGiven?.UnmarkedText}] [{newSpansGiven?.Count ?? 0}] Spans");
         
         string newText;
         HtmlSpans oldSpans;
@@ -433,11 +434,15 @@ internal partial class HtmlDependencyObject : DependencyObject
 
         for (var i = 0; i < newText.Length; i++)
         {
-            // Are we at the start of a double byte math Unicode character?
-            if (i + 1 < newText.Length && newText[i] == '\ud835' && newText[i + 1] >= '\udc00' && newText[i + 1] <= '\udeff')
+            // Are we at the start of a Unicode surrogate character?
+            if (i + 1 < newText.Length && newText[i]>= '\ud800' && newText[i]<='\udbff' && newText[i + 1] >= '\udc00' && newText[i + 1] <= '\udeff')
             {
-                metaFonts.Add(new MetaFont(mathMetaFont));
-                metaFonts.Add(new MetaFont(mathMetaFont));  // there are two because we're using a double byte Unicode character
+                var font = newText[i] == '\ud835'
+                    ? mathMetaFont
+                    : baseMetaFont;
+
+                metaFonts.Add(new MetaFont(font));
+                metaFonts.Add(new MetaFont(font));  // there are two because we're using a double byte Unicode character
                 i++;
             }
             else
@@ -517,6 +522,7 @@ internal partial class HtmlDependencyObject : DependencyObject
 
         #region Convert MetaFonts to InLines
         // run through MetaFonts to see if we need to set new Font attributes
+
         var lastMetaFont = baseMetaFont;
         var startIndex = 0;
         var lastFontWeight = lastMetaFont.FontWeight;
@@ -527,13 +533,15 @@ internal partial class HtmlDependencyObject : DependencyObject
                 continue;
 
             // we are at the start of a new span
-            if (i > 0) // && lastMetaFont != baseMetaFont)
+            if (i > 0) //&& lastMetaFont != baseMetaFont)
                 AddInline(textBlock, lastMetaFont, newText, startIndex, i - startIndex);
             lastMetaFont = metaFont;
             lastFontWeight = lastMetaFont.FontWeight;
             startIndex = i;
         }
         AddInline(textBlock, lastMetaFont, newText, startIndex, newText.Length - startIndex);
+
+        //AddInline(textBlock, lastMetaFont, lastMetaFont.Family.Source, startIndex+newText.Length, lastMetaFont.Family.Source.Length);
         #endregion
 
     }

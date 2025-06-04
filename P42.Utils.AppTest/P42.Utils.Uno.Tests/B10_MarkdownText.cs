@@ -20,6 +20,8 @@ internal class B10_MarkdownText
             TextWrapping = TextWrapping.WrapWholeWords,
 
         };
+
+
         var markdown = """
             # h1 Heading 8-)
             ## h2 Heading
@@ -161,8 +163,21 @@ internal class B10_MarkdownText
 
             
             """;
+        
+
+        textBlock.FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Variable");
+
+
+        //var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md");
+        //item.TryAssurePulled();
+        //var markdown = item.RecallText();
 
         textBlock.Markdown(markdown);
+
+        //var html = "<p>😎</p>";
+        //textBlock.Html(html);
+
+        //textBlock.Text = $"[{textBlock.FontFamily.Source}]<hr /><p><strong>Advertisement 😃</strong></p><ul><li>\r\n<font size=\"0.5em\">\r\n </font><sp> <sp> • <sp><strong><a href=\"https://nodeca.github.io/pica/demo/\">pica</a></strong> - high quality and fast imageresize in browser.</li><li>\r\n<font size=\"0.5em\">\r\n </font><sp> <sp> • <sp><strong><a href=\"https://github.com/nodeca/babelfish/\">babelfish</a></strong> - developer friendlyi18n with plurals support and easy syntax.</li></ul>\r\n<font size=\"1em\">\r\n </font><p>You will like those projects!</p>\r\n<font size=\"1em\">\r\n </font><hr /><p>😎</p>\r\n<font size=\"1em\">\r\n </font><h1 id=\"h1-heading-x\">h1 Heading x 😎</h1><font size=\"0.5em\">";
 
         UnitTestsUIContentHelper.Content = new ScrollViewer()
         {

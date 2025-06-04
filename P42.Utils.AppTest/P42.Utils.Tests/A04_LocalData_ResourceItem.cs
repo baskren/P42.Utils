@@ -13,7 +13,7 @@ using Uno.Foundation;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A03_LocalData_ResourceItem
+public class A04_LocalData_ResourceItem
 {
     private const string ResourceId = ".Resources.TextFile1.txt";
     private const string ExpectedContent = "THIS IS A TEXT FILE\r\n";

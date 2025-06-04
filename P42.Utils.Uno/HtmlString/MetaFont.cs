@@ -76,7 +76,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
             return false;
         if (Baseline != other.Baseline)
             return false;
-        if (ReferenceEquals(Action, other.Action))
+        if (!ReferenceEquals(Action, other.Action))
             return false;
         if (TextColor != other.TextColor)
             return false;

@@ -605,7 +605,8 @@ public abstract partial class LocalData
 
         internal static TagItem InternalGet(string tag, string folderPath, Assembly? assembly = null) // `Assembly? assembly = null` is here to facility Clear() being applied to everything.
         {
-            tag = CleanKey(tag);
+            if (!string.IsNullOrEmpty(tag))
+                tag = CleanKey(tag);
             var rootPath = FullPathForFolderAndAssembly(folderPath, assembly);
             if (!DirectoryExtensions.TryGetOrCreateDirectory(rootPath, out var rootDirectory))
                 throw new Exception($"Cannot create folder [{rootPath}] for P42.Utils.LocalData");
@@ -1146,26 +1147,21 @@ public abstract partial class LocalData
         
         if (!key.FullPath.StartsWith(StorePath))
             throw new Exception($"Key [{key.FullPath}] does not start with P42.Utils.LocalData StorePath");
-        
-        var parts = key.FullPath.Split(['/','\\'], StringSplitOptions.RemoveEmptyEntries);
-        var parentPath = key.FullPath[..^parts.Last().Length];
-        var parentFolder = new DirectoryInfo(parentPath);
-        if (!parentFolder.Exists)
-            return false;
 
-        var filesDeleted = false;
         try
         {
-            var candidates = parentFolder
-                .GetFileSystemInfos(parts.Last())
-                .Where(c=> c.Exists && c.LastWriteTime <= dateTime)
-                .ToArray();
             Semaphore.Wait();
-            foreach (var child in candidates)
+            if (File.Exists(key.FullPath))
             {
-                child.Delete();
-                filesDeleted = true;
+                File.Delete(key.FullPath);
+                return true;
             }
+            else if (Directory.Exists(key.FullPath))
+            {
+                Directory.Delete(key.FullPath, true);
+                return true;
+            }
+            return false;
         }
         catch (Exception ex)
         {
@@ -1177,7 +1173,7 @@ public abstract partial class LocalData
             Semaphore.Release();
         }
 
-        return filesDeleted;
+
     }
 
     #endregion

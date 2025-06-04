@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A09_StringExtensions
+public class A10_StringExtensions
 {
     const string text = "This is my text:\n  n•n•n = n³";
 

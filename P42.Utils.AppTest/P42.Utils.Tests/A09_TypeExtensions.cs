@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A08_TypeExtensions
+public class A09_TypeExtensions
 {
     public class Person
     {

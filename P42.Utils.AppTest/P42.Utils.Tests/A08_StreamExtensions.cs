@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-public class A07_StreamExtensions
+public class A08_StreamExtensions
 {
     private const string ResourceId = ".Resources.TextFile1.txt";
     private const string ExpectedContent = "THIS IS A TEXT FILE\r\n";
