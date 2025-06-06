@@ -112,7 +112,7 @@ public record TestCase
                             }
 
                             sw.Start();
-                            var initializeReturn = testClassInfo.Initialize?.Invoke(instance, Array.Empty<object>());
+                            var initializeReturn = testClassInfo.Initialize?.Method.Invoke(instance, Array.Empty<object>());
                             if (initializeReturn is Task initializeReturnTask)
                                 await initializeReturnTask;
 
@@ -148,7 +148,7 @@ public record TestCase
 
                     sw.Start();
 
-                    var initializeReturn = testClassInfo.Initialize?.Invoke(instance, Array.Empty<object>());
+                    var initializeReturn = testClassInfo.Initialize?.Method.Invoke(instance, Array.Empty<object>());
                     if (initializeReturn is Task initializeReturnTask)
                         await initializeReturnTask;
 
@@ -245,7 +245,7 @@ public record TestCase
         {
             try
             {
-                await WaitResult(testClassInfo.Cleanup?.Invoke(instance, Array.Empty<object>()) ?? new object(), "cleanup", CancellationToken.None);
+                await WaitResult(testClassInfo.Cleanup?.Method.Invoke(instance, Array.Empty<object>()) ?? new object(), "cleanup", CancellationToken.None);
             }
             catch (Exception e)
             {

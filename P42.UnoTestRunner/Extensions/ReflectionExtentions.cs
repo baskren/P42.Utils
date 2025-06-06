@@ -9,14 +9,23 @@ namespace P42.UnoTestRunner;
 
 static class ReflectionExtentions
 {
-    public static MethodInfo[] GetMethodsWithAttribute(this Type type, Type attributeType)
+    public static List<MethodInfo> GetMethodsWithAttribute(this Type type, Type attributeType)
         => (
             from method in type.GetMethods()
             where method.GetCustomAttribute(attributeType) != null
             select method
-        ).ToArray();
+        ).ToList();
 
-    public static MethodInfo[] GetMethodsWithAttribute<T>(this Type type)
+    public static List<MethodInfo> GetMethodsWithAttribute<T>(this Type type)
         => GetMethodsWithAttribute(type, typeof(T));
 
+    public static List<Type> GetTypesWithAttribute(this Assembly assembly, Type attributeType)
+        =>
+        (from type in assembly.GetTypes()
+         where type.GetCustomAttribute(attributeType) != null
+         select type)
+        .ToList();
+
+    public static List<Type> GetTypesWithAttribute<T>(this Assembly asm)
+        => GetTypesWithAttribute((Assembly)asm, typeof(T));
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.Reflection.Metadata.Ecma335.MethodBodyStreamEncoder;
 
 namespace P42.UnoTestRunner;
 
@@ -132,4 +133,24 @@ public record UnitTestMethodInfo
 
     public override string ToString()
         => Name;
+
+    public bool IsSelectedByDefault()
+    {
+        if (Method.HasAttribute<SelectedByDefaultAttribute>())                        
+            return true;
+
+        if (Method.HasAttribute<OnlyExplicitlySelectableAttribute>())
+            return false;
+
+        var parentUnitTestClassInfo = TestClassInfo;
+        var parentUnitTestAssemblyInfo = parentUnitTestClassInfo.AssemblyInfo;
+
+        var asmDefaultSelected = parentUnitTestAssemblyInfo.Assembly.HasAttribute<SelectedByDefaultAttribute>();
+        var classSelected = parentUnitTestClassInfo.Type.HasAttribute<SelectedByDefaultAttribute>();
+        classSelected |=
+            asmDefaultSelected && !parentUnitTestClassInfo.Type.HasAttribute<SelectedByDefaultAttribute>();
+
+        return classSelected;
+
+    }
 }

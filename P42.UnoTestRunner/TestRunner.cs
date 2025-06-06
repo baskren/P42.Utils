@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -28,61 +29,13 @@ public static class TestRunner
     }
 
     #region Find Tests
-    public static Dictionary<Assembly, Dictionary<UnitTestClassInfo, IEnumerable<UnitTestMethodInfo>>> GetTestTree(string searchText = "")
-    {
-        var result = new Dictionary<Assembly, Dictionary<UnitTestClassInfo, IEnumerable<UnitTestMethodInfo>>>();
 
-        foreach (var testAssembly in GetTestAssemblies())
-        {
-            foreach (var testClass in GetTestClasses(testAssembly))
-            {
-                var testMethods = GetTestMethods(testClass);
+    public static List<UnitTestAssemblyInfo> GetTestTree()
+        => AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => a.Types().Any(t => t.HasAttribute<TestClassAttribute>()))
+            .Select(a => new UnitTestAssemblyInfo(a)).ToList();
 
-                if (!string.IsNullOrWhiteSpace(searchText))
-                    if (!testClass.TestClassName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                        testMethods = testMethods.Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-
-                if (!testMethods.Any())
-                    continue;
-
-                if (!result.ContainsKey(testAssembly))
-                    result[testAssembly] = [];
-
-                result[testAssembly][testClass] = testMethods;
-
-            }
-        }
-
-        return result;
-    }
-
-    public static IEnumerable<Assembly> GetTestAssemblies()
-        => AppDomain.CurrentDomain.GetAssemblies();
-            //.Where(a => a.GetName().Name!.EndsWith("tests", StringComparison.OrdinalIgnoreCase))
-            //.OrderBy(a => a.FullName);
-
-    public static IEnumerable<UnitTestClassInfo> GetTestClasses(Assembly asm)
-    {
-        try
-        {
-            var testTypes = asm.GetTypes()
-                .Where(t => t.GetCustomAttribute<TestClassAttribute>() != null)
-                .OrderBy(t => t.Name).ToArray();
-
-            return testTypes.Select(t => new UnitTestClassInfo(t));
-        }
-        catch (Exception)
-        {
-            return Enumerable.Empty<UnitTestClassInfo>();
-        }
-    }
-
-    public static IEnumerable<UnitTestMethodInfo> GetTestMethods(UnitTestClassInfo testClass)
-        => testClass.Tests
-            .Select(t => new UnitTestMethodInfo(testClass, t))
-            .ToArray();
     #endregion
-
 
 
     #region Execute Tests
@@ -97,66 +50,65 @@ public static class TestRunner
         return run;
     }
 
-    internal static async Task ExecuteTestsAsync(
-        this Dictionary<Assembly, Dictionary<UnitTestClassInfo, IEnumerable<UnitTestMethodInfo>>> testTree, 
-        TestRun run)
-    {
-        foreach (var asm in testTree.Keys)
-        {
-            foreach (var unitClassKvp in testTree[asm])
-            {
-                if (run.CancellationToken.IsCancellationRequested)
-                    return;
-                await unitClassKvp.Key.ExecuteTestsAsync(run);
-            }
-        }
-
-    }
-
     internal static async Task ExecuteRequestedTestsAsync(this IEnumerable<UnitTestMethodInfo> requestedTests, TestRun run)
     {
         var requestedTestMethods = requestedTests.ToArray();
         var testTree = GetTestTree();
-        foreach (var testAssembly in testTree.Keys)
+
+        for (int a = testTree.Count - 1; a >= 0; a--) 
         {
-            var testClasses = testTree[testAssembly];
-            foreach (var testClass in testClasses.Keys)
+            var utAsmInfo = testTree[a];
+            for (int c = utAsmInfo.Count -1; c >= 0; c--)
             {
-                var testMethods = testClasses[testClass].ToList();
-                for (int i = testMethods.Count - 1; i >= 0; i--)
+                var utClassInfo = utAsmInfo[c];
+                for (int m = utClassInfo.Count - 1; m >= 0; m--)
                 {
-                    var testMethod = testMethods[i];
+                    var testMethod = utClassInfo[m];
                     if (requestedTestMethods.Any(rm => rm.Method == testMethod.Method))
                         continue;
-                    testMethods.RemoveAt(i);
+                    utClassInfo.RemoveAt(m);
                 }
 
-                if (testMethods.Count == 0)
-                    testClasses.Remove(testClass);
-                else
-                    testClasses[testClass] = testMethods;
+                if (utClassInfo.Count == 0)
+                    utAsmInfo.Remove(utClassInfo);
             }
 
-            if (testTree[testAssembly].Count == 0)
-                testTree.Remove(testAssembly);
+            if (utAsmInfo.Count == 0)
+                testTree.Remove(utAsmInfo);
         }
 
         await testTree.ExecuteTestsAsync(run);
     }
 
 
+    internal static async Task ExecuteTestsAsync(this List<UnitTestAssemblyInfo> testTree, TestRun run)
+    {
+        foreach (var utAsmInfo in testTree)
+        {
+            run.ResultLogBuilder.AppendLine($"======[{utAsmInfo.Assembly.GetName().Name}]======");
+            foreach (var utClassInfo in utAsmInfo)
+            {
+                if (run.CancellationToken.IsCancellationRequested)
+                    return;
+                await utClassInfo.ExecuteTestsAsync(run);
+            }
+        }
+
+    }
+
     internal static async Task ExecuteTestsAsync(this UnitTestClassInfo unitClass, TestRun run)
     {
-        run.ResultLogBuilder.AppendLine($"[{unitClass.TestClassName}]");
-        foreach (var testMethod in GetTestMethods(unitClass))
+        run.ResultLogBuilder.AppendLine($"------ {unitClass.TestClassName} ------");
+        foreach (var testMethod in unitClass)
+        {
+            if (run.CancellationToken.IsCancellationRequested)
+                return;
             await testMethod.ExecuteTestAsync(run);
+        }
     }
 
     internal static async Task ExecuteTestAsync(this UnitTestMethodInfo testMethod, TestRun run)
     {
-        if (run.CancellationToken.IsCancellationRequested)
-            return;
-
         if (testMethod.IsIgnored(out var ignoreMessage))
         {
             run.Ignored++;

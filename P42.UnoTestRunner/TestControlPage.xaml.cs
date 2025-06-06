@@ -18,6 +18,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using AsyncAwaitBestPractices;
+using Uno.Extensions;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -77,6 +78,7 @@ public sealed partial class TestControlPage : Page
     TestRun? TestRun;
     ConsoleOutputRedirector? _consoleOutputRedirector;
     public ConsoleOutputRedirector ConsoleOutputRedirector => _consoleOutputRedirector ??= new();
+    List<TreeViewNode> LastSelectedNodes = [];
     #endregion
 
 
@@ -87,12 +89,22 @@ public sealed partial class TestControlPage : Page
 
         var testTree = TestRunner.GetTestTree();
 
-        if (testTree.Keys.Count == 0)
+        if (testTree.Count == 0)
             return;
 
+        /*
+        var nodeTree = testTree.Count == 1
+            ? testTree[0].CreateTreeNode()
+            : testTree.CreateTreeNode();
+        */
+
         var nodeTree = testTree.CreateTreeNode();
+
         foreach (var rootNode in nodeTree.Children)
             testsTreeView.RootNodes.Add(rootNode);
+
+        LastSelectedNodes = nodeTree.SelectedByDefault();
+        testsTreeView.SelectedNodes.AddRange(LastSelectedNodes);
 
         testsTreeView.SelectionChanged += TestsTreeView_SelectionChanged;
 
@@ -103,10 +115,69 @@ public sealed partial class TestControlPage : Page
     {
         ConsoleOutputRedirector.ContentChanged += OnConsoleContentChanged;
         ConsoleOutputRedirector.Start();
+        stopStartTestButton.IsEnabled = testsTreeView.SelectedNodes.Any();
     }
 
     private void TestsTreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
-        => stopStartTestButton.IsEnabled = testsTreeView.SelectedNodes.Any();
+    {
+        List<TreeViewNode> lastSelectedNodes = [..LastSelectedNodes];
+
+        //System.Diagnostics.Debug.WriteLine($"Added:[{string.Join(", ", args.AddedItems.Select(i => ((TreeViewNode)i).Content))}]  Removed:[{string.Join(", ", args.RemovedItems.Select(i => ((TreeViewNode)i).Content))}]  SelectedNode:[{sender.SelectedNode.Content}]");
+        stopStartTestButton.IsEnabled = testsTreeView.SelectedNodes.Any();
+
+        List<TreeViewNode> toRemove = [];
+        if (args.AddedItems.Count > 1)
+        {
+            var selectedNode = args.AddedItems[0] as TreeViewNode;
+            for (int i = 1; i < args.AddedItems.Count; i++)
+            {
+                var item = args.AddedItems[i];
+                if (item is not TreeViewNode node)
+                    continue;
+                if (node.Content is UnitTestMethodInfo m &&
+                    m.Method is MethodInfo method &&
+                    method.HasAttribute(typeof(OnlyExplicitlySelectableAttribute))
+                    )
+                    toRemove.Add(node);
+                if (node.Content is UnitTestClassInfo c &&
+                    c.Type.HasAttribute(typeof(OnlyExplicitlySelectableAttribute)) )
+                {
+                    var deletes = node.Children.Where(node => node != selectedNode && !lastSelectedNodes.Contains(node));
+                    toRemove.AddRange( deletes );
+                }
+            }
+        }
+
+        List<TreeViewNode> toReturn = [];
+        if (args.RemovedItems.Count > 1)
+        {
+            var deselectedNode = args.RemovedItems[0] as TreeViewNode;
+            for (int i = 1; i < args.RemovedItems.Count; i++)
+            {
+                var item = args.RemovedItems[i];
+                if (item is not TreeViewNode node)
+                    continue;
+                if (node.Content is UnitTestMethodInfo m &&
+                    m.Method is MethodInfo method &&
+                    method.HasAttribute(typeof(OnlyExplicitlyUnselectableAttribute))
+                    )
+                    toReturn.Add(node);
+                if (node.Content is UnitTestClassInfo c &&
+                    c.Type.HasAttribute(typeof(OnlyExplicitlyUnselectableAttribute)))
+                {
+                    var adds = node.Children.Where(node => node != deselectedNode && lastSelectedNodes.Contains(node));
+                    toReturn.AddRange(adds);
+                }
+            }
+        }
+
+        foreach (var node in toRemove)
+            sender.SelectedNodes.Remove(node);
+        foreach (var node in toReturn)
+            sender.SelectedNodes.Add(node);
+
+        LastSelectedNodes = [.. sender.SelectedNodes];
+    }
     
 
     private void OnConsoleContentChanged(object? sender, string e)

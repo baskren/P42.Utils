@@ -193,4 +193,22 @@ internal static class ReflectionExtensions
         return true;
     }
 
+    public static bool HasAttribute(this Type type, Type attribute)
+        => type.CustomAttributes.Any(a => a.AttributeType == attribute);
+
+    public static bool HasAttribute<T>(this Type type)
+        => type.HasAttribute(typeof(T));
+    
+    public static bool HasAttribute(this MethodInfo method, Type attribute)
+        => method.CustomAttributes.Any(a => a.AttributeType == attribute);
+
+    public static bool HasAttribute<T>(this MethodInfo method)
+        => method.HasAttribute(typeof(T));
+
+    public static bool HasAttribute(this Assembly asm, Type attribute)
+        => asm.CustomAttributes.Any(a => a.AttributeType == attribute);
+
+    public static bool HasAttribute<T>(this Assembly asm)
+        => asm.HasAttribute(typeof(T));
+
 }

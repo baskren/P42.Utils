@@ -12,6 +12,8 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
+[SelectedByDefault]
+[OnlyExplicitlyUnselectable]
 public class A00_PlatformInitialization
 {
     static bool hasBeenRunBefore;
