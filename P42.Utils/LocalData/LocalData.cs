@@ -72,10 +72,7 @@ public abstract partial class LocalData
             throw new Exception($"Cannot get PlatformFolder.FullName [{PlatformFolder}] for P42.Utils.LocalData");
 
         var asm = AssemblyExtensions.GetApplicationAssembly();
-        var version = asm.GetName().Version;
-        if (version is null)
-            throw new Exception("Cannot get Version for P42.Utils.LocalData");
-
+        var version = asm.GetName().Version ?? throw new Exception("Cannot get Version for P42.Utils.LocalData");
         var versionFilePath = Path.Combine(platformFolder.FullName, "P42.Utils.LocalData.Version.txt");
 
         if (!DirectoryExtensions.TryGetOrCreateDirectory(StorePath, out var storeFolder))
