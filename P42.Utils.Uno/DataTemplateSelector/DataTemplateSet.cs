@@ -49,6 +49,9 @@ namespace P42.Utils.Uno
                 {
                     if (TemplateType is null)
                         return null;
+
+                    //var constructor = TemplateType.GetPublicConstructorInfo();
+                    //return (UIElement)constructor?.Invoke(null);
                     return (UIElement)Activator.CreateInstance(TemplateType);
                 };
         }

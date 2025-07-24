@@ -6,6 +6,10 @@ using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Input;
 
+#if BROWSERWASM
+using Uno.Foundation;
+#endif
+
 namespace P42.Utils.Uno
 {
     public static class ListViewExtensions
@@ -49,6 +53,7 @@ namespace P42.Utils.Uno
 			}
 			return null;
 		}
+
 
 		public static Point GetOffsetForItem(this ListView listView, object item)
 		{
@@ -95,22 +100,25 @@ namespace P42.Utils.Uno
 		
 		public async static Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
 		{
+            /*
 #if __WASM__
 			if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
             {
+
                 var id = selectorItem.GetHtmlAttribute("id");
                 //System.Diagnostics.Debug.WriteLine("BcGroupView.Edit html.id = " + id);
 				global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("document.getElementById('"+id+"').scrollIntoView(" +(toPosition != ScrollToPosition.End).ToString().ToLower()+ ");");
             }
 
 #else
+            */
 			await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
-#endif
+//#endif
 			await Task.Delay(5);
 		}
 		
 
-#if !__WASM__
+//#if !__WASM__
 		static bool InternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 		{
 			if (GetScrollViewer(list) is ScrollViewer viewer)
@@ -243,6 +251,6 @@ namespace P42.Utils.Uno
 			return null;
 		}
 		*/
-#endif
+//#endif
 	}
 }

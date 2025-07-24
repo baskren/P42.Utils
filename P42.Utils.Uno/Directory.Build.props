@@ -40,12 +40,12 @@
     <Message Text="======================== NOT WINDOWS ========================= " Condition=" !$(TargetFramework.Contains('windows')) " Importance="high" />
     <Message Text="========================== DESKTOP =========================== " Condition=" $(TargetFramework.Contains('desktop')) " Importance="high" />
     <Message Text="=========================== WASM ============================= " Condition=" $(TargetFramework.ToLower().Contains('wasm')) " Importance="high" />
-    <Message Text="=========================== .NET ============================= " Condition=" $(TargetFramework.ToLower().Equals('net8.0')) " Importance="high" />
+    <Message Text="=========================== .NET ============================= " Condition=" $(TargetFramework.ToLower().Equals('net9.0')) " Importance="high" />
     <Message Text="========================== ANDROID =========================== " Condition=" $(TargetFramework.Contains('android')) " Importance="high" />
     <Message Text="============================ IOS ============================= " Condition=" $(TargetFramework.Contains('ios')) " Importance="high" />
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
-  	<Message Text="  DotNetVersion:[net8.0]" Importance="high" />
+  	<Message Text="  DotNetVersion:[net9.0]" Importance="high" />
   	<Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
   	<Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
   	<Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />

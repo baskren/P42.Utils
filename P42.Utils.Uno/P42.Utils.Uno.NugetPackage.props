@@ -35,17 +35,5 @@
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
-  <!-- NUGET WINDOWS ASSETS WORKAROUND -->
-  <!--
-  <ItemGroup>
-    <None Include="Assets/**/*">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/any/net8.0-windows10.0.19041/$(PackageId)/Assets</PackagePath>
-      <BuildAction>Content</BuildAction>
-      <IncludeInPackage>true</IncludeInPackage>
-    </None>
-  </ItemGroup>
--->
-
 
 </Project>

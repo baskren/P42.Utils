@@ -1,5 +1,7 @@
-﻿#if __ANDROID__
+#if __ANDROID__
 using Java.Interop;
+#elif __IOS__ 
+using UIKit;
 #endif
 using System;
 using System.Collections.Generic;
@@ -23,83 +25,12 @@ namespace P42.Utils.Uno
         public static bool HasMaxHeight(this FrameworkElement element) => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
 
 
-#if __ANDROID__
 
-        static double _scale = -1;
-        static double DisplayScale
-        {
-            get
-            {
-                if (_scale > 0)
-                    return _scale;
-                using var displayMetrics = new Android.Util.DisplayMetrics();
-                using var service = global::Uno.UI.ContextHelper.Current.GetSystemService(Android.Content.Context.WindowService);
-                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
-                var display = windowManager?.DefaultDisplay;
-#pragma warning disable CA1422 // Validate platform compatibility
-                display?.GetRealMetrics(displayMetrics);
-#pragma warning restore CA1422 // Validate platform compatibility
-                _scale = (double)displayMetrics?.Density;
-                return _scale;
-            }
-        }
-
-        public static Rect GetBounds(this UIElement element)
-        {
-            if (element is Android.Views.View view)
-            {
-                int[] nativeLocation = new int[2];
-                //view.GetLocationOnScreen(nativeLocation);
-                view.GetLocationInWindow(nativeLocation);
-                var x = nativeLocation[0] / DisplayScale;
-                var y = nativeLocation[1] / DisplayScale;
-
-                /*
-                var rect = new Android.Graphics.Rect();
-                var window = ((Android.App.Activity)view.Context).Window;
-                window.DecorView.GetWindowVisibleDisplayFrame(rect);
-
-                using var displayMetrics = new Android.Util.DisplayMetrics();
-
-                using var service = view.Context.GetSystemService(Android.Content.Context.WindowService);
-                using var windowManager = service?.JavaCast<Android.Views.IWindowManager>();
-
-                windowManager?.DefaultDisplay?.GetRealMetrics(displayMetrics);
-
-                var statusBarHeight = rect.Top / displayMetrics?.Density ?? 1;
-
-                x -= statusBarHeight;
-                */
-                return new Rect(x, y, element.ActualSize.X, element.ActualSize.Y);
-            }
-            return WinUIGetBounds(element);
-        }
-
-#elif __IOS__ || __MACOS__
-
-        public static Rect GetBounds(this FrameworkElement element)
-        {
-
-            //var ttv = element.TransformToVisual(Platform.Window.Content);
-            //var location = ttv.TransformPoint(new Point(0, 0));
-            var rect = element.ConvertRectToView(element.Bounds, null);
-            return new Rect(rect.X, rect.Y, rect.Width,rect.Height);
-        }
-
-        public static Rect GetBounds(this UIElement element)
-        {
-            var rect = element.ConvertRectToView(element.Bounds, null);
-            return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
-        }
-
-
-#else
         public static Rect GetBounds(this FrameworkElement element)
             => WinUIGetBounds(element);
 
         public static Rect GetBounds(this UIElement element)
             => WinUIGetBounds(element);
-#endif
 
         static Rect WinUIGetBounds(this FrameworkElement element)
         {

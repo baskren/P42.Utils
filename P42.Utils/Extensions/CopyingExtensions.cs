@@ -33,7 +33,7 @@ namespace P42.Utils
             //	return source;
             //return (T)Activator.CreateInstance(typeof(T), new object[] { source });
             //var result = new T();
-            var result = (T)Activator.CreateInstance(typeof(T));
+            var result = Activator.CreateInstance<T>();
             result.PropertiesFrom(source);
             return result;
         }

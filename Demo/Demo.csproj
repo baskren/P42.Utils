@@ -1,18 +1,18 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>
-      net8.0-android;
-      net8.0-ios;
-      net8.0-maccatalyst;
+      net9.0-android;
+      net9.0-ios;
+      net9.0-maccatalyst;
     </TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
       $(TargetFrameworks);
-      net8.0-windows10.0.19041
+      net9.0-windows10.0.26100
     </TargetFrameworks>
     <TargetFrameworks>
       $(TargetFrameworks);
-      net8.0-browserwasm;
-      net8.0-desktop;
+      net9.0-browserwasm;
+      net9.0-desktop;
     </TargetFrameworks>
 
     <OutputType>Exe</OutputType>
@@ -39,12 +39,9 @@
       the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
       must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
     -->
-    <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
     <CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
-    <SkiaSharpVersion>3.0.0-preview.5.4</SkiaSharpVersion>
-        <Platforms>AnyCPU;ARM64;X86;X64</Platforms>
-
+    
 
     <!--
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
@@ -57,6 +54,7 @@
       MediaElement;
       Skia;
       Svg;
+      SkiaRenderer
     </UnoFeatures>
     <PackageCertificateThumbprint>6E2D2623C87282F3FCC413CBCF5AE7E5FD57845A</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>Demo_TemporaryKey.pfx</PackageCertificateKeyFile>
