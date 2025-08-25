@@ -401,3 +401,4 @@ FodyWeavers.xsd
 solution-config.props
 # Publish Profiles
 !**/Properties/PublishProfiles/*.pubxml
+.idea/.idea.P42.Utils/.idea
