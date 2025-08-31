@@ -64,7 +64,7 @@ namespace P42.Utils
             if (s.Length <= count || count < 0)
                 return s;
             var result = s.Substring(s.Length - count);
-            System.Diagnostics.Debug.WriteLine("WARNING!!! HAD TO IMPLEMENT SubstringLast on [" + s + "]");
+            //System.Diagnostics.Debug.WriteLine("WARNING!!! HAD TO IMPLEMENT SubstringLast on [" + s + "]");
             return result;
         }
 

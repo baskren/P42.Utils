@@ -66,7 +66,7 @@ namespace P42.Utils
                 var destPath = Path.Combine(FolderPath(folderName), destFileName);
                 if (System.IO.File.Exists(destPath) && !_downloadTasks.ContainsKey(destPath))
                 {
-                    System.Diagnostics.Debug.WriteLine("DownloadCache: [" + destPath + "] exists as [" + destFileName + "]");
+                    //System.Diagnostics.Debug.WriteLine("DownloadCache: [" + destPath + "] exists as [" + destFileName + "]");
                     return destPath;
                 }
 
