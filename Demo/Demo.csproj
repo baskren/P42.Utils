@@ -54,7 +54,6 @@
       MediaElement;
       Skia;
       Svg;
-      SkiaRenderer
     </UnoFeatures>
     <PackageCertificateThumbprint>6E2D2623C87282F3FCC413CBCF5AE7E5FD57845A</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>Demo_TemporaryKey.pfx</PackageCertificateKeyFile>

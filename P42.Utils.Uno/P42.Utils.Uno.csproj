@@ -28,7 +28,6 @@
     -->
     
     <UnoFeatures>
-      SkiaRenderer;
     </UnoFeatures>
     
     <BuildInParallel>true</BuildInParallel>
