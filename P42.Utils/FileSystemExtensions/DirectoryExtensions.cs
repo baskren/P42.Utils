@@ -35,12 +35,12 @@ public static class DirectoryExtensions
     /// <exception cref="Exception"></exception>
     public static DirectoryInfo GetOrCreateDirectory(string fullPath, bool exceptLast = false)
     {
-        var dpath = exceptLast 
+        var dPath = exceptLast 
             ? Path.GetDirectoryName(fullPath) 
             : fullPath;
 
-        if (Directory.Exists(dpath))
-            return new DirectoryInfo(dpath);
+        if (Directory.Exists(dPath))
+            return new DirectoryInfo(dPath);
 
         var path = $"{Path.DirectorySeparatorChar}";
         var directoryInfo = new DirectoryInfo(path);
@@ -56,16 +56,20 @@ public static class DirectoryExtensions
         for (var i = 0; i < parts.Count;)
         {
             var part = parts[i];
-            if (part == ".")
-                parts.RemoveAt(i);
-            else if (part == ".." && i > 0)
+            switch (part)
             {
-                parts.RemoveAt(i);
-                parts.RemoveAt(i - 1);
-                i--;
+                case ".":
+                    parts.RemoveAt(i);
+                    break;
+                case ".." when i > 0:
+                    parts.RemoveAt(i);
+                    parts.RemoveAt(i - 1);
+                    i--;
+                    break;
+                default:
+                    i++;
+                    break;
             }
-            else
-                i++;
         }
 
         if (parts.Count > 0 && exceptLast)
@@ -90,7 +94,12 @@ public static class DirectoryExtensions
                 var isWatchOS = OperatingSystem.IsWatchOS();
                 var isWindows = OperatingSystem.IsWindows();
                 */
-                if (!OperatingSystem.IsWindows() || i != 0 || part.Length != 2 || !char.IsLetter(part[0]) || part[1] != ':')
+                if (!OperatingSystem.IsWindows() 
+                    | i != 0 
+                    || part.Length != 2 
+                    || !char.IsLetter(part[0]) 
+                    || part[1] != ':'
+                    )
                     throw new ArgumentException($"Illegal characters are not allowed. Part [{part}] of fullPath [{fullPath}] ", nameof(fullPath));
             }
             path = Path.Combine(path, part);
@@ -105,7 +114,7 @@ public static class DirectoryExtensions
     /// <summary>
     /// Return DirectoryInfo Info for path, creating if it doesn't exist
     /// </summary>
-    /// <param name="directoryInfo"></param>
+    /// <param name="info"></param>
     /// <param name="exceptLast"></param>
     /// <returns></returns>
     public static DirectoryInfo GetOrCreateDirectory(this FileSystemInfo info, bool exceptLast = false)
@@ -337,13 +346,13 @@ public static class DirectoryExtensions
     /// <returns>path to unpacked contents</returns>
     private static async Task<string> UnpackTgzAsync(string sourcePath, string? destPath = null, bool overwriteFiles = true)
     {
-        if (string.IsNullOrEmpty(destPath))
-        {
-            if (sourcePath.EndsWith(".tgz", StringComparison.OrdinalIgnoreCase))
-                destPath = sourcePath[..^".tgz".Length];
-            else
-                destPath = sourcePath + ".unpacked";
-        }
+        if (!string.IsNullOrEmpty(destPath))
+            return await UnTarGzPackageAsync(sourcePath, destPath);
+
+        if (sourcePath.EndsWith(".tgz", StringComparison.OrdinalIgnoreCase))
+            destPath = sourcePath[..^".tgz".Length];
+        else
+            destPath = sourcePath + ".unpacked";
 
         return await UnTarGzPackageAsync(sourcePath, destPath);
     }

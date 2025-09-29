@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Reflection;
 
 namespace P42.Utils;
@@ -14,6 +12,7 @@ public static class MethodExtensions
     /// <param name="methodName">Method Name</param>
     /// <param name="parameterTypes">Parameter Types</param>
     /// <returns></returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static MethodInfo? GetMethodInfo(this Type type, string methodName, Type[]? parameterTypes = null)
     {
         if (string.IsNullOrEmpty(methodName))
@@ -21,7 +20,7 @@ public static class MethodExtensions
             
         parameterTypes ??= [];
         MethodInfo? methodInfo = null;
-        Type? t = type;
+        var t = type;
         do
         {
             if (t.GetRuntimeMethods() is { } methods)
@@ -47,6 +46,7 @@ public static class MethodExtensions
     /// <param name="methodName">method name</param>
     /// <param name="result">result</param>
     /// <returns>true on success</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static bool TryCallMethod(this object obj, string methodName, out object? result)
         => TryCallMethod(obj.GetType(), methodName, null, out result);
     
@@ -58,6 +58,7 @@ public static class MethodExtensions
     /// <param name="parameters">arguments</param>
     /// <param name="result">result</param>
     /// <returns>true on success</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static bool TryCallMethod(this object obj, string methodName, object[]? parameters, out object? result)
     {
         result = null;

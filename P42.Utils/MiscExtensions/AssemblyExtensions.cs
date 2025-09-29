@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
@@ -13,17 +12,17 @@ public static class AssemblyExtensions
     private static DateTime WasmFakeDate = DateTime.Now;
     //private static readonly LocalData.TagItem WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
 
-    static AssemblyExtensions() 
+    static AssemblyExtensions()
     {
-        if (System.OperatingSystem.IsBrowser())
-        {
-            var WasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
+        if (!OperatingSystem.IsBrowser())
+            return;
 
-            if (WasmFakeDateItem.TryDeserialize<DateTime>(out var fakeDate))
-                WasmFakeDate = fakeDate;
-            else
-                WasmFakeDateItem.Serialize(WasmFakeDate);
-        }
+        var wasmFakeDateItem = LocalData.TagItem.Get(nameof(WasmFakeDate), nameof(AssemblyExtensions), Environment.Assembly);
+
+        if (wasmFakeDateItem.TryDeserialize<DateTime>(out var fakeDate))
+            WasmFakeDate = fakeDate;
+        else
+            wasmFakeDateItem.Serialize(WasmFakeDate);
     }
 
 
@@ -92,10 +91,7 @@ public static class AssemblyExtensions
             //System.Diagnostics.Debug.WriteLine($"{index++}: {asm.FullName} : {asm.Location} {asm.IsDynamic} {asm.EntryPoint} {asm.IsFullyTrusted}");
         }
         
-        if (_applicationAssembly is not null)
-            return _applicationAssembly;
-        
-        throw new NullReferenceException("Could not get application assembly.");
+        return _applicationAssembly ?? throw new NullReferenceException("Could not get application assembly.");
     }
 
     /// <summary>
@@ -118,6 +114,7 @@ public static class AssemblyExtensions
     /// Gets time at which assembly was built
     /// </summary>
     /// <param name="assembly"></param>
+    /// <param name="buildTime"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     public static bool TryGetBuildTime(this Assembly assembly, out DateTime buildTime)

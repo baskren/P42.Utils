@@ -41,7 +41,7 @@ public static class EmbeddedResourceExtensions
     /// <param name="assembly">optional, target assembly</param>
     /// <returns>true on success</returns>
     [Obsolete("Use Exists instead.", true)]
-    public static bool EmbeddedResourceExists(string resourceId, Assembly? assembly = null)
+    public static bool EmbeddedResourceExists(string resourceId, Assembly? assembly)
         => FindAssembly(resourceId, assembly) is not null;
     
     
@@ -172,11 +172,11 @@ public static class EmbeddedResourceExtensions
             EmbeddedResourceNames[assembly] = names;
 
             var nameB = names.FirstOrDefault(n => n.EndsWith(resourceIdTail));
-            if (!string.IsNullOrWhiteSpace (nameB))
-            {
-                if (assembly.GetManifestResourceStream(nameB) is { } stream)
-                    return new EmbeddedResourceHandle(stream, nameB, assembly);
-            }
+            if (string.IsNullOrWhiteSpace(nameB))
+                return null;
+
+            if (assembly.GetManifestResourceStream(nameB) is { } stream)
+                return new EmbeddedResourceHandle(stream, nameB, assembly);
 
             return null;
 
@@ -215,7 +215,7 @@ public static class EmbeddedResourceExtensions
     public static Assembly? FindAssembly(string resourceIdTail, Assembly? assembly = null)
     {
         var result = FindAssemblyResourceIdAndStream(resourceIdTail, assembly);
-        result?.DisposableStream?.Dispose();
+        result?.DisposableStream.Dispose();
         return result?.Assembly;
     }
 
@@ -228,7 +228,7 @@ public static class EmbeddedResourceExtensions
     public static string? FindResourceId(string resourceIdTail, Assembly? assembly = null)
     {
         var result = FindAssemblyResourceIdAndStream(resourceIdTail, assembly);
-        result?.DisposableStream?.Dispose();
+        result?.DisposableStream.Dispose();
         return result?.ResourceId;
     }
 

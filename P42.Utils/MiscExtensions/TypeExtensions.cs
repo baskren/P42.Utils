@@ -48,7 +48,7 @@ public static class TypeExtensions
         if (to.IsAssignableFrom(from))
             return true;
         
-        if (TypeMaps.ContainsKey(to) && TypeMaps[to].Contains(from))
+        if (TypeMaps.TryGetValue(to, out var value) && value.Contains(from))
             return true;
         
         var castable = from.GetMethods(BindingFlags.Public | BindingFlags.Static)

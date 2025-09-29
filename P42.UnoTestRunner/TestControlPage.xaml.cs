@@ -134,8 +134,7 @@ public sealed partial class TestControlPage : Page
                 var item = args.AddedItems[i];
                 if (item is not TreeViewNode node)
                     continue;
-                if (node.Content is UnitTestMethodInfo m &&
-                    m.Method is MethodInfo method &&
+                if (node.Content is UnitTestMethodInfo { Method: MethodInfo method } &&
                     method.HasAttribute(typeof(OnlyExplicitlySelectableAttribute))
                     )
                     toRemove.Add(node);
@@ -157,8 +156,7 @@ public sealed partial class TestControlPage : Page
                 var item = args.RemovedItems[i];
                 if (item is not TreeViewNode node)
                     continue;
-                if (node.Content is UnitTestMethodInfo m &&
-                    m.Method is MethodInfo method &&
+                if (node.Content is UnitTestMethodInfo { Method: MethodInfo method } &&
                     method.HasAttribute(typeof(OnlyExplicitlyUnselectableAttribute))
                     )
                     toReturn.Add(node);

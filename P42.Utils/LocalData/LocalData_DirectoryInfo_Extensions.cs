@@ -46,7 +46,7 @@ public static class LocalData_DirectoryInfo_Extensions
     /// <returns></returns>
     public static async Task<DirectoryInfo> AssureSourcedDirectoryAsync(this AsynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsDirectory)
+        if (item is { Exists: true, IsDirectory: true })
             return item.Directory();
 
         await item.ForcePullAsync();
@@ -60,7 +60,7 @@ public static class LocalData_DirectoryInfo_Extensions
     /// <returns></returns>
     public static DirectoryInfo AssureSourcedDirectory(this SynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsDirectory)
+        if (item is { Exists: true, IsDirectory: true })
             return item.Directory();
 
         item.ForcePull();

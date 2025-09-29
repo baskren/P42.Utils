@@ -56,7 +56,7 @@ public static class LocalData_StreamReader_Extensions
     /// <returns></returns>
     public static async Task<StreamReader> AssureSourcedStreamReaderAsync(this AsynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return StreamReader(item);
 
         await item.ForcePullAsync();
@@ -71,7 +71,7 @@ public static class LocalData_StreamReader_Extensions
     /// <returns></returns>
     public static StreamReader AssureSourcedStreamReader(this SynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return StreamReader(item);
 
         item.ForcePull();

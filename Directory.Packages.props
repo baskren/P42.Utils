@@ -18,7 +18,7 @@
     <PackageVersion Include="FluentAssertions" Version="8.2.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
     <PackageVersion Include="AsyncAwaitBestPractices" Version="9.0.0" />
-    
+
     <!-- UNO RUNTIME ENGINE -->
     <!--
     <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="1.33.0-dev.11" />
@@ -28,5 +28,11 @@
 
     <PackageVersion Include="P42.Utils" Version="1.2.0" />
     <PackageVersion Include="P42.Utils.Uno" Version="$(UnoVersion)" />
+
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="P42.NotifiableObject" Version="1.0.4" />
+    <PackageVersion Include="P42.Serilog.QuickLog" Version="1.0.9" />
+
+
   </ItemGroup>
 </Project>

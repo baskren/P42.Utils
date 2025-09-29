@@ -427,7 +427,7 @@ internal class HtmlSpans : List<Span>
                                 else if (trimTagText.StartsWith("/h") && char.IsDigit(trimTagText[2]))
                                 {
                                     var value = trimTagText[2] - 48;
-                                    if (value >= 0 && value <= 6)
+                                    if (value is >= 0 and <= 6)
                                     {
                                         var size = value switch
                                         {
@@ -498,7 +498,7 @@ internal class HtmlSpans : List<Span>
                                 listIndexes.Add(-1);
                             else if (trimTagText.StartsWith("ol"))
                             {
-                                if (trimTagText.IndexOf("start=") is int startArgIndex && startArgIndex > -1)
+                                if (trimTagText.IndexOf("start=") is int startArgIndex and > -1)
                                 {
                                     var argStart = startArgIndex + trimTagText.Substring(startArgIndex).IndexOf('"')+1;
                                     var length = trimTagText.Substring(argStart).IndexOf('"');

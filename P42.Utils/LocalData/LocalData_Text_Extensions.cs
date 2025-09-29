@@ -62,7 +62,7 @@ public static class LocalData_Text_Extensions
     /// <returns></returns>
     public static async Task<string> AssureSourcedTextAsync(this AsynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return RecallText(item);
 
         await item.ForcePullAsync();
@@ -77,7 +77,7 @@ public static class LocalData_Text_Extensions
     /// <returns></returns>
     public static string AssureSourcedText(this SynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return RecallText(item);
 
         item.ForcePullAsync();

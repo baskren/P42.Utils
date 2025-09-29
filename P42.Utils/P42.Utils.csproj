@@ -43,5 +43,9 @@
   	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils.Timers\P42.Utils.Timers.csproj" />
+  </ItemGroup>
+  
 
 </Project>

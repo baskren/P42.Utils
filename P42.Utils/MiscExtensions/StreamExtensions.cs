@@ -37,66 +37,66 @@ public static class StreamExtensions
     public static async Task<byte[]> ReadBytesAsync(this Stream stream)
     {
         var readBuffer = new byte[stream.CanSeek ? (stream.Length - stream.Position) : 4096];
-        int totalBytesRead = 0;
+        var totalBytesRead = 0;
         int num;
         while ((num = await stream.ReadAsync(readBuffer, totalBytesRead, readBuffer.Length - totalBytesRead)) > 0)
         {
             totalBytesRead += num;
-            if (totalBytesRead == readBuffer.Length)
-            {
-                var nextBytes = new byte[1];
-                if (await stream.ReadAsync(nextBytes, 0, 1) == 1)
-                {
-                    var array = new byte[readBuffer.Length * 2];
-                    Buffer.BlockCopy(readBuffer, 0, array, 0, readBuffer.Length);
-                    Buffer.SetByte(array, totalBytesRead, nextBytes[0]);
-                    readBuffer = array;
-                    totalBytesRead++;
-                }
-            }
+            if (totalBytesRead != readBuffer.Length)
+                continue;
+
+            var nextBytes = new byte[1];
+            if (await stream.ReadAsync(nextBytes, 0, 1) != 1)
+                continue;
+
+            var array = new byte[readBuffer.Length * 2];
+            Buffer.BlockCopy(readBuffer, 0, array, 0, readBuffer.Length);
+            Buffer.SetByte(array, totalBytesRead, nextBytes[0]);
+            readBuffer = array;
+            totalBytesRead++;
         }
 
         var array2 = readBuffer;
-        if (readBuffer.Length != totalBytesRead)
-        {
-            array2 = new byte[totalBytesRead];
-            Buffer.BlockCopy(readBuffer, 0, array2, 0, totalBytesRead);
-        }
+        if (readBuffer.Length == totalBytesRead)
+            return array2;
+
+        array2 = new byte[totalBytesRead];
+        Buffer.BlockCopy(readBuffer, 0, array2, 0, totalBytesRead);
 
         return array2;
     }
 
     public static byte[] ReadBytes(this Stream stream)
     {
-        if (stream.CanSeek && stream.Position == 0L && stream is MemoryStream memoryStream)
+        if (stream is { CanSeek: true, Position: 0L } and MemoryStream memoryStream)
             return memoryStream.ToArray();
 
         var array = new byte[stream.CanSeek ? (stream.Length - stream.Position) : 4096];
-        int num = 0;
+        var num = 0;
         int num2;
         while ((num2 = stream.Read(array, num, array.Length - num)) > 0)
         {
             num += num2;
-            if (num == array.Length)
-            {
-                int num3 = stream.ReadByte();
-                if (num3 != -1)
-                {
-                    var array2 = new byte[array.Length * 2];
-                    Buffer.BlockCopy(array, 0, array2, 0, array.Length);
-                    Buffer.SetByte(array2, num, (byte)num3);
-                    array = array2;
-                    num++;
-                }
-            }
+            if (num != array.Length)
+                continue;
+
+            var num3 = stream.ReadByte();
+            if (num3 == -1)
+                continue;
+
+            var array2 = new byte[array.Length * 2];
+            Buffer.BlockCopy(array, 0, array2, 0, array.Length);
+            Buffer.SetByte(array2, num, (byte)num3);
+            array = array2;
+            num++;
         }
 
         var array3 = array;
-        if (array.Length != num)
-        {
-            array3 = new byte[num];
-            Buffer.BlockCopy(array, 0, array3, 0, num);
-        }
+        if (array.Length == num)
+            return array3;
+
+        array3 = new byte[num];
+        Buffer.BlockCopy(array, 0, array3, 0, num);
 
         return array3;
     }
@@ -139,7 +139,7 @@ public static class StreamExtensions
 
     //
     // Summary:
-    //     Warning, if stream cannot be seek, will read from current position! Warning,
+    //     Warning: if app cannot seek the stream, will read from current position! Warning,
     //     stream position will not been restored!
     //
     // Parameters:
@@ -187,10 +187,6 @@ public static class StreamExtensions
     // Returns:
     //     A seekable stream (original if seekable, a MemoryStream copy of stream else)
     public static Stream ToSeekable(this Stream stream)
-    {
-        if (!stream.CanSeek)
-            return stream.ToMemoryStream();
-
-        return stream;
-    }
+        => !stream.CanSeek ? stream.ToMemoryStream() : stream;
+    
 }

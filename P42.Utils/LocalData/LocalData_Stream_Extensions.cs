@@ -61,7 +61,7 @@ public static class LocalData_Stream_Extensions
     /// <returns></returns>
     public static async Task<Stream> AssureSourcedStreamAsync(this AsynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return item.Stream(FileMode.Open);
 
         await item.ForcePullAsync();
@@ -75,7 +75,7 @@ public static class LocalData_Stream_Extensions
     /// <returns></returns>
     public static Stream AssureSourcedStream(this SynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return item.Stream(FileMode.Open);
 
         item.ForcePullAsync();

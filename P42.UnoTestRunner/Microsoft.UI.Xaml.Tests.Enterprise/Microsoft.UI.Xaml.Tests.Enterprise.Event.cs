@@ -65,7 +65,7 @@ internal class Event
     internal bool HasFired()
     {
         var tcs = _tcs;
-        return tcs != null && tcs.Task.IsCompleted;
+        return tcs is { Task.IsCompleted: true };
     }
 
     public void Reset() => Interlocked.Exchange(ref _tcs, null)?.TrySetCanceled();

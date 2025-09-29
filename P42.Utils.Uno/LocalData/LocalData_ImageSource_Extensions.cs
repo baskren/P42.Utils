@@ -41,7 +41,7 @@ public static class LocalData_ImageSource_Extensions
     /// <returns></returns>
     public static async Task<ImageSource> AssureSourcedImageSourceAsync(this AsynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return item.RecallImageSource();
 
         await item.ForcePullAsync();
@@ -55,7 +55,7 @@ public static class LocalData_ImageSource_Extensions
     /// <returns></returns>
     public static ImageSource AssureSourcedImageSource(this SynchronousSourcedItem item)
     {
-        if (item.Exists && item.IsFile)
+        if (item is { Exists: true, IsFile: true })
             return item.RecallImageSource();
 
         item.AssureSourcedText();

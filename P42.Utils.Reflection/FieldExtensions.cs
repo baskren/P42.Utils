@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 
 namespace P42.Utils;
@@ -12,6 +11,7 @@ public static class FieldExtensions
     /// <param name="type">Type</param>
     /// <param name="fieldName">Field Name</param>
     /// <returns>null of no match found</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static FieldInfo? GetFieldInfo(this Type type, string fieldName)
     {
         if (string.IsNullOrEmpty(fieldName))
@@ -39,6 +39,7 @@ public static class FieldExtensions
     /// <param name="fieldName">Name of field</param>
     /// <param name="value">Value</param>
     /// <returns>true on success</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static bool TryGetFieldValue(this object obj, string fieldName, out object? value)
     {
         value = null;
@@ -60,6 +61,7 @@ public static class FieldExtensions
     /// <param name="fieldName">Field name</param>
     /// <param name="value">value to set</param>
     /// <returns>true on success</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static bool TrySetFieldValue(this object obj, string fieldName, object value)
     {
         if (string.IsNullOrWhiteSpace(fieldName))
@@ -79,6 +81,7 @@ public static class FieldExtensions
     /// <param name="fieldName">Field name</param>
     /// <param name="value">value</param>
     /// <returns>true on success</returns>
+    [Obsolete("NOT FOR RELEASE BUILDS")]
     public static bool TryGetStaticFieldValue(this Type type, string fieldName, out object? value)
     {
         value = null;
