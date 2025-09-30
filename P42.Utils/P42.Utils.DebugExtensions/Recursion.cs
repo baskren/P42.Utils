@@ -23,8 +23,8 @@ public static class Recursion
                 return _folderPath;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            DirectoryExtensions.GetOrCreateDirectory(Environment.ApplicationLocalCacheFolderPath);
-            var folderPath = Path.Combine(Environment.ApplicationLocalCacheFolderPath, RecursionFolderName);
+            DirectoryExtensions.GetOrCreateDirectory(Platform.ApplicationLocalCacheFolderPath);
+            var folderPath = Path.Combine(Platform.ApplicationLocalCacheFolderPath, RecursionFolderName);
 #pragma warning restore CS0618 // Type or member is obsolete
             DirectoryExtensions.GetOrCreateDirectory(folderPath);
             _folderPath = folderPath;

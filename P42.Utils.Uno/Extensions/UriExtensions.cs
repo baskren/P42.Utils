@@ -88,8 +88,8 @@ public static class UriExtensions
                 segments.RemoveRange(0, 2);
                 var dir = uri.Segments[1].ToLower() switch
                 {
-                    "local/" => Environment.ApplicationLocalFolderPath,
-                    "temp/" => Environment.ApplicationTemporaryFolderPath,
+                    "local/" => Utils.Platform.ApplicationLocalFolderPath,
+                    "temp/" => Utils.Platform.ApplicationTemporaryFolderPath,
                     _ => throw new Exception($"invalid root folder [{uri}]")
                 };
                 return Path.Combine(dir, string.Join("", segments));

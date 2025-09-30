@@ -46,9 +46,9 @@ public class A00_PlatformInitialization
         P42.Utils.Uno.Platform.MainWindow.ShouldBe(TestApplication.MainWindow);
         Thread.CurrentThread.ShouldBe(P42.Utils.Uno.Platform.MainThread);
         Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().ShouldBe(P42.Utils.Uno.Platform.MainThreadDispatchQueue);
-        P42.Utils.Environment.ApplicationLocalFolderPath.ShouldNotBeNull();
-        P42.Utils.Environment.ApplicationLocalCacheFolderPath.ShouldNotBeNull();
-        P42.Utils.Environment.ApplicationTemporaryFolderPath.ShouldNotBeNull();
+        P42.Utils.Platform.ApplicationLocalFolderPath.ShouldNotBeNull();
+        P42.Utils.Platform.ApplicationLocalCacheFolderPath.ShouldNotBeNull();
+        P42.Utils.Platform.ApplicationTemporaryFolderPath.ShouldNotBeNull();
     }
 
 

@@ -36,6 +36,8 @@
     <PackageVersion Include="P42.NotifiableObject" Version="1.0.4" />
     <PackageVersion Include="P42.Serilog.QuickLog" Version="1.0.9" />
 
+    <PackageVersion Include="Markdig" Version="0.41.1" />
+
 
   </ItemGroup>
 </Project>

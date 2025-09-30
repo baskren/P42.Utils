@@ -1,21 +1,6 @@
 ﻿<Project Sdk="Uno.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
-      $(TargetFrameworks);
-      <!-- why this version? -->
-      <!--
-      net9.0-windows10.0.19041
-      -->
-      net9.0-windows10.0.26100
-    </TargetFrameworks>
-    <!-- NEEDED TO GET -browserwasm TO BUILD USING BELOW WebView2 WORKAROUND -->
-    <TargetFrameworks Condition=" $(Platform) == 'AnyCPU' ">
-      $(TargetFrameworks);
-      net9.0-browserwasm
-    </TargetFrameworks>
-    <TargetFrameworks>$(TargetFrameworks);net9.0-desktop</TargetFrameworks>
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
     <UnoSingleProject>true</UnoSingleProject>
     <OutputType>Library</OutputType>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
@@ -23,34 +8,45 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-
     <!--
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
+
+    <UnoFeatures>
+      SkiaRenderer;
+    </UnoFeatures>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <!--
+    If you encounter this error message:
+
+      error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+      Please update to a newer .NET SDK in order to reference this assembly.
+
+    This means that the two packages below must be aligned with the "build" version number of
+    the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+    must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+    -->
+    <!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
+  </ItemGroup>
+
+
+
+
+  <!-- CUSTOMIZATION START -->
+  <PropertyGroup>
+
     <UnoFeatures>
       WebView;
+      $(UnoFeatures)
     </UnoFeatures>
 
-    <!-- Needed to reduce warnings when building with non-Windows OS : Can this be deleted because we're using Conditional TargetFrameworks? -->
-    <!--
-    <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
-    <WinAppSdkBuildToolsVersion>10.0.22621.756</WinAppSdkBuildToolsVersion>
-    -->
-
-    <!-- DO WE NEED THE FOLLOWING ?
-    <BuildInParallel>true</BuildInParallel>
-    -->
-
-    <!-- NEEDED FOR DisplayHelper.winui.cs and Beep.io.maccatalyst -->    
+    <!-- NEEDED FOR DisplayHelper.winui.cs and Beep.io.maccatalyst -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <!-- NEEDED BECAUSE WINAPPSDK PROJECT IS USING MICROSOFT.GRAPHICS.Win2D -->
-    <!--
-    <Platforms  Condition=" $(TargetFramework.Contains('-windows') ) ">AnyCPU;ARM64;X86;X64</Platforms>
-    -->
-
-    
     <!-- Needed for Beep -->
     <WasmShellEnableThreads>true</WasmShellEnableThreads>
 
@@ -67,11 +63,5 @@
     <EmbeddedResource Remove="WasmScripts\p42_utils_uno_beep.js" />
   </ItemGroup>
 
-  <!--
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\**" />
-  </ItemGroup>
-  -->
 
-  
 </Project>

@@ -4,6 +4,7 @@
     <ProjectReference Include="..\P42.Utils.DebugExtensions\P42.Utils.DebugExtensions.csproj" />
     <ProjectReference Include="..\P42.Utils.LocalDataStore\P42.Utils.LocalDataStore.csproj" />
     <ProjectReference Include="..\P42.Utils.UiItemExtensions\P42.Utils.UiItemExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Ttf\P42.Utils.Ttf.csproj" />
   </ItemGroup>
 
 </Project>

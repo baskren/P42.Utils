@@ -226,7 +226,8 @@ public static class UIElementExtensions
 
     internal static void FindChildrenInternal<T>(List<T> results, DependencyObject? startNode, bool strictTypeCheck) where T : DependencyObject
     {
-        startNode ??= Window.Current?.Content;
+        //startNode ??= Window.Current?.Content;
+        startNode ??= Platform.MainWindow?.Content;
 
         var count = VisualTreeHelper.GetChildrenCount(startNode);
         for (var i = 0; i < count; i++)

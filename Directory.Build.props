@@ -1,7 +1,5 @@
 <Project>
   <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
     <!--
@@ -11,31 +9,29 @@
       PRI257: Ignore default language (en) not being one of the included resources (eg en-us, en-uk)
     -->
     <NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
+    <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
 
 
   <!-- CUSTOMIZATION START -->
+  <!-- CUSTOMIZATION -->
   <PropertyGroup>
     <P42_Utils_Version>2.0.0</P42_Utils_Version>
+    <RootNamespace>$(MSBuildProjectName)Rns</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildProjectDirectory)/Resources/**/*.*"  />
+  </ItemGroup>
 
   <!-- REFERENCES -->
   <Import Condition="Exists('$(MSBuildProjectDirectory)/$(MSBuildProjectName).References.props')" Project="$(MSBuildProjectDirectory)/$(MSBuildProjectName).References.props" />
 
 
-  <!-- PLATFORM SPECIFIC SOURCE -->
-  <!-- LET START USING THE BUILT-IN UNO APPROACH
-  <Import Condition="Exists('$(MSBuildProjectDirectory)/Directory.Build.PlatformFiles.targets')" Project="$(MSBuildProjectDirectory)/Directory.Build.PlatformFiles.targets" />
-  -->
-
-
   <!-- NUGET PACKAGE PROPERTIES -->
+  <Import Condition="Exists('$(MSBuildProjectDirectory)/$(MSBuildProjectName).NugetPackage.props')" Project="$(MSBuildProjectDirectory)/$(MSBuildProjectName).NugetPackage.props" />
   <PropertyGroup>
-    <_NugetPackagePropsFile Condition="Exists('$(MSBuildProjectDirectory)/$(MSBuildProjectName).NugetPackage.props')">$(MSBuildProjectDirectory)/$(MSBuildProjectName).NugetPackage.props</_NugetPackagePropsFile>
     <_NugetPackagePropsSearchDir>$(MSBuildProjectDirectory)</_NugetPackagePropsSearchDir>
-  </PropertyGroup>
-  <!-- Keep walking up until the file is found or root reached -->
-  <PropertyGroup Condition=" !Exists('$(_NugetPackagePropsFile)') ">
     <_NugetPackagePropsFile Condition="Exists('$(_NugetPackagePropsSearchDir)/Directory.NugetPackage.props')">$(_NugetPackagePropsSearchDir)/Directory.NugetPackage.props</_NugetPackagePropsFile>
   </PropertyGroup>
   <!-- Keep walking up until the file is found or root reached -->
@@ -80,6 +76,10 @@
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
     <Message Text="  DotNetVersion:[net9.0]" Importance="high" />
     <Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
+    <Message Text="  UnoVersion:[$(UnoVersion)] " Importance="high" />
+    <Message Text="  P42_Utils_Version:[$(P42_Utils_Version)] " Importance="high" />
+    <Message Text="  Version:[$(Version)] " Importance="high" />
+    <Message Text="  PackageVersion:[$(PackageVersion)] " Importance="high"/>
     <Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
     <Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
@@ -88,34 +88,32 @@
     <Message Text="  TargetFramework:[$(TargetFramework)]" Importance="high"/>
     <Message Text="  Configuration:[$(Configuration)] " Importance="high"/>
     <Message Text="  SaveNuget:[$(GeneratePackageOnBuild)] " Importance="high"/>
-    <Message Text="  PackageVersion:[$(Version)] " Importance="high"/>
     <Message Text="  DefineConstants:[$(DefineConstants)]" Importance="high" />
     <Message Text="  Compile:[" Importance="high"/>
-    <Message Text="      @(Compile, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(Compile, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
-    <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
     <Message Text="  ProjectReference:[" Importance="high"/>
-    <Message Text="      @(ProjectReference, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(ProjectReference, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  PackageReference:[" Importance="high"/>
-    <Message Text="      @(PackageReference, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(PackageReference, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  EmbeddedResource:[" Importance="high"/>
-    <Message Text="      @(EmbeddedResource, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(EmbeddedResource, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  Content:[" Importance="high"/>
-    <Message Text="      @(Content, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(Content, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  AndroidResource:[" Importance="high"/>
-    <Message Text="      @(AndroidResource, '%0a      ')" Importance="high"/>
+    <Message Text="%09@(AndroidResource, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  NuGetPackageRoot:[$(NuGetPackageRoot)]" Importance="high" />
-    <Message Text="  UnoVersion:[$(UnoVersion)]" Importance="high" />
     <Message Text="  DebugSymbols:[$(DebugSymbols)]" Importance="high" />
     <Message Text="  Optimize:[$(Optimize)]" Importance="high" />
     <Message Text="  WindowsSdkPackageVersion:[$(WindowsSdkPackageVersion)]" Importance="high" />
     <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]"  Importance="high" />
     <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]"  Importance="high" />
+    <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
     <Message Text="  [Sytem.OperatiingSystem]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>

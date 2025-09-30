@@ -1,40 +1,27 @@
 <Project ToolsVersion="15.0">
 
 
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-  </PropertyGroup>
 
   <!-- SHARED ITEMS -->
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Markdig" Version="0.41.1" />
-    
-    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
-    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.2.0" />
-    <!--
-    <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
-    -->
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Markdig"  />
+
+    <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
+
   </ItemGroup>
+
+  <!--
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils\P42.Utils.DebugExtensions\P42.Utils.DebugExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils\P42.Utils.LocalDataStore\P42.Utils.LocalDataStore.csproj" />
+  </ItemGroup>
+  -->
 
 
   <!-- PLATFORM ITEMS -->
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
     <PackageReference Condition=" $(TargetFramework.Contains('-windows')) " Include="Microsoft.Graphics.Win2D"  Version="1.3.2" />
   </ItemGroup>
-  <ItemGroup Condition=" !$(TargetFramework.Contains('windows')) ">
-  </ItemGroup>
-
-  <Choose>
-    <When Condition="  $(TargetFramework.ToLower().Contains('wasm')) ">
-      <ItemGroup>
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
 
 </Project>

@@ -1,4 +1,3 @@
-#if __WASM__
 using System;
 using System.Diagnostics;
 using System.Text.Json;
@@ -68,4 +67,3 @@ public static partial class DeviceInfo
 
     private static bool GetIsEmulator() => false;
 }
-#endif

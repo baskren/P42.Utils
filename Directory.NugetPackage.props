@@ -2,7 +2,7 @@
 
   <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''   AND  $(Configuration) == 'Release' ">
 
-    <Version>$(P42_Utils_Version)</Version>
+    <Version Condition=" '$(Version)' == '' ">$(P42_Utils_Version)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Ben Askren</Authors>
     <Company>42nd Parallel</Company>
-    <Description>.Net Utilities</Description>
+    <Description Condition=" '$(Description)' == '' ">.Net Utilities</Description>
     <Copyright>2025, 42nd Parallel</Copyright>
     <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>P42</PackageTags>
+    <PackageTags>P42;$(PackageTags)</PackageTags>
 
   </PropertyGroup>
 
@@ -54,6 +54,7 @@
       Pack="true"
       PackagePath="\"
       BuildAction="None"
+      Visible="false"
       IncludeInPackage="false" />
   </ItemGroup>
 
@@ -83,7 +84,8 @@
       Condition="Exists('$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)')"
       Include="$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)"
       Pack="true"
-      PackagePath="\" />
+      PackagePath="\"
+      Visible="false" />
   </ItemGroup>
 
 
@@ -112,13 +114,26 @@
       Condition="Exists('$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)')"
       Include="$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)"
       Pack="true"
-      PackagePath="\" />
+      PackagePath="\"
+      Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
   	<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
   </ItemGroup>
 
+
+  <!-- NUGET WINDOWS ASSETS WORKAROUND : CAN WE DELETE THIS? -->
+  <!--
+  <ItemGroup>
+    <None Include="Assets/**/*">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/any/net9.0-windows10.0.19041/$(PackageId)/Assets</PackagePath>
+      <BuildAction>Content</BuildAction>
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
+  </ItemGroup>
+-->
 
 
 </Project>

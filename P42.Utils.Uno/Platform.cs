@@ -68,13 +68,7 @@ public static class Platform
         private set => _mainThreadDispatchQueue = value;
     }
     #endregion
-
-    #region AssembliesToInclude
-    private static List<System.Reflection.Assembly>? _assembliesToInclude;
-    [Obsolete("Is this still needed?", true)]
-    public static List<System.Reflection.Assembly> AssembliesToInclude => _assembliesToInclude ??= [typeof(P42.Utils.DebugExtensions).Assembly];
-    #endregion
-
+    
     #region Assembly
     [Obsolete("Is this still needed?", true)]
     public static System.Reflection.Assembly Assembly => throw new NotImplementedException();
@@ -129,9 +123,9 @@ public static class Platform
         Application = application;
         MainWindow = window;
 
-        Environment.PlatformPathLoader = PlatformPathLoader;
+        Utils.Platform.PlatformPathLoader = PlatformPathLoader;
         DiskSpace.PlatformDiskSpace = new DeviceDisk();
-        P42.Utils.Process.PlatformProcess = new P42.Utils.Uno.Process();
+        P42.Utils.Process.PlatformProcess = new Process();
         MainThread = Thread.CurrentThread;
         MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
@@ -150,9 +144,9 @@ public static class Platform
     {
         try
         {
-            Environment.ApplicationLocalFolderPath = ApplicationData.Current.LocalFolder.Path;
-            Environment.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
-            Environment.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
+            Utils.Platform.ApplicationLocalFolderPath = ApplicationData.Current.LocalFolder.Path;
+            Utils.Platform.ApplicationLocalCacheFolderPath = ApplicationData.Current.LocalCacheFolder.Path;
+            Utils.Platform.ApplicationTemporaryFolderPath = ApplicationData.Current.TemporaryFolder.Path;
         }
         catch (Exception)
         {
@@ -161,12 +155,12 @@ public static class Platform
                 var asm = AssemblyExtensions.GetApplicationAssembly();
                 var assemblyName = asm.Name();
                 // Unpackaged WinUI3 App
-                Environment.ApplicationLocalFolderPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), assemblyName);
-                Directory.CreateDirectory(Environment.ApplicationLocalFolderPath);
-                Environment.ApplicationLocalCacheFolderPath = Path.Combine(Environment.ApplicationLocalFolderPath, "Cache");
-                Directory.CreateDirectory(Environment.ApplicationLocalCacheFolderPath);
-                Environment.ApplicationTemporaryFolderPath = Path.Combine(Path.GetTempPath(), assemblyName);
-                Directory.CreateDirectory(Environment.ApplicationTemporaryFolderPath);
+                Utils.Platform.ApplicationLocalFolderPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), assemblyName);
+                Directory.CreateDirectory(Utils.Platform.ApplicationLocalFolderPath);
+                Utils.Platform.ApplicationLocalCacheFolderPath = Path.Combine(Utils.Platform.ApplicationLocalFolderPath, "Cache");
+                Directory.CreateDirectory(Utils.Platform.ApplicationLocalCacheFolderPath);
+                Utils.Platform.ApplicationTemporaryFolderPath = Path.Combine(Path.GetTempPath(), assemblyName);
+                Directory.CreateDirectory(Utils.Platform.ApplicationTemporaryFolderPath);
             }
             catch (Exception ex)
             {
@@ -246,7 +240,4 @@ public static class Platform
 
 }
 
-public class NotInitializedException : Exception 
-{
-    public NotInitializedException() : base("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()") { }
-}
+public class NotInitializedException() : Exception("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()");

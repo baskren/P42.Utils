@@ -6,14 +6,14 @@ namespace P42.Utils;
 /// <summary>
 /// Platform specific initialization
 /// </summary>
-public static class Environment
+public static class Platform
 {
 
     //[Obsolete("NO LONGER NEEDED", true)]
     //internal static IPlatformTimer? PlatformTimer { get; set; } 
     
 
-    internal static readonly Assembly Assembly = typeof(Environment).Assembly;
+    internal static readonly Assembly Assembly = typeof(Platform).Assembly;
     /*
     /// <summary>
     /// Gets or sets the main thread identifier.

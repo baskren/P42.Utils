@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.LocalDataStore", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils", "P42.Utils\P42.Utils\P42.Utils.csproj", "{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.Ttf", "P42.Utils\P42.Utils.Ttf\P42.Utils.Ttf.csproj", "{B8150907-6769-4DCA-B1B0-1893AD57094C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8150907-6769-4DCA-B1B0-1893AD57094C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8150907-6769-4DCA-B1B0-1893AD57094C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8150907-6769-4DCA-B1B0-1893AD57094C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8150907-6769-4DCA-B1B0-1893AD57094C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

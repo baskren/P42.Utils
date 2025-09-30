@@ -29,7 +29,7 @@ public abstract class LocalData
 #pragma warning disable CS0618 // Type or member is obsolete
     // DO NOT CHANGE Environment.ApplicationDataPath to another path.
     // This is used to pass EmbeddedResource Fonts to UWP Text elements and there is zero flexibility here.
-    private static string PlatformFolder => Environment.ApplicationLocalFolderPath;
+    private static string PlatformFolder => Platform.ApplicationLocalFolderPath;
 #pragma warning restore CS0618 // Type or member is obsolete
     private const string StoreFolderName = "P42.Utils.LocalData";
     private static readonly string StorePath = Path.Combine(PlatformFolder, StoreFolderName);

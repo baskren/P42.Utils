@@ -6,9 +6,5 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-  <!-- CUSTOMIZATION -->
-  <PropertyGroup>
-    <RootNamespace>$(MSBuildProjectName)Rns</RootNamespace>
-  </PropertyGroup>
 
 </Project>
