@@ -12,6 +12,9 @@
     <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
     -->
 
+    <!-- PACKAGING -->
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+
     <!-- UNIT TESTING -->
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.8.3" />

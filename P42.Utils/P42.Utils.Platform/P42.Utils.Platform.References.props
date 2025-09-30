@@ -1,0 +1,7 @@
+<Project ToolsVersion="15.0">
+
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils.IO.Extensions\P42.Utils.IO.Extensions.csproj" />
+  </ItemGroup>
+
+</Project>

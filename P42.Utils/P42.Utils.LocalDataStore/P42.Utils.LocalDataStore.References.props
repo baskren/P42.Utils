@@ -1,0 +1,9 @@
+<Project ToolsVersion="15.0">
+
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils.AssemblyExtensions\P42.Utils.AssemblyExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Platform\P42.Utils.Platform.csproj" />
+    <ProjectReference Include="..\P42.Utils.Json\P42.Utils.Json.csproj" />
+  </ItemGroup>
+
+</Project>

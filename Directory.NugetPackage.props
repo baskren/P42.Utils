@@ -1,0 +1,124 @@
+<Project ToolsVersion="15.0">
+
+  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''   AND  $(Configuration) == 'Release' ">
+
+    <Version>$(P42_Utils_Version)</Version>
+    <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
+
+  	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+  	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+  	<IncludeSymbols>true</IncludeSymbols>
+  	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Ben Askren</Authors>
+    <Company>42nd Parallel</Company>
+    <Description>.Net Utilities</Description>
+    <Copyright>2025, 42nd Parallel</Copyright>
+    <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>P42</PackageTags>
+
+  </PropertyGroup>
+
+
+  <!-- ICON FILE -->
+  <PropertyGroup>
+    <_NugetPackageIconFileName>icon.png</_NugetPackageIconFileName>
+    <_NugetPackageIconFile Condition="Exists('$(MSBuildProjectDirectory)/$(_NugetPackageIconFileName)')">$(MSBuildProjectDirectory)/$(_NugetPackageIconFileName)s</_NugetPackageIconFile>
+    <_NugetPackageIconSearchDir>$(MSBuildProjectDirectory)</_NugetPackageIconSearchDir>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageIconFile)') ">
+    <_NugetPackageIconFile Condition="Exists('$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)')">$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)</_NugetPackageIconFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageIconFile)') ">
+    <_NugetPackageIconSearchDir>$(_NugetPackageIconSearchDir)/..</_NugetPackageIconSearchDir>
+    <_NugetPackageIconFile Condition="Exists('$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)')">$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)</_NugetPackageIconFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageIconFile)') ">
+    <_NugetPackageIconSearchDir>$(_NugetPackageIconSearchDir)/..</_NugetPackageIconSearchDir>
+    <_NugetPackageIconFile Condition="Exists('$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)')">$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)</_NugetPackageIconFile>
+  </PropertyGroup>
+  <ItemGroup>
+		<None
+      Condition="Exists('$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)')"
+      Include="$(_NugetPackageIconSearchDir)/$(_NugetPackageIconFileName)"
+      Pack="true"
+      PackagePath="\"
+      BuildAction="None"
+      IncludeInPackage="false" />
+  </ItemGroup>
+
+
+  <!-- README FILE -->
+  <PropertyGroup>
+    <_NugetPackageReadMeFileName>README.md</_NugetPackageReadMeFileName>
+    <_NugetPackageReadMeFile Condition="Exists('$(MSBuildProjectDirectory)/$(_NugetPackageReadMeFileName)')">$(MSBuildProjectDirectory)/$(_NugetPackageReadMeFileName)s</_NugetPackageReadMeFile>
+    <_NugetPackageReadMeSearchDir>$(MSBuildProjectDirectory)</_NugetPackageReadMeSearchDir>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageReadMeFile)') ">
+    <_NugetPackageReadMeFile Condition="Exists('$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)')">$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)</_NugetPackageReadMeFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageReadMeFile)') ">
+    <_NugetPackageReadMeSearchDir>$(_NugetPackageReadMeSearchDir)/..</_NugetPackageReadMeSearchDir>
+    <_NugetPackageReadMeFile Condition="Exists('$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)')">$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)</_NugetPackageReadMeFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageReadMeFile)') ">
+    <_NugetPackageReadMeSearchDir>$(_NugetPackageReadMeSearchDir)/..</_NugetPackageReadMeSearchDir>
+    <_NugetPackageReadMeFile Condition="Exists('$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)')">$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)</_NugetPackageReadMeFile>
+  </PropertyGroup>
+  <ItemGroup>
+		<None
+      Condition="Exists('$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)')"
+      Include="$(_NugetPackageReadMeSearchDir)/$(_NugetPackageReadMeFileName)"
+      Pack="true"
+      PackagePath="\" />
+  </ItemGroup>
+
+
+  <!-- LICENSE FILE -->
+  <PropertyGroup>
+    <_NugetPackageLicenseFileName>LICENSE</_NugetPackageLicenseFileName>
+    <_NugetPackageLicenseFile Condition="Exists('$(MSBuildProjectDirectory)/$(_NugetPackageLicenseFileName)')">$(MSBuildProjectDirectory)/$(_NugetPackageLicenseFileName)s</_NugetPackageLicenseFile>
+    <_NugetPackageLicenseSearchDir>$(MSBuildProjectDirectory)</_NugetPackageLicenseSearchDir>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageLicenseFile)') ">
+    <_NugetPackageLicenseFile Condition="Exists('$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)')">$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)</_NugetPackageLicenseFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageLicenseFile)') ">
+    <_NugetPackageLicenseSearchDir>$(_NugetPackageLicenseSearchDir)/..</_NugetPackageLicenseSearchDir>
+    <_NugetPackageLicenseFile Condition="Exists('$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)')">$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)</_NugetPackageLicenseFile>
+  </PropertyGroup>
+  <!-- Keep walking up until the file is found or root reached -->
+  <PropertyGroup Condition=" !Exists('$(_NugetPackageLicenseFile)') ">
+    <_NugetPackageLicenseSearchDir>$(_NugetPackageLicenseSearchDir)/..</_NugetPackageLicenseSearchDir>
+    <_NugetPackageLicenseFile Condition="Exists('$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)')">$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)</_NugetPackageLicenseFile>
+  </PropertyGroup>
+  <ItemGroup>
+		<None
+      Condition="Exists('$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)')"
+      Include="$(_NugetPackageLicenseSearchDir)/$(_NugetPackageLicenseFileName)"
+      Pack="true"
+      PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+  </ItemGroup>
+
+
+
+</Project>

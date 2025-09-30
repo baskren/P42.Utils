@@ -1,0 +1,10 @@
+<Project ToolsVersion="15.0">
+
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils.AssemblyExtensions\P42.Utils.AssemblyExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Platform\P42.Utils.Platform.csproj" />
+    <ProjectReference Include="..\P42.Utils.ReflectionExtensions\P42.Utils.ReflectionExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Timers\P42.Utils.Timers.csproj" />
+  </ItemGroup>
+
+</Project>
