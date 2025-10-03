@@ -16,13 +16,33 @@
   <!-- CUSTOMIZATION START -->
   <!-- CUSTOMIZATION -->
   <PropertyGroup>
-    <P42_Utils_Version>2.0.0</P42_Utils_Version>
+    <P42_Utils_Version>2.0.0-dev0</P42_Utils_Version>
+    <P42_Utils_Uno_Version>$(UnoVersion)-dev0</P42_Utils_Uno_Version>
+    <IsP42UtilsUno>$(MSBuildProjectName.StartsWith('P42.Utils.Uno'))</IsP42UtilsUno>
+    <IsP42Utils>False</IsP42Utils>
+    <IsP42Utils Condition="!$(IsP42UtilsUno)">$(MSBuildProjectName.StartsWith('P42.Utils'))</IsP42Utils>
+    <Version Condition=" '$(Version)' == '' AND $(IsP42Utils) ">$(P42_Utils_Version)</Version>
+    <Version Condition=" '$(Version)' == '' AND $(IsP42UtilsUno) ">$(P42_Utils_Uno_Version)</Version>
     <RootNamespace>$(MSBuildProjectName)Rns</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildProjectDirectory)/Resources/**/*.*"  />
   </ItemGroup>
+
+  <!-- CROSS TARGETING -->
+  <PropertyGroup>
+    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('browserwasm')) ">WebAssembly</UnoRuntimeIdentifier>
+    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('desktop')) ">Skia</UnoRuntimeIdentifier>
+    <UnoRuntimeIdentifier Condition=" '$(TargetFramework)' == 'net9.0' ">Reference</UnoRuntimeIdentifier>
+  </PropertyGroup>
+  <!--
+  <PropertyGroup>
+    <_p42_utils_nuget_root>/Users/ben/.nuget/packages</_p42_utils_nuget_root>
+  </PropertyGroup>
+  <Import Condition="Exists('$(_p42_utils_nuget_root)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets')" Project="$(_p42_utils_nuget_root)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets" />
+  -->
+
 
   <!-- REFERENCES -->
   <Import Condition="Exists('$(MSBuildProjectDirectory)/$(MSBuildProjectName).References.props')" Project="$(MSBuildProjectDirectory)/$(MSBuildProjectName).References.props" />
@@ -52,17 +72,23 @@
 
   <!-- BUILD MESSAGES -->
   <!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022#default-build-targets -->
-  <Target Name="B1" BeforeTargets="BeforeBuild">
+  <Target Name="_p42_utils_directory_build_props" BeforeTargets="BeforeBuild">
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <!--
+    <Message Condition="Exists('$(_p42_utils_nuget_root)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets')" Text="  CrossTargeting: [$(NuGetPackageRoot)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets] EXISTS" Importance="high" />
+    <Message Condition="!Exists('$(_p42_utils_nuget_root)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets')" Text="  CrossTargeting: [$(NuGetPackageRoot)/uno.sdk/$(UnoSdkVersion)/targets/Uno.CrossTargeting.targets] DOES NOT EXIST" Importance="high" />
     <Message Text=" _NugetPackagePropsFile = [$(_NugetPackagePropsFile)]" Importance="high"/>
     <Message Text=" _NugetPackagePropsSearchDir = [$(_NugetPackagePropsSearchDir)]" Importance="high"/>
     <Message Condition="Exists('$(MSBuildThisFileDirectory)/Directory.NugetPackage.props')" Text="  Directory.NugetPackage.props EXISTS" Importance="high"/>
     <Message Condition="!Exists('$(MSBuildThisFileDirectory)/Directory.NugetPackage.props')" Text="  Directory.NugetPackage.props DOES NOT EXIST" Importance="high"/>
     <Message Text="  References.props: [$(MSBuildProjectDirectory)$(MSBuildProjectName).References.props] " Importance="high"/>
     -->
+    <Message Text=" " Importance="high"/>
+    <Message Text=" IsP42Utils=[$(IsP42Utils)] " Importance="high"/>
+    <Message Text=" IsP42UtilsUno=[$(IsP42UtilsUno)] " Importance="high"/>
+    <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text="========================== WINDOWS =========================== " Condition=" $(TargetFramework.Contains('windows')) " Importance="high" />
@@ -74,13 +100,27 @@
     <Message Text="============================ IOS ============================= " Condition=" $(TargetFramework.Contains('ios')) " Importance="high" />
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
+
+    <Message Text="  IsAndroid=[$(IsAndroid)]" Condition="'$(IsAndroid)'=='true'" Importance="high" />
+    <Message Text="  IsIOS=[$(IsIOS)]" Condition="'$(IsIOS)'=='true'" Importance="high" />
+    <Message Text="  IsMacOS=[$(IsMacOS)]" Condition="'$(IsMacOS)'=='true'" Importance="high" />
+    <Message Text="  IsMacCatalyst=[$(IsMacCatalyst)]" Condition="'$(IsMacCatalyst)'=='true'" Importance="high" />
+    <Message Text="  IsIOSOrCatalyst=[$(IsIOSOrCatalyst)]" Condition="'$(IsIOSOrCatalyst)'=='true'" Importance="high" />
+    <Message Text="  IsTvOS=[$(IsTvOS)]" Condition="'$(IsTvOS)'=='true'" Importance="high" />
+    <Message Text="  IsAppleUIKit=[$(IsAppleUIKit)]" Condition="'$(IsAppleUIKit)'=='true'" Importance="high" />
+    <Message Text="  IsWinAppSDK=[$(IsWinAppSDK)]" Condition="'$(ISWinAppSDK)'=='true'" Importance="high" />
+    <Message Text="  IsBrowserWasm=[$(IsBrowserWasm)]" Condition="'$(IsBrowserWasm)'=='true'" Importance="high" />
+    <Message Text="  IsDesktop=[$(IsDesktop)]" Condition="'$(IsDesktop)'=='true'" Importance="high" />
+    <Message Text="  IsCrossruntime=[$(IsCrossruntime)]" Condition="'$(IsCrossruntime)'=='true'" Importance="high" />
+
     <Message Text="  DotNetVersion:[net9.0]" Importance="high" />
-    <Message Text="  UnoSdk:[$(UnoSdk)] " Importance="high" />
+    <Message Text="  UnoSdk:[$(UnoSdkVersion)] " Importance="high" />
     <Message Text="  UnoVersion:[$(UnoVersion)] " Importance="high" />
     <Message Text="  P42_Utils_Version:[$(P42_Utils_Version)] " Importance="high" />
     <Message Text="  Version:[$(Version)] " Importance="high" />
     <Message Text="  PackageVersion:[$(PackageVersion)] " Importance="high"/>
     <Message Text="  UnoTarget:[$(UnoTarget)] " Importance="high" />
+    <Message Text="  UnoRuntimeIdentifier:[$(UnoRuntimeIdentifier)]" Importance="high" />
     <Message Text="  SolutionName:[$(SolutionName)]" Importance="high" />
     <Message Text="  MSBuildProjectName:[$(MSBuildProjectName)]  " Importance="high"/>
     <Message Text="  AssemblyName:[$(AssemblyName)]" Importance="high"/>
@@ -114,7 +154,9 @@
     <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]"  Importance="high" />
     <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]"  Importance="high" />
     <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
+    <Message Text="  [MSBuild]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
     <Message Text="  [Sytem.OperatiingSystem]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
+    <Message Text="  [Sytem.OperatiingSystem]::IsMacOS()]:[$([System.OperatingSystem]::IsMacOS())]"  Importance="high" />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

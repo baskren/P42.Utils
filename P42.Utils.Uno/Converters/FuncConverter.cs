@@ -1,8 +1,9 @@
-using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml.Data;
 using P42.Serilog.QuickLog;
+// ReSharper disable ExplicitCallerInfoArgument
+// ReSharper disable UnusedType.Global
 
 namespace P42.Utils.Uno;
 

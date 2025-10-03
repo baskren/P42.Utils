@@ -1,11 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.UI.Xaml;
 using P42.Serilog.QuickLog;
-using Windows.UI.Notifications;
 
 namespace P42.Utils.Uno;
 
@@ -13,7 +8,7 @@ namespace P42.Utils.Uno;
 /// A DataTemplateSelector that uses DataTemplateSets in order to enable a little bit more function and, optionally, performance
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector, IDictionary<Type, IDataTemplateSet>
+public class DataTemplateSetSelector : DataTemplateSelector, IDictionary<Type, IDataTemplateSet?>
 {
     #region Properties
 
@@ -21,12 +16,13 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// DataTemplate to be used if the data item is null
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public INullDataTemplateSet NullTemplateSet { get; set; } = new DefaultNullDataTemplateSet();
+    public INullDataTemplateSet? NullTemplateSet { get; set; } = new DefaultNullDataTemplateSet();
 
     /// <summary>
-    /// DataTemplate to be used if there isn't a matching DataTemplateSet stored in this DataTEemplateSelector
+    /// DataTemplate to be used if there isn't a matching DataTemplateSet stored in this DataTemplateSelector
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public INullDataTemplateSet? NoMatchTemplateSet { get; set; }
 
 
@@ -35,18 +31,18 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     public DataTemplateSetSelector()
     {
-        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>();
-        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>();
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet?>();
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet?>();
     }
 
     /// <summary>
     /// Constructor using external dictionary of type to DataTemplateSets
     /// </summary>
     /// <param name="itemTemplates"></param>
-    public DataTemplateSetSelector(Dictionary<Type, IDataTemplateSet> itemTemplates)
+    public DataTemplateSetSelector(Dictionary<Type, IDataTemplateSet?> itemTemplates)
     {
-        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>(itemTemplates);
-        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>();
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet?>(itemTemplates);
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet?>();
     }
 
     /// <summary>
@@ -55,8 +51,8 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <param name="selector"></param>
     public DataTemplateSetSelector(DataTemplateSetSelector selector)
     {
-        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet>(selector.ItemTemplateSets);
-        _cachedTemplates = new Dictionary<Type, IDataTemplateSet>(selector._cachedTemplates);
+        ItemTemplateSets = new Dictionary<Type, IDataTemplateSet?>(selector.ItemTemplateSets);
+        _cachedTemplates = new Dictionary<Type, IDataTemplateSet?>(selector._cachedTemplates);
     }
     
     #endregion
@@ -64,9 +60,9 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     
     #region Fields
 
-    private readonly Dictionary<Type, IDataTemplateSet> _cachedTemplates;
+    private readonly Dictionary<Type, IDataTemplateSet?> _cachedTemplates;
 
-    protected readonly Dictionary<Type, IDataTemplateSet> ItemTemplateSets;
+    protected readonly Dictionary<Type, IDataTemplateSet?> ItemTemplateSets;
 
     #endregion
 
@@ -84,7 +80,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
         try
         {
             var set = SelectDataTemplateSet(item);
-            element = set?.Constructor?.Invoke();
+            element = set?.Constructor.Invoke();
             return element;
         }
         catch (Exception e)
@@ -95,11 +91,11 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
         return element;
     }
 
-    protected override DataTemplate SelectTemplateCore(object? item, DependencyObject container)
-        => SelectDataTemplateSet(item).Template;
+    protected override DataTemplate? SelectTemplateCore(object? item, DependencyObject container)
+        => SelectDataTemplateSet(item)?.Template;
 
-    protected override DataTemplate SelectTemplateCore(object? item)
-        => SelectDataTemplateSet(item).Template;
+    protected override DataTemplate? SelectTemplateCore(object? item)
+        => SelectDataTemplateSet(item)?.Template;
 
     /// <summary>
     /// Find the DataTemplateSet for a given object
@@ -107,7 +103,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <param name="item"></param>
     /// <returns></returns>
     // ReSharper disable once MemberCanBeProtected.Global
-    public virtual IDataTemplateSet SelectDataTemplateSet(object? item)
+    public virtual IDataTemplateSet? SelectDataTemplateSet(object? item)
     {
         if (item is null)
             return NullTemplateSet;
@@ -151,7 +147,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// Dictionary of DataTemplateSets
     /// </summary>
     /// <param name="key"></param>
-    public IDataTemplateSet this[Type key]
+    public IDataTemplateSet? this[Type key]
     {
         get => ItemTemplateSets.GetValueOrDefault(key, NoMatchTemplateSet);
         set => ItemTemplateSets[key] = value;
@@ -177,7 +173,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// <summary>
     /// DataTemplateSets stored
     /// </summary>
-    public ICollection<IDataTemplateSet> Values => ItemTemplateSets.Values;
+    public ICollection<IDataTemplateSet?> Values => ItemTemplateSets.Values;
 
     /// <summary>
     /// Count of DataTemplateSets stored
@@ -193,6 +189,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// Add a DataTemplateSet
     /// </summary>
     /// <param name="set"></param>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public DataTemplateSetSelector Add(IDataTemplateSet set)
     { Add(set.DataType, set); return this; }
 
@@ -201,7 +198,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     /// <param name="key"></param>
     /// <param name="set"></param>
-    public virtual void Add(Type key, IDataTemplateSet set)
+    public virtual void Add(Type key, IDataTemplateSet? set)
         => ItemTemplateSets[key] = set;
 
     [Obsolete("Use .Add<TDataType, TTemplateType>(Func<UIElement>? constructor), instead", true)]
@@ -216,9 +213,9 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     // ReSharper disable UnusedParameter.Global
     public DataTemplateSetSelector Add(Type dataType, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type templateType)
     {
-        var constructor = () => (UIElement)Activator.CreateInstance(templateType);            
-        Add(new DataTemplateSet(dataType, templateType, constructor));
+        Add(new DataTemplateSet(dataType, templateType, Constructor));
         return this;
+        UIElement? Constructor() => Activator.CreateInstance(templateType) as UIElement;
     }
     // ReSharper restore UnusedParameter.Global
 
@@ -226,7 +223,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// Add a DataTemplateSet
     /// </summary>
     /// <param name="item"></param>
-    public void Add(KeyValuePair<Type, IDataTemplateSet> item)
+    public void Add(KeyValuePair<Type, IDataTemplateSet?> item)
         => Add(item.Key, item.Value);
 
     /// <summary>
@@ -254,7 +251,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public bool Contains(KeyValuePair<Type, IDataTemplateSet> item)
+    public bool Contains(KeyValuePair<Type, IDataTemplateSet?> item)
         => ItemTemplateSets.Contains(item);
 
     /// <summary>
@@ -270,14 +267,14 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     /// <param name="array"></param>
     /// <param name="arrayIndex"></param>
-    public void CopyTo(KeyValuePair<Type, IDataTemplateSet>[] array, int arrayIndex)
+    public void CopyTo(KeyValuePair<Type, IDataTemplateSet?>[] array, int arrayIndex)
         => ItemTemplateSets.ToArray().CopyTo(array, arrayIndex);
 
     /// <summary>
     /// Enumerator for DataType, DataTemplateSets KVP
     /// </summary>
     /// <returns></returns>
-    public IEnumerator<KeyValuePair<Type, IDataTemplateSet>> GetEnumerator()
+    public IEnumerator<KeyValuePair<Type, IDataTemplateSet?>> GetEnumerator()
         => ItemTemplateSets.GetEnumerator();
 
     /// <summary>
@@ -294,16 +291,16 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public bool Remove(KeyValuePair<Type, IDataTemplateSet> item)
+    public bool Remove(KeyValuePair<Type, IDataTemplateSet?> item)
     {
-        if (!TryGetValue(item.Key, out var value) || item.Value.TemplateType != value.TemplateType)
+        if (!TryGetValue(item.Key, out var value) || item.Value?.TemplateType != value?.TemplateType)
             return false;
 
         ItemTemplateSets.Remove(item.Key);
         return true;
     }
 
-    public bool TryGetValue(Type? key, out IDataTemplateSet value)
+    public bool TryGetValue(Type? key,  out IDataTemplateSet? value)
     {
         if (key is null)
         {
@@ -326,7 +323,7 @@ public class DataTemplateSetSelector : Microsoft.UI.Xaml.Controls.DataTemplateSe
     /// </summary>
     /// <returns></returns>
     IEnumerator IEnumerable.GetEnumerator()
-        => ItemTemplateSets.Select(s => new KeyValuePair<Type, IDataTemplateSet>(s.Key, s.Value)).GetEnumerator();
+        => ItemTemplateSets.Select(s => new KeyValuePair<Type, IDataTemplateSet?>(s.Key, s.Value)).GetEnumerator();
     
         
 

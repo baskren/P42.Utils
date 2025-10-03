@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Markdig"  />
-
+    <PackageReference Include="P42.Serilog.QuickLog" />
     <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
 
   </ItemGroup>
@@ -21,7 +21,15 @@
 
   <!-- PLATFORM ITEMS -->
   <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
-    <PackageReference Condition=" $(TargetFramework.Contains('-windows')) " Include="Microsoft.Graphics.Win2D"  Version="1.3.2" />
+    <PackageReference Condition=" $(TargetFramework.Contains('-windows')) " Include="Microsoft.Graphics.Win2D"  />
   </ItemGroup>
+
+  <Target Name="_p42_utils_uno_references_props" AfterTargets="_p42_utils_directory_build_props">
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" === P42.Utils.Uno.References.Props HAS BEEN LOADED" Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+  </Target>
 
 </Project>

@@ -263,6 +263,16 @@ public static class StringExtensions
         => HumanReadableBytes((double)num, precision, si, thouSeparators);
 
     /// <summary>
+    /// Convert number of bytes to human-readable value
+    /// </summary>
+    /// <param name="number"></param>
+    /// <param name="precision"></param>
+    /// <param name="si"></param>
+    /// <returns></returns>
+    public static string HumanReadableBytes(this long num, int precision = 2, bool si = false, bool thouSeparators = true)
+        => HumanReadableBytes((double)num, precision, si, thouSeparators);
+
+    /// <summary>
     /// Gets the first non null or whitespace entry from an IEnumerable
     /// </summary>
     /// <param name="values"></param>

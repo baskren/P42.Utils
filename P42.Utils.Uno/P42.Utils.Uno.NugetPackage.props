@@ -4,7 +4,6 @@
   <!-- NUGET PACKAGE GENERATION -->
   <PropertyGroup>
 
-    <Version>$(UnoVersion)</Version>
   	<Description>Uno Cross Platform utilities</Description>
     <PackageTags>Uno.Platform;$(PackageTags)</PackageTags>
 

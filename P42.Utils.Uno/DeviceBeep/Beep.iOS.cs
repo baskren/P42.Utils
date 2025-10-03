@@ -1,15 +1,5 @@
-#if __IOS__ || __MACCATALYST__
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using AudioToolbox;
 using AVFoundation;
-using Foundation;
 using P42.Serilog.QuickLog;
-using Windows.Storage.Streams;
 
 namespace P42.Utils.Uno;
 
@@ -19,22 +9,21 @@ public static partial class DeviceBeep
     static bool PlatformCanBeep() => true;
 
 
-    private static readonly AVAudioEngine _audioEngine;
-    private static readonly AVAudioPlayerNode _playerNode;
-    //private static AVAudioPcmBuffer _buffer;
-    private static readonly AVAudioFormat _audioFormat;
+    private static readonly AVAudioEngine AudioEngine;
+    private static readonly AVAudioPlayerNode PlayerNode;
+    private static readonly AVAudioFormat AudioFormat;
 
     static DeviceBeep()
     {
-        _audioEngine = new AVAudioEngine();
-        _playerNode = new AVAudioPlayerNode();
-        _audioFormat = new AVAudioFormat(44100, 1); // Standard format
-        _audioEngine.AttachNode(_playerNode);
-        _audioEngine.Connect(_playerNode, _audioEngine.OutputNode, _audioFormat);
+        AudioEngine = new AVAudioEngine();
+        PlayerNode = new AVAudioPlayerNode();
+        AudioFormat = new AVAudioFormat(44100, 1); // Standard format
+        AudioEngine.AttachNode(PlayerNode);
+        AudioEngine.Connect(PlayerNode, AudioEngine.OutputNode, AudioFormat);
 
         try
         {
-            _audioEngine.Prepare();
+            AudioEngine.Prepare();
         }
         catch (Exception ex)
         {
@@ -44,51 +33,50 @@ public static partial class DeviceBeep
 
     public static async Task PlatformBeepAsync(double frequency, int durationMs)
     {
-        if (_audioEngine.Running)
-            _audioEngine.Stop();
-        _audioEngine.Reset();
+        if (AudioEngine.Running)
+            AudioEngine.Stop();
+        AudioEngine.Reset();
 
         // Generate sine wave data
-        var sampleRate = (int)_audioFormat.SampleRate;
-        var frameCount = (int)(sampleRate * durationMs / 1000);
-        var buffer = new AVAudioPcmBuffer(_audioFormat, (uint)frameCount);
-        if (buffer?.FloatChannelData != null)
+        var sampleRate = (int)AudioFormat.SampleRate;
+        var frameCount = sampleRate * durationMs / 1000;
+        var buffer = new AVAudioPcmBuffer(AudioFormat, (uint)frameCount);
+        if (buffer.FloatChannelData != null)
         {
             unsafe
             {
-                nint* channels = (nint*)buffer.FloatChannelData.ToPointer();
-                float* data = (float*)channels[0].ToPointer();
-                for (int i = 0; i < frameCount; i++)
+                var channels = (nint*)buffer.FloatChannelData.ToPointer();
+                var data = (float*)channels[0].ToPointer();
+                for (var i = 0; i < frameCount; i++)
                 {
                     try
                     {
-                        double time = (double)i / sampleRate;
+                        var time = (double)i / sampleRate;
                         data[i] = (float)(1.0 * Math.Sin(2 * Math.PI * frequency * time)); // Adjust volume (0.2) as needed
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"EXECPTION: i=[{ex}]");
+                        Console.WriteLine($"EXCEPTION: i=[{ex}]");
                     }
                 }
             }
 
             buffer.FrameLength = (uint)frameCount;
-            _playerNode.ScheduleBuffer(buffer, null);
+            PlayerNode.ScheduleBuffer(buffer, null);
 
             try
             {
-                _audioEngine.StartAndReturnError(out var error);
-                if (error != null)
+                if (AudioEngine.StartAndReturnError(out var error))
                 {
-                    QLog.Error($"AVAudioEngine Start Error: {error}");
-                    _audioEngine.Stop();
+                    QLog.Error($"AVAudioEngine Start Error: {error.LocalizedDescription}");
+                    AudioEngine.Stop();
                     return;
                 }
                 
-                _playerNode.Play();
+                PlayerNode.Play();
                 await Task.Delay(durationMs);
-                _playerNode.Stop();
-                _audioEngine.Stop();
+                PlayerNode.Stop();
+                AudioEngine.Stop();
             }
             catch (Exception ex)
             {
@@ -103,7 +91,7 @@ public static partial class DeviceBeep
 
     private static void OnComplete()
     {
-        Console.WriteLine("SCHEULE COMPLETED");
+        Console.WriteLine("SCHEDULE COMPLETED");
     }
 
     /*
@@ -184,4 +172,4 @@ public static partial class DeviceBeep
     */
 
 }
-#endif
+

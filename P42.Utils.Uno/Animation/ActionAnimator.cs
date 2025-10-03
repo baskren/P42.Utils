@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.UI.Xaml.Media.Animation;
+﻿using Microsoft.UI.Xaml.Media.Animation;
 
 namespace P42.Utils.Uno;
 
@@ -12,6 +11,7 @@ namespace P42.Utils.Uno;
 /// <param name="action">action where animation is to be applied</param>
 /// <param name="easingFunction">easing function</param>
 /// <param name="delta">true: pass change in easing function value to action(); false: pass current easing function value to action()</param>
+// ReSharper disable once UnusedType.Global
 public class ActionAnimator(
     double from,
     double to,
@@ -24,13 +24,13 @@ public class ActionAnimator(
     /// <summary>
     /// Start value
     /// </summary>
-    public double From { get; private set; } = from;
+    public double From { get; } = from;
 
     
     /// <summary>
     /// End value
     /// </summary>
-    public double To { get; private set; } = to;
+    public double To { get; } = to;
 
 
     protected override double Value(double easedValue)

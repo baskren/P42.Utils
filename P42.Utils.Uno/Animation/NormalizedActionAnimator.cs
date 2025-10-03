@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Media.Animation;
+﻿using Microsoft.UI.Xaml.Media.Animation;
 
 namespace P42.Utils.Uno;
 
@@ -21,17 +18,17 @@ public class NormalizedActionAnimator(
     /// <summary>
     /// How long should the animation last?
     /// </summary>
-    public TimeSpan TimeSpan { get; private set; } = timeSpan;
+    public TimeSpan TimeSpan { get; } = timeSpan;
 
     /// <summary>
     /// What form should the animation path take
     /// </summary>
-    public EasingFunctionBase? EasingFunction { get; private set; } = easingFunction;
+    public EasingFunctionBase? EasingFunction { get; } = easingFunction;
 
     /// <summary>
     /// Where the animation is applied
     /// </summary>
-    public Action<double> Action { get; private set; } = action;
+    public Action<double> Action { get; } = action;
 
     /// <summary>
     /// Time stamp of animation start
@@ -41,7 +38,7 @@ public class NormalizedActionAnimator(
     /// <summary>
     /// true: pass change in easing function value to action(); false: pass current easing function value to action()
     /// </summary>
-    public bool Delta { get; private set; } = delta;
+    public bool Delta { get; } = delta;
 
     /// <summary>
     /// easing function value in previous iteration

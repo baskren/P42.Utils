@@ -2,7 +2,6 @@
 
   <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''   AND  $(Configuration) == 'Release' ">
 
-    <Version Condition=" '$(Version)' == '' ">$(P42_Utils_Version)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>

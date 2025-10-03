@@ -136,6 +136,7 @@ public static class ListViewExtensions
     /// <param name="shouldAnimate"></param>
     public static async Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
     {
+        /*
 #if __WASM__
         if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
         {
@@ -145,13 +146,13 @@ public static class ListViewExtensions
                 $"document.getElementById('{id}').scrollIntoView({(toPosition != ScrollToPosition.End).ToString().ToLower()});");
         }
 #else
+        */
         await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
-#endif
+//#endif
         await Task.Delay(500);
     }
 		
 
-#if !__WASM__
     private static bool TryInternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 	{
         if (GetScrollViewer(list) is not { } viewer)
@@ -256,7 +257,6 @@ public static class ListViewExtensions
 	}
 
     
-#endif
     
     
 }

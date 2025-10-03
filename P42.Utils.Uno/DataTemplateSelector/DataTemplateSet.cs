@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
 
 namespace P42.Utils.Uno;
 
@@ -9,8 +6,7 @@ public interface IDataTemplateSet
 {
     Type DataType { get; }
     Type TemplateType { get; }
-    Func<UIElement> Constructor { get; }
-    
+    Func<UIElement?> Constructor { get; }
     DataTemplate Template { get;  }
 }
 
@@ -20,7 +16,7 @@ public interface IDataTemplateSet
 /// <param name="dataType"></param>
 /// <param name="templateType"></param>
 /// <param name="constructor">recommended constructor lambda for improved performance</param>
-public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> constructor) : IDataTemplateSet
+public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement?> constructor) : IDataTemplateSet
 {
     /// <summary>
     /// Type that will be bound to Template 
@@ -37,7 +33,7 @@ public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> c
     /// <summary>
     /// Optional constructor, for better performance over Activator.CreateInstance()
     /// </summary>
-    public Func<UIElement> Constructor { get; } = constructor;
+    public Func<UIElement?> Constructor { get; } = constructor;
 
     private DataTemplate? _dataTemplate;
     public DataTemplate Template
@@ -55,6 +51,7 @@ public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement> c
 /// <typeparam name="TData">Type for Data</typeparam>
 /// <typeparam name="TTemplate">Type of DataTemplate</typeparam>
 public class DataTemplateSet<TData, TTemplate>(Func<TTemplate>? constructor = null) 
+    // ReSharper disable once RedundantAssignment
     : DataTemplateSet(typeof(TData), typeof(TTemplate), constructor ??= () => new())  
     where TTemplate : FrameworkElement, new();
 
@@ -68,6 +65,7 @@ public interface INullDataTemplateSet : IDataTemplateSet;
 /// default: () => (FrameworkElement)(templateType is null ? new NullView() : Activator.CreateInstance(templateType))</param>
 /// <typeparam name="TTemplate">Type for DataTemplate</typeparam>
 public class NullDataTemplateSet<TTemplate>(Func<TTemplate>? constructor = null)
+    // ReSharper disable once RedundantAssignment
     : DataTemplateSet<NullView, TTemplate>(constructor ??= () => new()), INullDataTemplateSet
     where TTemplate : FrameworkElement, new();
 
@@ -79,8 +77,9 @@ public class DefaultNullDataTemplateSet() : NullDataTemplateSet<NullView>(() => 
 /// <summary>
 /// Default view returned by DataTemplateSetSelector for null DataContext
 /// </summary>
-public partial class NullView : Microsoft.UI.Xaml.Controls.Grid
+// ReSharper disable once PartialTypeWithSinglePart
+public partial class NullView : Grid
 {
     public NullView()
-        => Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Gray);
+        => Background = new SolidColorBrush(Colors.Gray);
 }

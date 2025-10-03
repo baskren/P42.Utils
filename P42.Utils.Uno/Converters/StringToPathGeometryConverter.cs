@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
+// ReSharper disable UnusedType.Global
+// ReSharper disable MemberCanBeMadeStatic.Global
 
 namespace P42.Utils.Uno;
 
@@ -50,13 +51,10 @@ public class StringToPathGeometryConverter : IValueConverter
     /// </summary>
     /// <param name="geometry">Path Geometry object</param>
     /// <returns>String equivalent to PathGeometry contents</returns>
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public string ConvertBack(PathGeometry geometry)
-    {
-        if (null == geometry)
-            throw new ArgumentException("Path Geometry cannot be null!");
-
-        return string.Empty;
-    }
+        => null == geometry ? throw new ArgumentException("Path Geometry cannot be null!") : string.Empty;
+    
     #endregion
 
     #region Private Functionality
@@ -451,13 +449,15 @@ public class StringToPathGeometryConverter : IValueConverter
         {
             _token = _pathString[_curIndex];
 
-            // Valid start of a number
-            // I: infinity
-            // N: not-a-number
-            if (_token is '.' or '-' or '+' or 'I' or 'N') 
-                return true;
-            if (_token is >= '0' and <= '9')
-                return true;
+            switch (_token)
+            {
+                // Valid start of a number
+                // I: infinity
+                // N: not-a-number
+                case '.' or '-' or '+' or 'I' or 'N':
+                case >= '0' and <= '9':
+                    return true;
+            }
         }
 
         if (commaMet) // Only allowed between numbers

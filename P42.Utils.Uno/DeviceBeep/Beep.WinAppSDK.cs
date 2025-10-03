@@ -1,4 +1,3 @@
-#if WinAppSdk || DESKTOP
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,4 +18,3 @@ public static partial class DeviceBeep
     }
 
 }
-#endif

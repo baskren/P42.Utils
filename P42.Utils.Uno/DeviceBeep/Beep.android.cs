@@ -1,9 +1,3 @@
-#if __ANDROID__
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Android.Media;
 
 namespace P42.Utils.Uno;
@@ -11,70 +5,74 @@ namespace P42.Utils.Uno;
 public static partial class DeviceBeep
 {
 
-    static bool PlatformCanBeep() => true;
+    private static bool PlatformCanBeep() => true;
 
     // More accurate sine wave generation using AudioTrack (requires more setup)
-    static async Task PlatformBeepAsync(int frequencyHz, int durationMs)
+    private static async Task PlatformBeepAsync(int frequencyHz, int durationMs)
     {
-        int sampleRate = 44100;
-        int numSamples = durationMs * sampleRate / 1000;
-        double[] samples = new double[numSamples];
-        short[] generatedSnd = new short[numSamples];
-        double twopi = 2 * Math.PI;
-        double phase = 0.0;
+        const int sampleRate = 44100;
+        var numSamples = durationMs * sampleRate / 1000;
+        var samples = new double[numSamples];
+        var generatedSnd = new short[numSamples];
+        const double twoPi = 2 * Math.PI;
+        var phase = 0.0;
 
-        for (int i = 0; i < numSamples; i++)
+        for (var i = 0; i < numSamples; i++)
         {
             samples[i] = Math.Sin(phase);
             generatedSnd[i] = (short)(samples[i] * short.MaxValue);
-            phase += twopi * frequencyHz / sampleRate;
+            phase += twoPi * frequencyHz / sampleRate;
         }
 
         AudioTrack? audioTrack = null;
         try
         {
-            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.O)
+            switch ((int)Android.OS.Build.VERSION.SdkInt)
             {
+                case < 26:
 #pragma warning disable CA1422 // Validate platform compatibility
-                audioTrack = new AudioTrack(
-                    Android.Media.Stream.Music,
-                    sampleRate,
-                    ChannelOut.Mono,
-                    Android.Media.Encoding.Pcm16bit,
-                    numSamples * 2, // Two bytes per sample for PCM16BIT
-                    AudioTrackMode.Static);
+                    audioTrack = new AudioTrack(
+                        Android.Media.Stream.Music,
+                        sampleRate,
+                        ChannelOut.Mono,
+                        Android.Media.Encoding.Pcm16bit,
+                        numSamples * 2, // Two bytes per sample for PCM16BIT
+                        AudioTrackMode.Static);
 #pragma warning restore CA1422 // Validate platform compatibility
-            }
-            else
-            {
-                int bufferSize = AudioTrack.GetMinBufferSize(sampleRate, ChannelOut.Mono, Android.Media.Encoding.Pcm16bit);
-
-                var audioAttributes = new AudioAttributes.Builder()
-                    .SetUsage(AudioUsageKind.Media)!
-                    .SetContentType(AudioContentType.Music)!
-                    .Build()!;
-
-                var format = new AudioFormat.Builder()
-                    .SetSampleRate(sampleRate)!
-                    .SetChannelMask(ChannelOut.Mono)!
-                    .SetEncoding(Android.Media.Encoding.Pcm16bit)!
-                    .Build()!;
-
-                audioTrack = new AudioTrack.Builder()
-                    .SetAudioAttributes(audioAttributes)
-                    .SetAudioFormat(format)
-                    .SetBufferSizeInBytes(bufferSize)
-                    .SetTransferMode(AudioTrackMode.Static)
-                    .Build();
-
-                if (audioTrack?.State != AudioTrackState.Initialized)
+                    break;
+                case >= 23:
                 {
-                    Console.WriteLine("Error initializing AudioTrack.");
-                    return;
+                    var bufferSize = AudioTrack.GetMinBufferSize(sampleRate, ChannelOut.Mono, Encoding.Pcm16bit);
+
+                    var audioAttributes = new AudioAttributes.Builder()
+                        .SetUsage(AudioUsageKind.Media)!
+                        .SetContentType(AudioContentType.Music)!
+                        .Build()!;
+
+                    var format = new AudioFormat.Builder()
+                        .SetSampleRate(sampleRate)!
+                        .SetChannelMask(ChannelOut.Mono)
+                        .SetEncoding(Encoding.Pcm16bit)!
+                        .Build()!;
+
+#pragma warning disable CA1416
+                    audioTrack = new AudioTrack.Builder()
+                        .SetAudioAttributes(audioAttributes)
+                        .SetAudioFormat(format)
+                        .SetBufferSizeInBytes(bufferSize)
+                        .SetTransferMode(AudioTrackMode.Static)
+                        .Build();
+#pragma warning restore CA1416
+                    break;
                 }
             }
+            if (audioTrack.State != AudioTrackState.Initialized)
+            {
+                Console.WriteLine("Error initializing AudioTrack.");
+                return;
+            }
 
-            audioTrack.Write(generatedSnd, 0, numSamples);
+            await audioTrack.WriteAsync(generatedSnd, 0, numSamples);
             audioTrack.Play();
 
             // Wait for the duration
@@ -94,4 +92,3 @@ public static partial class DeviceBeep
 
 }
 
-#endif

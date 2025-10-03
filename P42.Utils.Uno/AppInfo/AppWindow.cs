@@ -1,11 +1,5 @@
-using System;
 using Windows.Foundation;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Windows.UI.ViewManagement;
-#if __ANDROID__
-using Android.Runtime;
-#endif
 
 namespace P42.Utils.Uno;
 

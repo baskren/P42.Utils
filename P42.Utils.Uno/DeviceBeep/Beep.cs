@@ -1,12 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using P42.Serilog.QuickLog;
-//using AVFoundation;
+
 
 namespace P42.Utils.Uno;
 
@@ -23,9 +17,9 @@ public static partial class DeviceBeep
     /// <param name="duration"></param>
     public static async Task PlayAsync(int frequency = 1500, int duration = 300)
     {
-#if BROWSERWASM
-        await DeviceBeep.PlatformBeepAsync(frequency, duration);
-#else
+//#if BROWSERWASM
+//        await DeviceBeep.PlatformBeepAsync(frequency, duration);
+//#else
 
         if (!PlatformCanBeep())
             return;
@@ -33,64 +27,57 @@ public static partial class DeviceBeep
         Init();
 
         var tcs = new TaskCompletionSource<bool>();
-        Queue?.Enqueue((frequency, duration, tcs));
+        _queue?.Enqueue((frequency, duration, tcs));
         await tcs.Task;
-#endif
+//#endif
     }
 
 
-    static ConcurrentQueue<(int Frequency, int Duration, TaskCompletionSource<bool> Tcs)>? Queue;
+//#if !BROWSERWASM
+    private static ConcurrentQueue<(int Frequency, int Duration, TaskCompletionSource<bool> Tcs)>? _queue;
 
-    static void Init()
+    private static void Init()
     {
         if (!PlatformCanBeep())
             return;
 
-        if (Queue == null)
+        if (_queue != null)
+            return;
+
+        _queue = new();
+
+
+        // Start a consumer task
+        Task.Run(async () =>
         {
-            Queue = new();
-
-
-            // Start a consumer task
-            Task consumer = Task.Run(async () =>
+            TaskCompletionSource<bool>? tcs = null;
+            while (true)
             {
-                TaskCompletionSource<bool>? tcs = null;
-                while (true)
+                try
                 {
-                    try
+                    if (_queue.TryDequeue(out var item))
                     {
-                        if (Queue.TryDequeue(out var item))
-                        {
-                            tcs = item.Tcs;
-                            await DeviceBeep.PlatformBeepAsync(item.Frequency, item.Duration);
-                            tcs.TrySetResult(true);
-                        }
-                        else
-                        {
-                            tcs = null;
-                            Thread.Sleep(50); // Avoid busy-waiting
-                        }
+                        tcs = item.Tcs;
+                        await PlatformBeepAsync(item.Frequency, item.Duration);
+                        tcs.TrySetResult(true);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        QLog.Error(ex);
-                        tcs?.TrySetException(ex);
                         tcs = null;
+                        Thread.Sleep(50); // Avoid busy-waiting
                     }
                 }
-            });
-        }
+                catch (Exception ex)
+                {
+                    QLog.Error(ex);
+                    tcs?.TrySetException(ex);
+                    tcs = null;
+                }
+            }
+            // ReSharper disable once FunctionNeverReturns
+        });
     }
+//#endif
 
 
-#if __IOS__ || __MACCATALYST__ || __ANDROID__ || WINDOWS || BROWSERWASM || DESKTOP
-#else
-    static bool PlatformCanBeep() => false;
-
-    static Task PlatformBeepAsync(int freq, int duration) 
-    {
-        //Console.Beep(freq, duration);
-        return Task.CompletedTask;
-    }
-#endif
 }
