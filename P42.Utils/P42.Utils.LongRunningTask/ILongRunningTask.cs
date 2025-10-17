@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace P42.Utils;
 
 /// <summary>
@@ -63,14 +60,14 @@ public interface ILongRunningTask
     /// <summary>
     /// Start long-running background process
     /// </summary>
-    /// <param name="func"></param>
+    /// <param name="action"></param>
     /// <param name="cancellationAction"></param>
     Task RunAsync(Func<Task> action, Action? cancellationAction = null);
 
     /// <summary>
     /// Start long-running background process
     /// </summary>
-    /// <param name="func"></param>
+    /// <param name="action"></param>
     /// <param name="cancellationAction"></param>
     Task RunAsync(Func<Task> action, Func<Task> cancellationAction);
 }

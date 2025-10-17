@@ -7,22 +7,21 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 
 namespace P42.Utils.Uno;
+// ReSharper disable once UnusedType.Global
 public static class ApplicationExtensions
 {
     /// <summary>
-    /// Create a window that shows console ouput (only works in WinAppSdk)
+    /// Create a window that shows console output (only works in WinAppSdk)
     /// </summary>
-    /// <param name="app"></param>
     /// <returns></returns>
-    public static bool OpenConsoleWindow(this Application app)
+    public static bool OpenConsoleWindow()
         => AllocConsole();
 
     /// <summary>
-    /// Close a window that shows console ouput (only works in WinAppSdk)
+    /// Close a window that shows console output (only works in WinAppSdk)
     /// </summary>
-    /// <param name="app"></param>
     /// <returns></returns>
-    public static bool CloseConsoleWindow(this Application app)
+    public static bool CloseConsoleWindow()
         => FreeConsole();
 
 

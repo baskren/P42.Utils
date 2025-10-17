@@ -3,6 +3,5 @@
 /// <summary>
 /// Interface for IJsonReadWriteable
 /// </summary>
-public interface IJsonReadWriteable : IJsonReadable, IJsonWriteable
-{
-}
+// ReSharper disable once UnusedType.Global
+public interface IJsonReadWriteable : IJsonReadable, IJsonWriteable;

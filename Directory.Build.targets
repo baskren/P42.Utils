@@ -1,2 +1,20 @@
 ﻿<Project>
+
+  <!-- FIX CROSS TARGETING -->
+  <PropertyGroup>
+    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('browserwasm')) ">WebAssembly</UnoRuntimeIdentifier>
+    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('desktop')) ">Skia</UnoRuntimeIdentifier>
+    <Pizza>$(TargetFramework)</Pizza>
+    <IsNetTarget>false</IsNetTarget>
+    <IsNetTarget Condition="  '$(TargetFramework)' == 'net9.0'  ">true</IsNetTarget>
+    <IsUno>true</IsUno>
+    <IsUno Condition=" '$(IsWinAppSDK)' == 'true' ">false</IsUno>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="**\*.net.cs" Exclude="bin\**\*.net.cs;obj\**\*.net.cs" Condition="!$(IsNetTarget)" />
+    <Compile Remove="**\*.net.cs" Condition="!$(IsNetTarget)" />
+    <None Include="**\*.uno.cs" Exclude="bin\**\*.uno.cs;obj\**\*.uno.cs" Condition="!$(IsUno)" />
+    <Compile Remove="**\*.uno.cs" Condition="!$(IsUno)" />
+  </ItemGroup>
+
 </Project>

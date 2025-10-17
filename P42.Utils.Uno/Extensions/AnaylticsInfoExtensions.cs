@@ -1,4 +1,3 @@
-using System;
 using Windows.System.Profile;
 
 namespace P42.Utils.Uno;

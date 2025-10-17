@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace P42.Utils;
@@ -62,7 +58,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    [Obsolete("Use relavent TryParse, instead")]
+    [Obsolete("Use relevant TryParse, instead")]
     public static bool IsNumeric(this string s)
         => s.All(c => char.IsDigit(c) || c == '.' || c == '-');
     
@@ -219,7 +215,7 @@ public static class StringExtensions
         throw new ArgumentOutOfRangeException($"Char [{c}] cannot be converted to hex");
     }
 
-    [Obsolete("OBSOLETE: Use byte.Parse(), insttead.", true)]
+    [Obsolete("OBSOLETE: Use byte.Parse(), instead.", true)]
     public static uint ToHex(string str)
         => str.Aggregate<char, uint>(0, (current, c) => (current << 4) + ToHex(c));
     
@@ -232,7 +228,9 @@ public static class StringExtensions
     /// <param name="number"></param>
     /// <param name="precision"></param>
     /// <param name="si"></param>
+    /// <param name="thouSeparators"></param>
     /// <returns></returns>
+    // ReSharper disable once UnusedParameter.Global
     public static string HumanReadableBytes(this double number, int precision = 2, bool si = false, bool thouSeparators = true)
     {
         // unit's number of bytes
@@ -255,9 +253,10 @@ public static class StringExtensions
     /// <summary>
     /// Convert number of bytes to human-readable value
     /// </summary>
-    /// <param name="number"></param>
+    /// <param name="num"></param>
     /// <param name="precision"></param>
     /// <param name="si"></param>
+    /// <param name="thouSeparators"></param>
     /// <returns></returns>
     public static string HumanReadableBytes(this ulong num, int precision = 2, bool si = false, bool thouSeparators = true)
         => HumanReadableBytes((double)num, precision, si, thouSeparators);
@@ -265,19 +264,46 @@ public static class StringExtensions
     /// <summary>
     /// Convert number of bytes to human-readable value
     /// </summary>
-    /// <param name="number"></param>
+    /// <param name="num"></param>
     /// <param name="precision"></param>
     /// <param name="si"></param>
+    /// <param name="thouSeparators"></param>
     /// <returns></returns>
     public static string HumanReadableBytes(this long num, int precision = 2, bool si = false, bool thouSeparators = true)
         => HumanReadableBytes((double)num, precision, si, thouSeparators);
 
     /// <summary>
-    /// Gets the first non null or whitespace entry from an IEnumerable
+    /// Gets the first non-null or whitespace entry from an IEnumerable
     /// </summary>
     /// <param name="values"></param>
     /// <param name="onFail">value returned if none found</param>
     /// <returns>string.Empty if none found</returns>
     public static string FirstNotNullOrWhiteSpace(this IEnumerable<string?> values, string onFail = "")
         => values.FirstOrDefault(s => !string.IsNullOrWhiteSpace(s)) ?? onFail;
+    
+    /// <summary>
+    /// Removes all white redundant white space, leaving only one space between words
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public static string RemoveExtraWhitespace(this string str)
+    {
+        var sb = new StringBuilder();
+        bool lastCharIsWhitespace = false;
+        foreach (var c in str)
+        {
+            if (char.IsWhiteSpace(c))
+            {
+                lastCharIsWhitespace = true;
+                continue;
+            }
+
+            if (lastCharIsWhitespace)
+                sb.Append(' ');
+            sb.Append(c);
+            lastCharIsWhitespace = false;
+        }
+    
+        return sb.ToString();
+    }
 }

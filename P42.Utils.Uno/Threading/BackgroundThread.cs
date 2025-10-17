@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using P42.Utils.Uno;
-
-namespace P42.Utils.Uno;
+﻿namespace P42.Utils.Uno;
 
 /// <summary>
 /// Run on background thread, passing exceptions back to calling waiting thread
 /// </summary>
+// ReSharper disable once UnusedType.Global
 public static class BackgroundThread
 {
     /// <summary>
@@ -22,7 +19,7 @@ public static class BackgroundThread
             return Task.CompletedTask;
         }
         
-        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+        var tcs = new TaskCompletionSource<bool>();
         Task.Run(delegate {
             try
             {
@@ -48,11 +45,11 @@ public static class BackgroundThread
         if (!MainThread.IsMainThread)
             return Task.FromResult(func());
 
-        TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
+        var tcs = new TaskCompletionSource<T>();
         Task.Run(delegate {
             try
             {
-                T result = func();
+                var result = func();
                 tcs.TrySetResult(result);
             }
             catch (Exception exception)

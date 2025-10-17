@@ -1,10 +1,7 @@
-using System;
 using System.ComponentModel;
 using Windows.UI;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using ElementType = Microsoft.UI.Xaml.Controls.TextBlock;
 using System.Runtime.CompilerServices;
 using Markdig;
@@ -50,7 +47,7 @@ public static class TextBlockExtensions
     public static readonly DependencyProperty MarkdownProperty =
         DependencyProperty.RegisterAttached("Markdown", typeof(string), typeof(TextBlockExtensions), new PropertyMetadata(null, MarkdownChanged));
 
-    private static MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
+    private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
         .UseAdvancedExtensions()
         .UseEmojiAndSmiley()
         .UseAutoLinks()
@@ -70,7 +67,7 @@ public static class TextBlockExtensions
 
         var markdown = (string)e.NewValue ?? string.Empty;
 
-        var html = Markdig.Markdown.ToHtml(markdown, pipeline);
+        var html = Markdig.Markdown.ToHtml(markdown, Pipeline);
         textBlock.Html(html);
     }
 
@@ -278,7 +275,7 @@ public static class TextBlockExtensions
         {
             // if anything goes wrong just show the html
             Console.WriteLine($"TextBlockExtensions.HtmlChanged Could not convert to Html [{text}]");
-            textBlock.Text = Windows.Data.Html.HtmlUtilities.ConvertToText(text);
+            textBlock.Text = HtmlExtensions.ConvertToPlainText(text);
         }
     }
 
@@ -290,6 +287,7 @@ public static class TextBlockExtensions
     /// <param name="textBlock"></param>
     /// <param name="value"></param>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static ElementType SetHtml(this ElementType textBlock, string? value)
     {
         textBlock.SetValue(HtmlProperty, value ?? string.Empty);
@@ -310,6 +308,7 @@ public static class TextBlockExtensions
     /// <param name="element"></param>
     /// <param name="value"></param>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static ElementType Html(this ElementType element, string value)
     { element.SetHtml(value); return element; }
 
@@ -465,9 +464,9 @@ public static class TextBlockExtensions
         typeof(TextBlockExtensions),
         new PropertyMetadata(default(HtmlDependencyObject))
     );
-    internal static HtmlDependencyObject GetHtmlDependencyObject(this ElementType element)
+    internal static HtmlDependencyObject? GetHtmlDependencyObject(this ElementType element)
         => (HtmlDependencyObject)element.GetValue(HtmlDependencyObjectProperty);
-    internal static void SetHtmlDependencyObject(this ElementType element, HtmlDependencyObject value)
+    internal static void SetHtmlDependencyObject(this ElementType element, HtmlDependencyObject? value)
         => element.SetValue(HtmlDependencyObjectProperty, value);
     #endregion HtmlDependencyObject Property
 
@@ -590,18 +589,14 @@ public static class TextBlockExtensions
     /// <returns></returns>
     public static TextAlignment AsTextAlignment(this HorizontalAlignment horizontalAlignment)
     {
-        switch (horizontalAlignment)
+        return horizontalAlignment switch
         {
-            case HorizontalAlignment.Center:
-                return TextAlignment.Center;
-            case HorizontalAlignment.Left:
-                return TextAlignment.Left;
-            case HorizontalAlignment.Right:
-                return TextAlignment.Right;
-            case HorizontalAlignment.Stretch:
-                return TextAlignment.Justify;
-        }
-        return TextAlignment.Left;
+            HorizontalAlignment.Center => TextAlignment.Center,
+            HorizontalAlignment.Left => TextAlignment.Left,
+            HorizontalAlignment.Right => TextAlignment.Right,
+            HorizontalAlignment.Stretch => TextAlignment.Justify,
+            _ => TextAlignment.Left
+        };
     }
 
     /// <summary>
@@ -611,18 +606,14 @@ public static class TextBlockExtensions
     /// <returns></returns>
     public static HorizontalAlignment AsHorizontalAlignment(this TextAlignment textAlignment)
     {
-        switch(textAlignment)
+        return textAlignment switch
         {
-            case TextAlignment.Center: 
-                return HorizontalAlignment.Center;
-            case TextAlignment.Left: 
-                return HorizontalAlignment.Left;
-            case TextAlignment.Right: 
-                return HorizontalAlignment.Right;
-            case TextAlignment.Justify:
-                return HorizontalAlignment.Stretch;
-        }
-        return HorizontalAlignment.Left;
+            TextAlignment.Center => HorizontalAlignment.Center,
+            TextAlignment.Left => HorizontalAlignment.Left,
+            TextAlignment.Right => HorizontalAlignment.Right,
+            TextAlignment.Justify => HorizontalAlignment.Stretch,
+            _ => HorizontalAlignment.Left
+        };
     }
 
     /// <summary>

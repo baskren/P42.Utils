@@ -41,7 +41,6 @@ public static partial class DeviceBeep
         var sampleRate = (int)AudioFormat.SampleRate;
         var frameCount = sampleRate * durationMs / 1000;
         var buffer = new AVAudioPcmBuffer(AudioFormat, (uint)frameCount);
-        if (buffer.FloatChannelData != null)
         {
             unsafe
             {
@@ -83,93 +82,9 @@ public static partial class DeviceBeep
                 Console.WriteLine($"Error playing tone: {ex}");
             }
         }
-        // Play the generated buffer
-        //_buffer.FrameLength = (uint)frameCount;
-        //_playerNode.ScheduleBuffer(_buffer, null, false);
-        //_playerNode.Play();
+        
     }
 
-    private static void OnComplete()
-    {
-        Console.WriteLine("SCHEDULE COMPLETED");
-    }
-
-    /*
-    const double SampleRate = 44100.0; // Standard audio sample rate
-    static double _frequency; // Frequency of the tone
-    static double _theta; // Current phase of the wave
-    static bool _isPlaying; // Playback state
-    static AudioStreamBasicDescription audioFormat = new ()
-    {
-        SampleRate = SampleRate,
-        Format = AudioFormatType.LinearPCM,
-        FormatFlags = AudioFormatFlags.IsSignedInteger | AudioFormatFlags.IsPacked,
-        ChannelsPerFrame = 1,
-        FramesPerPacket = 1,
-        BitsPerChannel = 16,
-        BytesPerFrame = 2,
-        BytesPerPacket = 2
-    };
-
-
-    static async Task PlatformBeepAsync(double frequency, double duration)
-    {
-        if (_isPlaying)
-            return;
-
-        _isPlaying = true;
-
-        // Audio format description
-
-        var audioQueue = new OutputAudioQueue(audioFormat);
-
-        // Allocate and enqueue audio buffers
-        for (int i = 0; i < 3; i++)
-        {
-            IntPtr buffer;
-            audioQueue.AllocateBuffer(2048, out buffer);
-            FillAudioBuffer(buffer, 2048);
-            audioQueue.EnqueueBuffer(buffer, 2048, new AudioStreamPacketDescription[] { });
-        }
-
-        var tcs = new TaskCompletionSource<bool>();
-
-        EventHandler<BufferCompletedEventArgs> callback = (object? sender, BufferCompletedEventArgs e) =>
-        {
-            tcs.TrySetResult(true);
-        };
-
-        audioQueue.BufferCompleted += callback;
-        audioQueue.Start();
-
-        // Stop after the specified duration
-        NSTimer.CreateScheduledTimer(duration, _ =>
-        {
-            audioQueue.Stop(true);
-        });
-
-        await tcs.Task;
-        audioQueue.BufferCompleted -= callback;
-        audioQueue.Dispose();
-    }
-
-    static void FillAudioBuffer(IntPtr buffer, int bufferSize)
-    {
-        short[] samples = new short[bufferSize / 2];
-        double thetaIncrement = 2.0 * Math.PI * _frequency / SampleRate;
-
-        for (int i = 0; i < samples.Length; i++)
-        {
-            samples[i] = (short)(Math.Sin(_theta) * short.MaxValue);
-            _theta += thetaIncrement;
-
-            if (_theta > 2.0 * Math.PI)
-                _theta -= 2.0 * Math.PI;
-        }
-
-        Marshal.Copy(samples, 0, buffer, samples.Length);
-    }
-    */
 
 }
 

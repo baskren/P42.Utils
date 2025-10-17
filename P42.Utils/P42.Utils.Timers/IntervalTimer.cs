@@ -1,7 +1,3 @@
-
-using System;
-using System.Threading.Tasks;
-
 namespace P42.Utils;
 
 // ReSharper disable once UnusedType.Global
@@ -48,11 +44,11 @@ public sealed class IntervalTimer
 
     
     #region Constructors
-    private IntervalTimer(TimeSpan period, Func<bool>? callback)
+    private IntervalTimer(TimeSpan period, Func<bool>? callback, CancellationToken token = default)
     {
         Action<Task> process = _ =>
         {
-            if (callback!.Invoke())
+            if (!token.IsCancellationRequested && callback!.Invoke())
                 _tick!.Invoke();
             else
             {
@@ -65,7 +61,7 @@ public sealed class IntervalTimer
         {
             Task.Delay(period).ContinueWith(
                 process, 
-                default,
+                token,
                 TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnRanToCompletion,
                 TaskScheduler.Current
             );
@@ -74,7 +70,7 @@ public sealed class IntervalTimer
         _tick.Invoke();
     }
 
-    private IntervalTimer(TimeSpan period, Func<Task<bool>>? callback)
+    private IntervalTimer(TimeSpan period, Func<Task<bool>>? callback, CancellationToken token = default)
     {
         if (callback == null)
             return;
@@ -83,7 +79,7 @@ public sealed class IntervalTimer
         
         Func<Task, Task> process = async _ =>
         {
-            if (await callback.Invoke())
+            if (!token.IsCancellationRequested && await callback.Invoke())
                 _tick!.Invoke();
             else
             {
@@ -96,7 +92,7 @@ public sealed class IntervalTimer
         {
             Task.Delay(period).ContinueWith(
                 process, 
-                default,
+                token,
                 TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnRanToCompletion,
                 TaskScheduler.Current
             );

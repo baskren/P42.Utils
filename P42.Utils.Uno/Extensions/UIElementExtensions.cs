@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Windows.Foundation;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
-using Microsoft.UI.Xaml.Media;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using P42.Serilog.QuickLog;
@@ -226,8 +221,7 @@ public static class UIElementExtensions
 
     internal static void FindChildrenInternal<T>(List<T> results, DependencyObject? startNode, bool strictTypeCheck) where T : DependencyObject
     {
-        //startNode ??= Window.Current?.Content;
-        startNode ??= Platform.MainWindow?.Content;
+        startNode ??= Platform.MainWindow.Content;
 
         var count = VisualTreeHelper.GetChildrenCount(startNode);
         for (var i = 0; i < count; i++)

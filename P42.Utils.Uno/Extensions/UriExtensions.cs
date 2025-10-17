@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AsyncAwaitBestPractices;
-using Uno.Extensions;
-
 namespace P42.Utils.Uno;
 public static class UriExtensions
 {
@@ -55,7 +46,7 @@ public static class UriExtensions
     /// <param name="uri"></param>
     /// <param name="storageFile"></param>
     /// <returns></returns>
-    public static bool TryGetStorageFile(this Uri uri, [MaybeNullWhen(false)] out StorageFile storageFile)
+    public static bool TryGetStorageFile(this Uri uri, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out StorageFile storageFile)
     {
         try
         {
@@ -73,36 +64,34 @@ public static class UriExtensions
     {
         try
         {
-            if (await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri) is not StorageFile storageFile)
-                return null;
-            return storageFile.Path;
+            return await StorageFile.GetFileFromApplicationUriAsync(uri) is not {} storageFile 
+                ? null 
+                : storageFile.Path;
         }
         catch (Exception)
         {
             // because we're an Unpackaged WinAppSdk app?
             if (uri.IsFile)
                 return uri.AbsolutePath;
-            if (uri.IsAppData())
+            if (!uri.IsAppData())
+                throw;
+            
+            var segments = uri.Segments.ToList();
+            segments.RemoveRange(0, 2);
+            var dir = uri.Segments[1].ToLower() switch
             {
-                var segments = uri.Segments.ToList();
-                segments.RemoveRange(0, 2);
-                var dir = uri.Segments[1].ToLower() switch
-                {
-                    "local/" => Utils.Platform.ApplicationLocalFolderPath,
-                    "temp/" => Utils.Platform.ApplicationTemporaryFolderPath,
-                    _ => throw new Exception($"invalid root folder [{uri}]")
-                };
-                return Path.Combine(dir, string.Join("", segments));
-            }
-
-            throw;
+                "local/" => Utils.Platform.ApplicationLocalFolderPath,
+                "temp/" => Utils.Platform.ApplicationTemporaryFolderPath,
+                _ => throw new Exception($"invalid root folder [{uri}]")
+            };
+            return Path.Combine(dir, string.Join("", segments));
         }
-
     }
 
-    static bool IsAppData(this Uri uri)
+    private static bool IsAppData(this Uri uri)
         => uri.Scheme.Equals("ms-appdata", StringComparison.OrdinalIgnoreCase);
 
-    static bool IsLocalResource(this Uri uri)
+    // ReSharper disable once UnusedMember.Local
+    private static bool IsLocalResource(this Uri uri)
         => uri.Scheme.Equals("ms-appx", StringComparison.OrdinalIgnoreCase);
 }

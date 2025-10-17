@@ -1,6 +1,5 @@
-#if WINDOWS
-using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace P42.Utils.Uno;
 
@@ -62,23 +61,27 @@ public static partial class DisplayHelper
     }
 
     
-    [DllImport("User32.dll")]
-    private static extern uint GetDpiForWindow(IntPtr hwnd);
+    [LibraryImport("User32.dll")]
+    private static partial uint GetDpiForWindow(IntPtr hwnd);
     
-    [DllImport("Shcore.dll")]
-    private static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+    [LibraryImport("Shcore.dll")]
+    // ReSharper disable once UnusedMethodReturnValue.Local
+    private static partial int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
 
-    [DllImport("User32.dll")]
-    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+    [LibraryImport("User32.dll")]
+    private static partial IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
 
-    [DllImport("User32.dll")]
-    private static extern int GetSystemMetrics(int nIndex);
+    [LibraryImport("User32.dll")]
+    private static partial int GetSystemMetrics(int nIndex);
 
-    [DllImport("User32.dll")]
-    private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    // ReSharper disable once UnusedMember.Local
+    private static partial bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc lpfnEnum, IntPtr dwData);
 
-    [DllImport("User32.dll")]
-    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
     private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData);
 
@@ -103,4 +106,3 @@ public static partial class DisplayHelper
 
 
 }
-#endif

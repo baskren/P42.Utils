@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P42.Utils;
+// ReSharper disable once UnusedType.Global
 public static class LocalData_WebView2Extensions
 {
     /// <summary>
@@ -17,7 +12,7 @@ public static class LocalData_WebView2Extensions
     public static async Task SetSourceAsync(this WebView2 webView, LocalData.AsynchronousSourcedItem item, params string[] searchPatterns)
     {
 #if ANDROID
-        if (VisualTreeHelper.GetChildren<Android.Webkit.WebView>(webView).FirstOrDefault() is Android.Webkit.WebView droidWebView)
+        if (VisualTreeHelper.GetChildren<Android.Webkit.WebView>(webView).FirstOrDefault() is { } droidWebView)
         {
             droidWebView.Settings.AllowContentAccess = true;
             droidWebView.Settings.AllowFileAccessFromFileURLs = true;

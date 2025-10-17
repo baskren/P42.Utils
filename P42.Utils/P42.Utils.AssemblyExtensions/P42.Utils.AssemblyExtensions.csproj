@@ -6,5 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\P42.Utils.Json\P42.Utils.Json.csproj" />
+    </ItemGroup>
+
 
 </Project>

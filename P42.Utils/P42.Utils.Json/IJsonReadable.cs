@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+
 namespace P42.Utils;
 
 /// <summary>
@@ -10,12 +11,11 @@ public interface IJsonReadable
     /// Applies properties values found in JsonReader
     /// </summary>
     /// <param name="reader"></param>
-    void PropertiesFrom(JsonReader reader);
+    void PropertiesFrom(Utf8JsonReader reader);
 }
 
 /// <summary>
 /// Interface for IJsonReadable
 /// </summary>
-public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>
-{
-}
+// ReSharper disable once UnusedType.Global
+public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>;

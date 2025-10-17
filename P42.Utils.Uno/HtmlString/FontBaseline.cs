@@ -6,5 +6,5 @@ internal enum FontBaseline
     Superscript=1,
     Subscript=2,
     Numerator=3,
-    Denominator=4,
+    Denominator=4
 }

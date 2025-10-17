@@ -1,18 +1,26 @@
-#if !__ANDROID__ && !__IOS__ && !__MACCATALYST__ && !__MACOS__ && !__WATCHOS__ && !__TVOS__ && !__WASM__ && !WINDOWS && !DESKTOP
-using System;
 
 namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
-    static string GetManufacturer() => EasDeviceInfo.SystemManufacturer;
+    private static string GetManufacturer() 
+        => string.Empty;
 
-    static string GetModel() => EasDeviceInfo.SystemProductName;
+    private static string GetModel() 
+        => string.Empty;
 
-    static string GetDeviceName() => EasDeviceInfo.FriendlyName;
+    private static string GetDeviceName()
+        => string.Empty;
 
-    static string GetDeviceId() => GetGeneratedDeviceId();
+    private static string GetDeviceId()
+        => string.Empty;
 
-    static bool GetIsEmulator() => false;
+    private static bool GetIsEmulator() => false;
+    
+    public static string QueryDeviceOs()
+        => FallbackQueryDeviceOs();
+
+    public static string QueryDeviceOsVersion()
+        => FallbackQueryDeviceOsVersion();
+
 }
-#endif

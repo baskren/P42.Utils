@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Threading;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Collections;
@@ -104,7 +102,7 @@ public class ObservableConcurrentDictionary<TKey, TValue> :
     /// <returns>Whether the update was successful.</returns> 
     private void UpdateWithNotification(TKey key, TValue value)
     {
-        TryRemoveWithNotification(key, out var _);
+        TryRemoveWithNotification(key, out _);
         TryAddWithNotification(key, value);
         /* Since when was NotifyCollectionChangedAction.Relace not supported in the constructor???
         _dictionary[key] = value;

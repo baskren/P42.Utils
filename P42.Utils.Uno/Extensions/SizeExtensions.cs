@@ -1,9 +1,8 @@
-﻿using System;
-using Windows.Foundation;
-using Microsoft.UI.Xaml;
+﻿using Windows.Foundation;
 
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class SizeExtensions
 {
     /// <summary>

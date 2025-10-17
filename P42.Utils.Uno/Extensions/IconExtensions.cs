@@ -1,7 +1,6 @@
-using Microsoft.UI.Xaml.Controls;
-
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class IconExtensions
 {
     /// <summary>

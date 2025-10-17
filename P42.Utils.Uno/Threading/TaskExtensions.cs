@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 
 namespace P42.Utils.Uno;
 

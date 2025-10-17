@@ -1,11 +1,7 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using P42.Serilog.QuickLog;
 
 namespace P42.Utils.Uno;
 
@@ -244,14 +240,32 @@ public static class ListViewExtensions
 		}
 		else
 		{
+            list.Loaded += LoadedHandler;
+
             async void LoadedHandler(object o, RoutedEventArgs e)
             {
-                list.Loaded -= LoadedHandler;
-                // Here we try to avoid an exception, see explanation at bottom
-                await list.Dispatcher.RunIdleAsync(async _ => { await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false); });
+                try
+                {
+                    list.Loaded -= LoadedHandler;
+                    // Here we try to avoid an exception, see explanation at bottom
+                    await list.Dispatcher.RunIdleAsync(async void (_) =>
+                    {
+                        try
+                        {
+                            await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            QLog.Error(ex);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    QLog.Error(ex);
+                }
             }
 
-            list.Loaded += LoadedHandler;
 		}
 
 	}

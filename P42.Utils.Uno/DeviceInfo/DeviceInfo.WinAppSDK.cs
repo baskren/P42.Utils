@@ -1,4 +1,3 @@
-#if WINDOWS 
 using System;
 using System.Diagnostics;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -11,13 +10,13 @@ namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
-    private static string GetManufacturer() => EasDeviceInfo.SystemManufacturer;
+    private static string GetManufacturer() => string.Empty;
 
     private static string GetModel()
     {
         try
         {
-            var data = ExecuteCommand("wmic computersystem get model");
+            var data = Platform.ExecuteCommand("wmic computersystem get model");
             return data.Replace("\r", "").Replace("\n", "").Replace("Model", "").Trim();
         }
         catch (Exception ex)
@@ -25,14 +24,14 @@ public static partial class DeviceInfo
             QLog.Warning(ex, "wmic computersystem get model");
         }
 
-        return EasDeviceInfo.SystemProductName;
+        return string.Empty;
     }
 
     private static string GetDeviceName()
     {
         try
         {
-            var data = ExecuteCommand("wmic computersystem get name");
+            var data = Platform.ExecuteCommand("wmic computersystem get name");
             return data.Replace("\r", "").Replace("\n", "").Replace("Name", "").Trim();
         }
         catch (Exception ex)
@@ -40,14 +39,14 @@ public static partial class DeviceInfo
             QLog.Warning(ex, "wmic computersystem get name");
         }
 
-        return EasDeviceInfo.FriendlyName;
+        return string.Empty;
     }
 
     private static string GetDeviceId()
     {
         try
         {
-            var data = ExecuteCommand("wmic csproduct get uuid");
+            var data = Platform.ExecuteCommand("wmic csproduct get uuid");
             data = data.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
             if (IsValidId(data)) 
                 return data;
@@ -58,11 +57,15 @@ public static partial class DeviceInfo
             QLog.Warning(ex, "mic computersystem get uuid");
         }
 
-        return EasDeviceInfo.Id.ToString();
+        return string.Empty;
     }
 
     private static bool GetIsEmulator() => false;
     
+    public static string QueryDeviceOs()
+        => nameof(OperatingSystem.Windows);
 
+    public static string QueryDeviceOsVersion()
+        => FallbackQueryDeviceOsVersion();
+    
 }
-#endif

@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Imaging;
+using P42.Serilog.QuickLog;
 using static P42.Utils.LocalData;
 
 namespace P42.Utils.Uno;
 
 
+// ReSharper disable once UnusedType.Global
 public static class LocalData_ImageSource_Extensions
 {
     /// <summary>
@@ -25,7 +22,7 @@ public static class LocalData_ImageSource_Extensions
         try
         {
             source = GetItemImageSource(item);
-            return source != null;
+            return true;
         }
         catch (Exception)
         {
@@ -74,7 +71,10 @@ public static class LocalData_ImageSource_Extensions
         {
             return await item.AssureSourcedImageSourceAsync();
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+            // ignored
+        }
 
         return null;
     }
@@ -90,7 +90,10 @@ public static class LocalData_ImageSource_Extensions
         {
             return item.AssureSourcedImageSource();
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+            // ignored
+        }
 
         return null;
     }
@@ -101,8 +104,6 @@ public static class LocalData_ImageSource_Extensions
 
     private static ImageSource GetItemImageSource(Item item)
     {
-        
-        using var stream = item.Stream(FileMode.Open);
 
         try
         {
@@ -110,6 +111,7 @@ public static class LocalData_ImageSource_Extensions
                 item.FullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
                 item.FullPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
             {
+                using var stream = item.Stream(FileMode.Open);
                 var bitmapImage = new BitmapImage();
                 bitmapImage.SetSource(stream.AsRandomAccessStream());
                 return bitmapImage;
@@ -119,20 +121,18 @@ public static class LocalData_ImageSource_Extensions
             {
                 return MainThread.Invoke(async () =>
                 {
+                    await using var stream = item.Stream(FileMode.Open);
                     var svgImageSource = new SvgImageSource();
                     await svgImageSource.SetSourceAsync(stream.AsRandomAccessStream());
                     return svgImageSource;
                 });
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            QLog.Error(ex);
         }
-        finally
-        {
-            stream.Dispose();
-        }
+        
 
         throw new ArgumentException($"Invalid ItemKey ItemSource [{item}] for ImageSource");
     }

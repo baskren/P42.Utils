@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Windows.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI.Text;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Data;
 using P42.Serilog.QuickLog;
@@ -177,16 +171,16 @@ internal partial class HtmlDependencyObject : DependencyObject
     /// </summary>
     public static readonly DependencyProperty FontFamilyProperty = DependencyProperty.Register(
         nameof(FontFamily),
-        typeof(Microsoft.UI.Xaml.Media.FontFamily),
+        typeof(FontFamily),
         typeof(HtmlDependencyObject),
         new PropertyMetadata(null, OnFontPropertyChanged)
     );
     /// <summary>
     /// FontFamily
     /// </summary>
-    public Microsoft.UI.Xaml.Media.FontFamily? FontFamily
+    public FontFamily? FontFamily
     {
-        get => (Microsoft.UI.Xaml.Media.FontFamily)GetValue(FontFamilyProperty);
+        get => (FontFamily)GetValue(FontFamilyProperty);
         set => SetValue(FontFamilyProperty, value);
     }
     #endregion FontFamily Property
@@ -412,7 +406,6 @@ internal partial class HtmlDependencyObject : DependencyObject
                 textBlock.FontFamily,
                 textBlock.FontSize, 
                 (short)Microsoft.UI.Text.FontWeights.Normal.Weight,
-                false,
                 textColor: textBlock.Foreground is SolidColorBrush brush
                     ? brush.Color
                     : ColorExtensions.AppColor("SystemColorWindowTextColor") //(Color)Application.Current.Resources["SystemBaseHighColor"]
@@ -525,7 +518,7 @@ internal partial class HtmlDependencyObject : DependencyObject
 
         var lastMetaFont = baseMetaFont;
         var startIndex = 0;
-        var lastFontWeight = lastMetaFont.FontWeight;
+        //var lastFontWeight = lastMetaFont.FontWeight;
         for (var i = 0; i < metaFonts.Count; i++)
         {
             var metaFont = metaFonts[i];
@@ -536,7 +529,7 @@ internal partial class HtmlDependencyObject : DependencyObject
             if (i > 0) //&& lastMetaFont != baseMetaFont)
                 AddInline(textBlock, lastMetaFont, newText, startIndex, i - startIndex);
             lastMetaFont = metaFont;
-            lastFontWeight = lastMetaFont.FontWeight;
+            //lastFontWeight = lastMetaFont.FontWeight;
             startIndex = i;
         }
         AddInline(textBlock, lastMetaFont, newText, startIndex, newText.Length - startIndex);
@@ -578,8 +571,8 @@ internal partial class HtmlDependencyObject : DependencyObject
                 Text = text.Substring(startIndex, length),
                 FontSize = metaFont.Size,
                 FontWeight = new FontWeight((ushort)metaFont.FontWeight),
-                FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal,
                 //Foreground = new SolidColorBrush(Microsoft.UI.Colors.Blue),
+                FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal
             };
 
             DecorateRun(textBlock, linkRun, metaFont, startIndex, length);
@@ -593,8 +586,8 @@ internal partial class HtmlDependencyObject : DependencyObject
             Text = text.Substring(startIndex, length),
             FontSize = metaFont.Size,
             FontWeight = new FontWeight((ushort)metaFont.FontWeight),
-            FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal,
-            Foreground = new SolidColorBrush(metaFont.TextColor)
+            Foreground = new SolidColorBrush(metaFont.TextColor),
+            FontStyle = metaFont.Italic ? FontStyle.Italic : FontStyle.Normal
         };
 
         DecorateRun(textBlock, run, metaFont, startIndex, length);
@@ -614,7 +607,7 @@ internal partial class HtmlDependencyObject : DependencyObject
                 if (metaFont.Family != null)
                     run.FontFamily = metaFont.Family;
                 break;
-#if WINDOWS
+//#if WINDOWS
 
             // FontVariants don't work in UNO
 
@@ -630,7 +623,7 @@ internal partial class HtmlDependencyObject : DependencyObject
                 break;
             default:
                 throw new ArgumentException($"Unsupported FontBaseline: {metaFont.Baseline}");
-#endif
+//#endif
         }
 
         if (!metaFont.BackgroundColor.IsDefaultOrTransparent())

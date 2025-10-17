@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 namespace P42.Utils;
 
@@ -33,7 +32,7 @@ public static class IEnumerableExtensions
     }
     
     /// <summary>
-    /// provides indexer with with IEnumerable
+    /// provides indexer with IEnumerable
     /// </summary>
     /// <param name="source"></param>
     /// <typeparam name="T"></typeparam>

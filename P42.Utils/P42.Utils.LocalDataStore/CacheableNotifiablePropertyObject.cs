@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
 using P42.NotifiableObject;
 
 namespace P42.Utils;
@@ -34,26 +33,27 @@ public class CacheableNotifiablePropertyObject : SelfBackedNotifiablePropertyObj
         }
     }
 
-    [JsonIgnore]
     private readonly List<string> _initializedProperties = [];
     
     private LocalData.TagItem TagItemKey(string propertyName) => LocalData.TagItem.Get(propertyName, Path.Combine(GetType().Name, InstanceIdentifier), GetType().Assembly);
 
+    /*
     /// <summary>
     /// Overrides Serialization Settings for Property
     /// </summary>
     /// <param name="propertyName"></param>
     /// <param name="settings"></param>
-    public void SetJsonSerializatingSettings(string propertyName, JsonSerializerSettings settings)
+    public void SetJsonSerializationSettings(string propertyName, JsonSerializerSettings settings)
         => TagItemKey(propertyName).JsonSerializingSettings = settings;
 
     /// <summary>
-    /// Overrides Deserialization Settings for Proeprty
+    /// Overrides Deserialization Settings for Property
     /// </summary>
     /// <param name="propertyName"></param>
     /// <param name="settings"></param>
     public void SetJsonDeserializationSettings(string propertyName, JsonSerializerSettings settings)
         => TagItemKey(propertyName).JsonDeserializingSettings = settings;
+        */
 
     /// <summary>
     /// Recall cached value (or default)
@@ -89,6 +89,7 @@ public class CacheableNotifiablePropertyObject : SelfBackedNotifiablePropertyObj
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     protected bool SetCachedValue<T>(string instanceId, T value, [CallerMemberName] string propertyName = "")
     {
         InstanceIdentifier = instanceId; 

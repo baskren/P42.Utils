@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace P42.Utils.Uno;
+﻿namespace P42.Utils.Uno;
 
 public static class IComparableExtensions
 {

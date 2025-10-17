@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
+// ReSharper disable once UnusedType.Global
 public static class Recursion
 {
     private const string RecursionFolderName = "P42.Utils.RecursionStackTraces";
@@ -56,11 +54,13 @@ public static class Recursion
     /// <summary>
     /// Fires when recursion logging is toggled
     /// </summary>
+    // ReSharper disable once EventNeverSubscribedTo.Global
     public static event EventHandler<bool>? IsMonitoringChanged;
     
     /// <summary>
     /// Fired when a recursion is detected
     /// </summary>
+    // ReSharper disable once EventNeverSubscribedTo.Global
     public static event EventHandler? RecursionDetected;
 
     private const int RecursionLimit = 100;
@@ -100,14 +100,14 @@ public static class Recursion
 
         var fileName = $"{DateTime.Now:yyyyMMdd'T'HHmmss}.txt";
         var filePath = Path.Combine(FolderPath, fileName);
-        var stackTrace = System.Environment.StackTrace;
+        var stackTrace = Environment.StackTrace;
         DirectoryExtensions.GetOrCreateParentDirectory(fileName);
         File.WriteAllText(filePath, stackTrace);
 
         if (RecursionDetected is null)
             throw new RecursionException(name);
         
-        RecursionDetected.Invoke(System.Environment.StackTrace, EventArgs.Empty);
+        RecursionDetected.Invoke(Environment.StackTrace, EventArgs.Empty);
     }
 
     /// <summary>

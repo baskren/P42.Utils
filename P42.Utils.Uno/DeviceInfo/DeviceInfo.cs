@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using P42.Serilog.QuickLog;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
@@ -12,34 +10,6 @@ namespace P42.Utils.Uno;
 public static partial class DeviceInfo
 {
 
-    static Dictionary<string, string>? _macOsHardwareOverview;
-    // ReSharper disable once UnusedMember.Local
-    private static Dictionary<string,string>? MacOsHardwareOverview
-    {
-        #if BROWSERWASM
-        [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
-        #endif
-        get
-        {
-            if (_macOsHardwareOverview is not null)
-                return _macOsHardwareOverview;
-            try
-            {
-                var json = ExecuteCommand("system_profiler -json SPHardwareDataType");
-                var obj = JsonSerializer.Deserialize<Dictionary<string, object>>(json)?["spHardwareDataType"];
-                if (obj is not IList { Count: > 0 } iList)
-                    return _macOsHardwareOverview = new();
-
-                json = JsonSerializer.Serialize(iList[0]);
-                return _macOsHardwareOverview = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            }
-            catch (Exception ex)
-            {
-                QLog.Warning(ex);
-            }
-            return _macOsHardwareOverview = new ();
-        }
-    }
 
     static EasClientDeviceInformation? _easDeviceInfo;
     private static EasClientDeviceInformation EasDeviceInfo => _easDeviceInfo ??= new EasClientDeviceInformation ();
@@ -50,7 +20,25 @@ public static partial class DeviceInfo
     /// Device Manufacturer
     /// </summary>
     static string? _make;
-    public static string Make => _make ??= GetManufacturer();
+
+    public static string Make
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty (_make))
+                return _make;
+
+            var make = GetManufacturer();
+            if (!string.IsNullOrEmpty (make))
+                return _make = make;
+
+            make = EasDeviceInfo.SystemManufacturer;
+            if (!string.IsNullOrEmpty (make))
+                return _make = make;
+
+            return _make = "Unknown";
+        }
+    }
 
     #endregion
 
@@ -60,20 +48,73 @@ public static partial class DeviceInfo
     /// Device model
     /// </summary>
     static string? _model;
-    public static string Model => _model ??= GetModel();
+
+    public static string Model
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_model))
+                return _model;
+            
+            var model = GetModel();
+            if (!string.IsNullOrEmpty(model))
+                return _model = model;
+            
+            try
+            {
+                model = EasDeviceInfo.SystemProductName;
+                if (!string.IsNullOrEmpty(model))
+                    return _model = model;
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
+
+            return _model = "Unknown";
+        }
+    }
     
     #endregion
 
 
     #region DeviceName
     private static string? _name;
-    public static string DeviceName => _name ??= GetDeviceName();
+
+    public static string DeviceName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_name))
+                return _name;
+
+            var name = GetDeviceName();
+            if (!string.IsNullOrEmpty(name))
+                return _name = name;
+            
+            try
+            {
+#pragma warning disable Uno0001
+                name = EasDeviceInfo.FriendlyName;
+#pragma warning restore Uno0001
+                if (!string.IsNullOrEmpty(name))
+                    return _name = name;
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
+
+            return _name = "Unknown";
+
+        }
+    }
     #endregion
 
 
     #region DeviceId
 
-    static string _id = string.Empty;
+    private static string _id = string.Empty;
     public static string DeviceId
     {
         get
@@ -83,10 +124,7 @@ public static partial class DeviceInfo
             _id = GetDeviceId();
             if (IsValidId(_id)) return _id;
 
-            _id = EasDeviceInfo.Id.ToString();
-            if (IsValidId(_id)) return _id;
-
-            return _id = GetGeneratedDeviceId();
+            return _id = FallbackId();
         }
     }
 
@@ -104,6 +142,26 @@ public static partial class DeviceInfo
     private static bool IsValidId(string? id)
         => !string.IsNullOrWhiteSpace(id) && id.Any(c => c != '0' && c != '-');
 
+    private static string FallbackId()
+    {
+        try
+        {
+#pragma warning disable Uno0001
+            if (EasDeviceInfo.Id != Guid.Empty)
+            {
+                var id = EasDeviceInfo.Id.ToString();
+                if (IsValidId(id)) return id;
+            }
+#pragma warning restore Uno0001
+        }
+        catch (Exception)
+        {
+            // Ignore
+        }
+        
+        return GetGeneratedDeviceId();
+        
+    }
     #endregion
 
 
@@ -186,29 +244,11 @@ public static partial class DeviceInfo
             if (!string.IsNullOrWhiteSpace(_os))
                 return _os;
 
-#if BROWSERWASM
-            _os = "Browser";
-
-            if (BrowserOverview is null)
-                return _os;
-
-            if (BrowserOverview.TryGetValue("os", out var os) && os.TryGetValue("name", out var osName))
-                _os += $":[{osName}]";
-
-            if (BrowserOverview.TryGetValue("os", out var browser) && browser.TryGetValue("name", out var browserName))
-                _os += $" {browserName}";
-
-            if (BrowserOverview.TryGetValue("engine", out var engine) && engine.TryGetValue("name", out var engineName))
-                _os += $" ({engineName})";
-
-            return _os;
-#else
-            return _os = QueryOs();
-#endif
+            return _os = QueryDeviceOs();
         }
     }
 
-    public static string Platform
+    public static string UiPlatform
     {
         get
         {
@@ -222,32 +262,32 @@ public static partial class DeviceInfo
         }
     }
 
-    public static string QueryOs()
+    public static string FallbackQueryDeviceOs()
     {
-        if (System.OperatingSystem.IsAndroid())
-            return nameof(OperatingSystem.Android);
-        if (System.OperatingSystem.IsBrowser())
-            return nameof(OperatingSystem.Browser);
-        if (System.OperatingSystem.IsFreeBSD())
-            return nameof(OperatingSystem.FreeBSD);
-        if (System.OperatingSystem.IsIOS())
-            return nameof(OperatingSystem.iOS);
-        if (System.OperatingSystem.IsLinux())
-            return nameof(OperatingSystem.Linux);
-        if (System.OperatingSystem.IsMacCatalyst())
-            return nameof(OperatingSystem.MacCatalyst);
-        if (System.OperatingSystem.IsMacOS())
-            return nameof(OperatingSystem.MacOS);
-        if (System.OperatingSystem.IsTvOS())
-            return nameof(OperatingSystem.TvOS);
-        if (System.OperatingSystem.IsWasi())
-            return nameof(OperatingSystem.Wasi);
-        if (System.OperatingSystem.IsWatchOS())
-            return nameof(OperatingSystem.WatchOS);
-        if (System.OperatingSystem.IsWindows())
-            return nameof(OperatingSystem.Windows);
+        if (OperatingSystem.IsAndroid())
+            return nameof(DeviceOperatingSystem.Android);
+        if (OperatingSystem.IsBrowser())
+            return nameof(DeviceOperatingSystem.Browser);
+        if (OperatingSystem.IsFreeBSD())
+            return nameof(DeviceOperatingSystem.FreeBSD);
+        if (OperatingSystem.IsIOS())
+            return nameof(DeviceOperatingSystem.iOS);
+        if (OperatingSystem.IsLinux())
+            return nameof(DeviceOperatingSystem.Linux);
+        if (OperatingSystem.IsMacCatalyst())
+            return nameof(DeviceOperatingSystem.MacCatalyst);
+        if (OperatingSystem.IsMacOS())
+            return nameof(DeviceOperatingSystem.MacOS);
+        if (OperatingSystem.IsTvOS())
+            return nameof(DeviceOperatingSystem.TvOS);
+        if (OperatingSystem.IsWasi())
+            return nameof(DeviceOperatingSystem.Wasi);
+        if (OperatingSystem.IsWatchOS())
+            return nameof(DeviceOperatingSystem.WatchOS);
+        if (OperatingSystem.IsWindows())
+            return nameof(DeviceOperatingSystem.Windows);
         QLog.Warning("Unknown OS");
-        return nameof(OperatingSystem.Unknown);
+        return nameof(DeviceOperatingSystem.Unknown);
 
     }
     #endregion
@@ -259,35 +299,22 @@ public static partial class DeviceInfo
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(_osVersion)) return _osVersion;
+            if (!string.IsNullOrWhiteSpace(_osVersion)) 
+                return _osVersion;
 
-#if BROWSERWASM
-            if (BrowserOverview is null)
-                return "n/a";
-
-            if (BrowserOverview.TryGetValue("os", out var os) && os.TryGetValue("version", out var osVersion))
-                _osVersion += $"[{osVersion}]";
-
-            if (BrowserOverview.TryGetValue("os", out var browser) && browser.TryGetValue("version", out var browserVersion))
-                _osVersion += $" {browserVersion}";
-
-            if (BrowserOverview.TryGetValue("engine", out var engine) && engine.TryGetValue("version", out var engineVersion))
-                _osVersion += $" ({engineVersion})";
-
-            return _osVersion;
-
-#elif ANDROID
-            return _osVersion = AnalyticsInfo.VersionInfo.ParseDeviceFamilyVersion().ToString();
-#else
-            var v1 = Environment.OSVersion.Version.Major;
-            var v2 = Environment.OSVersion.Version.Minor;
-            var v3 = Math.Max(Environment.OSVersion.Version.Build, 0);
-            var v4 = Math.Max(Environment.OSVersion.Version.Revision, 0);
-            return _osVersion = $"{v1}.{v2}.{v3}.{v4}";
-
-#endif
+            return _osVersion = QueryDeviceOsVersion();
         }
     }
+    
+    public static string FallbackQueryDeviceOsVersion()
+    {
+        var v1 = Environment.OSVersion.Version.Major;
+        var v2 = Environment.OSVersion.Version.Minor;
+        var v3 = Math.Max(Environment.OSVersion.Version.Build, 0);
+        var v4 = Math.Max(Environment.OSVersion.Version.Revision, 0);
+        return $"{v1}.{v2}.{v3}.{v4}";
+    }
+
     #endregion
 
 
@@ -297,13 +324,13 @@ public static partial class DeviceInfo
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace (_osDescription)) return _osDescription;
+            if (!string.IsNullOrWhiteSpace (_osDescription)) 
+                return _osDescription;
 
-#if BROWSERWASM
-            return _osDescription = AnalyticsInfo.VersionInfo.DeviceFamilyVersion; 
-#else
+            if (OperatingSystem.IsBrowser())
+                return _osDescription = AnalyticsInfo.VersionInfo.DeviceFamily; 
+                
             return _osDescription = RuntimeInformation.OSDescription;
-#endif
         }
     }
     #endregion
@@ -318,35 +345,5 @@ public static partial class DeviceInfo
 
     public static string FrameworkDescription => RuntimeInformation.FrameworkDescription;
 
-
-
-    private static string ExecuteCommand(string command)
-    {
-        // Create a new process
-        using var process = new System.Diagnostics.Process();
-        // Configure the process
-        process.StartInfo.FileName = "/bin/bash";
-        process.StartInfo.Arguments = $"-c \"{command}\"";
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.CreateNoWindow = true;
-
-        // Start the process
-        process.Start();
-
-        // Capture output
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
-
-        process.WaitForExit();
-
-        if (process.ExitCode == 0)
-            return output;
-
-        QLog.Warning($"ExecuteCommand({command}), Error {error}");
-        return string.Empty;
-
-    }
-
+    
 }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.VisualBasic.CompilerServices;
 using P42.Utils.Interfaces;
 
@@ -9,7 +8,9 @@ namespace P42.Utils;
 /// </summary>
 public static class DiskSpace
 {
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
     internal static IDiskSpace? PlatformDiskSpace;
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
     /// <summary>
     /// Free disk space

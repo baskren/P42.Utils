@@ -1,5 +1,4 @@
 using System.Reflection;
-using Newtonsoft.Json;
 using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
@@ -299,10 +298,13 @@ public static class EmbeddedResourceExtensions
 
         try
         {
+            value = Serializer.Default.Deserialize<T>(json);
+            /*
             value = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto
             });
+            */
             return true;
         }
         catch (Exception e)

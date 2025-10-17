@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.UI.Xaml;
-
 namespace P42.Utils.Uno;
 
 public static class TextPropertiesExtensions
@@ -35,6 +31,7 @@ public static class TextPropertiesExtensions
     /// </summary>
     /// <param name="textElement"></param>
     /// <returns></returns>
+    // ReSharper disable once UnusedParameter.Global
     public static double DefaultFontSize<T>(this T textElement) where T : FrameworkElement, new()
         => DefaultFontSize<T>();
 }

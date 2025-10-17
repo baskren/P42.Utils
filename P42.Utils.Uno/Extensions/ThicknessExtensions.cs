@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-
-namespace P42.Utils.Uno;
+﻿namespace P42.Utils.Uno;
 
 public static class ThicknessExtensions
 {

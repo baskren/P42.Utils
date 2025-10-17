@@ -1,42 +1,34 @@
 using P42.Utils.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace P42.Utils.Uno;
 
-internal class DeviceDisk : IDiskSpace
+public partial class DeviceDisk : IDiskSpace
 {
 
-    private const string FreeSpace = "System.FreeSpace";
-    private const string Capacity = "System.Capacity";
+    internal const string FreeSpace = "System.FreeSpace";
+    internal const string Capacity = "System.Capacity";
 
 
     public async Task<ulong> FreeAsync()
-        => await GetAppFolderProperty<ulong>(FreeSpace);
+        => await GetAppFolderProperty(FreeSpace);
 
     public async Task<ulong> SizeAsync()
-        => await GetAppFolderProperty<ulong>(Capacity);
+        => await GetAppFolderProperty(Capacity);
 
     public async Task<ulong> UsedAsync()
     {
-        var properties = await GetAppFolderProperties([FreeSpace, Capacity]);
-        var free = (ulong)properties[FreeSpace];
-        var size = (ulong)properties[Capacity];
+        var properties = await NativeGetAppFolderPropertiesAsync([FreeSpace, Capacity]);
+        var free = properties[FreeSpace];
+        var size = properties[Capacity];
         return size - free;
     }
-
-    private static async Task<IDictionary<string, object>> GetAppFolderProperties(string[] properties)
+    
+    private static async Task<ulong> GetAppFolderProperty(string property)
     {
-        var task = ApplicationData.Current.LocalFolder.Properties.RetrievePropertiesAsync(properties);
-        return await task.AsTask();
+        var retrievedProperties = await NativeGetAppFolderPropertiesAsync([property]);
+        return retrievedProperties[property];
     }
 
-    private static async Task<T> GetAppFolderProperty<T>(string property)
-    {
-        var retrivedProperties = await GetAppFolderProperties([property]);
-        return (T)retrivedProperties[property];
-    }
+    //public static partial Task<Dictionary<string, ulong>> NativeGetAppFolderPropertiesAsync(string[] properties);
 
 }

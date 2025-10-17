@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace P42.Utils;
 
@@ -99,7 +96,7 @@ public static class IListExtensions
         if (count > 0)
         {
             var item = iList[count - 1];
-            iList.RemoveAt((int)count - 1);
+            iList.RemoveAt(count - 1);
             return item;
         }
 
@@ -107,7 +104,7 @@ public static class IListExtensions
     }
 
     /// <summary>
-    /// Try remove last item in list
+    /// Try to remove last item in list
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="iList"></param>
@@ -128,7 +125,7 @@ public static class IListExtensions
     }
 
     /// <summary>
-    /// Try remove last item in list
+    /// Try to remove last item in list
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="iList"></param>

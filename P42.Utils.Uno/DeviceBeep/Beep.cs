@@ -17,9 +17,6 @@ public static partial class DeviceBeep
     /// <param name="duration"></param>
     public static async Task PlayAsync(int frequency = 1500, int duration = 300)
     {
-//#if BROWSERWASM
-//        await DeviceBeep.PlatformBeepAsync(frequency, duration);
-//#else
 
         if (!PlatformCanBeep())
             return;
@@ -29,11 +26,9 @@ public static partial class DeviceBeep
         var tcs = new TaskCompletionSource<bool>();
         _queue?.Enqueue((frequency, duration, tcs));
         await tcs.Task;
-//#endif
     }
 
 
-//#if !BROWSERWASM
     private static ConcurrentQueue<(int Frequency, int Duration, TaskCompletionSource<bool> Tcs)>? _queue;
 
     private static void Init()
@@ -77,7 +72,5 @@ public static partial class DeviceBeep
             // ReSharper disable once FunctionNeverReturns
         });
     }
-//#endif
-
 
 }

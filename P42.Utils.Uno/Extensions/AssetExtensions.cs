@@ -1,7 +1,6 @@
-using System;
-
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class AssetExtensions
 {
 
@@ -46,6 +45,9 @@ public static class AssetExtensions
 
         Console.WriteLine($"projectName:projectPath#argument = {projectName}:{projectPath}#{argument}");
 
+        
+        // TODO: Is this still necessary in the latest versions of UNO?
+        
         var useProjectPath = false;
 
 #if ANDROID

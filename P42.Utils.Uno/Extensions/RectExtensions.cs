@@ -1,8 +1,8 @@
-using Microsoft.UI.Xaml;
 using Windows.Foundation;
 
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class RectExtensions
 {
 
@@ -16,7 +16,7 @@ public static class RectExtensions
         => new(t1.Left - t2.Left, t1.Top - t2.Top, t1.Width + t2.Left + t2.Right, t1.Height + t2.Top + t2.Bottom);
 
     /// <summary>
-    /// Descrease the size of a Rect by a Thickness
+    /// Decrease the size of a Rect by a Thickness
     /// </summary>
     /// <param name="t1"></param>
     /// <param name="t2"></param>

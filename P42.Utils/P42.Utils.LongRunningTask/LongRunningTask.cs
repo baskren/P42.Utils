@@ -5,9 +5,11 @@ namespace P42.Utils;
 /// <summary>
 /// Long Running Background Task
 /// </summary>
+// ReSharper disable once UnusedType.Global
 public static class LongRunningTask
 {
 
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public static Type? PlatformLongRunningTaskType { get; set; }
     
     private static ILongRunningTask Create()

@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 
 namespace P42.Utils;
@@ -44,7 +43,7 @@ internal static class AssemblyBuildTimeExtensions
         try
         {
             var buffer = new byte[2048];
-            using var fs = new System.IO.FileStream(assembly.Location, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            using var fs = new FileStream(assembly.Location, FileMode.Open, FileAccess.Read);
             fs.ReadExactly(buffer, 0, buffer.Length);
 
             var headerOffset = BitConverter.ToInt32(buffer, peHeaderOffset);

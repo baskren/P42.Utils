@@ -1,40 +1,73 @@
-#if DESKTOP
-using System;
-using System.Diagnostics;
-using Microsoft.UI.Xaml.Media.Animation;
+using System.Text.Json.Serialization;
 using P42.Serilog.QuickLog;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.System.Profile;
-using Windows.UI.ViewManagement;
 
 namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
+    // ReSharper disable InconsistentNaming
+    [JsonSerializable(typeof(Dictionary<string, List<Dictionary<string, string>>>))]
+    internal partial class Dictionary_string_List_Dictionary_string_string_SerializerContext : JsonSerializerContext;
 
+    private static readonly Serializer Serializer = new ();
+    
+    static DeviceInfo()
+    {
+        Serializer.Add(typeof(Dictionary<string, List<Dictionary<string, string>>>), Dictionary_string_List_Dictionary_string_string_SerializerContext.Default);
+    }
+    
+    
+    private static Dictionary<string, string>? _macOsHardwareOverview;
+    // ReSharper disable once UnusedMember.Local
+    private static Dictionary<string,string> MacOsHardwareOverview
+    {
+        get
+        {
+            if (_macOsHardwareOverview is not null)
+                return _macOsHardwareOverview;
+            try
+            {
+                var json = Platform.ExecuteShellCommand("system_profiler -json SPHardwareDataType");
+                if (!Serializer.TryDeserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, out var dict)
+                    || dict["spHardwareDataType"] is not { Count: > 0 } list)
+                    return _macOsHardwareOverview = new Dictionary<string, string>();
+
+                return _macOsHardwareOverview = list[0];
+            }
+            catch (Exception ex)
+            {
+                QLog.Warning(ex);
+            }
+            return _macOsHardwareOverview = new Dictionary<string, string>();
+        }
+    }
+
+    
     private static string GetManufacturer()
     {
-        if (System.OperatingSystem.IsMacOS())
+        if (OperatingSystem.IsMacOS())
             return "Apple inc.";
 
-        if (System.OperatingSystem.IsWindows())
+        if (OperatingSystem.IsWindows())
         {
             try
             {
-                var data = ExecuteCommand("wmic computersystem get manufacturer");
+                // ReSharper disable once StringLiteralTypo
+                var data = Platform.ExecuteShellCommand("wmic computersystem get manufacturer");
                 return data.Replace("\r", "").Replace("\n", "").Replace("Manufacturer", "").Trim();
             }
             catch (Exception ex)
             {
+                // ReSharper disable once StringLiteralTypo
                 QLog.Warning(ex, "wmic computersystem get manufacturer");
             }
         }
 
-        if (System.OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
             try
             {
-                return ExecuteCommand("cat /sys/class/dmi/id/sys_vendor");
+                return Platform.ExecuteShellCommand("cat /sys/class/dmi/id/sys_vendor");
             }
             catch (Exception ex)
             {
@@ -42,17 +75,14 @@ public static partial class DeviceInfo
             }
         }
 
-        return EasDeviceInfo.SystemManufacturer;
+        return string.Empty;
     }
      
 
     private static string GetModel()
     {
-        if (System.OperatingSystem.IsMacOS() || System.OperatingSystem.IsMacCatalyst())
+        if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
         {
-            if (MacOsHardwareOverview is null)
-                return EasDeviceInfo.SystemProductName;
-
             var items = new List<string>();
             if (MacOsHardwareOverview.TryGetValue("machine_name", out var machineName))
                 items.Add(machineName);
@@ -63,17 +93,17 @@ public static partial class DeviceInfo
             if (MacOsHardwareOverview.TryGetValue("machine_model", out var modelNumber))
                 items.Add(modelNumber);
 
-            return (items.Count == 0)
+            return items.Count == 0
                 ? EasDeviceInfo.SystemProductName
                 : string.Join(":", items);
         }
 
 
-        if (System.OperatingSystem.IsWindows())
+        if (OperatingSystem.IsWindows())
         {
             try
             {
-                var data = ExecuteCommand("wmic computersystem get model");
+                var data = Platform.ExecuteShellCommand("wmic computersystem get model");
                 return data.Replace("\r", "").Replace("\n", "").Replace("Model", "").Trim();
             }
             catch (Exception ex)
@@ -82,11 +112,11 @@ public static partial class DeviceInfo
             }
         }
 
-        if (System.OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
             try
             {
-                return ExecuteCommand("cat /sys/class/dmi/id/product_name");
+                return Platform.ExecuteShellCommand("cat /sys/class/dmi/id/product_name");
             }
             catch (Exception ex)
             {
@@ -95,7 +125,7 @@ public static partial class DeviceInfo
         }
 
 
-        return EasDeviceInfo.SystemProductName;
+        return string.Empty;
     }
 
 
@@ -105,11 +135,11 @@ public static partial class DeviceInfo
         // ☐ Desktop.Linux
         // ☑ Desktop.Windows 
 
-        if (System.OperatingSystem.IsMacOS())
+        if (OperatingSystem.IsMacOS())
         {
             try
             {
-                return ExecuteCommand("scutil --get ComputerName");
+                return Platform.ExecuteShellCommand("scutil --get ComputerName");
             }
             catch (Exception e)
             {
@@ -118,11 +148,11 @@ public static partial class DeviceInfo
 
         }
 
-        if (System.OperatingSystem.IsWindows())
+        if (OperatingSystem.IsWindows())
         {
             try
             {
-                var data = ExecuteCommand("wmic computersystem get name");
+                var data = Platform.ExecuteShellCommand("wmic computersystem get name");
                 return data.Replace("\r", "").Replace("\n", "").Replace("Name", "").Trim();
             }
             catch (Exception ex)
@@ -131,11 +161,11 @@ public static partial class DeviceInfo
             }
         }
 
-        if (System.OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
             try
             {
-                return ExecuteCommand("uname -n");
+                return Platform.ExecuteShellCommand("uname -n");
             }
             catch (Exception ex)
             {
@@ -143,14 +173,13 @@ public static partial class DeviceInfo
             }
         }
 
-        return EasDeviceInfo.FriendlyName;
+        return string.Empty;
     }
 
 
     private static string GetDeviceId()
     {
-        if (MacOsHardwareOverview is not null &&
-            (System.OperatingSystem.IsMacOS() || System.OperatingSystem.IsMacCatalyst()))
+        if (OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst())
         {
             if (MacOsHardwareOverview.TryGetValue("platform_UUID", out var uuid) && IsValidId(uuid))
                 return uuid;
@@ -163,12 +192,14 @@ public static partial class DeviceInfo
 
         }
 
-        if (System.OperatingSystem.IsWindows())
+        if (OperatingSystem.IsWindows())
         {
             try
             {
-                var data = ExecuteCommand("wmic csproduct get uuid");
-                return data.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
+                var data = Platform.ExecuteShellCommand("wmic csproduct get uuid");
+                data = data.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
+                if (IsValidId(data))
+                    return data;
             }
             catch (Exception ex)
             {
@@ -176,24 +207,36 @@ public static partial class DeviceInfo
             }
         }
 
-        if (System.OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
             try
             {
-                return ExecuteCommand("cat /sys/class/dmi/id/product_uuid");
+                // This requires "sudo"
+                //var data = Platform.ExecuteCommand("cat /sys/class/dmi/id/product_uuid");
+                var data = Platform.ExecuteShellCommand("cat /etc/machine-id");
+                data = data.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
+                if (IsValidId(data))
+                    return data;
             }
             catch (Exception ex)
             {
-                QLog.Warning(ex, "cat /sys/class/dmi/id/product_uuid");
+                QLog.Warning(ex, "cat /etc/machine-id");
             }
         }
 
-        return string.Empty;
+        return string.Empty; 
 
     }
 
 
 
     private static bool GetIsEmulator() => false;
+
+    public static string QueryDeviceOs()
+        => FallbackQueryDeviceOs();
+
+    public static string QueryDeviceOsVersion()
+        => FallbackQueryDeviceOsVersion();
+    
 }
-#endif
+

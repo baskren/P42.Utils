@@ -1,4 +1,3 @@
-using System;
 
 namespace P42.Utils.Uno;
 
@@ -9,13 +8,13 @@ internal class FontFamilySpan : Span, ICopiable<FontFamilySpan>
 {
     internal const string SpanKey = "FontFamily";
 
-    private Microsoft.UI.Xaml.Media.FontFamily? _fontFamily;
+    private FontFamily? _fontFamily;
 
     /// <summary>
     /// Gets or sets the name of the font family -OR- resource ID or embedded resource font.
     /// </summary>
     /// <value>The name of the font family.</value>
-    public Microsoft.UI.Xaml.Media.FontFamily? FontFamily
+    public FontFamily? FontFamily
     {
         get => _fontFamily; 
         set => SetField(ref _fontFamily, value);
@@ -28,7 +27,7 @@ internal class FontFamilySpan : Span, ICopiable<FontFamilySpan>
     /// <param name="end">End.</param>
     /// <param name="fontFamily">Font name.</param>
     /// <param name="id">optional</param>
-    public FontFamilySpan(int start, int end, Microsoft.UI.Xaml.Media.FontFamily? fontFamily = null, string id = "") : base (start, end, id) 
+    public FontFamilySpan(int start, int end, FontFamily? fontFamily = null, string id = "") : base (start, end, id) 
     {
         Key = SpanKey;
         FontFamily = fontFamily;

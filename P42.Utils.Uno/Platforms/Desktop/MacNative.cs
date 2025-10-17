@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace P42.Utils.Uno;
 
-public static partial class MacNativeFunctions
+public static partial class MacNative
 {
     
     [LibraryImport("Native/libNativeBeep.dylib")]

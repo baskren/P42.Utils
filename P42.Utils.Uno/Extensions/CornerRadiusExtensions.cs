@@ -1,7 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿namespace P42.Utils.Uno;
 
-namespace P42.Utils.Uno;
-
+// ReSharper disable once UnusedType.Global
 public static class CornerRadiusExtensions
 {
     /// <summary>

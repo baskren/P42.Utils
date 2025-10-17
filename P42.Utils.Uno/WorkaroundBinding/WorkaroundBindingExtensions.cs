@@ -39,6 +39,7 @@ public static class WorkaroundBindingExtensions
     /// <param name="targetProperty"></param>
     /// <typeparam name="TBindable"></typeparam>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static TBindable WUnbind<TBindable>( this TBindable target, DependencyProperty targetProperty ) where TBindable : DependencyObject
     {
         target.GetWorkaroundBindings().RemoveIf(b => b.TargetProperty == targetProperty);
@@ -171,6 +172,7 @@ public static class WorkaroundBindingExtensions
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TDest"></typeparam>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static TBindable WBind<TBindable, TSource, TDest>(
         this TBindable target,
         DependencyProperty targetProperty,
@@ -214,6 +216,7 @@ public static class WorkaroundBindingExtensions
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TDest"></typeparam>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static TBindable WBind<TBindable, TSource, TDest>(
         this TBindable target,
         DependencyProperty targetProperty,

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+
 namespace P42.Utils;
 
 /// <summary>
@@ -11,5 +12,5 @@ public interface IJsonWriteable
     /// </summary>
     /// <param name="writer">JsonWriter</param>
     /// <param name="justValues"></param>
-    void WriteValue(JsonWriter writer, bool justValues=false);
+    void WriteValue(Utf8JsonWriter writer, bool justValues=false);
 }

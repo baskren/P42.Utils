@@ -4,8 +4,6 @@
 //  *
 //  *******************************************************************/
 
-using System;
-
 namespace P42.Utils.Uno;
 
 internal class HyperlinkSpan : Span, ICopiable<HyperlinkSpan>
@@ -68,8 +66,8 @@ internal class HyperlinkSpan : Span, ICopiable<HyperlinkSpan>
     public override int GetHashCode()
         => HashCode.Combine(base.GetHashCode(), Href);
 
-    [Obsolete("Use HasReference() instead.")]
-    public bool IsEmpty() => throw new NotImplementedException();
+    [Obsolete("Use HasIdOrLinkReference() instead.")]
+    public bool IsEmpty() => HasIdOrLinkReference();
 
     /// <summary>
     /// Is the HyperlinkSpan dangling (does not reference anything)?

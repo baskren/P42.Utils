@@ -3,9 +3,12 @@ using Microsoft.VisualBasic.CompilerServices;
 
 namespace P42.Utils;
 
+// ReSharper disable once UnusedType.Global
 public static class Process
 {
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
     internal static IProcess? PlatformProcess;
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
     /// <summary>
     /// How much memory is consumed by this process / application

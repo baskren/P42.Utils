@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using P42.Serilog.QuickLog;
 
 namespace P42.Utils;

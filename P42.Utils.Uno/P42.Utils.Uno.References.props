@@ -1,27 +1,25 @@
 <Project ToolsVersion="15.0">
 
-
+  <PropertyGroup>
+    <WindowsBaseOs Condition="$(TargetFramework.Contains('windows')) OR ( $([MSBuild]::IsOSPlatform('windows')) AND $(TargetFramework.Contains('desktop')) )">true</WindowsBaseOs>
+    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$DefineConstants;WindowsBaseOs</DefineConstants>
+  </PropertyGroup>
 
   <!-- SHARED ITEMS -->
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Markdig"  />
     <PackageReference Include="P42.Serilog.QuickLog" />
+    <PackageReference Include="HtmlAgilityPack" />
     <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
 
   </ItemGroup>
 
-  <!--
-  <ItemGroup>
-    <ProjectReference Include="..\P42.Utils\P42.Utils.DebugExtensions\P42.Utils.DebugExtensions.csproj" />
-    <ProjectReference Include="..\P42.Utils\P42.Utils.LocalDataStore\P42.Utils.LocalDataStore.csproj" />
-  </ItemGroup>
-  -->
-
-
   <!-- PLATFORM ITEMS -->
-  <ItemGroup Condition=" $(TargetFramework.Contains('windows')) ">
+  <ItemGroup>
+    <!--
     <PackageReference Condition=" $(TargetFramework.Contains('-windows')) " Include="Microsoft.Graphics.Win2D"  />
+    -->
+    <PackageReference Condition=" '$(WindowsBaseOs)' == 'true' " Include="Microsoft.PowerShell.SDK" />
   </ItemGroup>
 
   <Target Name="_p42_utils_uno_references_props" AfterTargets="_p42_utils_directory_build_props">

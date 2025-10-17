@@ -1,8 +1,4 @@
-﻿using System.IO;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-
-namespace P42.Utils.Uno;
+﻿namespace P42.Utils.Uno;
 
 /// <summary>
 /// Help with debugging
@@ -110,7 +106,7 @@ public static class DebugExtensions
         writer.WriteLine($"\t Resources: {element.Resources}");
         writer.WriteLine($"\t Style: {element.Style}");
         writer.WriteLine($"\t Tag: {element.Tag}");
-        writer.WriteLine($"\t Triggers: {element.Triggers}");
+        //writer.WriteLine($"\t Triggers: {element.Triggers}");
         writer.WriteLine($"\t VerticalAlignment: {element.VerticalAlignment}");
         writer.WriteLine($"\t Width: {element.Width}");
         

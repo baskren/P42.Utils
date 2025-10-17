@@ -1,9 +1,7 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using P42.Serilog.QuickLog;
 
@@ -88,12 +86,15 @@ internal class WorkaroundBinding : IDisposable
         DependencyObject source, DependencyProperty sourceProperty, 
         BindingMode bindingMode, 
         IValueConverter? valueConverter, object? valueConverterProperty, string? valueConverterLanguage, 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
     {
+#pragma warning disable Uno0001
         if (updateSourceTrigger is UpdateSourceTrigger.Explicit or UpdateSourceTrigger.LostFocus)
+#pragma warning restore Uno0001
             throw new ArgumentException($"UpdateSourceTrigger.Explicit and UpdateSourceTrigger.LostFocus are not supported in WorkaroundBinding. FilePath: [{_filePath}], LineNumber: [{_lineNumber}]");
         
         TargetDependencyObject = target;
@@ -135,12 +136,15 @@ internal class WorkaroundBinding : IDisposable
         INotifyPropertyChanged source, string  sourcePropertyName, 
         BindingMode bindingMode, 
         IValueConverter? valueConverter, object? valueConverterProperty, string? valueConverterLanguage, 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
     {
-        if (updateSourceTrigger is UpdateSourceTrigger.Explicit or UpdateSourceTrigger.LostFocus)
+#pragma warning disable Uno0001
+        if (updateSourceTrigger is UpdateSourceTrigger.Explicit or UpdateSourceTrigger.LostFocus) 
+#pragma warning restore Uno0001
             throw new ArgumentException($"UpdateSourceTrigger.Explicit and UpdateSourceTrigger.LostFocus are not supported in WorkaroundBinding. FilePath: [{_filePath}], LineNumber: [{_lineNumber}]");
         
         if (source.GetProperty(sourcePropertyName) is not { } sourcePropertyInfo)
@@ -374,30 +378,14 @@ internal class WorkaroundBinding : IDisposable
         _sourceWeakReference = null;
         _targetWeakReference = null;
 
-        // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-        // TODO: set large fields to null
     }
 
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~WorkaroundBinding()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
 
     public void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
-        System.GC.SuppressFinalize(this);
+        GC.SuppressFinalize(this);
     }
 }
 
-/*
-internal enum WorkaroundBindingSourceType
-{
-    Value,
-    DependencyProperty,
-    INotifyPropertyChanged,
-}
-*/

@@ -1,6 +1,4 @@
 
-using System.Web;
-
 namespace P42.Utils.Uno;
 
 public static class Platform
@@ -28,7 +26,7 @@ public static class Platform
     private static Window? _mainWindow;
 
     [Obsolete("Use MainWindow instead", true)]
-    public static Window Window => throw new NotImplementedException();
+    public static Window Window => MainWindow;
 
     /// <summary>
     /// Reference to main window
@@ -69,48 +67,51 @@ public static class Platform
     }
     #endregion
     
-    #region Assembly
-    [Obsolete("Is this still needed?", true)]
-    public static System.Reflection.Assembly Assembly => throw new NotImplementedException();
-    #endregion
-
     #region Font Families
-    private static Microsoft.UI.Xaml.Media.FontFamily? _mathFontFamily;
+    private static FontFamily? _mathFontFamily;
     /// <summary>
     /// Math font family
     /// </summary>
-    public static Microsoft.UI.Xaml.Media.FontFamily MathFontFamily => _mathFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/STIXGeneral.ttf#STIXGeneral");
+    public static FontFamily MathFontFamily => _mathFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/STIXGeneral.ttf#STIXGeneral");
 
     
-    private static Microsoft.UI.Xaml.Media.FontFamily? _sansSerifFontFamily;
+    private static FontFamily? _sansSerifFontFamily;
     /// <summary>
     /// Segoe UI font family
     /// </summary>
-    public static Microsoft.UI.Xaml.Media.FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI#Regular");
+    public static FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new FontFamily("Segoe UI#Regular");
 
-    private static Microsoft.UI.Xaml.Media.FontFamily? _variantsFontFamily;
+    private static FontFamily? _variantsFontFamily;
+    // Font that has built-in  "variants" for subscript and superscript
     // Variants don't work on UNO
-    public static Microsoft.UI.Xaml.Media.FontFamily VariantsFontFamily => _variantsFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("Calibri");
-    //public static Microsoft.UI.Xaml.Media.FontFamily VariantsFontFamily => _variantsFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/ScriptVariants.ttf#ScriptVariants");
+    public static FontFamily VariantsFontFamily => _variantsFontFamily ??= new FontFamily("Calibri");
+    //public static FontFamily VariantsFontFamily => _variantsFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/ScriptVariants.ttf#ScriptVariants");
 
 
-    static Microsoft.UI.Xaml.Media.FontFamily? _serifFontFamily;
-    public static Microsoft.UI.Xaml.Media.FontFamily SerifFontFamily => _serifFontFamily ??=
-        #if __IOS__ || __MACCATALYST__ || __DESKTOP__ || __MACOS__
-        new Microsoft.UI.Xaml.Media.FontFamily("Times New Roman");
-        #elif WINDOWS
-        new Microsoft.UI.Xaml.Media.FontFamily("Cambria");
-        #else
-        new Microsoft.UI.Xaml.Media.FontFamily("serif");
-        #endif
+    static FontFamily? _serifFontFamily;
+    public static FontFamily SerifFontFamily
+    {
+        get
+        {
+            if (_serifFontFamily != null)
+                return _serifFontFamily;
+            
+            if (OperatingSystem.IsLinux())
+                return _serifFontFamily =  new FontFamily("Noto Serif");
+            if (OperatingSystem.IsBrowser())
+                return _serifFontFamily =  new FontFamily("serif");
+            
+            return _serifFontFamily =  new FontFamily("Times New Roman");
+        }
+    }
         
 
-    private static Microsoft.UI.Xaml.Media.FontFamily? _monoSpaceFontFamily;
+    private static FontFamily? _monoSpaceFontFamily;
     /// <summary>
     /// Monospace font family
     /// </summary>
     // ReSharper disable once StringLiteralTypo
-    public static Microsoft.UI.Xaml.Media.FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new Microsoft.UI.Xaml.Media.FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
+    public static FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
     #endregion
 
     static bool _hasBeenInit;
@@ -132,12 +133,12 @@ public static class Platform
         NotifiableObject.BaseNotifiablePropertyObject.MainThreadAction = P42.Utils.Uno.MainThread.Invoke;
 
         // DO WE NEED TO DO A RESET?
-        if (ResetRequested())
-        {
-            Console.WriteLine($"P42.Utils.Uno.Platform.Init B");
-            Task.Run(ResetAppStorage).Wait();
-            Console.WriteLine($"P42.Utils.Uno.Platform.Init C");
-        }
+        if (!ResetRequested())
+            return;
+
+        Console.WriteLine("P42.Utils.Uno.Platform.Init RESET START");
+        Task.Run(ResetAppStorage).Wait();
+        Console.WriteLine("P42.Utils.Uno.Platform.Init RESET COMPLETE");
     }
 
     private static void PlatformPathLoader()
@@ -155,7 +156,7 @@ public static class Platform
                 var asm = AssemblyExtensions.GetApplicationAssembly();
                 var assemblyName = asm.Name();
                 // Unpackaged WinUI3 App
-                Utils.Platform.ApplicationLocalFolderPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), assemblyName);
+                Utils.Platform.ApplicationLocalFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), assemblyName);
                 Directory.CreateDirectory(Utils.Platform.ApplicationLocalFolderPath);
                 Utils.Platform.ApplicationLocalCacheFolderPath = Path.Combine(Utils.Platform.ApplicationLocalFolderPath, "Cache");
                 Directory.CreateDirectory(Utils.Platform.ApplicationLocalCacheFolderPath);
@@ -174,16 +175,12 @@ public static class Platform
 #if BROWSERWASM
 
         // app path needs to be appended with the following, without quotes: "?ResetAppStorage="
-        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested A");
-
-        var fullUrlText = global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("window.location.href;");
+        var fullUrlText = WasmNative.GetPageUrl();
         var fullUrl = new Uri(fullUrlText);
         var args = global::Uno.Extensions.UriExtensions.GetParameters(fullUrl);
-        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested B");
         if (args.Keys.FirstOrDefault(k => k.Equals(nameof(ResetAppStorage), StringComparison.OrdinalIgnoreCase)) is not { } resetKey)
             return false; 
         var value = args[resetKey];
-        Console.WriteLine($"P42.Utils.Uno.Platform.ResetRequested C");
         return string.IsNullOrEmpty(value) || value.Equals("true", StringComparison.OrdinalIgnoreCase);
 
 #elif __IOS__
@@ -197,26 +194,24 @@ public static class Platform
 
     public static async Task ResetAppStorage()
     {
-        Console.WriteLine($"P42.Utils.Uno.Platform.ResetAppStorage A");
         await ApplicationData.Current.LocalFolder.DeleteChildrenAsync();
         await ApplicationData.Current.LocalCacheFolder.DeleteChildrenAsync();
         await ApplicationData.Current.TemporaryFolder.DeleteChildrenAsync();
-        Console.WriteLine($"P42.Utils.Uno.Platform.ResetAppStorage B");
 
 #if __IOS__ || __MACCATALYST__
         Foundation.NSUserDefaults.StandardUserDefaults.SetBool(false, nameof(ResetAppStorage));
 #elif BROWSERWASM
-        var fullUrlText = global::Uno.Foundation.WebAssemblyRuntime.InvokeJS("window.location.href;");
+        var fullUrlText = WasmNative.GetPageUrl();
         var fullUrl = new Uri(fullUrlText);
         var args = global::Uno.Extensions.UriExtensions.GetParameters(fullUrl);
         if (args.Keys.FirstOrDefault(k => k.Equals(nameof(ResetAppStorage), StringComparison.OrdinalIgnoreCase)) is { } resetKey)
             args.Keys.Remove(resetKey);
         var builder = new UriBuilder(fullUrl);
-        var query = HttpUtility.ParseQueryString(builder.Query);
+        var query = System.Web.HttpUtility.ParseQueryString(builder.Query);
         query.Remove(nameof(ResetAppStorage));
         builder.Query = query.ToString();
         var updatedUrl = builder.ToString();
-        global::Uno.Foundation.WebAssemblyRuntime.InvokeJS($"window.location.href={updatedUrl};");
+        WasmNative.SetPageUrl(updatedUrl);
 #endif
     }
 
@@ -238,6 +233,45 @@ public static class Platform
     }
 #endif
 
+    // ReSharper disable once UnusedMember.Local
+    public static string ExecuteShellCommand(string command)
+    {
+        // Create a new process
+        using var process = new System.Diagnostics.Process();
+        // Configure the process
+        if (OperatingSystem.IsWindows())
+        {
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.Arguments = $"/c \"{command}\"";
+        }
+        else
+        {
+            process.StartInfo.FileName = "/bin/bash";
+            process.StartInfo.Arguments = $"-c \"{command}\"";
+        }
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.CreateNoWindow = true;
+
+        // Start the process
+        process.Start();
+
+        // Capture output
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+
+        process.WaitForExit();
+
+        if (process.ExitCode == 0)
+            return output;
+
+        Serilog.QuickLog.QLog.Warning($"ExecuteCommand({command}), Error {error}");
+        return string.Empty;
+
+    }
+
+    
 }
 
 public class NotInitializedException() : Exception("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()");

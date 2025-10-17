@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using Microsoft.VisualBasic.CompilerServices;
 using P42.Serilog.QuickLog;
 

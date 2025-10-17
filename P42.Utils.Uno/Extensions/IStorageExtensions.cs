@@ -1,7 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Windows.Storage;
-
 namespace P42.Utils.Uno;
 
 public static class IStorageExtensions

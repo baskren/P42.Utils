@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Uno.Foundation;
-
 namespace P42.Utils.Uno;
 
 public static partial class DeviceBeep

@@ -1,14 +1,8 @@
-#if !WINDOWS
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace P42.Utils.Uno;
 
 public static partial class DeviceInfo
 {
+    // ReSharper disable once UnusedMember.Local
     private static FormFactor GetDeviceForm()
     {
         if (_deviceForm != FormFactor.NotSet)
@@ -22,4 +16,3 @@ public static partial class DeviceInfo
     }
 
 }
-#endif

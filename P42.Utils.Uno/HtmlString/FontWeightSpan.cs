@@ -16,7 +16,9 @@ internal class FontWeightSpan : Span, ICopiable<FontWeightSpan>
     /// </summary>
     /// <param name="start">Start.</param>
     /// <param name="end">End.</param>
+    /// <param name="isRelativeToParent"></param>
     /// <param name="id">optional</param>
+    /// <param name="weight"></param>
     public FontWeightSpan(int start, int end, short weight, bool isRelativeToParent = false, string id = "") : base(start, end, id)
     {
         Key = SpanKey;

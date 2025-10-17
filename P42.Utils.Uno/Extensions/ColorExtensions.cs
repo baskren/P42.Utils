@@ -1,7 +1,4 @@
-using System;
 using Microsoft.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 
 namespace P42.Utils.Uno;
@@ -54,7 +51,7 @@ public static class ColorExtensions
     /// </summary>
     /// <param name="color"></param>
     /// <returns></returns>
-    public static System.Drawing.Color ToSystemDrawingColor(this Windows.UI.Color color)
+    public static System.Drawing.Color ToSystemDrawingColor(this Color color)
         => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
 
     /// <summary>
@@ -70,7 +67,7 @@ public static class ColorExtensions
     /// </summary>
     /// <param name="color"></param>
     /// <returns></returns>
-    public static Brush ToBrush(this Windows.UI.Color color)
+    public static Brush ToBrush(this Color color)
         => new SolidColorBrush(color);
 
     /// <summary>
@@ -279,20 +276,15 @@ public static class ColorExtensions
         var q = v * (1 - f * s);
         var t = v * (1 - (1 - f) * s);
 
-        switch (range)
+        return range switch
         {
-            case 0:
-                return ColorFromRgba(v, t, p, a);
-            case 1:
-                return ColorFromRgba(q, v, p, a);
-            case 2:
-                return ColorFromRgba(p, v, t, a);
-            case 3:
-                return ColorFromRgba(p, q, v, a);
-            case 4:
-                return ColorFromRgba(t, p, v, a);
-        }
-        return ColorFromRgba(v, p, q, a);
+            0 => ColorFromRgba(v, t, p, a),
+            1 => ColorFromRgba(q, v, p, a),
+            2 => ColorFromRgba(p, v, t, a),
+            3 => ColorFromRgba(p, q, v, a),
+            4 => ColorFromRgba(t, p, v, a),
+            _ => ColorFromRgba(v, p, q, a)
+        };
     }
 
     /// <summary>
@@ -358,7 +350,7 @@ public static class ColorExtensions
     {
         // Undefined
         if (hex.Length < 3)
-            return default(Color);
+            return default;
         var idx = hex[0] == '#' ? 1 : 0;
 
         switch (hex.Length - idx)
@@ -392,7 +384,7 @@ public static class ColorExtensions
                     (int)a1);
 
             default: //everything else will result in unexpected results
-                return default(Color);
+                return default;
         }
     }
 
@@ -434,158 +426,151 @@ public static class ColorExtensions
         }
         var colorName = s.ToLower();
 // ReSharper disable StringLiteralTypo
-        switch (colorName)
+        return colorName switch
         {
-            case "aliceblue": return ColorFromHex("F0F8FF");
-            case "antiquewhite": return ColorFromHex("FAEBD7");
-            case "aqua": return ColorFromHex("00FFFF");
-            case "aquamarine": return ColorFromHex("7FFFD4");
-            case "azure": return ColorFromHex("F0FFFF");
-            case "beige": return ColorFromHex("F5F5DC");
-            case "bisque": return ColorFromHex("FFE4C4");
-            case "black": return ColorFromHex("000000");
-            case "blanchedalmond": return ColorFromHex("FFEBCD");
-            case "blue": return ColorFromHex("0000FF");
-            case "blueviolet": return ColorFromHex("8A2BE2");
-            case "brown": return ColorFromHex("A52A2A");
-            case "burlywood": return ColorFromHex("DEB887");
-            case "cadetblue": return ColorFromHex("5F9EA0");
-            case "chartreuse": return ColorFromHex("7FFF00");
-            case "chocolate": return ColorFromHex("D2691E");
-            case "coral": return ColorFromHex("FF7F50");
-            case "cornflowerblue": return ColorFromHex("6495ED");
-            case "cornsilk": return ColorFromHex("FFF8DC");
-            case "crimson": return ColorFromHex("DC143C");
-            case "cyan": return ColorFromHex("00FFFF");
-            case "darkblue": return ColorFromHex("00008B");
-            case "darkcyan": return ColorFromHex("008B8B");
-            case "darkgoldenrod": return ColorFromHex("B8860B");
-            case "darkgray": return ColorFromHex("A9A9A9");
-            case "darkgrey": return ColorFromHex("A9A9A9");
-            case "darkgreen": return ColorFromHex("006400");
-            case "darkkhaki": return ColorFromHex("BDB76B");
-            case "darkmagenta": return ColorFromHex("8B008B");
-            case "darkolivegreen": return ColorFromHex("556B2F");
-            case "darkorange": return ColorFromHex("FF8C00");
-            case "darkorchid": return ColorFromHex("9932CC");
-            case "darkred": return ColorFromHex("8B0000");
-            case "darksalmon": return ColorFromHex("E9967A");
-            case "darkseagreen": return ColorFromHex("8FBC8F");
-            case "darkslateblue": return ColorFromHex("483D8B");
-            case "darkslategray": return ColorFromHex("2F4F4F");
-            case "darkslategrey": return ColorFromHex("2F4F4F");
-            case "darkturquoise": return ColorFromHex("00CED1");
-            case "darkviolet": return ColorFromHex("9400D3");
-            case "deeppink": return ColorFromHex("FF1493");
-            case "deepskyblue": return ColorFromHex("00BFFF");
-            case "dimgray": return ColorFromHex("696969");
-            case "dimgrey": return ColorFromHex("696969");
-            case "dodgerblue": return ColorFromHex("1E90FF");
-            case "firebrick": return ColorFromHex("B22222");
-            case "floralwhite": return ColorFromHex("FFFAF0");
-            case "forestgreen": return ColorFromHex("228B22");
-            case "fuchsia": return ColorFromHex("FF00FF");
-            case "gainsboro": return ColorFromHex("DCDCDC");
-            case "ghostwhite": return ColorFromHex("F8F8FF");
-            case "gold": return ColorFromHex("FFD700");
-            case "goldenrod": return ColorFromHex("DAA520");
-            case "gray": return ColorFromHex("808080");
-            case "grey": return ColorFromHex("808080");
-            case "green": return ColorFromHex("008000");
-            case "greenyellow": return ColorFromHex("ADFF2F");
-            case "honeydew": return ColorFromHex("F0FFF0");
-            case "hotpink": return ColorFromHex("FF69B4");
-            case "indianred ": return ColorFromHex("CD5C5C");
-            case "indigo ": return ColorFromHex("4B0082");
-            case "ivory": return ColorFromHex("FFFFF0");
-            case "khaki": return ColorFromHex("F0E68C");
-            case "lavender": return ColorFromHex("E6E6FA");
-            case "lavenderblush": return ColorFromHex("FFF0F5");
-            case "lawngreen": return ColorFromHex("7CFC00");
-            case "lemonchiffon": return ColorFromHex("FFFACD");
-            case "lightblue": return ColorFromHex("ADD8E6");
-            case "lightcoral": return ColorFromHex("F08080");
-            case "lightcyan": return ColorFromHex("E0FFFF");
-            case "lightgoldenrodyellow": return ColorFromHex("FAFAD2");
-            case "lightgray": return ColorFromHex("D3D3D3");
-            case "lightgrey": return ColorFromHex("D3D3D3");
-            case "lightgreen": return ColorFromHex("90EE90");
-            case "lightpink": return ColorFromHex("FFB6C1");
-            case "lightsalmon": return ColorFromHex("FFA07A");
-            case "lightseagreen": return ColorFromHex("20B2AA");
-            case "lightskyblue": return ColorFromHex("87CEFA");
-            case "lightslategray": return ColorFromHex("778899");
-            case "lightslategrey": return ColorFromHex("778899");
-            case "lightsteelblue": return ColorFromHex("B0C4DE");
-            case "lightyellow": return ColorFromHex("FFFFE0");
-            case "lime": return ColorFromHex("00FF00");
-            case "limegreen": return ColorFromHex("32CD32");
-            case "linen": return ColorFromHex("FAF0E6");
-            case "magenta": return ColorFromHex("FF00FF");
-            case "maroon": return ColorFromHex("800000");
-            case "mediumaquamarine": return ColorFromHex("66CDAA");
-            case "mediumblue": return ColorFromHex("0000CD");
-            case "mediumorchid": return ColorFromHex("BA55D3");
-            case "mediumpurple": return ColorFromHex("9370DB");
-            case "mediumseagreen": return ColorFromHex("3CB371");
-            case "mediumslateblue": return ColorFromHex("7B68EE");
-            case "mediumspringgreen": return ColorFromHex("00FA9A");
-            case "mediumturquoise": return ColorFromHex("48D1CC");
-            case "mediumvioletred": return ColorFromHex("C71585");
-            case "midnightblue": return ColorFromHex("191970");
-            case "mintcream": return ColorFromHex("F5FFFA");
-            case "mistyrose": return ColorFromHex("FFE4E1");
-            case "moccasin": return ColorFromHex("FFE4B5");
-            case "navajowhite": return ColorFromHex("FFDEAD");
-            case "navy": return ColorFromHex("000080");
-            case "oldlace": return ColorFromHex("FDF5E6");
-            case "olive": return ColorFromHex("808000");
-            case "olivedrab": return ColorFromHex("6B8E23");
-            case "orange": return ColorFromHex("FFA500");
-            case "orangered": return ColorFromHex("FF4500");
-            case "orchid": return ColorFromHex("DA70D6");
-            case "palegoldenrod": return ColorFromHex("EEE8AA");
-            case "palegreen": return ColorFromHex("98FB98");
-            case "paleturquoise": return ColorFromHex("AFEEEE");
-            case "palevioletred": return ColorFromHex("DB7093");
-            case "papayawhip": return ColorFromHex("FFEFD5");
-            case "peachpuff": return ColorFromHex("FFDAB9");
-            case "peru": return ColorFromHex("CD853F");
-            case "pink": return ColorFromHex("FFC0CB");
-            case "plum": return ColorFromHex("DDA0DD");
-            case "powderblue": return ColorFromHex("B0E0E6");
-            case "purple": return ColorFromHex("800080");
-            case "rebeccapurple": return ColorFromHex("663399");
-            case "red": return ColorFromHex("FF0000");
-            case "rosybrown": return ColorFromHex("BC8F8F");
-            case "royalblue": return ColorFromHex("4169E1");
-            case "saddlebrown": return ColorFromHex("8B4513");
-            case "salmon": return ColorFromHex("FA8072");
-            case "sandybrown": return ColorFromHex("F4A460");
-            case "seagreen": return ColorFromHex("2E8B57");
-            case "seashell": return ColorFromHex("FFF5EE");
-            case "sienna": return ColorFromHex("A0522D");
-            case "silver": return ColorFromHex("C0C0C0");
-            case "skyblue": return ColorFromHex("87CEEB");
-            case "slateblue": return ColorFromHex("6A5ACD");
-            case "slategray": return ColorFromHex("708090");
-            case "slategrey": return ColorFromHex("708090");
-            case "snow": return ColorFromHex("FFFAFA");
-            case "springgreen": return ColorFromHex("00FF7F");
-            case "steelblue": return ColorFromHex("4682B4");
-            case "tan": return ColorFromHex("D2B48C");
-            case "teal": return ColorFromHex("008080");
-            case "thistle": return ColorFromHex("D8BFD8");
-            case "tomato": return ColorFromHex("FF6347");
-            case "turquoise": return ColorFromHex("40E0D0");
-            case "violet": return ColorFromHex("EE82EE");
-            case "wheat": return ColorFromHex("F5DEB3");
-            case "white": return ColorFromHex("FFFFFF");
-            case "whitesmoke": return ColorFromHex("F5F5F5");
-            case "yellow": return ColorFromHex("FFFF00");
-            case "yellowgreen": return ColorFromHex("9ACD32");
-        }
-        return default(Color);
+            "aliceblue" => ColorFromHex("F0F8FF"),
+            "antiquewhite" => ColorFromHex("FAEBD7"),
+            "aqua" => ColorFromHex("00FFFF"),
+            "aquamarine" => ColorFromHex("7FFFD4"),
+            "azure" => ColorFromHex("F0FFFF"),
+            "beige" => ColorFromHex("F5F5DC"),
+            "bisque" => ColorFromHex("FFE4C4"),
+            "black" => ColorFromHex("000000"),
+            "blanchedalmond" => ColorFromHex("FFEBCD"),
+            "blue" => ColorFromHex("0000FF"),
+            "blueviolet" => ColorFromHex("8A2BE2"),
+            "brown" => ColorFromHex("A52A2A"),
+            "burlywood" => ColorFromHex("DEB887"),
+            "cadetblue" => ColorFromHex("5F9EA0"),
+            "chartreuse" => ColorFromHex("7FFF00"),
+            "chocolate" => ColorFromHex("D2691E"),
+            "coral" => ColorFromHex("FF7F50"),
+            "cornflowerblue" => ColorFromHex("6495ED"),
+            "cornsilk" => ColorFromHex("FFF8DC"),
+            "crimson" => ColorFromHex("DC143C"),
+            "cyan" => ColorFromHex("00FFFF"),
+            "darkblue" => ColorFromHex("00008B"),
+            "darkcyan" => ColorFromHex("008B8B"),
+            "darkgoldenrod" => ColorFromHex("B8860B"),
+            "darkgray" => ColorFromHex("A9A9A9"),
+            "darkgreen" => ColorFromHex("006400"),
+            "darkkhaki" => ColorFromHex("BDB76B"),
+            "darkmagenta" => ColorFromHex("8B008B"),
+            "darkolivegreen" => ColorFromHex("556B2F"),
+            "darkorange" => ColorFromHex("FF8C00"),
+            "darkorchid" => ColorFromHex("9932CC"),
+            "darkred" => ColorFromHex("8B0000"),
+            "darksalmon" => ColorFromHex("E9967A"),
+            "darkseagreen" => ColorFromHex("8FBC8F"),
+            "darkslateblue" => ColorFromHex("483D8B"),
+            "darkslategray" => ColorFromHex("2F4F4F"),
+            "darkturquoise" => ColorFromHex("00CED1"),
+            "darkviolet" => ColorFromHex("9400D3"),
+            "deeppink" => ColorFromHex("FF1493"),
+            "deepskyblue" => ColorFromHex("00BFFF"),
+            "dimgray" => ColorFromHex("696969"),
+            "dodgerblue" => ColorFromHex("1E90FF"),
+            "firebrick" => ColorFromHex("B22222"),
+            "floralwhite" => ColorFromHex("FFFAF0"),
+            "forestgreen" => ColorFromHex("228B22"),
+            "fuchsia" => ColorFromHex("FF00FF"),
+            "gainsboro" => ColorFromHex("DCDCDC"),
+            "ghostwhite" => ColorFromHex("F8F8FF"),
+            "gold" => ColorFromHex("FFD700"),
+            "goldenrod" => ColorFromHex("DAA520"),
+            "gray" => ColorFromHex("808080"),
+            "green" => ColorFromHex("008000"),
+            "greenyellow" => ColorFromHex("ADFF2F"),
+            "honeydew" => ColorFromHex("F0FFF0"),
+            "hotpink" => ColorFromHex("FF69B4"),
+            "indianred " => ColorFromHex("CD5C5C"),
+            "indigo " => ColorFromHex("4B0082"),
+            "ivory" => ColorFromHex("FFFFF0"),
+            "khaki" => ColorFromHex("F0E68C"),
+            "lavender" => ColorFromHex("E6E6FA"),
+            "lavenderblush" => ColorFromHex("FFF0F5"),
+            "lawngreen" => ColorFromHex("7CFC00"),
+            "lemonchiffon" => ColorFromHex("FFFACD"),
+            "lightblue" => ColorFromHex("ADD8E6"),
+            "lightcoral" => ColorFromHex("F08080"),
+            "lightcyan" => ColorFromHex("E0FFFF"),
+            "lightgoldenrodyellow" => ColorFromHex("FAFAD2"),
+            "lightgrey" => ColorFromHex("D3D3D3"),
+            "lightgreen" => ColorFromHex("90EE90"),
+            "lightpink" => ColorFromHex("FFB6C1"),
+            "lightsalmon" => ColorFromHex("FFA07A"),
+            "lightseagreen" => ColorFromHex("20B2AA"),
+            "lightskyblue" => ColorFromHex("87CEFA"),
+            "lightslategrey" => ColorFromHex("778899"),
+            "lightsteelblue" => ColorFromHex("B0C4DE"),
+            "lightyellow" => ColorFromHex("FFFFE0"),
+            "lime" => ColorFromHex("00FF00"),
+            "limegreen" => ColorFromHex("32CD32"),
+            "linen" => ColorFromHex("FAF0E6"),
+            "magenta" => ColorFromHex("FF00FF"),
+            "maroon" => ColorFromHex("800000"),
+            "mediumaquamarine" => ColorFromHex("66CDAA"),
+            "mediumblue" => ColorFromHex("0000CD"),
+            "mediumorchid" => ColorFromHex("BA55D3"),
+            "mediumpurple" => ColorFromHex("9370DB"),
+            "mediumseagreen" => ColorFromHex("3CB371"),
+            "mediumslateblue" => ColorFromHex("7B68EE"),
+            "mediumspringgreen" => ColorFromHex("00FA9A"),
+            "mediumturquoise" => ColorFromHex("48D1CC"),
+            "mediumvioletred" => ColorFromHex("C71585"),
+            "midnightblue" => ColorFromHex("191970"),
+            "mintcream" => ColorFromHex("F5FFFA"),
+            "mistyrose" => ColorFromHex("FFE4E1"),
+            "moccasin" => ColorFromHex("FFE4B5"),
+            "navajowhite" => ColorFromHex("FFDEAD"),
+            "navy" => ColorFromHex("000080"),
+            "oldlace" => ColorFromHex("FDF5E6"),
+            "olive" => ColorFromHex("808000"),
+            "olivedrab" => ColorFromHex("6B8E23"),
+            "orange" => ColorFromHex("FFA500"),
+            "orangered" => ColorFromHex("FF4500"),
+            "orchid" => ColorFromHex("DA70D6"),
+            "palegoldenrod" => ColorFromHex("EEE8AA"),
+            "palegreen" => ColorFromHex("98FB98"),
+            "paleturquoise" => ColorFromHex("AFEEEE"),
+            "palevioletred" => ColorFromHex("DB7093"),
+            "papayawhip" => ColorFromHex("FFEFD5"),
+            "peachpuff" => ColorFromHex("FFDAB9"),
+            "peru" => ColorFromHex("CD853F"),
+            "pink" => ColorFromHex("FFC0CB"),
+            "plum" => ColorFromHex("DDA0DD"),
+            "powderblue" => ColorFromHex("B0E0E6"),
+            "purple" => ColorFromHex("800080"),
+            "rebeccapurple" => ColorFromHex("663399"),
+            "red" => ColorFromHex("FF0000"),
+            "rosybrown" => ColorFromHex("BC8F8F"),
+            "royalblue" => ColorFromHex("4169E1"),
+            "saddlebrown" => ColorFromHex("8B4513"),
+            "salmon" => ColorFromHex("FA8072"),
+            "sandybrown" => ColorFromHex("F4A460"),
+            "seagreen" => ColorFromHex("2E8B57"),
+            "seashell" => ColorFromHex("FFF5EE"),
+            "sienna" => ColorFromHex("A0522D"),
+            "silver" => ColorFromHex("C0C0C0"),
+            "skyblue" => ColorFromHex("87CEEB"),
+            "slateblue" => ColorFromHex("6A5ACD"),
+            "slategray" => ColorFromHex("708090"),
+            "snow" => ColorFromHex("FFFAFA"),
+            "springgreen" => ColorFromHex("00FF7F"),
+            "steelblue" => ColorFromHex("4682B4"),
+            "tan" => ColorFromHex("D2B48C"),
+            "teal" => ColorFromHex("008080"),
+            "thistle" => ColorFromHex("D8BFD8"),
+            "tomato" => ColorFromHex("FF6347"),
+            "turquoise" => ColorFromHex("40E0D0"),
+            "violet" => ColorFromHex("EE82EE"),
+            "wheat" => ColorFromHex("F5DEB3"),
+            "white" => ColorFromHex("FFFFFF"),
+            "whitesmoke" => ColorFromHex("F5F5F5"),
+            "yellow" => ColorFromHex("FFFF00"),
+            "yellowgreen" => ColorFromHex("9ACD32"),
+            _ => default
+        };
     }
     #endregion
 
@@ -647,7 +632,7 @@ public static class ColorExtensions
         var g2 = (v - g) / vm;
         var b2 = (v - b) / vm;
 
-        var tolerance = 0.001f;
+        const float tolerance = 0.001f;
         if (Math.Abs(r - v) < tolerance)
             hue = Math.Abs(g - m) < tolerance ? 5.0f + b2 : 1.0f - g2;
         else if (Math.Abs(g - v) < tolerance)
@@ -703,9 +688,8 @@ public static class ColorExtensions
     /// <returns>The int rgb color string.</returns>
     /// <param name="color">Color.</param>
     public static string ToRgbaColorString(this Color color)
-    {
-        return $"{color.ToIntRgbColorString()},{color.A}";
-    }
+        => $"{color.ToIntRgbColorString()},{color.A}";
+    
 
     /// <summary>
     /// Returns a 3 character hexadecimal string of a color's RGB value
@@ -740,9 +724,8 @@ public static class ColorExtensions
     /// <returns>The hex rgb color string.</returns>
     /// <param name="color">Color.</param>
     public static string ToHexRrggbbColorString(this Color color)
-    {
-        return color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
-    }
+        => color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
+    
 
     /// <summary>
     /// Returns an eight character hexadecimal string of a color's AARRGGBB value
@@ -750,14 +733,13 @@ public static class ColorExtensions
     /// <returns>The hex rgb color string.</returns>
     /// <param name="color">Color.</param>
     public static string ToHexAarrggbbColorString(this Color color)
-    {
-        return color.A.ToString("x2") + color.ToHexRrggbbColorString();
-    }
+        => color.A.ToString("x2") + color.ToHexRrggbbColorString();
+    
     #endregion
 
 
     #region Internal
-    static uint ToHex(char c)
+    private static uint ToHex(char c)
     {
         var x = (ushort)c;
         if (x is >= '0' and <= '9')
@@ -768,7 +750,8 @@ public static class ColorExtensions
             return (uint)(x - 'a' + 10);
         return 0;
     }
-    static uint ToHexD(char c)
+    
+    private static uint ToHexD(char c)
     {
         var j = ToHex(c);
         return (j << 4) | j;
@@ -785,11 +768,12 @@ public static class ColorExtensions
     public static Color AppColor(string key)
     {
         var obj = Application.Current.Resources[key];
-        if (obj is Color color)
-            return color;
-        if (obj is SolidColorBrush brush)
-            return brush.Color;
-        throw new Exception($"color not found in Application.Current.Resources for key [{key}]. ");
+        return obj switch
+        {
+            Color color => color,
+            SolidColorBrush brush => brush.Color,
+            _ => throw new Exception($"color not found in Application.Current.Resources for key [{key}]. ")
+        };
     }
 
     /// <summary>
@@ -801,11 +785,12 @@ public static class ColorExtensions
     public static Brush AppBrush(string key)
     {
         var obj = Application.Current.Resources[key];
-        if (obj is Brush brush)
-            return brush;
-        if (obj is Color color)
-            return color.ToBrush();
-        throw new Exception($"Brush not found in Application.Current.Resources for key [{key}]. ");
+        return obj switch
+        {
+            Brush brush => brush,
+            Color color => color.ToBrush(),
+            _ => throw new Exception($"Brush not found in Application.Current.Resources for key [{key}]. ")
+        };
     }
 
     /// <summary>

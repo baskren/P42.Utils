@@ -1,8 +1,6 @@
-#if __IOS__ || __MACCATALYST__
-using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using P42.Serilog.QuickLog;
+using AdSupport;
+using AppTrackingTransparency;
 using UIKit;
 
 namespace P42.Utils.Uno;
@@ -10,89 +8,36 @@ namespace P42.Utils.Uno;
 public static partial class DeviceInfo
 {
     private static string GetManufacturer() =>
-        (new string?[]
-        {
-            EasDeviceInfo.SystemManufacturer,
-            "Apple inc"
-        })
+        new[]
+            {
+                EasDeviceInfo.SystemManufacturer,
+                "Apple inc",
+                string.Empty
+            }
         .FirstNotNullOrWhiteSpace();
 
 
     private static string GetModel()
     {
-#if MACCATALYST
-        if (MacOsHardwareOverview is null)
-            return string.Empty;
-
-        var items = new List<string>();
-        if (MacOsHardwareOverview.TryGetValue("machine_name", out var machineName))
-            items.Add(machineName);
-
-        if (MacOsHardwareOverview.TryGetValue("machine_model", out var machineModel))
-            items.Add(machineModel);
-
-        if (MacOsHardwareOverview.TryGetValue("model_number", out var modelNumber))
-            items.Add(modelNumber);
-
-        return string.Join(":", items);
-#endif
-
-        return (new string?[]
-            {
-                GetSystemLibraryProperty("hw.model"),
-                EasDeviceInfo.SystemProductName,
-                UIDevice.CurrentDevice.Model,
-            }).FirstNotNullOrWhiteSpace();
+        return new[]
+        {
+            GetSystemLibraryProperty("hw.model"),
+            EasDeviceInfo.SystemProductName,
+            UIDevice.CurrentDevice.Model,
+            string.Empty
+        }.FirstNotNullOrWhiteSpace();
 
     }
 
     private static string GetDeviceName()
-    {
-#if MACCATALYST
-            try
-            {
-                return ExecuteCommand("scutil --get ComputerName");
-            }
-            catch (Exception e)
-            {
-                QLog.Warning(e, "scutil --get ComputerName");
-            }
-#endif
-
-        return UIDevice.CurrentDevice.Name;
-    }
-
+        => UIDevice.CurrentDevice.Name;
+    
     private static string GetDeviceId()
-    {
-        var id = UIKit.UIDevice.CurrentDevice.IdentifierForVendor?.AsString();
-        if (IsValidId(id))
-            return id!;
-
-#if MACCATALYST
-        if (MacOsHardwareOverview is not null)
-        {
-            if (MacOsHardwareOverview.TryGetValue("platform_UUID", out var uuid) && IsValidId(uuid))
-                return uuid;
-
-            if (MacOsHardwareOverview.TryGetValue("provisioning_UDID", out var udid) && IsValidId(udid))
-                return udid;
-
-            if (MacOsHardwareOverview.TryGetValue("serial_number", out var serialNumber) && IsValidId(serialNumber))
-                return serialNumber;
-
-        }
-#endif
-
-        return string.Empty;
-    }
+        => UIDevice.CurrentDevice.IdentifierForVendor?.AsString() ?? string.Empty;
 
 
     private static bool GetIsEmulator()
-    #if __MACCATALYST__
-        => false;
-    #else
         => ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR;
-    #endif
     
 
     private static string? GetSystemLibraryProperty(string property)
@@ -119,13 +64,53 @@ public static partial class DeviceInfo
         }
         catch (Exception)
         {
+            // ignored
         }
+
         return null;
     }
 
+    public static string QueryDeviceOs()
+        => nameof(DeviceOperatingSystem.iOS);
+
+    public static string QueryDeviceOsVersion()
+        => FallbackQueryDeviceOsVersion();
+    
+    [LibraryImport(ObjCRuntime.Constants.SystemLibrary, EntryPoint = "sysctlbyname")]
+    // ReSharper disable once UnusedMethodReturnValue.Local
+    private static partial int SysctlByName([MarshalAs(UnmanagedType.LPStr)] string property, IntPtr output, IntPtr oldLen, IntPtr newp, uint newLen);
+
+    /*
     [DllImport(ObjCRuntime.Constants.SystemLibrary, EntryPoint = "sysctlbyname")]
-    private static extern int SysctlByName([MarshalAs(UnmanagedType.LPStr)] string property, IntPtr output, IntPtr oldLen, IntPtr newp, uint newlen);
+       private static extern int SysctlByName([MarshalAs(UnmanagedType.LPStr)] string property, IntPtr output, IntPtr oldLen, IntPtr newp, uint newLen);
+     
+     */
+    
+    public static async Task<string> GetAdvertiserIdAsync()
+    {
+        if (!UIDevice.CurrentDevice.CheckSystemVersion(14, 0))
+            return ASIdentifierManager.SharedManager.AdvertisingIdentifier.AsString();
 
+        var status = ATTrackingManager.TrackingAuthorizationStatus;
 
+        // If not determined, request permission
+        if (status == ATTrackingManagerAuthorizationStatus.NotDetermined)
+        {
+            var tcs = new TaskCompletionSource<ATTrackingManagerAuthorizationStatus>();
+            ATTrackingManager.RequestTrackingAuthorization(authStatus => tcs.SetResult(authStatus));
+            status = await tcs.Task;
+        }
+
+        // Check if tracking is authorized
+        if (status == ATTrackingManagerAuthorizationStatus.Authorized)
+            return ASIdentifierManager.SharedManager.AdvertisingIdentifier.AsString();
+
+        Console.WriteLine("Tracking not authorized by the user.");
+        return "not authorized"; // IDFA is not accessible
+
+        // Get the IDFA using ASIdentifierManager
+
+    }
+    
+    
 }
-#endif

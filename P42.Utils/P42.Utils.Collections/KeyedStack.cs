@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace P42.Utils;
 
 /// <summary>
 /// Dictionary of stacks, indexed by key
 /// </summary>
-/// <typeparam name="TK"></typeparam>
-/// <typeparam name="TV"></typeparam>
+/// <typeparam name="Tk"></typeparam>
+/// <typeparam name="Tv"></typeparam>
 // ReSharper disable once UnusedType.Global
-public class KeyedStack<TK, TV> : Dictionary<TK, Stack<TV>>
-    where TK : notnull
-    where TV : class 
+public class KeyedStack<Tk, Tv> : Dictionary<Tk, Stack<Tv>>
+    where Tk : notnull
+    where Tv : class 
 {
     /// <summary>
     /// Constructor
@@ -26,10 +24,10 @@ public class KeyedStack<TK, TV> : Dictionary<TK, Stack<TV>>
     /// </summary>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void Push(TK key, TV value)
+    public void Push(Tk key, Tv value)
     {
         if (!ContainsKey(key))
-            Add(key, new Stack<TV>());
+            Add(key, new Stack<Tv>());
         this[key].Push(value);
     }
 
@@ -38,7 +36,7 @@ public class KeyedStack<TK, TV> : Dictionary<TK, Stack<TV>>
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public TV Pop(TK key)
+    public Tv Pop(Tk key)
     {
         if (!ContainsKey(key))
             throw new InvalidOperationException("No such key");
@@ -54,7 +52,7 @@ public class KeyedStack<TK, TV> : Dictionary<TK, Stack<TV>>
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public bool TryPop(TK key, [MaybeNullWhen(false)] out TV value)
+    public bool TryPop(Tk key, [MaybeNullWhen(false)] out Tv value)
     {
         if (!TryGetValue(key, out var stack))
         {
@@ -72,7 +70,7 @@ public class KeyedStack<TK, TV> : Dictionary<TK, Stack<TV>>
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public new int Count(TK key)
+    public new int Count(Tk key)
     {
         return ContainsKey(key)
             ? this[key].Count

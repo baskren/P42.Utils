@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace P42.Utils;
 
+// ReSharper disable once UnusedType.Global
 public static class Profile
 {
     /// <summary>
     /// Enable profiler
     /// </summary>
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public static bool Enabled { get; set; }
 
     /// <summary>

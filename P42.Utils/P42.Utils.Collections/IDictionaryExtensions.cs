@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace P42.Utils;
 
@@ -16,9 +13,9 @@ public static class IDictionaryExtensions
     /// <param name="dictionary"></param>
     /// <param name="range"></param>
     /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TQ"></typeparam>
+    /// <typeparam name="Tq"></typeparam>
     /// <returns></returns>
-    public static IDictionary<T,TQ> AddRange<T,TQ>(this IDictionary<T,TQ> dictionary, IDictionary<T,TQ> range)
+    public static IDictionary<T,Tq> AddRange<T,Tq>(this IDictionary<T,Tq> dictionary, IDictionary<T,Tq> range)
     {
         foreach (var item in range)
             dictionary[item.Key] = item.Value;

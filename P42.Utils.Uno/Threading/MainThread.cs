@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace P42.Utils.Uno;
+﻿namespace P42.Utils.Uno;
 
 /// <summary>
 /// Run on MainThread, padding exceptions back to waiting thread
@@ -55,22 +51,21 @@ public static class MainThread
         }
 
         var tcs = new TaskCompletionSource<bool>();
-        if (!Platform.MainThreadDispatchQueue.TryEnqueue(
-                Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+        return !Platform.MainThreadDispatchQueue.TryEnqueue(
+            Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+            {
+                try
                 {
-                    try
-                    {
-                        action();
-                        tcs.TrySetResult(true);
-                    }
-                    catch (Exception ex)
-                    {
-                        tcs.TrySetException(ex);
-                    }
-                }))
-            throw new InvalidOperationException("Unable to queue on the main thread.");
-
-        return tcs.Task;
+                    action();
+                    tcs.TrySetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            }) 
+            ? throw new InvalidOperationException("Unable to queue on the main thread.") 
+            : tcs.Task;
     }
 
     
@@ -100,22 +95,21 @@ public static class MainThread
             return Task.FromResult(func());
 
         var tcs = new TaskCompletionSource<T>();
-        if (!Platform.MainThreadDispatchQueue.TryEnqueue(
-                Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+        return !Platform.MainThreadDispatchQueue.TryEnqueue(
+            Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+            {
+                try
                 {
-                    try
-                    {
-                        var result = func();
-                        tcs.TrySetResult(result);
-                    }
-                    catch (Exception ex)
-                    {
-                        tcs.TrySetException(ex);
-                    }
-                }))
-            throw new InvalidOperationException("Unable to queue on the main thread.");
-
-        return tcs.Task;
+                    var result = func();
+                    tcs.TrySetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    tcs.TrySetException(ex);
+                }
+            }) 
+            ? throw new InvalidOperationException("Unable to queue on the main thread.") 
+            : tcs.Task;
     }
 
     
@@ -131,23 +125,22 @@ public static class MainThread
             return funcTask();
 
         var tcs = new TaskCompletionSource<bool>();
-        if (!Platform.MainThreadDispatchQueue.TryEnqueue(
-                // use of async void is ok here since tcs.SetException() handles exceptions
-                Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, async void () =>
-                {
-                    try
-                    {
-                        await funcTask().ConfigureAwait(false);
-                        tcs.SetResult(true);
-                    }
-                    catch (Exception e)
-                    {
-                        tcs.SetException(e);
-                    }
-                }))
-            throw new InvalidOperationException("Unable to queue on the main thread.");
-
-        return tcs.Task;
+        return !Platform.MainThreadDispatchQueue.TryEnqueue(
+            // use of async void is ok here since tcs.SetException() handles exceptions
+            Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, async void () =>
+        {
+            try
+            {
+                await funcTask().ConfigureAwait(false);
+                tcs.SetResult(true);
+            }
+            catch (Exception e)
+            {
+                tcs.SetException(e);
+            }
+        }) 
+        ? throw new InvalidOperationException("Unable to queue on the main thread.") 
+        : tcs.Task;
     }
     
     
@@ -169,22 +162,21 @@ public static class MainThread
             return funcTask();
 
         var tcs = new TaskCompletionSource<T>();
-        if (!Platform.MainThreadDispatchQueue.TryEnqueue(
-                // use of async void is ok here since tcs.SetException() handles exceptions
-                Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, async void () =>
-                {
-                    try
-                    {
-                        var ret = await funcTask().ConfigureAwait(false);
-                        tcs.SetResult(ret);
-                    }
-                    catch (Exception e)
-                    {
-                        tcs.SetException(e);
-                    }
-                }))
-            throw new InvalidOperationException("Unable to queue on the main thread.");
-
-        return tcs.Task;
+        return !Platform.MainThreadDispatchQueue.TryEnqueue(
+            // use of async void is ok here since tcs.SetException() handles exceptions
+            Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, async void () =>
+        {
+            try
+            {
+                var ret = await funcTask().ConfigureAwait(false);
+                tcs.SetResult(ret);
+            }
+            catch (Exception e)
+            {
+                tcs.SetException(e);
+            }
+        }) 
+            ? throw new InvalidOperationException("Unable to queue on the main thread.") 
+            : tcs.Task;
     }
 }

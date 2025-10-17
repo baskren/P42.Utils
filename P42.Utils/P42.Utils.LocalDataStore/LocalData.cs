@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Web;
-using Newtonsoft.Json;
 using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
@@ -49,11 +48,12 @@ public abstract class LocalData
 
     #endregion
 
-    
+
     #region Construction / Initialization
 
     static LocalData()
     {
+        Serializer.Default.Add(typeof(ObservableConcurrentDictionary<string, string>), ObservableConcurrentDictionary_string_string_SerializerContext.Default);
         //TODO: Right now, the local data store is cleared when the app is updated.  This may not be the best behavior for downloaded items.
 
         if (!DirectoryExtensions.TryGetOrCreateDirectory(PlatformFolder, out var platformFolder))
@@ -81,14 +81,15 @@ public abstract class LocalData
             }
 
         }
-
+        
         DirectoryExtensions.GetOrCreateParentDirectory(versionFilePath);
         File.WriteAllText(versionFilePath, version.ToString());
 
         if (File.Exists(ItemUriRootLookupPath) &&
             File.ReadAllText(ItemUriRootLookupPath) is { } urJson &&
             !string.IsNullOrWhiteSpace(urJson) &&
-            JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(urJson) is { } uriLookup)
+            //JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(urJson) is { } uriLookup)
+            Serializer.Default.TryDeserialize<ObservableConcurrentDictionary<string, string>>(urJson, out var uriLookup))
             ItemUriRootLookup = uriLookup;
         else
             ItemUriRootLookup = new ObservableConcurrentDictionary<string, string>();
@@ -96,7 +97,8 @@ public abstract class LocalData
         if (File.Exists(ETagLookupPath) &&
             File.ReadAllText(ETagLookupPath) is { } etagJson &&
             !string.IsNullOrWhiteSpace(etagJson) &&
-            JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(etagJson) is { } etagLookup)
+            //JsonConvert.DeserializeObject<ObservableConcurrentDictionary<string, string>>(etagJson) is { } etagLookup)
+            Serializer.Default.TryDeserialize<ObservableConcurrentDictionary<string, string>>(etagJson, out var etagLookup))
             ETagLookup = etagLookup;
         else
             ETagLookup = new ObservableConcurrentDictionary<string, string>();
@@ -112,7 +114,8 @@ public abstract class LocalData
     {
         try
         {
-            var json = JsonConvert.SerializeObject(ETagLookup);
+            //var json = JsonConvert.SerializeObject(ETagLookup);
+            var json = System.Text.Json.JsonSerializer.Serialize(ETagLookup);
             await Semaphore.WaitAsync();
             try
             {
@@ -139,7 +142,8 @@ public abstract class LocalData
     {
         try
         {
-            var json = JsonConvert.SerializeObject(ItemUriRootLookup);
+            //var json = JsonConvert.SerializeObject(ItemUriRootLookup);
+            var json = System.Text.Json.JsonSerializer.Serialize(ItemUriRootLookup);
             await Semaphore.WaitAsync();
             try
             {
@@ -233,6 +237,7 @@ public abstract class LocalData
 
         public Uri FileUri => new (FullPath);
 
+        /*
         /// <summary>
         /// Settings for Json Serialization
         /// </summary>
@@ -254,7 +259,7 @@ public abstract class LocalData
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
             TypeNameHandling = TypeNameHandling.Auto
         };
-
+        */
 
 
         protected static string CleanKey(string key)
@@ -464,13 +469,16 @@ public abstract class LocalData
         /// <param name="defaultValue"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T? Deserialize<T>(T? defaultValue = default)
+        // ReSharper disable once MemberCanBeProtected.Global
+        public T? Deserialize<T>(T? defaultValue = default) 
         {
             if (!this.TryRecallText(out var text) || string.IsNullOrWhiteSpace(text))
                 return defaultValue;
 
-            return JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
+            //return JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
+            return Serializer.Default.Deserialize<T>(text);
         }
+        
 
         /// <summary>
         /// Load serialized object from app local storage
@@ -486,7 +494,8 @@ public abstract class LocalData
 
             try
             {
-                result = JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
+                //result = JsonConvert.DeserializeObject<T>(text, JsonDeserializingSettings);
+                result = Serializer.Default.Deserialize<T>(text);
                 return result is not null;
             }
             catch (Exception e)
@@ -506,7 +515,8 @@ public abstract class LocalData
         {
             if (obj is Item)
                 throw new ArgumentException("Cannot serialize a LocalData.Item");
-            var json = JsonConvert.SerializeObject(obj, JsonSerializingSettings);
+            //var json = JsonConvert.SerializeObject(obj, JsonSerializingSettings);
+            var json = System.Text.Json.JsonSerializer.Serialize(obj);
             this.StoreText(json);
         }
 
@@ -520,7 +530,8 @@ public abstract class LocalData
         {
             if (obj is Item)
                 throw new ArgumentException("Cannot serialize a LocalData.Item");
-            var json = JsonConvert.SerializeObject(obj, JsonSerializingSettings);
+            //var json = JsonConvert.SerializeObject(obj, JsonSerializingSettings);
+            var json = System.Text.Json.JsonSerializer.Serialize(obj);
             await this.StoreTextAsync(json);
         }
 
@@ -1087,6 +1098,7 @@ public abstract class LocalData
     /// </summary>
     /// <param name="key">omit to clear all</param>
     /// <returns>true if any items cleared</returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static bool Clear(Item? key = null)
         => Clear(DateTime.Now, key);
 

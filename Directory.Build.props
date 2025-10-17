@@ -14,28 +14,39 @@
 
 
   <!-- CUSTOMIZATION START -->
-  <!-- CUSTOMIZATION -->
+
+  <!-- SET ASSEMBLY/NUGET VERSION NUMBER -->
   <PropertyGroup>
-    <P42_Utils_Version>2.0.0-dev0</P42_Utils_Version>
-    <P42_Utils_Uno_Version>$(UnoVersion)-dev0</P42_Utils_Uno_Version>
-    <IsP42UtilsUno>$(MSBuildProjectName.StartsWith('P42.Utils.Uno'))</IsP42UtilsUno>
-    <IsP42Utils>False</IsP42Utils>
-    <IsP42Utils Condition="!$(IsP42UtilsUno)">$(MSBuildProjectName.StartsWith('P42.Utils'))</IsP42Utils>
+
+    <DevIteration>-dev0</DevIteration>
+
+    <IsP42UtilsUno>false</IsP42UtilsUno>
+    <IsP42UtilsUno Condition=" $(MSBuildProjectName.StartsWith('P42.Utils.Uno')) ">true</IsP42UtilsUno>
+    <P42_Utils_Uno_Version Condition="$(IsP42UtilsUno)">$(UnoVersion)$(DevIteration)</P42_Utils_Uno_Version>
+
+    <IsP42Utils>false</IsP42Utils>
+    <IsP42Utils Condition=" !$(IsP42UtilsUno) AND $(MSBuildProjectName.StartsWith('P42.Utils')) ">true</IsP42Utils>
+    <P42_Utils_Version>2.0.0$(DevIteration)</P42_Utils_Version>
+
     <Version Condition=" '$(Version)' == '' AND $(IsP42Utils) ">$(P42_Utils_Version)</Version>
     <Version Condition=" '$(Version)' == '' AND $(IsP42UtilsUno) ">$(P42_Utils_Uno_Version)</Version>
+
     <RootNamespace>$(MSBuildProjectName)Rns</RootNamespace>
+
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildProjectDirectory)/Resources/**/*.*"  />
   </ItemGroup>
 
-  <!-- CROSS TARGETING -->
+
+  <!-- GET BUILD OS -->
   <PropertyGroup>
-    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('browserwasm')) ">WebAssembly</UnoRuntimeIdentifier>
-    <UnoRuntimeIdentifier Condition=" $(TargetFramework.Contains('desktop')) ">Skia</UnoRuntimeIdentifier>
-    <UnoRuntimeIdentifier Condition=" '$(TargetFramework)' == 'net9.0' ">Reference</UnoRuntimeIdentifier>
+    <BuildOsIsWindows>$([System.OperatingSystem]::IsWindows())</BuildOsIsWindows>
+    <BuildOsIsMacOS>$([System.OperatingSystem]::IsMacOS())</BuildOsIsMacOS>
+    <BuildOsIsLinux>$([System.OperatingSystem]::IsLinux())</BuildOsIsLinux>
   </PropertyGroup>
+
   <!--
   <PropertyGroup>
     <_p42_utils_nuget_root>/Users/ben/.nuget/packages</_p42_utils_nuget_root>
@@ -85,9 +96,12 @@
     <Message Condition="!Exists('$(MSBuildThisFileDirectory)/Directory.NugetPackage.props')" Text="  Directory.NugetPackage.props DOES NOT EXIST" Importance="high"/>
     <Message Text="  References.props: [$(MSBuildProjectDirectory)$(MSBuildProjectName).References.props] " Importance="high"/>
     -->
-    <Message Text=" " Importance="high"/>
+    <Message Text=" Pizza=[$(Pizza)] " Importance="high"/>
     <Message Text=" IsP42Utils=[$(IsP42Utils)] " Importance="high"/>
     <Message Text=" IsP42UtilsUno=[$(IsP42UtilsUno)] " Importance="high"/>
+    <Message Text=" IsNetTarget=[$(IsNetTarget)]" Importance="high" />
+    <Message Text=" IsUno=[$(IsUno)]" Importance="high" />
+    <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
@@ -101,17 +115,30 @@
     <Message Text="======================= MAC CATALYST ========================= " Condition=" $(TargetFramework.Contains('maccatalyst')) " Importance="high" />
     <Message Text="=========================== MACOS ============================ " Condition=" $(TargetFramework.Contains('macos')) " Importance="high" />
 
-    <Message Text="  IsAndroid=[$(IsAndroid)]" Condition="'$(IsAndroid)'=='true'" Importance="high" />
-    <Message Text="  IsIOS=[$(IsIOS)]" Condition="'$(IsIOS)'=='true'" Importance="high" />
-    <Message Text="  IsMacOS=[$(IsMacOS)]" Condition="'$(IsMacOS)'=='true'" Importance="high" />
-    <Message Text="  IsMacCatalyst=[$(IsMacCatalyst)]" Condition="'$(IsMacCatalyst)'=='true'" Importance="high" />
-    <Message Text="  IsIOSOrCatalyst=[$(IsIOSOrCatalyst)]" Condition="'$(IsIOSOrCatalyst)'=='true'" Importance="high" />
-    <Message Text="  IsTvOS=[$(IsTvOS)]" Condition="'$(IsTvOS)'=='true'" Importance="high" />
-    <Message Text="  IsAppleUIKit=[$(IsAppleUIKit)]" Condition="'$(IsAppleUIKit)'=='true'" Importance="high" />
-    <Message Text="  IsWinAppSDK=[$(IsWinAppSDK)]" Condition="'$(ISWinAppSDK)'=='true'" Importance="high" />
-    <Message Text="  IsBrowserWasm=[$(IsBrowserWasm)]" Condition="'$(IsBrowserWasm)'=='true'" Importance="high" />
-    <Message Text="  IsDesktop=[$(IsDesktop)]" Condition="'$(IsDesktop)'=='true'" Importance="high" />
-    <Message Text="  IsCrossruntime=[$(IsCrossruntime)]" Condition="'$(IsCrossruntime)'=='true'" Importance="high" />
+    <Message Text="  BuildOsIsWindows" Condition="'$(BuildOsIsWindows)'=='true'" Importance="high" />
+    <Message Text="  BuildOsIsMacOS" Condition="'$(BuildOsIsMacOS)'=='true'" Importance="high" />
+    <Message Text="  BuildOsIsLinux" Condition="'$(BuildOsIsLinux)'=='true'" Importance="high" />
+
+    <Message Text="  IsAndroid" Condition="'$(IsAndroid)'=='true'" Importance="high" />
+    <Message Text="  IsIOS" Condition="'$(IsIOS)'=='true'" Importance="high" />
+    <Message Text="  IsMacOS" Condition="'$(IsMacOS)'=='true'" Importance="high" />
+    <Message Text="  IsMacCatalyst" Condition="'$(IsMacCatalyst)'=='true'" Importance="high" />
+    <Message Text="  IsIOSOrCatalyst" Condition="'$(IsIOSOrCatalyst)'=='true'" Importance="high" />
+    <Message Text="  IsTvOS" Condition="'$(IsTvOS)'=='true'" Importance="high" />
+    <Message Text="  IsAppleUIKit" Condition="'$(IsAppleUIKit)'=='true'" Importance="high" />
+    <Message Text="  IsWinAppSDK" Condition="'$(IsWinAppSDK)'=='true'" Importance="high" />
+    <Message Text="  IsBrowserWasm" Condition="'$(IsBrowserWasm)'=='true'" Importance="high" />
+    <Message Text="  IsDesktop" Condition="'$(IsDesktop)'=='true'" Importance="high" />
+    <Message Text="  IsCrossruntime" Condition="'$(IsCrossruntime)'=='true'" Importance="high" />
+    <Message Text="  IsNetTarget" Condition="'$(IsNetTarget)'=='true'" Importance="high" />
+    <Message Text="  IsUno" Condition="'$(IsUno)'=='true'" Importance="high" />
+
+
+    <!--
+    <Message Text="  [MSBuild]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
+    <Message Text="  [Sytem.OperatiingSystem]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
+    <Message Text="  [Sytem.OperatiingSystem]::IsMacOS()]:[$([System.OperatingSystem]::IsMacOS())]"  Importance="high" />
+  -->
 
     <Message Text="  DotNetVersion:[net9.0]" Importance="high" />
     <Message Text="  UnoSdk:[$(UnoSdkVersion)] " Importance="high" />
@@ -154,9 +181,7 @@
     <Message Text="  AppIdentifierPrefix:[$(AppIdentifierPrefix)]"  Importance="high" />
     <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]"  Importance="high" />
     <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
-    <Message Text="  [MSBuild]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
-    <Message Text="  [Sytem.OperatiingSystem]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
-    <Message Text="  [Sytem.OperatiingSystem]::IsMacOS()]:[$([System.OperatingSystem]::IsMacOS())]"  Importance="high" />
+    <Message Condition=" $(TargetFramework.Contains('browserwasm'))" Text="  WasmShellEnableIDBFS:[$(WasmShellEnableIDBFS)]" Importance="high" />
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>

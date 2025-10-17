@@ -1,8 +1,6 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace P42.Utils;
 
@@ -11,6 +9,7 @@ namespace P42.Utils;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TItem"></typeparam>
+// ReSharper disable once UnusedType.Global
 public class ObservableKeyedCollection<TKey, TItem> : KeyedCollection<TKey, TItem>, INotifyCollectionChanged where TKey : notnull
 {
     // Overrides a lot of methods that can cause collection change

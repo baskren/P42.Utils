@@ -1,4 +1,3 @@
-using System;
 using Uno;
 using Windows.Graphics.Display;
 
@@ -49,8 +48,7 @@ public readonly struct DisplayMetrics(
     public override string ToString() =>
         $"{nameof(Height)}: {Height}, {nameof(Width)}: {Width}, {nameof(Density)}: {Density}, {nameof(Orientation)}: {Orientation}, {nameof(Rotation)}: {Rotation}";
 
-    public DisplayMetrics Copy()
-        => new DisplayMetrics(Width, Height, Density, Orientation, Rotation);
+    public DisplayMetrics Copy() => new(Width, Height, Density, Orientation, Rotation);
     
 }
 

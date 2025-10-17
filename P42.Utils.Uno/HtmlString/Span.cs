@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace P42.Utils.Uno;
 
@@ -77,7 +76,7 @@ internal abstract class Span : NotifiableObject.FieldBackedNotifiablePropertyObj
     public string Id
     {
         get => _id;
-        set => SetField(ref _id, value);
+        protected set => SetField(ref _id, value);
     }
     #endregion
 

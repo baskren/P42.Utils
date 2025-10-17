@@ -11,12 +11,12 @@ public sealed class PeriodicTimer
     /// </summary>
     /// <param name="period">The time between invocation of callback</param>
     /// <param name="callback">returns false when you wish timer to stop.</param>
-    public static void StartTimer(TimeSpan period, Func<bool> callback)
+    public static void StartTimer(TimeSpan period, Func<bool> callback, CancellationToken token = default)
     {
         if (period <= TimeSpan.Zero)
             return;
 
-        _ = new PeriodicTimer(period, callback);
+        _ = new PeriodicTimer(period, callback, token);
     }
 
     /// <summary>
@@ -24,15 +24,15 @@ public sealed class PeriodicTimer
     /// </summary>
     /// <param name="period">The time between invocation of callback</param>
     /// <param name="callback">returns false when you wish timer to stop.</param>
-    public static void StartTimer(TimeSpan period, Func<Task<bool>> callback)
+    public static void StartTimer(TimeSpan period, Func<Task<bool>> callback, CancellationToken token = default)
     {
         if (period <= TimeSpan.Zero)
             return;
 
-        _ = new PeriodicTimer(period, callback);
+        _ = new PeriodicTimer(period, callback, token);
     }
 
-    private PeriodicTimer(TimeSpan span, Func<bool>? func)
+    private PeriodicTimer(TimeSpan span, Func<bool>? func, CancellationToken token = default)
     {
         if (func == null)
             return;
@@ -42,7 +42,7 @@ public sealed class PeriodicTimer
         var timer = new System.Timers.Timer();
         timer.Elapsed += (_, _) =>
         {
-            if (func.Invoke())
+            if (!token.IsCancellationRequested && func.Invoke())
                 return;
             timer.Stop();
             func = null;
@@ -51,7 +51,7 @@ public sealed class PeriodicTimer
         timer.Start();
     }
 
-    private PeriodicTimer(TimeSpan span, Func<Task<bool>>? func)
+    private PeriodicTimer(TimeSpan span, Func<Task<bool>>? func, CancellationToken token = default)
     {
         if (func == null)
             return;
@@ -61,7 +61,7 @@ public sealed class PeriodicTimer
         var timer = new System.Timers.Timer();
         timer.Elapsed += async (_, _) =>
         {
-            if (await func.Invoke())
+            if (!token.IsCancellationRequested && await func.Invoke())
                 return;
             timer.Stop();
             func = null;

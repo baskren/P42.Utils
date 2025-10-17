@@ -1,19 +1,17 @@
-using System;
 using Windows.UI;
 
 namespace P42.Utils.Uno;
 
-internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size, short fontWeight = 400, bool italic = false)
+internal class MetaFont(FontFamily? family, double size, short fontWeight = 400, bool italic = false)
 {
     #region Properties
 
-    public Microsoft.UI.Xaml.Media.FontFamily? Family = family;
+    public FontFamily? Family = family;
 
     public double Size = size;
 
     public bool Italic = italic;
 
-    //public bool Bold = bold;
     public short FontWeight = fontWeight;
 
     public FontBaseline Baseline = FontBaseline.Normal;
@@ -42,7 +40,7 @@ internal class MetaFont(Microsoft.UI.Xaml.Media.FontFamily? family, double size,
         Underline = f.Underline;
         Strikethrough = f.Strikethrough;
     }
-    public MetaFont(Microsoft.UI.Xaml.Media.FontFamily family, double size, short fontWeight = 400, bool italic = false, string id = "", string href = "", Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, fontWeight, italic)
+    public MetaFont(FontFamily family, double size, short fontWeight = 400, bool italic = false, string id = "", string href = "", Color textColor = default, Color backgroundColor = default, bool underline = false, bool strikethrough = false) : this(family, size, fontWeight, italic)
     {
         if (!string.IsNullOrEmpty(id) || !string.IsNullOrEmpty(href))
             Action = new MetaFontAction(href, id);

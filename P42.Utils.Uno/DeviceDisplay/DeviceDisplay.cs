@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.Graphics.Display;
+﻿using Windows.Graphics.Display;
 using AsyncAwaitBestPractices;
 using P42.Serilog.QuickLog;
 
@@ -16,8 +14,8 @@ public static class DeviceDisplay
 
     private static DisplayMetrics _currentMetrics;
 
-    private static System.Threading.Lock? _lock;
-    private static System.Threading.Lock Locker => _lock ??= new System.Threading.Lock();
+    private static Lock? _lock;
+    private static Lock Locker => _lock ??= new Lock();
     
     private static Windows.System.Display.DisplayRequest? _displayRequest;
 
@@ -117,7 +115,7 @@ public static class DeviceDisplay
     {
         try
         {
-#if WINDOWS
+            
             if (di is not null)
             {
                 var result = di.ToDisplayMetrics();
@@ -130,16 +128,11 @@ public static class DeviceDisplay
                 IsMainDisplayInfoTrusted = true;
                 return metrics;
             }
-#else
-            di ??= MainThread.Invoke(DisplayInformation.GetForCurrentView);
-            var result = di.ToDisplayMetrics();
-            IsMainDisplayInfoTrusted = true;
-            return result;
-#endif
 
         }
         catch (Exception)
         {
+            // /Ignore
         }
         IsMainDisplayInfoTrusted = false;
         return DefaultMetrics;
