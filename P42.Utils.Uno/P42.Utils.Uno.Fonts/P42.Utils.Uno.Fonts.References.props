@@ -1,0 +1,15 @@
+<Project ToolsVersion="15.0">
+
+
+  <PropertyGroup>
+    <WindowsBaseOs Condition="$(TargetFramework.Contains('windows')) OR ( $([MSBuild]::IsOSPlatform('windows')) AND $(TargetFramework.Contains('desktop')) )">true</WindowsBaseOs>
+    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$DefineConstants;WindowsBaseOs</DefineConstants>
+  </PropertyGroup>
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" />
+    <PackageReference Condition=" '$(WindowsBaseOs)' == 'true' " Include="Microsoft.PowerShell.SDK" />
+  </ItemGroup>
+
+</Project>

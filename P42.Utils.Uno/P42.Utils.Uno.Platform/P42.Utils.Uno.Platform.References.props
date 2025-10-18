@@ -1,0 +1,25 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" />
+    <ProjectReference Include="..\P42.Utils.Uno.BaseExtensions\P42.Utils.Uno.BaseExtensions.csproj" />
+  </ItemGroup>
+  <!-- NEEDED FOR JSImport -->
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.DebugExtensions\P42.Utils.DebugExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Uno.DeviceDisk\P42.Utils.Uno.DeviceDisk.csproj" />
+    <ProjectReference Include="..\P42.Utils.Uno.StorageExtensions\P42.Utils.Uno.StorageExtensions.csproj" />
+    <ProjectReference Include="..\P42.Utils.Uno.Threading\P42.Utils.Uno.Threading.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Platforms\WebAssembly\WasmScripts\*.*" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" />
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.Collections\P42.Utils.Collections.csproj" />
+    <ProjectReference Include="..\P42.Utils.Uno.Converters\P42.Utils.Uno.Converters.csproj" />
+
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.ReflectionExtensions\P42.Utils.ReflectionExtensions.csproj" />
+
+    <!--
+    <PackageReference Include="Markdig"  />
+    <PackageReference Include="HtmlAgilityPack" />
+    <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
+  -->
+  </ItemGroup>
+
+</Project>

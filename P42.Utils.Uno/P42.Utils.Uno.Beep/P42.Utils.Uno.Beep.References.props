@@ -1,0 +1,13 @@
+<Project ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WasmShellEnableThreads>true</WasmShellEnableThreads>
+  </PropertyGroup>
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" />
+  </ItemGroup>
+
+</Project>

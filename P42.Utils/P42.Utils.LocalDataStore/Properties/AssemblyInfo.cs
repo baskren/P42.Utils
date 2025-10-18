@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("P42.Utils.Uno")]
+[assembly: InternalsVisibleTo("P42.Utils.Uno.LocalDataStore")]

@@ -14,7 +14,7 @@ public static class Process
     /// How much memory is consumed by this process / application
     /// </summary>
     /// <exception cref="IncompleteInitialization"></exception>
-    //public static ulong Memory => PlatformProcess?.Memory() ?? throw new IncompleteInitialization();
+    
     public static ulong Memory( [CallerMemberName] string caller = "", [CallerFilePath] string callerFile = "", [CallerLineNumber] int callerLineNumber = 0)
     {
         /*
@@ -36,7 +36,7 @@ public static class Process
              """); 
         return memoryReport.PrivatePageCount;
         */
-        
+        PlatformProcess?.Memory(caller, callerFile, callerLineNumber);
         // HEAP
         
         var managedMemoryBytes = GC.GetTotalMemory(true); // true to force a garbage collection before calculation

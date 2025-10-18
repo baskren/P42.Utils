@@ -1,0 +1,16 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="P42.Serilog.QuickLog" />
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.LocalDataStore\P42.Utils.LocalDataStore.csproj" />
+    <ProjectReference Include="..\P42.Utils.Uno.Threading\P42.Utils.Uno.Threading.csproj" />
+    <!--
+    <PackageReference Include="Markdig"  />
+    <PackageReference Include="HtmlAgilityPack" />
+    <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
+  -->
+  </ItemGroup>
+
+</Project>

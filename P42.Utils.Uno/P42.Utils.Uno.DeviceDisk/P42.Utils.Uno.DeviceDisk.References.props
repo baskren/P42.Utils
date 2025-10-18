@@ -1,0 +1,24 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- SHARED ITEMS -->
+
+  <!-- NEEDED FOR JSImport -->
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.IO.Extensions\P42.Utils.IO.Extensions.csproj" />
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.Json\P42.Utils.Json.csproj" />
+    <ProjectReference Include="..\..\P42.Utils\P42.Utils.StringExtensions\P42.Utils.StringExtensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Platforms\WebAssembly\WasmScripts\*.*" />
+  </ItemGroup>
+
+
+</Project>
