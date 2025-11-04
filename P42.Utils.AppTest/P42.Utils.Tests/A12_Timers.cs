@@ -24,7 +24,7 @@ public class A12_Timers
 
         var first = true;
         var lastDateTime = DateTime.Now;
-        P42.Utils.IntervalTimer.StartTimer(timeSpan, async () =>
+        IntervalTimer.StartTimer(timeSpan, async () =>
         {
             var now = DateTime.Now;
 
@@ -69,7 +69,7 @@ public class A12_Timers
 
         var first = true;
         var lastDateTime = DateTime.Now;
-        P42.Utils.PeriodicTimer.StartTimer(timeSpan, async () =>
+        PeriodicTimer.StartTimer(timeSpan, async () =>
         {
             var now = DateTime.Now;
 

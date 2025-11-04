@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ public class A08_StreamExtensions
     public void A01_CopyToPath()
     {
         //var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "TestFile1");
-        var path = Path.Combine(P42.Utils.Platform.ApplicationTemporaryFolderPath, "TestFile1");
+        var path = Path.Combine(Platform.ApplicationTemporaryFolderPath, "TestFile1");
         using var stream = ResourceItem.Stream(FileMode.OpenOrCreate);
         stream.CopyToPath(path);
         stream.Dispose();

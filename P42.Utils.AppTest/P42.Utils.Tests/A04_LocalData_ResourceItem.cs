@@ -1,25 +1,25 @@
-using System.Runtime.InteropServices;
-using Microsoft.UI;
+using System;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Web.WebView2.Core;
 using P42.UnoTestRunner;
-using P42.Utils;
 using P42.Utils.Uno;
 using Shouldly;
-using Uno.Foundation;
+// ReSharper disable LocalizableElement
 
 namespace P42.Utils.AppTest;
 
 [TestClass]
+// ReSharper disable once InconsistentNaming
 public class A04_LocalData_ResourceItem
 {
     private const string ResourceId = ".Resources.TextFile1.txt";
     private const string ExpectedContent = "THIS IS A TEXT FILE\r\n";
-    private static LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.Get(ResourceId);
-    private static LocalData.ResourceItem AltResourceItemA = LocalData.ResourceItem.Get(ResourceId, "AltResources");
-    private static LocalData.ResourceItem AltResourceItemB = LocalData.ResourceItem.Get(".Resources.html5-test-page.html");
+    private static readonly LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.Get(ResourceId);
+    private static readonly LocalData.ResourceItem AltResourceItemA = LocalData.ResourceItem.Get(ResourceId, "AltResources");
+    private static readonly LocalData.ResourceItem AltResourceItemB = LocalData.ResourceItem.Get(".Resources.html5-test-page.html");
 
     [TestMethod]
     public void A00_IntersessionCaching()
@@ -33,7 +33,7 @@ public class A04_LocalData_ResourceItem
     [TestMethod]
     public void A01_KeyEquality()
     {
-        var item = P42.Utils.LocalData.ResourceItem.Get(ResourceId);
+        var item = LocalData.ResourceItem.Get(ResourceId);
         item.FullPath.ShouldBe(ResourceItem.FullPath);
         item.ShouldBe(ResourceItem);
 
@@ -65,6 +65,7 @@ public class A04_LocalData_ResourceItem
     [TestMethod]
     public void A03_Recall()
     {
+        ResourceItem.IsFile.ShouldBeTrue();
         ResourceItem.Exists.ShouldBeTrue();
         ResourceItem.TryRecallText(out var text).ShouldBe(true);
         text.ShouldBe(ExpectedContent);
@@ -118,7 +119,7 @@ public class A04_LocalData_ResourceItem
         writer.ShouldNotBeNull();
         await writer.WriteAsync(ExpectedContent);
         writer.Close();
-        writer.Dispose();
+        await writer.DisposeAsync();
 
         ResourceItem.Exists.ShouldBeTrue();
         ResourceItem.TryRecallText(out var item).ShouldBeTrue();
@@ -135,7 +136,7 @@ public class A04_LocalData_ResourceItem
         writer.ShouldNotBeNull();
         await writer.WriteAsync(ExpectedContent);
         writer.Close();
-        writer.Dispose();
+        await writer.DisposeAsync();
 
         ResourceItem.Exists.ShouldBeTrue();
         ResourceItem.TryRecallText(out var item).ShouldBeTrue();
@@ -143,7 +144,7 @@ public class A04_LocalData_ResourceItem
     }
 
     [TestMethod]
-    public void A10_NonExistantResource()
+    public void A10_NonExistentResource()
     {
         Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.Get(ResourceId, "AltResources", typeof(P42.Utils.Uno.Platform).Assembly));
         Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.Get(".Resources.AltResources") );
@@ -174,7 +175,7 @@ public class A04_LocalData_ResourceItem
     [TestMethod]
     public async Task A11_Beep()
     {
-        //await DeviceBeep.PlayAsync(1500, 300);
+        await DeviceBeep.PlayAsync(800, 800);
         Console.WriteLine("A11_Beep done");
     }
 
@@ -237,16 +238,16 @@ public class A04_LocalData_ResourceItem
         //wv2.NavigateToString(resource.RecallText());
         var tcs = new TaskCompletionSource<bool>();
 
-        void Wv2_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+        void Wv2NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
         {
             Task.Run(async () =>
             {
-                await DeviceBeep.PlayAsync(1500, 300);
+                await DeviceBeep.PlayAsync(1600, 500);
                 tcs.TrySetResult(true);
             });
         }
 
-        void Wv2_CoreProcessFailed(WebView2 sender, CoreWebView2ProcessFailedEventArgs args)
+        void Wv2CoreProcessFailed(WebView2 sender, CoreWebView2ProcessFailedEventArgs args)
         {
             Task.Run(async () =>
             {
@@ -259,8 +260,8 @@ public class A04_LocalData_ResourceItem
 
         await wv2.EnsureCoreWebView2Async();
 
-        wv2.NavigationCompleted += Wv2_NavigationCompleted;
-        wv2.CoreProcessFailed += Wv2_CoreProcessFailed;
+        wv2.NavigationCompleted += Wv2NavigationCompleted;
+        wv2.CoreProcessFailed += Wv2CoreProcessFailed;
 
         /*
         var destUri = new Uri("ms-appdata:///local/test/index.html");

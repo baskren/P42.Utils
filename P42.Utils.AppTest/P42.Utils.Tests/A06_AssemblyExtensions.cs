@@ -32,7 +32,7 @@ public class A06_AssemblyExtensions
         var asm = Assembly.GetExecutingAssembly();
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         assemblies.ShouldContain(asm);
-        assemblies.ShouldContain(typeof(P42.Utils.LocalData).Assembly);
+        assemblies.ShouldContain(typeof(LocalData).Assembly);
         assemblies.ShouldContain(typeof(Microsoft.UI.Xaml.Application).Assembly);
 #if HAS_UNO
         assemblies.ShouldContain(typeof(global::Uno.UI.Toolkit.UIElementExtensions).Assembly);
@@ -48,19 +48,16 @@ public class A06_AssemblyExtensions
     }
 
     [TestMethod]
-    public void A04_GetBuildTime()
+    public async Task A04_GetBuildTimeAsync()
     {
         var asm = Assembly.GetExecutingAssembly();
 
-#if BROWSERWASM
-        asm.TryGetBuildTime(out var time).ShouldBeFalse();
-#else
-        asm.TryGetBuildTime(out var time).ShouldBeTrue();
-#endif
+        var time = await asm.GetBuildTimeAsync();
+
+        time.ShouldNotBe(default);
         time.ShouldNotBe(DateTime.MinValue);
         time.ShouldNotBe(DateTime.MaxValue);
         time.ShouldNotBe(DateTime.Now);
-        time.ShouldNotBe(DateTime.Today);
         time.ShouldNotBe(DateTime.UtcNow);
     }
 }

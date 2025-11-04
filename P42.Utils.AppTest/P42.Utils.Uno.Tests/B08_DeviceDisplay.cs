@@ -13,6 +13,6 @@ internal class B08_DeviceDisplay
     [TestMethod]
     public void A01_GetInfo()
     {
-        Console.WriteLine($"[{P42.Utils.Uno.DeviceDisplay.QueryMainDisplayInfo()}]");
+        Console.WriteLine($"[{Uno.DeviceDisplay.QueryMainDisplayInfo()}]");
     }
 }

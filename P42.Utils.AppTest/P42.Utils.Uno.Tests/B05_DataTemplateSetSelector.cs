@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using P42.Utils.Uno;
 using Shouldly;
@@ -10,14 +13,17 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
+[SuppressMessage("Usage", "MSTEST0003:Test methods should have valid layout")]
+[SuppressMessage("Usage", "MSTEST0008:TestInitialize method should have valid layout")]
+// ReSharper disable once InconsistentNaming
 internal class B05_DataTemplateSetSelector
 {
-    P42.Utils.Uno.DataTemplateSetSelector Selector;
+    DataTemplateSetSelector Selector;
 
     [TestInitialize]
     public void A00_Initialize()
     {
-        Selector = new Uno.DataTemplateSetSelector()
+        Selector = new DataTemplateSetSelector()
             .Add<int, Button>()
             .Add<double, TextBlock>();
         Selector.Count.ShouldBe(2);

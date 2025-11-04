@@ -888,7 +888,7 @@ internal class HtmlSpans : List<Span>
     {
         var s = sizeString;
         double size;
-        //var element = new Xamarin.Forms.Label();
+
         if (s.EndsWith("px", StringComparison.Ordinal))
         {
             var subString = s[..^2];

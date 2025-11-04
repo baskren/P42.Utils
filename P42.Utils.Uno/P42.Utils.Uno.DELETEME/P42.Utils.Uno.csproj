@@ -1,6 +1,13 @@
-<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
+      $(TargetFrameworks);net9.0-windows10.0.26100;</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+
+
     <UnoSingleProject>true</UnoSingleProject>
     <OutputType>Library</OutputType>
     <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
@@ -12,7 +19,7 @@
       UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
-    
+
     <UnoFeatures>
       SkiaRenderer;
     </UnoFeatures>
@@ -33,23 +40,41 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\P42.Utils\P42.Utils\P42.Utils.csproj" />
-    
-    <ProjectReference Include="..\P42.Utils.Uno.HtmlTextBlock\P42.Utils.Uno.HtmlTextBlock.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.DebugExtensions\P42.Utils.Uno.DebugExtensions.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.DataTemplateSelector\P42.Utils.Uno.DataTemplateSelector.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.AssetExtensions\P42.Utils.Uno.AssetExtensions.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.Beep\P42.Utils.Uno.Beep.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.Animation\P42.Utils.Uno.Animation.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.DeviceDisplay\P42.Utils.Uno.DeviceDisplay.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.UriExtensions\P42.Utils.Uno.UriExtensions.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.LocalDataStore\P42.Utils.Uno.LocalDataStore.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.DeviceInfo\P42.Utils.Uno.DeviceInfo.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno.Fonts\P42.Utils.Uno.Fonts.csproj" />
-  </ItemGroup>
+
+
+
+  <!-- CUSTOMIZATION START -->
+  <PropertyGroup>
+
+    <UnoFeatures>
+      WebView;
+      $(UnoFeatures)
+    </UnoFeatures>
+
+    <!-- NEEDED FOR DisplayHelper.winui.cs and Beep.io.maccatalyst -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Needed for Beep -->
+    <WasmShellEnableThreads>true</WasmShellEnableThreads>
+
+  </PropertyGroup>
+
+
+
 
   <ItemGroup>
-    <Folder Include="Platforms\Desktop\" />
+    <EmbeddedResource Include="Platforms\WebAssembly\WasmScripts\**\*.*" />
   </ItemGroup>
+
+
+
+
+  <ItemGroup>
+  </ItemGroup>
+
+
+
+
+
+
 </Project>

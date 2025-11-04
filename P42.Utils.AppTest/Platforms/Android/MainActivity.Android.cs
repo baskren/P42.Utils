@@ -15,7 +15,7 @@ public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
 {
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        global::AndroidX.Core.SplashScreen.SplashScreen.InstallSplashScreen(this);
+        AndroidX.Core.SplashScreen.SplashScreen.InstallSplashScreen(this);
 
         base.OnCreate(savedInstanceState);
     }

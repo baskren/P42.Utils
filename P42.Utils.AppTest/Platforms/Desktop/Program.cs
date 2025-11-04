@@ -1,6 +1,7 @@
-using P42.Utils.AppTest;
+using System;
 using Uno.UI.Hosting;
-using Uno.UI.Runtime.Skia;
+
+namespace P42.Utils.AppTest;
 
 internal class Program
 {

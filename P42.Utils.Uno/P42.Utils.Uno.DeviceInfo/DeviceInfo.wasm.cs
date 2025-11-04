@@ -19,11 +19,17 @@ public static partial class DeviceInfo
     private static string GetDeviceId()
     {
         const string deviceIdKey = "P42.Utils.Uno.DeviceInfo.DeviceId";
-        if (WasmNative.TryGetCookie(deviceIdKey, out var id))
-            return id;
+        var manager = global::Uno.Web.Http.CookieManager.GetDefault(); 
+        if (manager.FindCookie(deviceIdKey) is {} cookie)
+            return cookie.Value;
 
-        id = FallbackId();
-        WasmNative.SetCookie(deviceIdKey, id);
+        var id = FallbackId();
+        cookie = new global::Uno.Web.Http.Cookie(deviceIdKey, id);
+        var request = new global::Uno.Web.Http.SetCookieRequest(cookie)
+        {
+            Expires = DateTimeOffset.MaxValue        
+        };
+        manager.SetCookie(request);
         return id;
     }
 

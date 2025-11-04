@@ -15,7 +15,7 @@ internal class B11_PdfViewerControl
     [RunsOnUIThread]
     public void A00_ShowPdf()
     {
-        var control = new P42.Utils.Uno.PdfViewerControl();
+        var control = new Uno.PdfViewerControl();
         UnitTestsUIContentHelper.Content = control;
 
         if (EmbeddedResourceExtensions.TryGetBytes(out var bytes, ".sampledocpage1.pdf", GetType().Assembly))

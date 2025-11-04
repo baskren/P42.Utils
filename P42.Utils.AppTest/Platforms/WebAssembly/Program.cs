@@ -1,11 +1,19 @@
+using System.Threading.Tasks;
 using Uno.UI.Hosting;
-using P42.Utils.AppTest;
 
-App.InitializeLogging();
+namespace P42.Utils.AppTest;
 
-var host = UnoPlatformHostBuilder.Create()
-    .App(() => new App())
-    .UseWebAssembly()
-    .Build();
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        App.InitializeLogging();
 
-await host.RunAsync();
+        var host = UnoPlatformHostBuilder.Create()
+            .App(() => new App())
+            .UseWebAssembly()
+            .Build();
+
+        await host.RunAsync();
+    }
+}

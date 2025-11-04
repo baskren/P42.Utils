@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using P42.UnoTestRunner;
@@ -14,20 +14,21 @@ namespace P42.Utils.AppTest;
 [TestClass]
 [SelectedByDefault]
 [OnlyExplicitlyUnselectable]
+// ReSharper disable once InconsistentNaming
 public class A00_PlatformInitialization
 {
-    static bool hasBeenRunBefore;
-    static int Count;
+    private static bool _hasBeenRunBefore;
+    //private static int Count;
 
     [TestMethod]
     public void A00_TestUninitialized()
     {
         // un comment before pushing!
-        if (!hasBeenRunBefore)
-            Assert.ThrowsException<P42.Utils.Uno.NotInitializedException>(() => _ = P42.Utils.Uno.Platform.Application);
+        if (!_hasBeenRunBefore)
+            Assert.ThrowsException<NotInitializedException>(() => _ = P42.Utils.Uno.Platform.Application);
         else
             Assert.IsNotNull(P42.Utils.Uno.Platform.Application);
-        hasBeenRunBefore = true;
+        _hasBeenRunBefore = true;
     }
 
     [TestMethod]
@@ -35,7 +36,7 @@ public class A00_PlatformInitialization
     public void A01_TestInitialize()
     {
         Assert.IsNotNull(TestApplication.MainWindow);
-        P42.Utils.Uno.Platform.Init(Application.Current, TestApplication.MainWindow!);
+        P42.Utils.Uno.Platform.Init(Application.Current, TestApplication.MainWindow);
     }
 
     [TestMethod]
@@ -44,15 +45,15 @@ public class A00_PlatformInitialization
     {
         P42.Utils.Uno.Platform.Application.ShouldBe(Application.Current);
         P42.Utils.Uno.Platform.MainWindow.ShouldBe(TestApplication.MainWindow);
-        Thread.CurrentThread.ShouldBe(P42.Utils.Uno.Platform.MainThread);
-        Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().ShouldBe(P42.Utils.Uno.Platform.MainThreadDispatchQueue);
-        P42.Utils.Platform.ApplicationLocalFolderPath.ShouldNotBeNull();
-        P42.Utils.Platform.ApplicationLocalCacheFolderPath.ShouldNotBeNull();
-        P42.Utils.Platform.ApplicationTemporaryFolderPath.ShouldNotBeNull();
+        Thread.CurrentThread.ShouldBe(Uno.MainThread.Current);
+        Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().ShouldBe(Uno.MainThread.DispatchQueue);
+        Platform.ApplicationLocalFolderPath.ShouldNotBeNull();
+        Platform.ApplicationLocalCacheFolderPath.ShouldNotBeNull();
+        Platform.ApplicationTemporaryFolderPath.ShouldNotBeNull();
     }
 
 
-    /*
+    
     [TestMethod]
     [RunsOnUIThread]
     public async Task A03_WebView2_Working()
@@ -66,7 +67,7 @@ public class A00_PlatformInitialization
         var wv2 = new WebView2
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
         };
         Grid.SetRow(wv2, 1);
 
@@ -92,6 +93,6 @@ public class A00_PlatformInitialization
 
 
     }
-    */
+    
 
 }

@@ -18,7 +18,7 @@
   <!-- SET ASSEMBLY/NUGET VERSION NUMBER -->
   <PropertyGroup>
 
-    <DevIteration>-dev0</DevIteration>
+    <DevIteration Condition="  $(Configuration) != 'Release'  ">-dev.$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmm"))</DevIteration>
 
     <IsP42UtilsUno>false</IsP42UtilsUno>
     <IsP42UtilsUno Condition=" $(MSBuildProjectName.StartsWith('P42.Utils.Uno')) ">true</IsP42UtilsUno>
@@ -163,7 +163,10 @@
     <Message Text="%09@(ProjectReference, '%0a%09')" Importance="high"/>
     <Message Text="  ]" Importance="high"/>
     <Message Text="  PackageReference:[" Importance="high"/>
+    <!--
     <Message Text="%09@(PackageReference, '%0a%09')" Importance="high"/>
+    -->
+    <Message Text="%09[%(PackageReference.Identity):%(PackageReference.Version) [%(PackageReference.Aliases)]]   [i:%(PackageReference.IncludeAssets)|e:%(PackageReference.ExcludeAssets)|p:%(PackageReference.PrivateAssets)] " Importance="high" />
     <Message Text="  ]" Importance="high"/>
     <Message Text="  EmbeddedResource:[" Importance="high"/>
     <Message Text="%09@(EmbeddedResource, '%0a%09')" Importance="high"/>

@@ -86,6 +86,7 @@ public static partial class DeviceInfo
      
      */
     
+    /*
     public static async Task<string> GetAdvertiserIdAsync()
     {
         if (!UIDevice.CurrentDevice.CheckSystemVersion(14, 0))
@@ -111,6 +112,6 @@ public static partial class DeviceInfo
         // Get the IDFA using ASIdentifierManager
 
     }
-    
+    */
     
 }

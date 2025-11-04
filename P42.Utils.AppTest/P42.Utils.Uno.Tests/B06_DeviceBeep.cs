@@ -14,24 +14,24 @@ internal class B06_DeviceBeep
     [TestMethod]
     public void A01_CanBeep()
     {
-        P42.Utils.Uno.DeviceBeep.CanBeep.ShouldBeTrue();
+        Uno.DeviceBeep.CanBeep.ShouldBeTrue();
     }
 
     [TestMethod]
     public async Task A02_BeepDefault()
     {
-        await P42.Utils.Uno.DeviceBeep.PlayAsync();
+        await Uno.DeviceBeep.PlayAsync();
     }
 
     [TestMethod]
     public async Task A03_LowBeep()
     {
-        await P42.Utils.Uno.DeviceBeep.PlayAsync(800, 600);
+        await Uno.DeviceBeep.PlayAsync(800, 600);
     }
 
     [TestMethod]
     public async Task A03_HiBeep()
     {
-        await P42.Utils.Uno.DeviceBeep.PlayAsync(6000, 300);
+        await Uno.DeviceBeep.PlayAsync(6000, 300);
     }
 }

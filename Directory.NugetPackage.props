@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 
-  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != ''   AND  $(Configuration) == 'Release' ">
+  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != '' ">
 
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 

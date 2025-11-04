@@ -342,7 +342,6 @@ public static class DebugExtensions
     {
         if (IsRequestUserHelpEnabled && RequestHelpDelegate is { } d)
         {
-            //Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(async () =>
             await d(e, additionalInfo, path, lineNumber, methodName);
         }
     }

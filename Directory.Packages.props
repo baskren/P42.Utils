@@ -25,8 +25,6 @@
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Disposables" Version="4.1.1" />
     -->
-    <PackageVersion Include="P42.Utils" Version="2.0.0-dev0" />
-    <PackageVersion Condition=" '$(UnoVersion)' != '' " Include="P42.Utils.Uno" Version="$(UnoVersion)-dev0" />
     <PackageVersion Include="P42.NotifiableObject" Version="1.0.4" />
     <PackageVersion Include="P42.Serilog.QuickLog" Version="1.0.9" />
     <PackageVersion Include="Markdig" Version="0.41.1" />
@@ -39,6 +37,28 @@
 
     <!-- To convert HTML to Text -->
     <PackageVersion Include="HtmlAgilityPack" Version="1.12.4" />
+
+    <!-- not visibile to libraries -->
+    <PackageVersion Include="Uno.WinUI.Runtime.Skia.WebAssembly.Browser" Version="6.3.28"  />
+
+    <PackageVersion Include="P42.Utils" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.AssemblyExtensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Collections" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.DebugExtensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.IO.Extensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Json" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.LocalDataStore" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.LongRunningTask" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Platform" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.ReflectionExtensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Shell" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.StringExtensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Timers" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Ttf" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.UiItemExtensions" Version="$(P42_Utils_Version)" />
+
+    <PackageVersion Include="P42.Utils.Uno.Extensions" Version="$(P42_Utils_Uno_Version)" />
+
 
   </ItemGroup>
 </Project>

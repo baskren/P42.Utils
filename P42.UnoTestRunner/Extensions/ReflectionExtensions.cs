@@ -54,7 +54,7 @@ internal static class ReflectionExtensions
             return null;
 
         FieldInfo? fieldInfo = null;
-        Type? t = type;
+        var t = type;
         do
         {
             if (t.GetRuntimeFields() is { } fields)

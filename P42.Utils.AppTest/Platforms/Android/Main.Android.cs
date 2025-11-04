@@ -12,12 +12,12 @@ using Microsoft.UI.Xaml.Media;
 
 namespace P42.Utils.AppTest.Droid;
 
-[global::Android.App.ApplicationAttribute(
+[ApplicationAttribute(
     Label = "@string/ApplicationName",
     Icon = "@mipmap/icon",
     LargeHeap = true,
     HardwareAccelerated = true,
-    Theme = "@style/AppTheme"
+    Theme = "@style/Theme.App.Starting"
 )]
 public class Application : Microsoft.UI.Xaml.NativeApplication
 {

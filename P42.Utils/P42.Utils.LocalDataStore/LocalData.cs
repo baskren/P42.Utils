@@ -403,11 +403,8 @@ public abstract class LocalData
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals(object? obj)
-        {
-            if (obj is not Item other)
-                return false;
-            return Equals(other);
-        }
+            => obj is Item other && Equals(other);
+        
 
         /// <summary>
         /// Get hash 
@@ -591,11 +588,10 @@ public abstract class LocalData
         public string Tag { get; }
 
         public static TagItem Get(string tag, string folderPath, Assembly assembly)
-        {
-            if (string.IsNullOrEmpty(tag))
-                throw new ArgumentNullException(nameof(tag));
-            return InternalGet(tag, folderPath, assembly);
-        }
+            => string.IsNullOrEmpty(tag) 
+                ? throw new ArgumentNullException(nameof(tag)) 
+                : InternalGet(tag, folderPath, assembly);
+        
 
         internal static TagItem InternalGet(string tag, string folderPath, Assembly? assembly = null) // `Assembly? assembly = null` is here to facility Clear() being applied to everything.
         {
@@ -627,12 +623,8 @@ public abstract class LocalData
 
 
         public override bool Equals(Item? other)
-        {
-            if (other is not TagItem)
-                return false;
-
-            return base.Equals(other);
-        }
+            => other is TagItem && base.Equals(other);
+        
 
         public override int GetHashCode()
             => HashCode.Combine(Tag, base.GetHashCode());
@@ -825,13 +817,15 @@ public abstract class LocalData
         /// Is the item available from the source?
         /// </summary>
         /// <returns></returns>
-        public override Task<bool> IsSourceAvailableAsync() => Task.FromResult(IsSourceAvailable());
+        public override Task<bool> IsSourceAvailableAsync() 
+            => Task.FromResult(IsSourceAvailable());
 
         /// <summary>
         /// Is the item available from the source
         /// </summary>
         /// <returns></returns>
-        public override bool IsSourceAvailable() => Assembly?.Exists(ResourceId) ?? false;
+        public override bool IsSourceAvailable() 
+            => Assembly?.Exists(ResourceId) ?? false;
 
         /// <summary>
         /// Pull the resource asynchronously
@@ -854,8 +848,9 @@ public abstract class LocalData
                 await using var destinationStream = new FileStream(FullPath, FileMode.Create);
                 await resource.DisposableStream.CopyToAsync(destinationStream);
 
-                if (Assembly.TryGetBuildTime(out var buildDateTime))
-                    File.SetLastWriteTime(FullPath, buildDateTime);
+                var time = await Assembly.GetBuildTimeAsync();
+                if (time != default)
+                    File.SetLastWriteTime(FullPath, time);
             }
             finally
             {
@@ -881,8 +876,9 @@ public abstract class LocalData
                 using var destinationStream = new FileStream(FullPath, FileMode.Create);
                 resource.DisposableStream.CopyTo(destinationStream);
 
-                if (Assembly.TryGetBuildTime(out var buildDateTime))
-                    File.SetLastWriteTime(FullPath, buildDateTime);
+                var time = Assembly.GetBuildTime();
+                if (time != default)
+                    File.SetLastWriteTime(FullPath, time);
             }
             finally
             {
@@ -1075,11 +1071,8 @@ public abstract class LocalData
         }
 
         public override bool Equals(Item? other)
-        {
-            if (other is not UriItem)
-                return false;
-            return base.Equals(other);
-        }
+            => other is UriItem && base.Equals(other);
+        
 
         public override int GetHashCode()
             => HashCode.Combine(SourceUri, RootUri, base.GetHashCode());

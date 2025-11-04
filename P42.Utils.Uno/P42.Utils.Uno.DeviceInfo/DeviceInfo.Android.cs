@@ -1,7 +1,7 @@
 using Android.Content.PM;
-using Android.Gms.Common;
+//using Android.Gms.Common;
 using Android.OS;
-using Google.Ads.Identifier;
+//using Google.Ads.Identifier;
 
 namespace P42.Utils.Uno;
 
@@ -111,6 +111,7 @@ public static partial class DeviceInfo
     public static string QueryDeviceOsVersion()
         => Windows.System.Profile.AnalyticsInfo.VersionInfo.ParseDeviceFamilyVersion().ToString();
 
+    /*
     public static async Task<string> GetAdvertiserIdAsync()
     {
         var emptyGuid = Guid.Empty.ToString();
@@ -174,4 +175,5 @@ public static partial class DeviceInfo
             return emptyGuid;
         });
     }   
+    */
 }

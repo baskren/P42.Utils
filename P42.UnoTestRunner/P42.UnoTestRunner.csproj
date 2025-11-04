@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android;</TargetFrameworks>
+    <TargetFrameworks>net9.0;net9.0-ios;net9.0-android;</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">
       $(TargetFrameworks);net9.0-windows10.0.26100;</TargetFrameworks>
     <TargetFrameworks>$(TargetFrameworks);net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
@@ -20,6 +20,7 @@
     <UnoFeatures>
       Toolkit;
       Lottie;
+      SkiaRenderer;
     </UnoFeatures>
 
 
@@ -64,11 +65,13 @@
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- WebView2 reference fail fix (required for both Release and Debug issues -->
+  <ItemGroup><!-- WebView2 reference fail fix (required for both Release and Debug issues -->
     <!--
     <PackageReference  Condition="$(TargetFramework.Contains('-windows'))" Include="Microsoft.Web.WebView2" />
     -->
+  
+    <Folder Include="Platforms\Desktop\" />
+    <Folder Include="Platforms\WebAssembly\WasmScripts\" />
   </ItemGroup>
 
 </Project>

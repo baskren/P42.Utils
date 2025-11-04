@@ -15,6 +15,6 @@ internal class A02_LocalDataReset
     [TestMethod]
     public void A00_LocalDataReset()
     {
-        P42.Utils.LocalData.Clear();
+        LocalData.Clear();
     }
 }

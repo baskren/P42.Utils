@@ -22,7 +22,7 @@ internal class B10_MarkdownText
         {
             if (!string.IsNullOrWhiteSpace(_markdownSample))
                 return _markdownSample;
-            var item = P42.Utils.LocalData.ResourceItem.Get(".markdown-it.md", assembly: GetType().Assembly);
+            var item = LocalData.ResourceItem.Get(".markdown-it.md", assembly: GetType().Assembly);
             item.TryAssurePulled();
             _markdownSample = item.RecallText();
             return _markdownSample;
@@ -36,7 +36,7 @@ internal class B10_MarkdownText
         {
             if (!string.IsNullOrWhiteSpace(_markdownCss))
                 return _markdownCss;
-            var item = P42.Utils.LocalData.ResourceItem.Get(".github-markdown.css", assembly: GetType().Assembly);
+            var item = LocalData.ResourceItem.Get(".github-markdown.css", assembly: GetType().Assembly);
             item.TryAssurePulled();
             _markdownCss = item.RecallText();
             return _markdownCss;
@@ -64,7 +64,7 @@ internal class B10_MarkdownText
     [TestMethod]
     public void A02_MarkdownControl()
     {
-        var control = new P42.Utils.Uno.MarkDownControl();
+        var control = new Uno.MarkDownControl();
         control.MarkdownText = MarkdownSample;
         UnitTestsUIContentHelper.Content = control;
     }

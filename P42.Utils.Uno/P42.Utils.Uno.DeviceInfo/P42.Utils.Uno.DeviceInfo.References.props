@@ -12,7 +12,13 @@
     <PackageReference Include="UAParser" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+    <!--
     <PackageReference Include="Xamarin.GooglePlayServices.Ads.Identifier" />
+    -->
+  </ItemGroup>
+  <ItemGroup Condition="  $(TargetFramework.Contains('wasm'))">
+    <!-- required to use Uno.Web.Http.CookieManager because not visible to library projects -->
+    <PackageReference Include="Uno.WinUI.Runtime.Skia.WebAssembly.Browser" />
   </ItemGroup>
 
 </Project>

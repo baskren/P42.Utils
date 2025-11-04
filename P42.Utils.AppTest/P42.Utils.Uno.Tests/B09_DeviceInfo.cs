@@ -13,66 +13,66 @@ internal class B09_DeviceInfo
     [TestMethod]
     public void A01_Make()
     {
-        Console.WriteLine($"Platform:[{P42.Utils.Uno.DeviceInfo.Make}]");
+        Console.WriteLine($"Platform:[{Uno.DeviceInfo.Make}]");
     }
 
     [TestMethod]
     public void A02_Model()
     {
-        Console.WriteLine($"Model:[{P42.Utils.Uno.DeviceInfo.Model}]");
+        Console.WriteLine($"Model:[{Uno.DeviceInfo.Model}]");
     }
 
     [TestMethod]
     public void A03_DeviceName()
     {
-        Console.WriteLine($"Name:[{P42.Utils.Uno.DeviceInfo.DeviceName}]");
+        Console.WriteLine($"Name:[{Uno.DeviceInfo.DeviceName}]");
     }
 
     [TestMethod]
     public void A03_DeviceId()
     {
-        Console.WriteLine($"Name:[{P42.Utils.Uno.DeviceInfo.DeviceId}]");
+        Console.WriteLine($"Name:[{Uno.DeviceInfo.DeviceId}]");
     }
 
     [TestMethod]
     public void A05_DeviceForm()
     {
-        Console.WriteLine($"DeviceForm:[{P42.Utils.Uno.DeviceInfo.DeviceForm}]");
+        Console.WriteLine($"DeviceForm:[{Uno.DeviceInfo.DeviceForm}]");
     }
 
     [TestMethod]
     public void A06_Os()
     {
-        Console.WriteLine($"OsVersion:[{P42.Utils.Uno.DeviceInfo.Os}]");
+        Console.WriteLine($"OsVersion:[{Uno.DeviceInfo.Os}]");
     }
 
     [TestMethod]
     public void A07_OsVersion()
     {
-        Console.WriteLine($"OsVersion:[{P42.Utils.Uno.DeviceInfo.OsVersion}]");
+        Console.WriteLine($"OsVersion:[{Uno.DeviceInfo.OsVersion}]");
     }
 
     [TestMethod]
     public void A08_OsDescription()
     {
-        Console.WriteLine($"OsVersion:[{P42.Utils.Uno.DeviceInfo.OsDescription}]");
+        Console.WriteLine($"OsVersion:[{Uno.DeviceInfo.OsDescription}]");
     }
 
     [TestMethod]
     public void A09_IsEmulator()
     {
-        Console.WriteLine($"IsEmulator:[{P42.Utils.Uno.DeviceInfo.IsEmulator}]");
+        Console.WriteLine($"IsEmulator:[{Uno.DeviceInfo.IsEmulator}]");
     }
 
     [TestMethod]
     public void A10_RuntimeIdentifier()
     {
-        Console.WriteLine($"OsVersion:[ {P42.Utils.Uno.DeviceInfo.RuntimeIdentifier}]");
+        Console.WriteLine($"OsVersion:[ {Uno.DeviceInfo.RuntimeIdentifier}]");
     }
 
     [TestMethod]
     public void A11_FrameworkDescription()
     {
-        Console.WriteLine($"OsVersion:[ {P42.Utils.Uno.DeviceInfo.FrameworkDescription}]");
+        Console.WriteLine($"OsVersion:[ {Uno.DeviceInfo.FrameworkDescription}]");
     }
 }

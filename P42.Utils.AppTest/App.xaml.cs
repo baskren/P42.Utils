@@ -1,10 +1,10 @@
 using System;
-using Microsoft.Extensions.Logging;
-using Uno.Resizetizer;
+
+// ReSharper disable LocalizableElement
 
 namespace P42.Utils.AppTest;
 
-public partial class App : global::P42.UnoTestRunner.TestApplication
+public partial class App : UnoTestRunner.TestApplication
 {
     /// <summary>
     /// Initializes the singleton application object. This is the first line of authored code
@@ -12,20 +12,13 @@ public partial class App : global::P42.UnoTestRunner.TestApplication
     /// </summary>
     public App()
     {
-        //P42.UnoTestRunner.TestApplication.MainThread = Thread.CurrentThread;
-        //P42.UnoTestRunner.TestApplication.MainThreadDispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-
         InitializeExceptionHandling();
-        //_instance = this;
-        this.InitializeComponent();
+        InitializeComponent();
     }
 
-    //static App? _instance;
-    //public static App Instance => _instance ?? throw new Exception("TestApplication.Instance called before being set");
-
-    public UnoTestRunner.ConsoleOutputRedirector ConsoleOutputRedirector = new UnoTestRunner.ConsoleOutputRedirector();
-
+    public UnoTestRunner.ConsoleOutputRedirector ConsoleOutputRedirector = new ();
     
+    /*
     Window? _mainWindow;
     public Window MainWindow
     {
@@ -37,6 +30,7 @@ public partial class App : global::P42.UnoTestRunner.TestApplication
             _mainWindow = value;
         }
     }
+    */
 
     /*
     protected override void OnLaunched(LaunchActivatedEventArgs args)
@@ -103,7 +97,7 @@ public partial class App : global::P42.UnoTestRunner.TestApplication
         {
 #if __WASM__
             builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__ || __MACCATALYST__
+#elif __IOS__ 
             builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
             builder.AddConsole();
@@ -153,27 +147,27 @@ public partial class App : global::P42.UnoTestRunner.TestApplication
 #endif
     }
 
-    private void InitializeExceptionHandling()
+    private static void InitializeExceptionHandling()
     {
-        System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         //System.AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
-        Microsoft.UI.Xaml.Application.Current.UnhandledException += CurrentApplication_UnhandledException;
+        Current.UnhandledException += CurrentApplication_UnhandledException;
 
         // https://learn.microsoft.com/en-us/windows/uwp/launch-resume/app-lifecycle
 
     }
 
-    private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+    private static void CurrentDomain_FirstChanceException(object? _, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
     {
         Console.WriteLine($"FIRST CHANCE APPLICATION EXCEPTION: {e.Exception}");
     }
 
-    private void CurrentApplication_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private static void CurrentApplication_UnhandledException(object _, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         Console.WriteLine($"UNHANDLED APPLICATION EXCEPTION: {e.Exception}");
     }
 
-    private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+    private static void CurrentDomain_UnhandledException(object _, UnhandledExceptionEventArgs e)
     {
         Console.WriteLine($"UNHANDLED CURRENT DOMAIN EXCEPTION: {e.ExceptionObject}");
     }

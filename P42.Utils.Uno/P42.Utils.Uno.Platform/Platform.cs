@@ -114,6 +114,10 @@ public static class Platform
         Console.WriteLine("P42.Utils.Uno.Platform.Init RESET START");
         Task.Run(ResetAppStorage).Wait();
         Console.WriteLine("P42.Utils.Uno.Platform.Init RESET COMPLETE");
+
+        #if BROWSERWASM
+        AssemblyExtensions.WasmAssemblyDateTimeDelegate = WasmNative.GetWasmAsmDateTimeAsync;
+        #endif
     }
 
     private static void PlatformPathLoader()
@@ -213,4 +217,4 @@ public static class Platform
     
 }
 
-internal class NotInitializedException() : Exception("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()");
+public class NotInitializedException() : Exception("P42.Utils.Uno not initialized via P42.Utils.Uno.Platform.Init()");

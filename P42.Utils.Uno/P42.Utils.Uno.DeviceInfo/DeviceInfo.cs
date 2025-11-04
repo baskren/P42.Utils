@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
@@ -285,7 +284,7 @@ public static partial class DeviceInfo
             return nameof(DeviceOperatingSystem.WatchOS);
         if (OperatingSystem.IsWindows())
             return nameof(DeviceOperatingSystem.Windows);
-        P42.Serilog.QuickLog.QLog.Warning("Unknown OS");
+        Serilog.QuickLog.QLog.Warning("Unknown OS");
         return nameof(DeviceOperatingSystem.Unknown);
 
     }

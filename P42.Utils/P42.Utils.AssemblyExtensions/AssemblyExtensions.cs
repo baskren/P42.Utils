@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
@@ -94,6 +95,59 @@ public static class AssemblyExtensions
     /// <returns>matching assembly or null</returns>
     public static Assembly? GetAssemblyByName(string name)
         => AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(asm => asm.Name() == name);
+
+
+    internal static Func<Assembly, Task<DateTime>>? WasmAssemblyDateTimeDelegate { get; set; }
+
+    /// <summary>
+    /// Gets time at which assembly was built
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <returns></returns>
+    public static DateTime GetBuildTime(this Assembly assembly)
+        => Task.Run(async () => await GetBuildTimeAsync(assembly)).Result;
+    
+    /// <summary>
+    /// Gets time at which assembly was built
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <returns>default DateTimeOffset upon failure</returns>
+    public static async Task<DateTime> GetBuildTimeAsync(this Assembly assembly)
+    {
+        
+        if (OperatingSystem.IsBrowser())
+        {
+            if (WasmAssemblyDateTimeDelegate?.Invoke(assembly) is not {} task)
+                return default;
+
+            return await task;
+        }
+
+        // WASM
+        if (string.IsNullOrWhiteSpace(assembly.Location))
+            return default;
+
+        const int peHeaderOffset = 60;
+        const int linkerTimestampOffset = 8;
+
+        try
+        {
+            var buffer = new byte[2048];
+            await using var fs = new FileStream(assembly.Location, FileMode.Open, FileAccess.Read);
+            await fs.ReadExactlyAsync(buffer, 0, buffer.Length);
+
+            var headerOffset = BitConverter.ToInt32(buffer, peHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, headerOffset + linkerTimestampOffset);
+            var time = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            time = time.AddSeconds(secondsSince1970);
+            return time;
+        }
+        catch (Exception e)
+        {
+            QLog.Error(e);
+            return default;
+        }
+    }
 
 
 }
