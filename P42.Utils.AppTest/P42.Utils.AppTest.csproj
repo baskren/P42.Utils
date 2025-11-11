@@ -54,14 +54,16 @@
   <ItemGroup>
     <PackageReference Include="Shouldly" />
     <ProjectReference Include="..\P42.UnoTestRunner\P42.UnoTestRunner.csproj" />
-    <ProjectReference Include="..\P42.Utils.Uno\P42.Utils.Uno\P42.Utils.Uno.csproj" />
-    <ProjectReference Include="..\P42.Utils\P42.Utils\P42.Utils.csproj" />
-    <!--
+
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils"  />
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils.Uno" />
-    -->
+
+
+    <!-- FIX : Build failure -->
+    <PackageReference Include="SkiaSharp.Skottie" />
+
   </ItemGroup>
 
 

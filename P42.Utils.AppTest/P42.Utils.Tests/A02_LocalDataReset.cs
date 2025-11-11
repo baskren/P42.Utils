@@ -10,7 +10,7 @@ namespace P42.Utils.AppTest;
 
 [TestClass]
 [OnlyExplicitlySelectable]
-internal class A02_LocalDataReset
+public class A02_LocalDataReset
 {
     [TestMethod]
     public void A00_LocalDataReset()

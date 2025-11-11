@@ -13,13 +13,13 @@ namespace P42.Utils.AppTest;
 public class A08_StreamExtensions
 {
     private const string ResourceId = ".Resources.TextFile1.txt";
-    private const string ExpectedContent = "THIS IS A TEXT FILE\r\n";
-    private static LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.Get(ResourceId);
+    private const string ExpectedContent = "THIS IS A TEXT FILE\n";
+    private static LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.For(ResourceId);
 
     [TestMethod]
     public void A00_Init()
     {
-        ResourceItem.TryAssurePulled();
+        ResourceItem.TryAssureExists();
         ResourceItem.Exists.ShouldBeTrue();
         ResourceItem.RecallText().ShouldBe(ExpectedContent);
     }

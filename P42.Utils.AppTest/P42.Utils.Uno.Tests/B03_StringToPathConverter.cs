@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B03_StringToPathConverter
+public class B03_StringToPathConverter
 {
     [TestMethod]
     public void A01_Placeholder()

@@ -1,0 +1,10 @@
+<Project ToolsVersion="15.0">
+
+  <ItemGroup>
+    <PackageReference Include="AsyncAwaitBestPractices" />
+    <PackageReference Include="P42.Serilog.QuickLog" />
+    <PackageReference Include="JetBrains.Annotations" />
+
+  </ItemGroup>
+
+</Project>

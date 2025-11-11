@@ -9,7 +9,7 @@ using P42.Utils;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B07_DeviceDisk
+public class B07_DeviceDisk
 {
     [TestMethod]
     public async Task A01_Free()
@@ -26,7 +26,7 @@ internal class B07_DeviceDisk
     [TestMethod]
     public async Task A01_Used()
     {
-        Console.WriteLine($"Free: {(await DiskSpace.SizeAsync()).HumanReadableBytes ()}");
+        Console.WriteLine($"Free: {(await DiskSpace.SizeAsync()).HumanReadableBytes ()}"); 
     }
 
 }

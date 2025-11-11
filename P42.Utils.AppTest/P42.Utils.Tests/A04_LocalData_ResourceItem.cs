@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -7,6 +8,8 @@ using Microsoft.Web.WebView2.Core;
 using P42.UnoTestRunner;
 using P42.Utils.Uno;
 using Shouldly;
+using Task = System.Threading.Tasks.Task;
+
 // ReSharper disable LocalizableElement
 
 namespace P42.Utils.AppTest;
@@ -16,24 +19,25 @@ namespace P42.Utils.AppTest;
 public class A04_LocalData_ResourceItem
 {
     private const string ResourceId = ".Resources.TextFile1.txt";
-    private const string ExpectedContent = "THIS IS A TEXT FILE\r\n";
-    private static readonly LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.Get(ResourceId);
-    private static readonly LocalData.ResourceItem AltResourceItemA = LocalData.ResourceItem.Get(ResourceId, "AltResources");
-    private static readonly LocalData.ResourceItem AltResourceItemB = LocalData.ResourceItem.Get(".Resources.html5-test-page.html");
+    private const string ExpectedContent = "THIS IS A TEXT FILE\n";
+    private static readonly LocalData.ResourceItem ResourceItem = LocalData.ResourceItem.For(ResourceId);
+    private static readonly LocalData.ResourceItem AltResourceItemA = LocalData.ResourceItem.For(ResourceId, "AltResources");
+    private static readonly LocalData.ResourceItem AltResourceItemB = LocalData.ResourceItem.For(".Resources.html5-test-page.html");
 
     [TestMethod]
     public void A00_IntersessionCaching()
     {
-        if (!ResourceItem.Exists)
-            throw new Exception("Should ONLY fail upon first run of test on a given platform.  Except WASM, if you see two times in a row, there is an error.");
-        ResourceItem.RecallText().ShouldBe(ExpectedContent);
+        ResourceItem.Exists.ShouldBe(!LocalData.IsLocalDataEmpty);
+        ResourceItem.TryGetAssuredValue(out string? value).ShouldBeTrue();
+        value.ShouldBe(ExpectedContent);
+        ResourceItem.Exists.ShouldBeTrue();
     }
 
 
     [TestMethod]
     public void A01_KeyEquality()
     {
-        var item = LocalData.ResourceItem.Get(ResourceId);
+        var item = LocalData.ResourceItem.For(ResourceId);
         item.FullPath.ShouldBe(ResourceItem.FullPath);
         item.ShouldBe(ResourceItem);
 
@@ -50,15 +54,15 @@ public class A04_LocalData_ResourceItem
         ResourceItem.Exists.ShouldBeFalse();
         Assert.ThrowsException<System.IO.FileNotFoundException> (ResourceItem.RecallText);
         ResourceItem.TryRecallText(out var _).ShouldBe(false);
-        var text = await ResourceItem.AssureSourcedTextAsync();
+        var text = await ResourceItem.AssureExistsTextAsync();
         ResourceItem.Exists.ShouldBeTrue();
         text.ShouldBe(ExpectedContent);
 
         ResourceItem.Clear();
         ResourceItem.Exists.ShouldBeFalse();
-        await ResourceItem.TryAssurePulledAsync();
+        await ResourceItem.TryRefreshAsync();
         ResourceItem.Exists.ShouldBeTrue();
-        text = ResourceItem.RecallText();
+        text = await ResourceItem.RecallTextAsync();
         text.ShouldBe(ExpectedContent);
     }
 
@@ -146,8 +150,8 @@ public class A04_LocalData_ResourceItem
     [TestMethod]
     public void A10_NonExistentResource()
     {
-        Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.Get(ResourceId, "AltResources", typeof(P42.Utils.Uno.Platform).Assembly));
-        Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.Get(".Resources.AltResources") );
+        Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.For(ResourceId, "AltResources", typeof(P42.Utils.Uno.Platform).Assembly));
+        Assert.ThrowsException<ArgumentException>(() => LocalData.ResourceItem.For(".Resources.AltResources") );
     }
 
 
@@ -159,8 +163,8 @@ public class A04_LocalData_ResourceItem
         ResourceItem.ShouldNotBe(AltResourceItemB);
         AltResourceItemB.ShouldNotBe(AltResourceItemA);
 
-        AltResourceItemA.TryAssurePulled().ShouldBeTrue();
-        (await AltResourceItemB.TryAssurePulledAsync()).ShouldBeTrue();
+        AltResourceItemA.TryAssureExists().ShouldBeTrue();
+        (await AltResourceItemB.TryAssureExistsAsync()).ShouldBeTrue();
 
         ResourceItem.TryRecallText(out var item).ShouldBeTrue();
         item.ShouldBe(ExpectedContent);
@@ -222,14 +226,10 @@ public class A04_LocalData_ResourceItem
         await UnitTestsUIContentHelper.WaitForIdle();
 #endif
 
-        var resource = LocalData.ResourceItem.Get(".Resources.html5-test-page.html");
-        var html = resource.AssureSourcedText();
+        var resource = LocalData.ResourceItem.For(".Resources.html5-test-page.html");
+        var html = resource.AssureExistsText();
         string.IsNullOrWhiteSpace(html).ShouldBeFalse();
         var filePath = resource.FullPath;
-
-
-        var asmName = GetType().Assembly.Name();    
-        resource.AppDataUri.ShouldBe(new Uri($"ms-appdata:///local/{typeof(LocalData).Assembly.Name()}.{nameof(LocalData)}/{asmName}/{asmName}.Resources.html5-test-page.html"));
         var content = await System.IO.File.ReadAllTextAsync(resource.FullPath);
         content.ShouldBe(html);
 

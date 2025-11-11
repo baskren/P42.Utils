@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B08_DeviceDisplay
+public class B08_DeviceDisplay
 {
     [TestMethod]
     public void A01_GetInfo()

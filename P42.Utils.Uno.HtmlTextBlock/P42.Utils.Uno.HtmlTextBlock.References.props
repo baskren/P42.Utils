@@ -1,0 +1,14 @@
+<Project ToolsVersion="15.0">
+
+
+  <!-- SHARED ITEMS -->
+  <ItemGroup>
+    <PackageReference Include="Markdig"  />
+    <PackageReference Include="HtmlAgilityPack" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\P42.Utils.Uno.csproj" />
+  </ItemGroup>
+
+</Project>

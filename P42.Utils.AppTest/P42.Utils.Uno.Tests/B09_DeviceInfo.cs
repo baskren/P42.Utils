@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B09_DeviceInfo
+public class B09_DeviceInfo
 {
     [TestMethod]
     public void A01_Make()

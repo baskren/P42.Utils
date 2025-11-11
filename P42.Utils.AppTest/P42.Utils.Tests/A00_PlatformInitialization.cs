@@ -18,7 +18,6 @@ namespace P42.Utils.AppTest;
 public class A00_PlatformInitialization
 {
     private static bool _hasBeenRunBefore;
-    //private static int Count;
 
     [TestMethod]
     public void A00_TestUninitialized()

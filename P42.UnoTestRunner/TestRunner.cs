@@ -1,40 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace P42.UnoTestRunner;
 
 public static class TestRunner
 {
+    public static Func<Task> GeneralCleanupAsync { get; set; } = () => Task.CompletedTask;
 
-    static Func<Task> _generalCleanupAsync = () => Task.CompletedTask;
-    public static Func<Task> GeneralCleanupAsync 
-    { 
-        get => _generalCleanupAsync; 
-        set => _generalCleanupAsync = value; 
-    }
-
-    static Func<Task> _generalInitAsync = () => Task.CompletedTask;
-    public static Func<Task> GeneralInitAsync
-    {
-        get => _generalInitAsync;
-        set => _generalInitAsync = value;
-    }
+    public static Func<Task> GeneralInitAsync { get; set; } = () => Task.CompletedTask;
 
     #region Find Tests
 
     public static List<UnitTestAssemblyInfo> GetTestTree()
-        => AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => a.Types().Any(t => t.HasAttribute<TestClassAttribute>()))
-            .Select(a => new UnitTestAssemblyInfo(a)).ToList();
-
+        {
+            var asms = AppDomain.CurrentDomain.GetAssemblies();
+            //var testClasses = asms.Where(a => a.Types().Any(t => t.HasAttribute<TestClassAttribute>()));
+            var testAsms = new List<Assembly>();
+            var testAsmInfos = new List<UnitTestAssemblyInfo>();
+            foreach (var asm in asms)
+            {
+                try
+                {
+                var types =  asm.GetTypes();
+                if (types.Any(t => t.HasAttribute<TestClassAttribute>()))
+                {
+                    testAsms.Add(asm);
+                    var info = new UnitTestAssemblyInfo(asm);
+                    testAsmInfos.Add(info);
+                }
+                }
+                catch (Exception e)
+                {
+                    // Console.WriteLine($"Can't query assembly [{asm.FullName}] [{e}]");
+                }
+            }
+            
+            return testAsmInfos;  
+        } 
     #endregion
 
 
@@ -42,7 +45,7 @@ public static class TestRunner
     internal static async Task<TestRun> ExecuteTestsAsync(TestRun? run = null, CancellationToken? ct = null)
     {
         run ??= new TestRun();
-        if (ct is CancellationToken xct)
+        if (ct is { } xct)
             run.CancellationToken = xct;
 
         var testTree = GetTestTree();
@@ -109,7 +112,7 @@ public static class TestRunner
 
     internal static async Task ExecuteTestAsync(this UnitTestMethodInfo testMethod, TestRun run)
     {
-        if (testMethod.IsIgnored(out var ignoreMessage))
+        if (testMethod.IsIgnored(out var _))
         {
             run.Ignored++;
             return;

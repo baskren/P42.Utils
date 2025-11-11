@@ -10,14 +10,14 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B02_FuncConverter
+public class B02_FuncConverter
 {
     [TestMethod]
     public void A01_Convert()
     {
         var converter = new FuncConverter<int, string>(
                 i => i.ToString(),
-                s => int.Parse(s));
+                s => string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
 
         var result = converter.Convert(55, typeof(string), null, string.Empty);
         result.ShouldBe("55");
@@ -28,7 +28,7 @@ internal class B02_FuncConverter
     {
         var converter = new FuncConverter<int, string>(
                 i => i.ToString(),
-                s => int.Parse(s));
+                s => string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
 
         var result = converter.ConvertBack("255", typeof(string), null, string.Empty);
         result.ShouldBe(255);

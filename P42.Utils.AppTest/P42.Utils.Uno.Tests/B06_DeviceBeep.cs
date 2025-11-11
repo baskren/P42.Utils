@@ -9,7 +9,7 @@ using Shouldly;
 namespace P42.Utils.AppTest;
 
 [TestClass]
-internal class B06_DeviceBeep
+public class B06_DeviceBeep
 {
     [TestMethod]
     public void A01_CanBeep()

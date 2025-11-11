@@ -28,15 +28,9 @@ public class A10_StringExtensions
         spaceless.ShouldBe("Thisismytext:n•n•n=n³");
     }
 
-    [TestMethod]
-    public void A02_IsNumeric()
-    {
-        text.IsNumeric().ShouldBeFalse();
-        "3.45".IsNumeric().ShouldBeTrue();
-    }
 
     [TestMethod]
-    public void A03_RemoveLast()
+    public void A02_RemoveLast()
     {
         var alt = text.RemoveLast();
         alt.ShouldBe(text[..^1]);
@@ -48,7 +42,7 @@ public class A10_StringExtensions
     }
 
     [TestMethod]
-    public void A04_SubstringLast()
+    public void A03_SubstringLast()
     {
         var alt = text.SubstringLast(20);
         alt.ShouldBe(text[^20..]);
@@ -58,7 +52,7 @@ public class A10_StringExtensions
     }
 
     [TestMethod]
-    public void A05_HasIllegalCharacter()
+    public void A04_HasIllegalCharacter()
     {
         "`1234567890-=".HasIllegalCharacter().ShouldBeFalse();
         "~!@#$%^&*()_+".HasIllegalCharacter().ShouldBeFalse();
@@ -76,19 +70,19 @@ public class A10_StringExtensions
     }
 
     [TestMethod]
-    public void A06_ReplaceIllegalCharacters()
+    public void A05_ReplaceIllegalCharacters()
     {
         "12{a}bc[D]h;`'".ReplaceIllegalCharacters().ShouldBe("12｛a｝bc［D］h;`'");
     }
 
     [TestMethod]
-    public void A07_ReplaceSafeCharacters()
+    public void A06_ReplaceSafeCharacters()
     {
         "12｛a｝bc［D］h;`'".ReplaceSafeCharacters().ShouldBe("12{a}bc[D]h;`'");
     }
 
     [TestMethod]
-    public void A08_ToHex_char()
+    public void A07_ToHex_char()
     {
         '0'.ToHex().ShouldBe<uint>(0);
         '1'.ToHex().ShouldBe<uint>(1);
@@ -122,7 +116,7 @@ public class A10_StringExtensions
     }
 
     [TestMethod]
-    public void A09_HumanReadableBytes()
+    public void A08_HumanReadableBytes()
     {
         StringExtensions.HumanReadableBytes(256).ShouldBe("256 Bi");
         StringExtensions.HumanReadableBytes(1024).ShouldBe("1 KBi");

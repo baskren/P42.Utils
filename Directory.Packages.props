@@ -41,24 +41,12 @@
     <!-- not visibile to libraries -->
     <PackageVersion Include="Uno.WinUI.Runtime.Skia.WebAssembly.Browser" Version="6.3.28"  />
 
+    <!-- P42.Utils Nuget references -->
     <PackageVersion Include="P42.Utils" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.AssemblyExtensions" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Collections" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.DebugExtensions" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.IO.Extensions" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Json" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.LocalDataStore" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.LongRunningTask" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Platform" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.ReflectionExtensions" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Shell" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.StringExtensions" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Timers" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.Ttf" Version="$(P42_Utils_Version)" />
-    <PackageVersion Include="P42.Utils.UiItemExtensions" Version="$(P42_Utils_Version)" />
+    <PackageVersion Include="P42.Utils.Uno" Version="$(P42_Utils_Uno_Version)" />
 
-    <PackageVersion Include="P42.Utils.Uno.Extensions" Version="$(P42_Utils_Uno_Version)" />
-
+    <!-- FIX : Build of P42.Utils.App.Test failure -->
+    <PackageVersion Include="SkiaSharp.Skottie" Version="3.119.1" />
 
   </ItemGroup>
 </Project>

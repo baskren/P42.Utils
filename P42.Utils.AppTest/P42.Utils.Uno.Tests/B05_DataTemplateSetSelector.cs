@@ -16,14 +16,14 @@ namespace P42.Utils.AppTest;
 [SuppressMessage("Usage", "MSTEST0003:Test methods should have valid layout")]
 [SuppressMessage("Usage", "MSTEST0008:TestInitialize method should have valid layout")]
 // ReSharper disable once InconsistentNaming
-internal class B05_DataTemplateSetSelector
+public class B05_DataTemplateSetSelector
 {
-    DataTemplateSetSelector Selector;
-
+    DataTemplateSetSelector Selector = new();
+ 
     [TestInitialize]
     public void A00_Initialize()
     {
-        Selector = new DataTemplateSetSelector()
+        Selector
             .Add<int, Button>()
             .Add<double, TextBlock>();
         Selector.Count.ShouldBe(2);
