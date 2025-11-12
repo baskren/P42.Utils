@@ -32,7 +32,10 @@
     <Version Condition=" '$(Version)' == '' AND $(IsP42Utils) ">$(P42_Utils_Version)</Version>
     <Version Condition=" '$(Version)' == '' AND $(IsP42UtilsUno) ">$(P42_Utils_Uno_Version)</Version>
 
+    <!-- Would be necessary if using CommunityToolkit structuring of projects and packages.  But that brings Rider to its knees -->
+    <!--
     <RootNamespace>$(MSBuildProjectName)Rns</RootNamespace>
+    -->
 
   </PropertyGroup>
 
