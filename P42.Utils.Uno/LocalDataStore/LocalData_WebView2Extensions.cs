@@ -1,13 +1,16 @@
 
 namespace P42.Utils;
 // ReSharper disable once UnusedType.Global
+// ReSharper disable once InconsistentNaming
 public static class LocalData_WebView2Extensions
 {
     /// <summary>
     /// Presents the Item as a WebView2.Source Uri
     /// NOTE: If Item is a .zip, .tar, .tag.gz, or .tgz file, it will unpackage the file and return the default HTML file 
     /// </summary>
-    /// <param name="searchPatterns">files names, searched in package, to be html source.  Default: ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]</param>
+    /// <param name="item"></param>
+    /// <param name="searchPatterns">files names, searched in package, to be HTML source.  Default: ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]</param>
+    /// <param name="webView"></param>
     /// <returns></returns>
     public static async Task SetSourceAsync(this WebView2 webView, LocalData.AsynchronousSourcedItem item, params string[] searchPatterns)
     {

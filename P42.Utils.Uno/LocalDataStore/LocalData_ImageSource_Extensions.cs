@@ -1,28 +1,33 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml.Media.Imaging;
-using P42.Serilog.QuickLog;
 using static P42.Utils.LocalData;
 
 namespace P42.Utils.Uno;
 
 
 // ReSharper disable once UnusedType.Global
-public static class LocalData_ImageSource_Extensions
+// ReSharper disable once InconsistentNaming
+public static class  LocalData_ImageSource_Extensions
 {
     /// <summary>
     /// Get ImageSource from item in local data store
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public static ImageSource RecallImageSource(this Item item)
+    public static ImageSource? RecallImageSource(this Item item)
         => GetItemImageSource(item);
 
-    public static bool TryRecallImageSource(this Item item, [MaybeNullWhen(false)] out ImageSource source)
+    /// <summary>
+    /// Get ImageSource from item in local data store
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="source"></param>
+    /// <returns>true upon success</returns>
+    public static bool TryRecallImageSource(this Item item, out ImageSource? source)
     {
         try
         {
             source = GetItemImageSource(item);
-            return true;
+            return source != null;
         }
         catch (Exception)
         {
@@ -36,10 +41,10 @@ public static class LocalData_ImageSource_Extensions
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public static async Task<ImageSource> AssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
+    public static async Task<ImageSource?> AssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
     {
-        await item.AssureExitsAsync();
-        return item.RecallImageSource();
+        await item.AssureExistsAsync();
+        return await item.GetImageSourceAsync();
     }
 
     /// <summary>
@@ -47,10 +52,10 @@ public static class LocalData_ImageSource_Extensions
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public static ImageSource AssureExistsImageSource(this SynchronousSourcedItem item)
+    public static ImageSource? AssureExistsImageSource(this SynchronousSourcedItem item)
     {
         item.AssureExists();
-        return item.RecallImageSource();
+        return item.GetImageSource();
     }
 
 
@@ -59,18 +64,19 @@ public static class LocalData_ImageSource_Extensions
     /// </summary>
     /// <param name="item"></param>
     /// <returns>null on fail</returns>
-    public static async Task<ImageSource?> TryAssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
+    public static async Task<(bool success, ImageSource? imageSource)> TryAssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
     {
         try
         {
-            return await item.AssureExistsImageSourceAsync();
+            var imageSource = await item.AssureExistsImageSourceAsync();
+            return (imageSource != null, imageSource);
         }
         catch (Exception)
         {
             // ignored
         }
 
-        return null;
+        return (false, null);
     }
 
     /// <summary>
@@ -78,57 +84,49 @@ public static class LocalData_ImageSource_Extensions
     /// </summary>
     /// <param name="item"></param>
     /// <returns>null on fail</returns>
-    public static ImageSource? TryAssureExistsImageSource(this SynchronousSourcedItem item)
+    public static (bool success, ImageSource? imageSource) TryAssureExistsImageSource(this SynchronousSourcedItem item)
     {
         try
         {
-            return item.AssureExistsImageSource();
+            var imageSource = item.AssureExistsImageSource();
+            return (imageSource != null, imageSource);
         }
         catch (Exception)
         {
             // ignored
         }
 
-        return null;
+        return (false, null);
     }
 
 
+    public static ImageSource? GetImageSource(this Item item)
+        => GetItemImageSource(item);
 
 
-
-    private static ImageSource GetItemImageSource(Item item)
+    private static async Task<ImageSource?> GetImageSourceAsync(this Item item)
     {
-
-        try
+        if (item.FullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+            item.FullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+            item.FullPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
         {
-            if (item.FullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                item.FullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                item.FullPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
-            {
-                using var stream = item.Stream(FileMode.Open);
-                var bitmapImage = new BitmapImage();
-                bitmapImage.SetSource(stream.AsRandomAccessStream());
-                return bitmapImage;
-            }
-
-            if (item.FullPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
-            {
-                return MainThread.Invoke(async () =>
-                {
-                    await using var stream = item.Stream(FileMode.Open);
-                    var svgImageSource = new SvgImageSource();
-                    await svgImageSource.SetSourceAsync(stream.AsRandomAccessStream());
-                    return svgImageSource;
-                });
-            }
+            await using var bitmapStream = item.Stream(FileMode.Open);
+            var bitmapImage = new BitmapImage();
+            bitmapImage.SetSource(bitmapStream.AsRandomAccessStream());
+            return bitmapImage;
         }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-        }
-        
 
-        throw new ArgumentException($"Invalid ItemKey ItemSource [{item}] for ImageSource");
+        if (!item.FullPath.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        await using var stream = item.Stream(FileMode.Open);
+        var svgImageSource = new SvgImageSource();
+        await svgImageSource.SetSourceAsync(stream.AsRandomAccessStream());
+        return svgImageSource;
+
     }
-
+    
+    private static ImageSource? GetItemImageSource(Item item)
+        => MainThread.Invoke(async () => await GetImageSourceAsync(item));
+   
 }

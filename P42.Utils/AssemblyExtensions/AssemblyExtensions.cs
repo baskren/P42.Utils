@@ -159,19 +159,24 @@ public static class AssemblyExtensions
         }
     }
 
-    public static string GetRootNamespace(this Assembly assembly)
+    /// <summary>
+    /// Doesn't really work!!!
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <param name="rootNamespace"></param>
+    /// <returns></returns>
+    public static bool TryGetRootNamespace(this Assembly assembly, out string? rootNamespace)
     {
-        var rootNamespace = assembly
+        rootNamespace = assembly
             .GetCustomAttributes<AssemblyMetadataAttribute>()
             .SingleOrDefault(a => a.Key == "RootNamespace")
             ?.Value;
 
-// If no custom attribute is found, fall back to the assembly name
-        if (string.IsNullOrEmpty(rootNamespace))
-        {
-            rootNamespace = assembly.GetName().Name;
-        }
-
-        return rootNamespace;
+        if (!string.IsNullOrEmpty(rootNamespace))
+            return true;
+        
+        // If no custom attribute is found, fall back to the assembly name
+        rootNamespace = assembly.GetName().Name;
+        return !string.IsNullOrEmpty(rootNamespace);
     }
 }

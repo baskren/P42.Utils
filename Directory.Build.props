@@ -18,8 +18,10 @@
 
   <!-- SET ASSEMBLY/NUGET VERSION NUMBER -->
   <PropertyGroup>
-
+	
+    <!--
     <DevIteration Condition="  $(Configuration) != 'Release'  ">-dev.9</DevIteration>
+    -->
 
     <IsP42UtilsUno>false</IsP42UtilsUno>
     <IsP42UtilsUno Condition=" $(MSBuildProjectName.StartsWith('P42.Utils.Uno')) ">true</IsP42UtilsUno>

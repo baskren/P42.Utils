@@ -387,7 +387,7 @@ public abstract class LocalData
         /// Presents the Item as a WebView2.Source Uri
         /// NOTE: If Item is a .zip, .tar, .tag.gz, or .tgz file, it will unpackage the file and return the default HTML file 
         /// </summary>
-        /// <param name="searchPatterns">files names, searched in package, to be html source.  Default: ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]</param>
+        /// <param name="searchPatterns">files names, searched in package, to be HTML source.  Default: ["index.html", "default.html", "index.htm", "default.htm", "*.html", "*.htm"]</param>
         /// <returns></returns>
         internal async Task<Uri?> AsWebViewSourceAsync(params string[] searchPatterns)
         {
@@ -651,8 +651,19 @@ public abstract class LocalData
                 ? throw new ArgumentNullException(nameof(tag)) 
                 : InternalFor(tag, folderPath, assembly);
         
+        /// <summary>
+        /// Instance Factory
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static TagItem For(string tag, Assembly assembly)
+            => string.IsNullOrEmpty(tag)
+                ? throw new ArgumentNullException(nameof(tag))
+                : InternalFor(tag, null, assembly);
 
-        internal static TagItem InternalFor(string tag, string folderPath, Assembly? assembly = null) // `Assembly? assembly = null` is here to facility Clear() being applied to everything.
+        internal static TagItem InternalFor(string tag, string? folderPath = null, Assembly? assembly = null) // `Assembly? assembly = null` is here to facility Clear() being applied to everything.
         {
             if (!string.IsNullOrEmpty(tag))
                 tag = CleanKey(tag);
@@ -672,7 +683,7 @@ public abstract class LocalData
         }
 
 
-        private TagItem(string tag, string fullPath, string folderPath, Assembly? assembly) : base(fullPath, folderPath, assembly)
+        private TagItem(string tag, string fullPath, string? folderPath, Assembly? assembly) : base(fullPath, folderPath, assembly)
         {
             Tag = tag;
         }
@@ -811,7 +822,7 @@ public abstract class LocalData
         /// <summary>
         /// use local value, if exists, else use source value
         /// </summary>
-        public async Task AssureExitsAsync()
+        public async Task AssureExistsAsync()
         {
             if (IsFile)
                 return;
@@ -1244,88 +1255,88 @@ public abstract class LocalData
             ETagDates.CollectionChanged += OnETagDatesCollectionChanged;
         }
         
-    private static async void OnETagDatesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        try
+        private static async void OnETagDatesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            var dateJson = System.Text.Json.JsonSerializer.Serialize(ETagDates);
-            await Semaphore.WaitAsync();
             try
             {
-                DirectoryExtensions.GetOrCreateParentDirectory(ETagDatesPath);
-                await File.WriteAllTextAsync(ETagDatesPath, dateJson);
+                var dateJson = System.Text.Json.JsonSerializer.Serialize(ETagDates);
+                await Semaphore.WaitAsync();
+                try
+                {
+                    DirectoryExtensions.GetOrCreateParentDirectory(ETagDatesPath);
+                    await File.WriteAllTextAsync(ETagDatesPath, dateJson);
+                }
+                catch (Exception ex)
+                {
+                    QLog.Error(ex);
+                }
+                finally
+                {
+                    Semaphore.Release();
+                }
             }
             catch (Exception ex)
             {
                 QLog.Error(ex);
             }
-            finally
-            {
-                Semaphore.Release();
-            }
         }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-        }
-    }
 
-    // use of async void is ok here since we're handling exceptions
-    private static async void OnETagLookupCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        try
+        // use of async void is ok here since we're handling exceptions
+        private static async void OnETagLookupCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            //var json = JsonConvert.SerializeObject(ETagLookup);
-            var etagJson = System.Text.Json.JsonSerializer.Serialize(ETagLookup);
-            await Semaphore.WaitAsync();
             try
             {
-                DirectoryExtensions.GetOrCreateParentDirectory(ETagLookupPath);
-                await File.WriteAllTextAsync(ETagLookupPath, etagJson);
+                //var json = JsonConvert.SerializeObject(ETagLookup);
+                var etagJson = System.Text.Json.JsonSerializer.Serialize(ETagLookup);
+                await Semaphore.WaitAsync();
+                try
+                {
+                    DirectoryExtensions.GetOrCreateParentDirectory(ETagLookupPath);
+                    await File.WriteAllTextAsync(ETagLookupPath, etagJson);
+                }
+                catch (Exception ex)
+                {
+                    QLog.Error(ex);
+                }
+                finally
+                {
+                    Semaphore.Release();
+                }
             }
             catch (Exception ex)
             {
                 QLog.Error(ex);
             }
-            finally
-            {
-                Semaphore.Release();
-            }
         }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-        }
-    }
 
-    // use of async void is ok here since we're handling exceptions
-    private static async void OnItemUriRootLookupCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        try
+        // use of async void is ok here since we're handling exceptions
+        private static async void OnItemUriRootLookupCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            //var json = JsonConvert.SerializeObject(ItemUriRootLookup);
-            var json = System.Text.Json.JsonSerializer.Serialize(ItemUriRootLookup);
-            await Semaphore.WaitAsync();
             try
             {
-                DirectoryExtensions.GetOrCreateParentDirectory(ItemUriRootLookupPath);
-                await File.WriteAllTextAsync(ItemUriRootLookupPath, json);
+                //var json = JsonConvert.SerializeObject(ItemUriRootLookup);
+                var json = System.Text.Json.JsonSerializer.Serialize(ItemUriRootLookup);
+                await Semaphore.WaitAsync();
+                try
+                {
+                    DirectoryExtensions.GetOrCreateParentDirectory(ItemUriRootLookupPath);
+                    await File.WriteAllTextAsync(ItemUriRootLookupPath, json);
+                }
+                catch (Exception ex)
+                {
+                    QLog.Error(ex);
+                }
+                finally
+                {
+                    Semaphore.Release();
+                }
             }
             catch (Exception ex)
             {
                 QLog.Error(ex);
             }
-            finally
-            {
-                Semaphore.Release();
-            }
         }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-        }
-    }
-        
+            
         /// <summary>
         /// Uri for Source
         /// </summary>
@@ -1384,6 +1395,15 @@ public abstract class LocalData
             return new UriItem(sourceUri, rootUri, storeSubPath, fullPath, folderPath, assembly);
         }
 
+        /// <summary>
+        /// Convert a Uri into an item key (replacing rootUri portion with a Guid to prevent naming conflicts)
+        /// </summary>
+        /// <param name="sourceUri"></param>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        public static UriItem For(Uri sourceUri, Assembly assembly)
+            => For(sourceUri, null, null, assembly);
+        
         private UriItem(Uri sourceUri, Uri? rootUri, string localPath, string fullPath, string? folderPath, Assembly assembly) : base(fullPath,
             folderPath, assembly)
         {
@@ -1553,6 +1573,15 @@ public abstract class LocalData
             return new ResourceItem(resourceId, fullPath, folderPath, assembly);
         }
 
+        /// <summary>
+        /// Get ResourceItem for Embedded Resource
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        public static ResourceItem For(string resourceId, Assembly assembly)
+            => For(resourceId, null, assembly);
+        
         private ResourceItem(string resourceId, string fullPath, string? folderPath, Assembly assembly) : 
             base(fullPath, folderPath, assembly)
         {

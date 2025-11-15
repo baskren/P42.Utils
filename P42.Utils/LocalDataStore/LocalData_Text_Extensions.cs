@@ -91,7 +91,7 @@ public static class LocalDataTextExtensions
     /// <returns></returns>
     public static async Task<string?> AssureExistsTextAsync(this AsynchronousSourcedItem item)
     {
-        await item.AssureExitsAsync();
+        await item.AssureExistsAsync();
         return await RecallTextAsync(item);
     }
 

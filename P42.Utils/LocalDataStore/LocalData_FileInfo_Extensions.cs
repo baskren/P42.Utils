@@ -40,7 +40,7 @@ public static class LocalDataFileInfoExtensions
     /// <returns></returns>
     public static async Task<FileInfo> AssureExistsFileAsync(this AsynchronousSourcedItem item)
     {
-        await item.AssureExitsAsync();
+        await item.AssureExistsAsync();
         return item.File();
     }
 

@@ -117,13 +117,21 @@ public static class ColorExtensions
     }
 
     /// <summary>
-    /// Withs the alpha.
+    /// Changes the alpha value.
     /// </summary>
     /// <returns>The alpha.</returns>
     /// <param name="c">C.</param>
     /// <param name="alpha">Alpha.</param>
     public static Color WithAlpha(this Color c, double alpha)
         => new() { R = c.R, G = c.G, B = c.B, A = (byte)(alpha*255).Clamp(0, 255) };
+
+    /// <summary>
+    /// Changes the alpha value.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="alpha"></param>
+    /// <returns></returns>
+    public static Color WithAlpha(this Color c, byte alpha) => new() { R = c.R, G = c.G, B = c.B, A = byte.Clamp(alpha, 0, 255) };
 
     /// <summary>
     /// Adjust color so it will be opaque to gestures
@@ -145,6 +153,7 @@ public static class ColorExtensions
         var color = scb.Color;
         return new SolidColorBrush(color.AssureGesturable());
     }
+    
     #endregion
 
 

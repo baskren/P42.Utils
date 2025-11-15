@@ -55,7 +55,7 @@ public static class LocalDataStreamReaderExtensions
     /// <returns></returns>
     public static async Task<StreamReader> AssureExistsStreamReaderAsync(this AsynchronousSourcedItem item)
     {
-        await item.AssureExitsAsync();
+        await item.AssureExistsAsync();
         return StreamReader(item);
     }
 

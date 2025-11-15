@@ -284,17 +284,17 @@ internal partial class HtmlDependencyObject : DependencyObject
     {
         var excepts = GetExcepts(except);
         if (excepts is null || !excepts.Contains(nameof(Control.FontFamily)))
-            this.WBind(FontFamilyProperty, source, Control.FontFamilyProperty, bindingMode);
+            this.AltBind(FontFamilyProperty, source, Control.FontFamilyProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(Control.FontSize)))
-            this.WBind(FontSizeProperty, source, Control.FontSizeProperty, bindingMode);
+            this.AltBind(FontSizeProperty, source, Control.FontSizeProperty, bindingMode);
         //if (excepts is null || !excepts.Contains(nameof(Control.FontStretch)))
         //    this.Bind(HtmlDependencyObject.FontStretchProperty, source, nameof(Control.FontStretch), bindingMode);
         if (excepts is null || !excepts.Contains(nameof(Control.FontStyle)))
-            this.WBind(FontStyleProperty, source, Control.FontStyleProperty, bindingMode);
+            this.AltBind(FontStyleProperty, source, Control.FontStyleProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(Control.FontWeight)))
-            this.WBind(FontWeightProperty, source, Control.FontWeightProperty, bindingMode);
+            this.AltBind(FontWeightProperty, source, Control.FontWeightProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(Control.Foreground)))
-            this.WBind(ForegroundProperty, source, Control.ForegroundProperty, bindingMode);
+            this.AltBind(ForegroundProperty, source, Control.ForegroundProperty, bindingMode);
     }
     */
 
@@ -302,17 +302,17 @@ internal partial class HtmlDependencyObject : DependencyObject
     {
         var excepts = GetExcepts(except);
         if (excepts is null || !excepts.Contains(nameof(TextBlock.FontFamily)))
-            this.WBind(FontFamilyProperty, source, TextBlock.FontFamilyProperty, bindingMode);
+            this.AltBind(FontFamilyProperty, source, TextBlock.FontFamilyProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(TextBlock.FontSize)))
-            this.WBind(FontSizeProperty, source, TextBlock.FontSizeProperty, bindingMode);
+            this.AltBind(FontSizeProperty, source, TextBlock.FontSizeProperty, bindingMode);
         //if (excepts is null || !excepts.Contains(nameof(TextBlock.FontStretch)))
         //    this.Bind(HtmlDependencyObject.FontStretchProperty, source, nameof(TextBlock.FontStretch), bindingMode);
         if (excepts is null || !excepts.Contains(nameof(TextBlock.FontStyle)))
-            this.WBind(FontStyleProperty, source, TextBlock.FontStyleProperty, bindingMode);
+            this.AltBind(FontStyleProperty, source, TextBlock.FontStyleProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(TextBlock.FontWeight)))
-            this.WBind(FontWeightProperty, source, TextBlock.FontWeightProperty, bindingMode);
+            this.AltBind(FontWeightProperty, source, TextBlock.FontWeightProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(TextBlock.Foreground)))
-            this.WBind(ForegroundProperty, source, TextBlock.ForegroundProperty, bindingMode);
+            this.AltBind(ForegroundProperty, source, TextBlock.ForegroundProperty, bindingMode);
     }
 
     /*
@@ -320,17 +320,17 @@ internal partial class HtmlDependencyObject : DependencyObject
     {
         var excepts = GetExcepts(except);
         if (excepts is null || !excepts.Contains(nameof(ContentPresenter.FontFamily)))
-            this.WBind(FontFamilyProperty, source, ContentPresenter.FontFamilyProperty, bindingMode);
+            this.AltBind(FontFamilyProperty, source, ContentPresenter.FontFamilyProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(ContentPresenter.FontSize)))
-            this.WBind(FontSizeProperty, source, ContentPresenter.FontSizeProperty, bindingMode);
+            this.AltBind(FontSizeProperty, source, ContentPresenter.FontSizeProperty, bindingMode);
         //if (excepts is null || !excepts.Contains(nameof(ContentPresenter.FontStretch)))
         //    this.Bind(HtmlDependencyObject.FontStretchProperty, source, nameof(ContentPresenter.FontStretch), bindingMode);
         if (excepts is null || !excepts.Contains(nameof(ContentPresenter.FontStyle)))
-            this.WBind(FontStyleProperty, source, ContentPresenter.FontStyleProperty, bindingMode);
+            this.AltBind(FontStyleProperty, source, ContentPresenter.FontStyleProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(ContentPresenter.FontWeight)))
-            this.WBind(FontWeightProperty, source, ContentPresenter.FontWeightProperty, bindingMode);
+            this.AltBind(FontWeightProperty, source, ContentPresenter.FontWeightProperty, bindingMode);
         if (excepts is null || !excepts.Contains(nameof(ContentPresenter.Foreground)))
-            this.WBind(ForegroundProperty, source, ContentPresenter.ForegroundProperty, bindingMode);
+            this.AltBind(ForegroundProperty, source, ContentPresenter.ForegroundProperty, bindingMode);
     }
     */
 

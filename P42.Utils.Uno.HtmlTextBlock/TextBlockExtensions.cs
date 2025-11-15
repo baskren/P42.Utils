@@ -42,7 +42,7 @@ public static class TextBlockExtensions
 
     #region Markdown Property
     /// <summary>
-    /// Html Attached Dependency Property
+    /// HTML Attached Dependency Property
     /// </summary>
     public static readonly DependencyProperty MarkdownProperty =
         DependencyProperty.RegisterAttached("Markdown", typeof(string), typeof(TextBlockExtensions), new PropertyMetadata(null, MarkdownChanged));
@@ -77,6 +77,7 @@ public static class TextBlockExtensions
     /// <param name="textBlock"></param>
     /// <param name="value"></param>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public static ElementType SetMarkdown(this ElementType textBlock, string? value)
     {
         textBlock.SetValue(MarkdownProperty, value ?? string.Empty);
@@ -116,7 +117,7 @@ public static class TextBlockExtensions
     /// <param name="filePath"></param>
     /// <param name="lineNumber"></param>
     /// <returns></returns>
-    public static ElementType WBindMarkdown(
+    public static ElementType AltBindMarkdown(
         this ElementType target,
         INotifyPropertyChanged source,
         string sourcePropertyName,
@@ -130,7 +131,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(MarkdownProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(MarkdownProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
 
@@ -150,7 +151,7 @@ public static class TextBlockExtensions
     /// <param name="filePath"></param>
     /// <param name="lineNumber"></param>
     /// <returns></returns>
-    public static ElementType WBindMarkdown(
+    public static ElementType AltBindMarkdown(
         this ElementType target,
         DependencyObject source,
         DependencyProperty sourceProperty,
@@ -164,7 +165,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(MarkdownProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(MarkdownProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
 
@@ -186,7 +187,7 @@ public static class TextBlockExtensions
     /// <param name="lineNumber"></param>
     /// <typeparam name="TSource"></typeparam>
     /// <returns></returns>
-    public static ElementType WBindMarkdown<TSource>(
+    public static ElementType AltBindMarkdown<TSource>(
         this ElementType target,
         DependencyObject source,
         DependencyProperty sourceProperty,
@@ -201,7 +202,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(MarkdownProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(MarkdownProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
 
@@ -223,7 +224,7 @@ public static class TextBlockExtensions
     /// <param name="lineNumber"></param>
     /// <typeparam name="TSource"></typeparam>
     /// <returns></returns>
-    public static ElementType WBindMarkdown<TSource>(
+    public static ElementType AltBindMarkdown<TSource>(
         this ElementType target,
         INotifyPropertyChanged source,
         string sourcePropertyName,
@@ -238,7 +239,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(MarkdownProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(MarkdownProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
 
@@ -246,7 +247,7 @@ public static class TextBlockExtensions
 
     #region Html Property
     /// <summary>
-    /// Html Attached Dependency Property
+    /// HTML Attached Dependency Property
     /// </summary>
     public static readonly DependencyProperty HtmlProperty =
         DependencyProperty.RegisterAttached("Html", typeof(string), typeof(TextBlockExtensions), new PropertyMetadata(null, HtmlChanged));
@@ -273,7 +274,7 @@ public static class TextBlockExtensions
         }
         catch (Exception)
         {
-            // if anything goes wrong just show the html
+            // if anything goes wrong just show the HTML
             Console.WriteLine($"TextBlockExtensions.HtmlChanged Could not convert to Html [{text}]");
             textBlock.Text = HtmlExtensions.ConvertToPlainText(text);
         }
@@ -328,7 +329,7 @@ public static class TextBlockExtensions
     /// <param name="filePath"></param>
     /// <param name="lineNumber"></param>
     /// <returns></returns>
-    public static ElementType WBindHtml(
+    public static ElementType AltBindHtml(
         this ElementType target, 
         INotifyPropertyChanged source, 
         string sourcePropertyName,
@@ -342,7 +343,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(HtmlProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(HtmlProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
 
@@ -362,7 +363,7 @@ public static class TextBlockExtensions
     /// <param name="filePath"></param>
     /// <param name="lineNumber"></param>
     /// <returns></returns>
-    public static ElementType WBindHtml(
+    public static ElementType AltBindHtml(
         this ElementType target, 
         DependencyObject source, 
         DependencyProperty sourceProperty,
@@ -376,7 +377,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(HtmlProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(HtmlProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
     
@@ -398,7 +399,7 @@ public static class TextBlockExtensions
     /// <param name="lineNumber"></param>
     /// <typeparam name="TSource"></typeparam>
     /// <returns></returns>
-    public static ElementType WBindHtml<TSource>(
+    public static ElementType AltBindHtml<TSource>(
         this ElementType target, 
         DependencyObject source, 
         DependencyProperty sourceProperty,
@@ -413,7 +414,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(HtmlProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(HtmlProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
     
@@ -435,7 +436,7 @@ public static class TextBlockExtensions
     /// <param name="lineNumber"></param>
     /// <typeparam name="TSource"></typeparam>
     /// <returns></returns>
-    public static ElementType WBindHtml<TSource>(
+    public static ElementType AltBindHtml<TSource>(
         this ElementType target, 
         INotifyPropertyChanged source,
         string sourcePropertyName,
@@ -450,7 +451,7 @@ public static class TextBlockExtensions
         [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
     )
     {
-        target.WBind(HtmlProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        target.AltBind(HtmlProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         return target;
     }
     

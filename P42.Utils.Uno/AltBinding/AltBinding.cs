@@ -371,7 +371,7 @@ internal class AltBinding : IDisposable
             if (_onTargetDependencyPropertyChangedIndex > -1) 
                 TargetDependencyObject?.UnregisterPropertyChangedCallback(TargetProperty, _onTargetDependencyPropertyChangedIndex);
             if (TargetProperty is not null)
-                TargetDependencyObject?.WUnbind(TargetProperty);
+                TargetDependencyObject?.AltUnbind(TargetProperty);
         }
 
 

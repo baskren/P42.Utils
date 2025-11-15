@@ -55,7 +55,7 @@ public static class LocalDataStreamExtensions
     /// <returns></returns>
     public static async Task<Stream> AssureExistsStreamAsync(this AsynchronousSourcedItem item)
     {
-        await item.AssureExitsAsync();
+        await item.AssureExistsAsync();
         return item.Stream(FileMode.Open);
     }
 
