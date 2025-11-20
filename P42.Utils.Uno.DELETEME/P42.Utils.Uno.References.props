@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <WindowsBaseOs Condition="$(TargetFramework.Contains('windows')) OR ( $([MSBuild]::IsOSPlatform('windows')) AND $(TargetFramework.Contains('desktop')) )">true</WindowsBaseOs>
-    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$DefineConstants;WindowsBaseOs</DefineConstants>
+    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$(DefineConstants);WindowsBaseOs</DefineConstants>
   </PropertyGroup>
 
   <!-- SHARED ITEMS -->

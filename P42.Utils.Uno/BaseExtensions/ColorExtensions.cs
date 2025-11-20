@@ -767,6 +767,13 @@ public static class ColorExtensions
     }
     #endregion
 
+    /// <summary>
+    /// Returns int value of color
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public static int ToInt(this Color c)
+        => c.R << 16 |  c.G << 8 | c.B | c.A << 24; 
 
     /// <summary>
     /// Get color from Application.Current.Resources[key]

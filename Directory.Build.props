@@ -18,7 +18,7 @@
 
   <!-- SET ASSEMBLY/NUGET VERSION NUMBER -->
   <PropertyGroup>
-	
+
     <!--
     <DevIteration Condition="  $(Configuration) != 'Release'  ">-dev.9</DevIteration>
     -->
@@ -57,7 +57,7 @@
   <!-- DETERMINE IF TARGET FRAMEWORK'S UNDERLYING OS IS WINDOWS (for compiler directives) -->
   <PropertyGroup>
     <WindowsBaseOs Condition="$(TargetFramework.Contains('windows')) OR ( $([MSBuild]::IsOSPlatform('windows')) AND $(TargetFramework.Contains('desktop')) )">true</WindowsBaseOs>
-    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$DefineConstants;WindowsBaseOs</DefineConstants>
+    <DefineConstants Condition="'$(WindowsBaseOs)'=='true'">$(DefineConstants);WindowsBaseOs</DefineConstants>
   </PropertyGroup>
 
   <!--
@@ -198,6 +198,9 @@
     <Message Text="  CFBundleIdentifier:[$(CFBundleIdentifier)]"  Importance="high" />
     <Message Text="  BuildInParallel:[$(BuildInParallel)]" Importance="high" />
     <Message Condition=" $(TargetFramework.Contains('browserwasm'))" Text="  WasmShellEnableIDBFS:[$(WasmShellEnableIDBFS)]" Importance="high" />
+
+    <Message Text="  [Sytem.OperatiingSystem]::IsOSPlatform('macos')]:[$([MSBuild]::IsOSPlatform('macos'))]" Importance="high"  />
+
     <Message Text="============================= $(MSBuildProjectName):$(TargetFramework) =================================" Importance="high"/>
     <Message Text=" " Importance="high"/>
     <Message Text=" " Importance="high"/>
