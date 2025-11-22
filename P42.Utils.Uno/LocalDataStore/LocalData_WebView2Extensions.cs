@@ -1,5 +1,5 @@
 
-namespace P42.Utils;
+namespace P42.Utils.Uno;
 // ReSharper disable once UnusedType.Global
 // ReSharper disable once InconsistentNaming
 public static class LocalData_WebView2Extensions
