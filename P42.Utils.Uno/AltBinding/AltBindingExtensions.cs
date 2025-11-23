@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml.Data;
@@ -217,8 +217,10 @@ public static class AltBindingExtensions
                     continue;
 
                 lastLine = LastLine();
+#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
                 if (property.GetValue(target) == targetProperty)
                     return true;
+#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
             }
 
             lastLine = LastLine();

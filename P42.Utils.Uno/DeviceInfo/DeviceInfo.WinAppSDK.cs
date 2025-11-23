@@ -63,7 +63,7 @@ public static partial class DeviceInfo
     private static bool GetIsEmulator() => false;
     
     public static string QueryDeviceOs()
-        => nameof(OperatingSystem.Windows);
+        => nameof(DeviceOperatingSystem.Windows);
 
     public static string QueryDeviceOsVersion()
         => FallbackQueryDeviceOsVersion();

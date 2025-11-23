@@ -30,19 +30,19 @@ public class FuncConverter<TSource, TDest, TParam> : IValueConverter
     public FuncConverter(
         Func<TSource?, TParam?, string, TDest?>? convertWithParamAndLanguage = null, 
         Func<TDest?, TParam?, string, TSource?>? convertBackWithParamAndCulture = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     { _convertWithParamAndLanguage = convertWithParamAndLanguage; _convertBackWithParamAndLanguage = convertBackWithParamAndCulture; _filePath = filePath; _lineNumber = lineNumber; }
 
     public FuncConverter(
         Func<TSource?, TParam?, TDest?>? convertWithParam = null, 
         Func<TDest?, TParam?, TSource?>? convertBackWithParam = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     { _convertWithParam = convertWithParam; _convertBackWithParam = convertBackWithParam; _filePath = filePath; _lineNumber = lineNumber; }
 
     public FuncConverter(
         Func<TSource?, TDest?>? convert = null, 
         Func<TDest?, TSource?>? convertBack = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     { _convert = convert; _convertBack = convertBack; _filePath = filePath; _lineNumber = lineNumber; }
 
     /// <summary>
@@ -147,7 +147,7 @@ public class FuncConverter<TSource, TDest, TParam> : IValueConverter
 public class FuncConverter<TSource, TDest>(
     Func<TSource?, TDest?>? convert = null,
     Func<TDest?, TSource?>? convertBack = null,
-    [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+    [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     : FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
 
 /// <summary>
@@ -159,7 +159,7 @@ public class FuncConverter<TSource, TDest>(
 public class FuncConverter<TSource>(
     Func<TSource?, object?>? convert = null,
     Func<object?, TSource?>? convertBack = null,
-    [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+    [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     : FuncConverter<TSource, object, object>(convert, convertBack, filePath, lineNumber);
 
 /// <summary>
@@ -170,20 +170,20 @@ public class FuncConverter<TSource>(
 public class FuncConverter(
     Func<object?, object?>? convert = null, 
     Func<object?, object?>? convertBack = null,
-    [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+    [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     : FuncConverter<object, object, object>(convert, convertBack, filePath, lineNumber);
 
 /// <summary>
 /// Convert to string
 /// </summary>
 /// <param name="format"></param>
-public class ToStringConverter(string format = "{0}", [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+public class ToStringConverter(string format = "{0}", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     : FuncConverter<object, string>(o => string.Format(CultureInfo.InvariantCulture, format, o), s => s, filePath, lineNumber);
 
 /// <summary>
 /// Simple NOT converter
 /// </summary>
-public class NotConverter([CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1) : FuncConverter<bool, bool>(t => !t, t => !t, filePath, lineNumber)
+public class NotConverter([CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1) : FuncConverter<bool, bool>(t => !t, t => !t, filePath, lineNumber)
 {
     private static NotConverter? _instance;
     public static NotConverter Instance => _instance ??= new NotConverter();

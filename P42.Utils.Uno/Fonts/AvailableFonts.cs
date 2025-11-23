@@ -178,12 +178,9 @@ public static class AvailableFonts
         ps.AddScript("Add-Type -AssemblyName System.Drawing\r\n(New-Object System.Drawing.Text.InstalledFontCollection).Families | Select-Object -ExpandProperty Name");
         var psResults = ps.Invoke();
         if (ps.HadErrors)
-            return results;
+            return [];
 
-        foreach (var psResult in psResults)
-            results.Add(psResult.ToString());
-
-        return results.ToArray();
+        return [.. psResults.Select(psResult => psResult.ToString())];
         #else
         return [];
         #endif

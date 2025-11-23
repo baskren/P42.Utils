@@ -79,7 +79,7 @@ internal class AltBinding : IDisposable
 
     private bool _isDisposed;
 
-    private readonly string? _filePath;
+    private readonly string _filePath;
     private readonly int _lineNumber;
 
     internal AltBinding(DependencyObject target, DependencyProperty targetProperty, 
@@ -90,7 +90,7 @@ internal class AltBinding : IDisposable
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     {
 #pragma warning disable Uno0001
         if (updateSourceTrigger is UpdateSourceTrigger.Explicit or UpdateSourceTrigger.LostFocus)
@@ -140,7 +140,7 @@ internal class AltBinding : IDisposable
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1)
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1)
     {
 #pragma warning disable Uno0001
         if (updateSourceTrigger is UpdateSourceTrigger.Explicit or UpdateSourceTrigger.LostFocus) 

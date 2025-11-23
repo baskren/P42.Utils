@@ -128,7 +128,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(MarkdownProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -162,7 +162,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(MarkdownProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -199,7 +199,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(MarkdownProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -236,7 +236,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null,
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(MarkdownProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -340,7 +340,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(HtmlProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -374,7 +374,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(HtmlProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -411,7 +411,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(HtmlProperty, source, sourceProperty, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
@@ -448,7 +448,7 @@ public static class TextBlockExtensions
         UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
         object? targetNullValue = null,
         object? fallbackValue = null, 
-        [CallerFilePath] string? filePath = null, [CallerLineNumber] int lineNumber = -1
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
     )
     {
         target.AltBind(HtmlProperty, source, sourcePropertyName, mode, convert, convertBack, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
