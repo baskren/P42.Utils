@@ -1,6 +1,4 @@
 using System.Runtime.InteropServices;
-using AdSupport;
-using AppTrackingTransparency;
 using UIKit;
 
 namespace P42.Utils.Uno;

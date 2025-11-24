@@ -36,74 +36,7 @@ public static class  LocalData_ImageSource_Extensions
                 return false; 
             }
         }
-    }
 
-    /// <summary>
-    /// Get ImageSource from item in local data store
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<ImageSource?> AssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
-    {
-        await item.AssureExistsAsync();
-        return await item.GetImageSourceAsync();
-    }
-
-    /// <summary>
-    /// Get ImageSource from item in local data store
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static ImageSource? AssureExistsImageSource(this SynchronousSourcedItem item)
-    {
-        item.AssureExists();
-        return item.GetImageSource();
-    }
-
-
-    /// <summary>
-    /// Try get ImageSource from item in local data store
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns>null on fail</returns>
-    public static async Task<(bool success, ImageSource? imageSource)> TryAssureExistsImageSourceAsync(this AsynchronousSourcedItem item)
-    {
-        try
-        {
-            var imageSource = await item.AssureExistsImageSourceAsync();
-            return (imageSource != null, imageSource);
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-
-        return (false, null);
-    }
-
-    /// <summary>
-    /// Try get ImageSource from item in local data store
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns>null on fail</returns>
-    public static (bool success, ImageSource? imageSource) TryAssureExistsImageSource(this SynchronousSourcedItem item)
-    {
-        try
-        {
-            var imageSource = item.AssureExistsImageSource();
-            return (imageSource != null, imageSource);
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-
-        return (false, null);
-    }
-
-
-    extension(Item item)
-    {
         public ImageSource? GetImageSource()
             => GetItemImageSource(item);
 
@@ -128,10 +61,76 @@ public static class  LocalData_ImageSource_Extensions
             return svgImageSource;
 
         }
+        
+        private ImageSource? GetItemImageSource()
+            => MainThread.Invoke(async () => await GetImageSourceAsync(item));
+
     }
 
 
-    private static ImageSource? GetItemImageSource(Item item)
-        => MainThread.Invoke(async () => await GetImageSourceAsync(item));
-   
+    /// <param name="item"></param>
+    extension(AsynchronousSourcedItem item)
+    {
+        /// <summary>
+        /// Get ImageSource from item in local data store
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ImageSource?> AssureExistsImageSourceAsync()
+        {
+            await item.AssureExistsAsync();
+            return await item.GetImageSourceAsync();
+        }
+
+        /// <summary>
+        /// Try get ImageSource from item in local data store
+        /// </summary>
+        /// <returns>null on fail</returns>
+        public async Task<(bool success, ImageSource? imageSource)> TryAssureExistsImageSourceAsync()
+        {
+            try
+            {
+                var imageSource = await item.AssureExistsImageSourceAsync();
+                return (imageSource != null, imageSource);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return (false, null);
+        }
+    }
+
+    /// <param name="item"></param>
+    extension(SynchronousSourcedItem item)
+    {
+        /// <summary>
+        /// Get ImageSource from item in local data store
+        /// </summary>
+        /// <returns></returns>
+        public ImageSource? AssureExistsImageSource()
+        {
+            item.AssureExists();
+            return item.GetImageSource();
+        }
+
+        /// <summary>
+        /// Try get ImageSource from item in local data store
+        /// </summary>
+        /// <returns>null on fail</returns>
+        public (bool success, ImageSource? imageSource) TryAssureExistsImageSource()
+        {
+            try
+            {
+                var imageSource = item.AssureExistsImageSource();
+                return (imageSource != null, imageSource);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return (false, null);
+        }
+    }
 }

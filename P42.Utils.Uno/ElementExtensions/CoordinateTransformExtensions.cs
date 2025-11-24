@@ -12,6 +12,7 @@ public static class CoordinateTransformExtensions
     #region ILocation implementation
 
     /// <param name="fromElement"></param>
+    // ReSharper disable once UnusedType.Global
     extension(FrameworkElement fromElement)
     {
         /// <summary>

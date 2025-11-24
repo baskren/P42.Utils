@@ -1,7 +1,4 @@
-using Android.Content.PM;
-//using Android.Gms.Common;
 using Android.OS;
-//using Google.Ads.Identifier;
 
 namespace P42.Utils.Uno;
 

@@ -5,28 +5,26 @@
 /// </summary>
 public static class MainThread
 {
-    private static Thread? _current;
     /// <summary>
     /// Applications UI Thread
     /// </summary>
     /// <exception cref="Exception"></exception>
     public static Thread Current
     {
-        get => _current ?? throw new NotInitializedException(); 
-        private set  => _current = value;
+        get => field ?? throw new NotInitializedException();
+        private set;
     }
-    
-    private static Microsoft.UI.Dispatching.DispatcherQueue? _dispatchQueue;
+
     /// <summary>
     /// DispatchQueue for the main thread
     /// </summary>
     /// <exception cref="Exception"></exception>
     public static Microsoft.UI.Dispatching.DispatcherQueue DispatchQueue
     {
-        get => _dispatchQueue ?? throw new NotInitializedException(); 
-        private set => _dispatchQueue = value;
+        get => field ?? throw new NotInitializedException();
+        private set;
     }
-    
+
     public static void Init()
     {
         Current = Thread.CurrentThread;

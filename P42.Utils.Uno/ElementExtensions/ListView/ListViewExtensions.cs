@@ -5,6 +5,7 @@ using P42.Serilog.QuickLog;
 
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class ListViewExtensions
 {
     
@@ -164,11 +165,12 @@ public static class ListViewExtensions
         var containerHeight = selectorItem.DesiredSize.Height;
         var viewportHeight = viewer.ViewportHeight;
 
-        var offset = 0.0;
-        if (toPosition == ScrollToPosition.Center)
-            offset = (viewportHeight - containerHeight) / 2.0;
-        else if (toPosition == ScrollToPosition.End)
-            offset = viewportHeight - containerHeight;
+        var offset = toPosition switch
+        {
+            ScrollToPosition.Center => (viewportHeight - containerHeight) / 2.0,
+            ScrollToPosition.End => viewportHeight - containerHeight,
+            _ => 0.0
+        };
         viewer.ChangeView(position.X, position.Y - offset, null);
         return true;
     }

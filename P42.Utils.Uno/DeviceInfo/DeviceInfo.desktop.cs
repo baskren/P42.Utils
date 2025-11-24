@@ -15,34 +15,34 @@ public static partial class DeviceInfo
     {
         Serializer.Add(typeof(Dictionary<string, List<Dictionary<string, string>>>), Dictionary_string_List_Dictionary_string_string_SerializerContext.Default);
     }
-    
-    
-    private static Dictionary<string, string>? _macOsHardwareOverview;
+
+
     // ReSharper disable once UnusedMember.Local
     private static Dictionary<string,string> MacOsHardwareOverview
     {
         get
         {
-            if (_macOsHardwareOverview is not null)
-                return _macOsHardwareOverview;
+            if (field is not null)
+                return field;
 
             const string errorTitle = "Failed to Get Mac OS Hardware Overview";
             try
             {
-                if (Shell.ExecuteCommand("system_profiler", "-json SPHardwareDataType", out var json, out var error) != 0
-                    || !Serializer.TryDeserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, out var dict)
-                    || dict["spHardwareDataType"] is not { Count: > 0 } list)
+                if (Shell.ExecuteCommand("system_profiler", "-json SPHardwareDataType", out var json, out var error) == 0
+                    && Serializer.TryDeserialize<Dictionary<string, List<Dictionary<string, string>>>>(json, out var dict)
+                    && dict["spHardwareDataType"] is { Count: > 0 } list)
                 {
-                    QLog.Error(error, errorTitle);
-                    return _macOsHardwareOverview = new Dictionary<string, string>();
+                    return field = list[0];
                 }
-                return _macOsHardwareOverview = list[0];
+
+                QLog.Error(error, errorTitle);
+                return field = new Dictionary<string, string>();
             }
             catch (Exception ex)
             {
                 QLog.Warning(ex, errorTitle);
             }
-            return _macOsHardwareOverview = new Dictionary<string, string>();
+            return field = new Dictionary<string, string>();
         }
     }
 

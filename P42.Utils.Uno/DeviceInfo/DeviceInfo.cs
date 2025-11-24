@@ -9,32 +9,27 @@ public static partial class DeviceInfo
 {
 
 
-    static EasClientDeviceInformation? _easDeviceInfo;
-    private static EasClientDeviceInformation EasDeviceInfo => _easDeviceInfo ??= new EasClientDeviceInformation ();
+    private static EasClientDeviceInformation EasDeviceInfo => field ??= new EasClientDeviceInformation ();
 
     
     #region Manufacturer
-    /// <summary>
-    /// Device Manufacturer
-    /// </summary>
-    static string? _make;
 
     public static string Make
     {
         get
         {
-            if (!string.IsNullOrEmpty (_make))
-                return _make;
+            if (!string.IsNullOrEmpty (field))
+                return field;
 
             var make = GetManufacturer();
             if (!string.IsNullOrEmpty (make))
-                return _make = make;
+                return field = make;
 
             make = EasDeviceInfo.SystemManufacturer;
             if (!string.IsNullOrEmpty (make))
-                return _make = make;
+                return field = make;
 
-            return _make = "Unknown";
+            return field = "Unknown";
         }
     }
 
@@ -42,34 +37,30 @@ public static partial class DeviceInfo
 
 
     #region Model
-    /// <summary>
-    /// Device model
-    /// </summary>
-    static string? _model;
 
     public static string Model
     {
         get
         {
-            if (!string.IsNullOrEmpty(_model))
-                return _model;
+            if (!string.IsNullOrEmpty(field))
+                return field;
             
             var model = GetModel();
             if (!string.IsNullOrEmpty(model))
-                return _model = model;
+                return field = model;
             
             try
             {
                 model = EasDeviceInfo.SystemProductName;
                 if (!string.IsNullOrEmpty(model))
-                    return _model = model;
+                    return field = model;
             }
             catch (Exception)
             {
                 // Ignore
             }
 
-            return _model = "Unknown";
+            return field = "Unknown";
         }
     }
     
@@ -77,18 +68,17 @@ public static partial class DeviceInfo
 
 
     #region DeviceName
-    private static string? _name;
 
     public static string DeviceName
     {
         get
         {
-            if (!string.IsNullOrEmpty(_name))
-                return _name;
+            if (!string.IsNullOrEmpty(field))
+                return field;
 
             var name = GetDeviceName();
             if (!string.IsNullOrEmpty(name))
-                return _name = name;
+                return field = name;
             
             try
             {
@@ -96,14 +86,14 @@ public static partial class DeviceInfo
                 name = EasDeviceInfo.FriendlyName;
 #pragma warning restore Uno0001
                 if (!string.IsNullOrEmpty(name))
-                    return _name = name;
+                    return field = name;
             }
             catch (Exception)
             {
                 // Ignore
             }
 
-            return _name = "Unknown";
+            return field = "Unknown";
 
         }
     }
@@ -112,19 +102,18 @@ public static partial class DeviceInfo
 
     #region DeviceId
 
-    private static string _id = string.Empty;
     public static string DeviceId
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(_id)) return _id;
+            if (!string.IsNullOrWhiteSpace(field)) return field;
 
-            _id = GetDeviceId();
-            if (IsValidId(_id)) return _id;
+            field = GetDeviceId();
+            if (IsValidId(field)) return field;
 
-            return _id = FallbackId();
+            return field = FallbackId();
         }
-    }
+    } = string.Empty;
 
     private static string GetGeneratedDeviceId()
     {
@@ -230,21 +219,17 @@ public static partial class DeviceInfo
 
 
     #region Os
-    /// <summary>
-    /// Common name for OsVersion
-    /// </summary>
-    //public static Version OsVersion => Windows.System.Profile.AnalyticsInfo.VersionInfo.ParseDeviceFamilyVersion();
-    static string _os = string.Empty;
+
     public static string Os
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(_os))
-                return _os;
+            if (!string.IsNullOrWhiteSpace(field))
+                return field;
 
-            return _os = QueryDeviceOs();
+            return field = QueryDeviceOs();
         }
-    }
+    } = string.Empty;
 
     public static string UiPlatform
     {
@@ -292,18 +277,18 @@ public static partial class DeviceInfo
 
 
     #region OsVersion
-    static string _osVersion = string.Empty;
+
     public static string OsVersion
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(_osVersion)) 
-                return _osVersion;
+            if (!string.IsNullOrWhiteSpace(field)) 
+                return field;
 
-            return _osVersion = QueryDeviceOsVersion();
+            return field = QueryDeviceOsVersion();
         }
-    }
-    
+    } = string.Empty;
+
     public static string FallbackQueryDeviceOsVersion()
     {
         var v1 = Environment.OSVersion.Version.Major;
@@ -317,20 +302,21 @@ public static partial class DeviceInfo
 
 
     #region OsDescription
-    static string _osDescription = string.Empty;
+
     public static string OsDescription
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace (_osDescription)) 
-                return _osDescription;
+            if (!string.IsNullOrWhiteSpace (field)) 
+                return field;
 
             if (OperatingSystem.IsBrowser())
-                return _osDescription = AnalyticsInfo.VersionInfo.DeviceFamily; 
+                return field = AnalyticsInfo.VersionInfo.DeviceFamily; 
                 
-            return _osDescription = RuntimeInformation.OSDescription;
+            return field = RuntimeInformation.OSDescription;
         }
-    }
+    } = string.Empty;
+
     #endregion
 
 

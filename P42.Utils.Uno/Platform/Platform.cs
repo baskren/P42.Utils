@@ -10,20 +10,20 @@ public static class Platform
     public static double MinFontSize { get; set; } = 10.0;
 
     #region Application
-    private static Application? _application;
+
     /// <summary>
     /// Reference to current application
     /// </summary>
     /// <exception cref="Exception"></exception>
     public static Application Application
     {
-        get => _application ?? throw new NotInitializedException();
-        private set => _application = value;
+        get => field ?? throw new NotInitializedException();
+        private set;
     }
+
     #endregion
 
     #region Window / Frame
-    private static Window? _mainWindow;
 
     [Obsolete("Use MainWindow instead", true)]
     public static Window Window => MainWindow;
@@ -34,8 +34,8 @@ public static class Platform
     /// <exception cref="Exception"></exception>
     public static Window MainWindow
     {
-        get => _mainWindow ?? throw new NotInitializedException();
-        private set => _mainWindow = value; 
+        get => field ?? throw new NotInitializedException();
+        private set;
     }
 
     public static Frame Frame 
@@ -45,50 +45,45 @@ public static class Platform
     
     
     #region Font Families
-    private static FontFamily? _mathFontFamily;
     /// <summary>
     /// Math font family
     /// </summary>
-    public static FontFamily MathFontFamily => _mathFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno.Platform/Assets/Fonts/STIXGeneral.ttf#STIXGeneral");
+    public static FontFamily MathFontFamily => field ??= new FontFamily("ms-appx:///P42.Utils.Uno.Platform/Assets/Fonts/STIXGeneral.ttf#STIXGeneral");
 
     
-    private static FontFamily? _sansSerifFontFamily;
     /// <summary>
     /// Segoe UI font family
     /// </summary>
-    public static FontFamily SansSerifFontFamily => _sansSerifFontFamily ??= new FontFamily("Segoe UI#Regular");
+    public static FontFamily SansSerifFontFamily => field ??= new FontFamily("Segoe UI#Regular");
 
-    private static FontFamily? _variantsFontFamily;
     // Font that has built-in  "variants" for subscript and superscript
     // Variants don't work on UNO
-    public static FontFamily VariantsFontFamily => _variantsFontFamily ??= new FontFamily("Calibri");
+    public static FontFamily VariantsFontFamily => field ??= new FontFamily("Calibri");
     //public static FontFamily VariantsFontFamily => _variantsFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno/Assets/Fonts/ScriptVariants.ttf#ScriptVariants");
 
 
-    static FontFamily? _serifFontFamily;
     public static FontFamily SerifFontFamily
     {
         get
         {
-            if (_serifFontFamily != null)
-                return _serifFontFamily;
+            if (field != null)
+                return field;
             
             if (OperatingSystem.IsLinux())
-                return _serifFontFamily =  new FontFamily("Noto Serif");
+                return field =  new FontFamily("Noto Serif");
             if (OperatingSystem.IsBrowser())
-                return _serifFontFamily =  new FontFamily("serif");
+                return field =  new FontFamily("serif");
             
-            return _serifFontFamily =  new FontFamily("Times New Roman");
+            return field =  new FontFamily("Times New Roman");
         }
     }
         
 
-    private static FontFamily? _monoSpaceFontFamily;
     /// <summary>
     /// Monospace font family
     /// </summary>
     // ReSharper disable once StringLiteralTypo
-    public static FontFamily MonoSpaceFontFamily => _monoSpaceFontFamily ??= new FontFamily("ms-appx:///P42.Utils.Uno.Platform/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
+    public static FontFamily MonoSpaceFontFamily => field ??= new FontFamily("ms-appx:///P42.Utils.Uno.Platform/Assets/Fonts/FiraCode-VariableFont_wght.ttf#Fira Code");
     #endregion
 
     static bool _hasBeenInit;

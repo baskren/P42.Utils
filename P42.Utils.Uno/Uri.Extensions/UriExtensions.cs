@@ -94,6 +94,7 @@ public static class UriExtensions
         private bool IsAppData()
             => uri.Scheme.Equals("ms-appdata", StringComparison.OrdinalIgnoreCase);
 
+        // ReSharper disable once UnusedMember.Local
         private bool IsLocalResource()
             => uri.Scheme.Equals("ms-appx", StringComparison.OrdinalIgnoreCase);
     }

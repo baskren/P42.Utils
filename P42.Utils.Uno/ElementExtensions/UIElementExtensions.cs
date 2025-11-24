@@ -64,6 +64,12 @@ public static class UIElementExtensions
         }
     }
 
+    private static MethodInfo? GetActualWidthMethod 
+        => field ??= typeof(FrameworkElement).GetMethod("GetActualWidth", BindingFlags.NonPublic | BindingFlags.Instance);
+            
+    private static MethodInfo? GetActualHeightMethod
+        => field ??= typeof(FrameworkElement).GetMethod("GetActualHeight", BindingFlags.NonPublic | BindingFlags.Instance);
+
     /// <param name="element"></param>
     extension(UIElement element)
     {
@@ -82,7 +88,14 @@ public static class UIElementExtensions
             relativeTo ??= Platform.Frame;
             var ttv = element.TransformToVisual(relativeTo);
             var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.DesiredSize.Width, element.DesiredSize.Height));
+            
+            if (GetActualWidthMethod?.Invoke(element, null) is not double width)
+                width = element.DesiredSize.Width;
+            
+            if (GetActualHeightMethod?.Invoke(element, null) is not double height)
+                height = element.DesiredSize.Height;
+            
+            return new Rect(location, new Size(width, height));
         }
 
         /// <summary>
@@ -95,8 +108,16 @@ public static class UIElementExtensions
         {
             var ttv = element.TransformToVisual(relativeToElement);
             var location = ttv.TransformPoint(new Point(0, 0));
-            return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
+            //return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
+            if (GetActualWidthMethod?.Invoke(element, null) is not double width)
+                width = element.DesiredSize.Width;
+            
+            if (GetActualHeightMethod?.Invoke(element, null) is not double height)
+                height = element.DesiredSize.Height;
+            
+            return new Rect(location, new Size(width, height));
         }
+
     }
 
     /// <param name="element"></param>
