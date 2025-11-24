@@ -14,7 +14,7 @@ internal class HtmlSpans : List<Span>
     //internal readonly List<Span> _spans = new List<Span>();
 
     /// <summary>
-    /// Returns a <see cref="System.String"/> that represents the current Html formatted string.
+    /// Returns a <see cref="System.String"/> that represents the current HTML formatted string.
     /// </summary>
     /// <returns>A <see cref="System.String"/> that represents the current HTML formatted string.</returns>
     public override string ToString()

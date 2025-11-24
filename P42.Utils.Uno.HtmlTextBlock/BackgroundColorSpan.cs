@@ -9,15 +9,14 @@ internal class BackgroundColorSpan : Span, ICopiable<BackgroundColorSpan>
 {
     internal const string SpanKey = "BackgroundColor";
 
-    private Color _color;
     /// <summary>
     /// Gets or sets the background color.
     /// </summary>
     /// <value>The color.</value>
     public Color Color
     {
-        get => _color; 
-        set => SetField(ref _color, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     /// <summary>

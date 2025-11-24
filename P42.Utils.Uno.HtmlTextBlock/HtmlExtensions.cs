@@ -11,10 +11,10 @@ public class HtmlExtensions
     /// <returns></returns>
     public static string ConvertToPlainText(string html)
     {
-        HtmlDocument doc = new HtmlDocument();
+        var doc = new HtmlDocument();
         doc.LoadHtml(html);
 
-        StringWriter sw = new StringWriter();
+        var sw = new StringWriter();
         ConvertTo(doc.DocumentNode, sw);
         sw.Flush();
         return sw.ToString();
@@ -29,7 +29,7 @@ public class HtmlExtensions
     /// <returns></returns>
     public static int CountWords(string plainText)
     {
-        return !String.IsNullOrEmpty(plainText) ? plainText.Split(' ', '\n').Length : 0;
+        return !string.IsNullOrEmpty(plainText) ? plainText.Split(' ', '\n').Length : 0;
     }
 
 
@@ -37,7 +37,7 @@ public class HtmlExtensions
     {
         if (!String.IsNullOrEmpty(text) && text.Length > length)
         {
-            text = text.Substring(0, length - 4) + " ...";
+            text = text[..(length - 4)] + " ...";
         }
         return text;
     }
@@ -45,7 +45,7 @@ public class HtmlExtensions
 
     private static void ConvertContentTo(HtmlNode node, TextWriter outText)
     {
-        foreach (HtmlNode subnode in node.ChildNodes)
+        foreach (var subnode in node.ChildNodes)
         {
             ConvertTo(subnode, outText);
         }
@@ -54,7 +54,6 @@ public class HtmlExtensions
 
     private static void ConvertTo(HtmlNode node, TextWriter outText)
     {
-        string html;
         switch (node.NodeType)
         {
             case HtmlNodeType.Comment:
@@ -67,12 +66,12 @@ public class HtmlExtensions
 
             case HtmlNodeType.Text:
                 // script and style must not be output
-                string parentName = node.ParentNode.Name;
-                if ((parentName == "script") || (parentName == "style"))
+                var parentName = node.ParentNode.Name;
+                if (parentName is "script" or "style")
                     break;
 
                 // get text
-                html = ((HtmlTextNode)node).Text;
+                var html = ((HtmlTextNode)node).Text;
 
                 // is it in fact a special closing node output as text?
                 if (HtmlNode.IsOverlappedClosingElement(html))
@@ -80,9 +79,8 @@ public class HtmlExtensions
 
                 // check the text is meaningful and not a bunch of whitespaces
                 if (html.Trim().Length > 0)
-                {
                     outText.Write(HtmlEntity.DeEntitize(html));
-                }
+
                 break;
 
             case HtmlNodeType.Element:
@@ -98,10 +96,10 @@ public class HtmlExtensions
                 }
 
                 if (node.HasChildNodes)
-                {
                     ConvertContentTo(node, outText);
-                }
+
                 break;
+            
         }
     }
 }

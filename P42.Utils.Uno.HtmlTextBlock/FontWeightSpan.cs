@@ -7,9 +7,9 @@ internal class FontWeightSpan : Span, ICopiable<FontWeightSpan>
 {
     internal const string SpanKey = "Weight";
 
-    public short Weight { get; set; }
+    public short Weight { get; private set; }
 
-    public bool IsRelativeToParent { get; set; }
+    public bool IsRelativeToParent { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="P42.Utils.Uno.FontWeightSpan"/> class.

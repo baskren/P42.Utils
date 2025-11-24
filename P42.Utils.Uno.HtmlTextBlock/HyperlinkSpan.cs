@@ -12,16 +12,15 @@ internal class HyperlinkSpan : Span, ICopiable<HyperlinkSpan>
 
     internal const string NullId = "HyperlinkSpanNullId";
 
-    private string _href = string.Empty;
     /// <summary>
     /// Hyperlink Reference
     /// </summary>
     public string Href
     {
-        get => _href; 
-        set => SetField(ref _href, value);
+        get;
+        private set => SetField(ref field, value);
     }
-    
+
     /// <summary>
     /// Create a new instance of a HyperlinkSpan.
     /// </summary>

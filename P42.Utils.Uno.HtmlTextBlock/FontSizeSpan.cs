@@ -8,15 +8,14 @@ internal class FontSizeSpan : Span, ICopiable<FontSizeSpan>
 {
     internal const string SpanKey = "Size";
 
-    private float _size = -1;
     /// <summary>
     /// Gets or sets the size.
     /// </summary>
     /// <value>The size.</value>
     public float Size
     {
-        get => _size; 
-        set => SetField(ref _size, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     /// <summary>

@@ -622,7 +622,6 @@ public static class TextBlockExtensions
     public static double FloorFontSize(double fontSize, double floor = -1.0)
         => Math.Max(fontSize, floor < 0 ? Platform.MinFontSize : floor);
 
-    private static bool _textHighlighterPresent;
     private static bool _textHighlighterPresentSet;
     /// <summary>
     /// Is the TextHighlighter class available in this version of WinUI?
@@ -632,15 +631,14 @@ public static class TextBlockExtensions
         get
         {
             if (_textHighlighterPresentSet)
-                return _textHighlighterPresent;
+                return field;
 
-            _textHighlighterPresent = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Microsoft.UI.Xaml.Documents.TextHighlighter");
+            field = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Microsoft.UI.Xaml.Documents.TextHighlighter");
             _textHighlighterPresentSet = true;
-            return _textHighlighterPresent;
+            return field;
         }
     }
 
-    private static bool _textDecorationsPresent;
     private static bool _textDecorationsPresentSet;
     /// <summary>
     /// Is TextDecorations available in this version of WinUI?
@@ -650,18 +648,18 @@ public static class TextBlockExtensions
         get
         {
             if (_textDecorationsPresentSet)
-                return _textDecorationsPresent;
+                return field;
 
             try
             {
-                _textDecorationsPresent = TestTextDecorations();
+                field = TestTextDecorations();
             }
             catch (Exception)
             {
-                _textDecorationsPresent = false;
+                field = false;
             }
             _textDecorationsPresentSet = true;
-            return _textDecorationsPresent;
+            return field;
         }
     }
 

@@ -9,39 +9,36 @@ internal abstract class Span : NotifiableObject.FieldBackedNotifiablePropertyObj
 {
 
     #region Properties
-    
-    private string _key;
+
     /// <summary>
     /// Span Key
     /// </summary>
     public string Key
     {
-        get => _key;
-        internal set => SetField(ref _key, value);
+        get;
+        protected set => SetField(ref field, value);
     }
-    
-    
-    private int _start;
+
+
     /// <summary>
     /// Gets or sets the span's start.
     /// </summary>
     /// <value>The start.</value>
     public int Start
     {
-        get => _start;
-        set => SetField(ref _start, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     // use int.MaxValue to indicate that the span is unterminated (goes to the end of the string)
-    private int _end;
     /// <summary>
     /// Gets or sets the span's end.
     /// </summary>
     /// <value>The end.</value>
     public int End
     {
-        get => _end;
-        set => SetField(ref _end, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     /// <summary>
@@ -52,31 +49,30 @@ internal abstract class Span : NotifiableObject.FieldBackedNotifiablePropertyObj
     {
         get
         {
-            if (_end == int.MaxValue)
+            if (End == int.MaxValue)
                 return int.MaxValue;
 
-            return _end - _start + 1;
+            return End - Start + 1;
         }
         set
         {
-            if (_end - _start + 1 == value)
+            if (End - Start + 1 == value)
                 return;
             if (value == int.MaxValue)
-                _end = int.MaxValue;
+                End = int.MaxValue;
             else
-                _end = _start + value - 1;
+                End = Start + value - 1;
             OnPropertyChanged(nameof(End));
         }
     }
 
-    private string _id;
     /// <summary>
     /// Id attribute
     /// </summary>
     public string Id
     {
-        get => _id;
-        protected set => SetField(ref _id, value);
+        get;
+        protected set => SetField(ref field, value);
     }
     #endregion
 
@@ -95,10 +91,10 @@ internal abstract class Span : NotifiableObject.FieldBackedNotifiablePropertyObj
         // TODO: If this works, can remove Key setting from all derived classes
         if (key.EndsWith("Span"))
             key = key[..^"Span".Length];
-        _key = key;
-        _id = id;
-        _start = start;
-        _end = end;
+        Key = key;
+        Id = id;
+        Start = start;
+        End = end;
     }
     #endregion
 
@@ -140,8 +136,8 @@ internal abstract class Span : NotifiableObject.FieldBackedNotifiablePropertyObj
             return true;
 
         return Key == other.Key && 
-               _start == other._start && 
-               _end == other._end;
+               Start == other.Start && 
+               End == other.End;
     }
 
     public override bool Equals(object? obj)

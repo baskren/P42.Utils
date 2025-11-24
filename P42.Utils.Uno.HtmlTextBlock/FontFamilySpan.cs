@@ -8,16 +8,14 @@ internal class FontFamilySpan : Span, ICopiable<FontFamilySpan>
 {
     internal const string SpanKey = "FontFamily";
 
-    private FontFamily? _fontFamily;
-
     /// <summary>
     /// Gets or sets the name of the font family -OR- resource ID or embedded resource font.
     /// </summary>
     /// <value>The name of the font family.</value>
     public FontFamily? FontFamily
     {
-        get => _fontFamily; 
-        set => SetField(ref _fontFamily, value);
+        get;
+        private set => SetField(ref field, value);
     }
 
     /// <summary>
