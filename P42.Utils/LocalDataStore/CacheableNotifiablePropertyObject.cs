@@ -10,8 +10,6 @@ namespace P42.Utils;
 /// </summary>
 public class CacheableNotifiablePropertyObject : SelfBackedNotifiablePropertyObject
 {
-    
-    private string? _instanceIdentifier;
     /// <summary>
     /// Unique name given to object instance, required recall values in later app session.
     /// </summary>
@@ -19,17 +17,17 @@ public class CacheableNotifiablePropertyObject : SelfBackedNotifiablePropertyObj
     /// <exception cref="Exception"></exception>
     public string InstanceIdentifier
     {
-        get => _instanceIdentifier ?? throw new ArgumentNullException(nameof(InstanceIdentifier));
+        get => field ?? throw new ArgumentNullException(nameof(InstanceIdentifier));
         protected set
         {
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
 
-            if (value == _instanceIdentifier) return;
+            if (value == field) return;
 
-            if (!string.IsNullOrWhiteSpace(_instanceIdentifier))
+            if (!string.IsNullOrWhiteSpace(field))
                 throw new Exception($"Cannot change InstanceIdentifier of {GetType().Name}");
 
-            _instanceIdentifier = value;
+            field = value;
         }
     }
 

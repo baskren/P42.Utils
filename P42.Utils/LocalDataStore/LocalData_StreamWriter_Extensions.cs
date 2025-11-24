@@ -9,44 +9,46 @@ public static class LocalDataStreamWriterExtensions
 
     #region StreamWriter
 
-    /// <summary>
-    /// StreamWriter for LocalData.Item
-    /// </summary>
     /// <param name="item"></param>
-    /// <returns></returns>
-    public static StreamWriter StreamWriter(this Item item)
+    extension(Item item)
     {
-        LocalData.Semaphore.Wait();
-        try
+        /// <summary>
+        /// StreamWriter for LocalData.Item
+        /// </summary>
+        /// <returns></returns>
+        public StreamWriter StreamWriter()
         {
-            return new StreamWriter(item.FullPath);
-        }
-        finally 
-        {
-            LocalData.Semaphore.Release();
+            LocalData.Semaphore.Wait();
+            try
+            {
+                return new StreamWriter(item.FullPath);
+            }
+            finally 
+            {
+                LocalData.Semaphore.Release();
+            }
+
         }
 
-    }
-
-    /// <summary>
-    /// Tries to get StreamWriter for LocalData.Item
-    /// </summary>
-    /// <param name="item"></param>
-    /// <param name="reader"></param>
-    /// <returns>false if item is not already in cache</returns>
-    public static bool TryStreamWriter(this Item item, [MaybeNullWhen(false)] out StreamWriter reader)
-    {
-        try
+        /// <summary>
+        /// Tries to get StreamWriter for LocalData.Item
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns>false if item is not already in cache</returns>
+        public bool TryStreamWriter([MaybeNullWhen(false)] out StreamWriter reader)
         {
-            reader = item.StreamWriter();
-            return true;
-        }
-        catch (Exception)
-        {
-            reader = null;
-            return false;
-        }
+            try
+            {
+                reader = item.StreamWriter();
+                return true;
+            }
+            catch (Exception)
+            {
+                reader = null;
+                return false;
+            }
         
+        }
     }
 
     #endregion

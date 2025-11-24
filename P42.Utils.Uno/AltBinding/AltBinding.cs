@@ -362,8 +362,7 @@ internal class AltBinding : IDisposable
         {
             if (_onSourceDependencyPropertyChangedIndex > -1)
                 SourceDependencyObject?.UnregisterPropertyChangedCallback(_sourceProperty, _onSourceDependencyPropertyChangedIndex);
-            if (SourceNotifyPropertyChanged is { } source)
-                source.PropertyChanged -= OnSourceNotifyPropertyChanged;
+            SourceNotifyPropertyChanged?.PropertyChanged -= OnSourceNotifyPropertyChanged;
         }
 
         if (!_targetFailed)

@@ -9,102 +9,108 @@ public static class LocalDataStreamReaderExtensions
 
     #region StreamReader
 
-    /// <summary>
-    /// StreamReader for LocalData.Item
-    /// </summary>
     /// <param name="item"></param>
-    /// <returns></returns>
-    public static StreamReader StreamReader(this Item item)
+    extension(Item item)
     {
-        LocalData.Semaphore.Wait();
-        try
+        /// <summary>
+        /// StreamReader for LocalData.Item
+        /// </summary>
+        /// <returns></returns>
+        public StreamReader StreamReader()
         {
-            return new StreamReader(item.FullPath);
+            LocalData.Semaphore.Wait();
+            try
+            {
+                return new StreamReader(item.FullPath);
+            }
+            finally { LocalData.Semaphore.Release(); }
         }
-        finally { LocalData.Semaphore.Release(); }
-    }
 
-    /// <summary>
-    /// Tries to get StreamReader for LocalData.Item
-    /// </summary>
-    /// <param name="item"></param>
-    /// <param name="reader"></param>
-    /// <returns>false if item is not already in cache</returns>
-    public static bool TryStreamReader(this Item item, [MaybeNullWhen(false)] out StreamReader reader)
-    {
-        reader = null;
-        if (!item.IsFile)
-            return false;
+        /// <summary>
+        /// Tries to get StreamReader for LocalData.Item
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns>false if item is not already in cache</returns>
+        // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Global
+        public bool TryStreamReader([MaybeNullWhen(false)] out StreamReader reader)
+        {
+            reader = null;
+            if (!item.IsFile)
+                return false;
         
-        try
-        {
-            reader = item.StreamReader();
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+            try
+            {
+                reader = item.StreamReader();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         
-    }
-
-    /// <summary>
-    /// Get StreamReader, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<StreamReader> AssureExistsStreamReaderAsync(this AsynchronousSourcedItem item)
-    {
-        await item.AssureExistsAsync();
-        return StreamReader(item);
-    }
-
-    /// <summary>
-    /// Get StreamReader, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static StreamReader AssureExistsStreamReader(this SynchronousSourcedItem item)
-    {
-        item.AssureExists();
-        return StreamReader(item);
-    }
-
-
-    /// <summary>
-    /// Try to get StreamReader, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns>null on fail</returns>
-    public static async Task<StreamReader?> TryAssureExistsStreamReaderAsync(this AsynchronousSourcedItem item)
-    {
-        try
-        {
-            return await item.AssureExistsStreamReaderAsync();
         }
-        catch (Exception)
+    }
+
+    /// <param name="item"></param>
+    extension(AsynchronousSourcedItem item)
+    {
+        /// <summary>
+        /// Get StreamReader, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public async Task<StreamReader> AssureExistsStreamReaderAsync()
         {
-            return null;
+            await item.AssureExistsAsync();
+            return StreamReader(item);
         }
+
+        /// <summary>
+        /// Try to get StreamReader, pulling from source if not stored locally
+        /// </summary>
+        /// <returns>null on fail</returns>
+        public async Task<StreamReader?> TryAssureExistsStreamReaderAsync()
+        {
+            try
+            {
+                return await item.AssureExistsStreamReaderAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         
+        }
     }
 
-    /// <summary>
-    /// Try to get StreamReader, pulling from source if not stored locally
-    /// </summary>
     /// <param name="item"></param>
-    /// <returns>null on fail</returns>
-    public static StreamReader? TryAssureExistsStreamReader(this SynchronousSourcedItem item)
+    extension(SynchronousSourcedItem item)
     {
-        try
+        /// <summary>
+        /// Get StreamReader, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public StreamReader AssureExistsStreamReader()
         {
-            return item.AssureExistsStreamReader();
+            item.AssureExists();
+            return StreamReader(item);
         }
-        catch (Exception)
+
+        /// <summary>
+        /// Try to get StreamReader, pulling from source if not stored locally
+        /// </summary>
+        /// <returns>null on fail</returns>
+        public StreamReader? TryAssureExistsStreamReader()
         {
-            return null;
-        }
+            try
+            {
+                return item.AssureExistsStreamReader();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         
+        }
     }
 
     #endregion

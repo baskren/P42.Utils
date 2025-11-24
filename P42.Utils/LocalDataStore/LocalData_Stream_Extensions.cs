@@ -9,214 +9,212 @@ public static class LocalDataStreamExtensions
 
     #region Stream
 
-    /// <summary>
-    /// Get stream for item in local data store
-    /// </summary>
     /// <param name="item"></param>
-    /// <param name="fileMode"></param>
-    /// <returns></returns>
-    public static Stream Stream(this Item item, FileMode fileMode)
+    extension(Item item)
     {
-        LocalData.Semaphore.Wait();
-        try
+        /// <summary>
+        /// Get stream for item in local data store
+        /// </summary>
+        /// <param name="fileMode"></param>
+        /// <returns></returns>
+        public Stream Stream(FileMode fileMode)
         {
-            return File.Open(item.FullPath, fileMode);
-        }
-        finally { LocalData.Semaphore.Release(); }
+            LocalData.Semaphore.Wait();
+            try
+            {
+                return File.Open(item.FullPath, fileMode);
+            }
+            finally { LocalData.Semaphore.Release(); }
 
+        }
+
+        /// <summary>
+        /// Tries to get stream for item in local data store
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileMode"></param>
+        /// <returns>false if item is not already in local data store</returns>
+        public bool TryStream([MaybeNullWhen(false)] out Stream stream, FileMode fileMode)
+        {
+            try
+            {
+                stream = item.Stream(fileMode);
+                return true;
+            }
+            catch (Exception)
+            {
+                stream = null;
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// StoreItem in LocalData store
+        /// </summary>
+        /// <param name="sourceItem"></param>
+        /// <param name="wipeOld"></param>
+        /// <exception cref="IOException"></exception>
+        public void StoreStream(Stream? sourceItem, bool wipeOld = true)
+        {
+            var file = item.File();
+            if (!file.WritePossible(wipeOld))
+                throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
+
+            LocalData.Semaphore.Wait();
+
+            try
+            {
+                if (file.Exists && wipeOld)
+                    file.Delete();
+
+                if (sourceItem is null)
+                    return;
+
+                item.AssureExistsParentDirectory();
+                using var fileStream = file.OpenWrite();
+                sourceItem.CopyTo(fileStream);
+            }
+            finally
+            {
+                LocalData.Semaphore.Release();
+            }
+
+        }
+
+        /// <summary>
+        /// Store sourceItem in LocalData store
+        /// </summary>
+        /// <param name="sourceItem"></param>
+        /// <param name="wipeOld"></param>
+        public async Task StoreStreamAsync(Stream? sourceItem, bool wipeOld = true)
+        {
+            var file = item.File();
+            if (!file.WritePossible(wipeOld))
+                throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
+
+            await LocalData.Semaphore.WaitAsync();
+
+            try
+            {
+                if (file.Exists && wipeOld)
+                    file.Delete();
+
+                if (sourceItem is null)
+                    return;
+
+                item.AssureExistsParentDirectory();
+                await using var fileStream = file.OpenWrite();
+                await sourceItem.CopyToAsync(fileStream);
+            }
+            finally
+            {
+                LocalData.Semaphore.Release();
+            }
+
+        }
+
+        /// <summary>
+        /// Puts an sourceItem in local data store (null clears out the sourceItem)
+        /// </summary>
+        /// <param name="sourceItem">null to clear</param>
+        /// <param name="wipeOld"></param>
+        /// <returns>true on success</returns>
+        public bool TryStoreStream(Stream sourceItem, bool wipeOld = true)
+        {
+            try
+            {
+                item.StoreStream(sourceItem, wipeOld);
+                return true;
+            }
+            catch (Exception) 
+            { 
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Puts an sourceItem in local data store (null clears out the sourceItem)
+        /// </summary>
+        /// <param name="sourceItem">null to clear</param>
+        /// <param name="wipeOld"></param>
+        /// <returns>true on success</returns>
+        public async Task<bool> TryStoreStreamAsync(Stream sourceItem, bool wipeOld = true)
+        {
+            try
+            {
+                await item.StoreStreamAsync(sourceItem, wipeOld);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
     }
 
-    /// <summary>
-    /// Tries to get stream for item in local data store
-    /// </summary>
-    /// <param name="stream"></param>
     /// <param name="item"></param>
-    /// <param name="fileMode"></param>
-    /// <returns>false if item is not already in local data store</returns>
-    public static bool TryStream(this Item item, [MaybeNullWhen(false)] out Stream stream, FileMode fileMode)
+    extension(AsynchronousSourcedItem item)
     {
-        try
+        /// <summary>
+        /// Get Stream, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Stream> AssureExistsStreamAsync()
         {
-            stream = item.Stream(fileMode);
-            return true;
-        }
-        catch (Exception)
-        {
-            stream = null;
-            return false;
+            await item.AssureExistsAsync();
+            return item.Stream(FileMode.Open);
         }
 
-    }
-
-    /// <summary>
-    /// Get Stream, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<Stream> AssureExistsStreamAsync(this AsynchronousSourcedItem item)
-    {
-        await item.AssureExistsAsync();
-        return item.Stream(FileMode.Open);
-    }
-
-    /// <summary>
-    /// Get Stream, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static Stream AssureExistsStream(this SynchronousSourcedItem item)
-    {
-        item.AssureExists();
-        return item.Stream(FileMode.Open);
-    }
-
-
-    /// <summary>
-    /// Try to get Stream, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<Stream?> TryAssureExistsStreamAsync(this AsynchronousSourcedItem item)
-    {
-        try
+        /// <summary>
+        /// Try to get Stream, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Stream?> TryAssureExistsStreamAsync()
         {
-            return await item.AssureExistsStreamAsync();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+            try
+            {
+                return await item.AssureExistsStreamAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         
+        }
     }
 
-    /// <summary>
-    /// Try to get Stream, pulling from source if not stored locally
-    /// </summary>
     /// <param name="item"></param>
-    /// <returns></returns>
-    public static Stream? TryAssureExistsStream(this SynchronousSourcedItem item)
+    extension(SynchronousSourcedItem item)
     {
-        try
+        /// <summary>
+        /// Get Stream, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public Stream AssureExistsStream()
         {
-            return item.AssureExistsStream();
+            item.AssureExists();
+            return item.Stream(FileMode.Open);
         }
-        catch (Exception)
+
+        /// <summary>
+        /// Try to get Stream, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public Stream? TryAssureExistsStream()
         {
-            return null;
-        }
+            try
+            {
+                return item.AssureExistsStream();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         
-    }
-
-
-
-    /// <summary>
-    /// StoreItem in LocalData store
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <exception cref="IOException"></exception>
-    public static void StoreStream(this Item item, Stream? sourceItem, bool wipeOld = true)
-    {
-        var file = item.File();
-        if (!file.WritePossible(wipeOld))
-            throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
-
-        LocalData.Semaphore.Wait();
-
-        try
-        {
-            if (file.Exists && wipeOld)
-                file.Delete();
-
-            if (sourceItem is null)
-                return;
-
-            item.AssureExistsParentDirectory();
-            using var fileStream = file.OpenWrite();
-            sourceItem.CopyTo(fileStream);
         }
-        finally
-        {
-            LocalData.Semaphore.Release();
-        }
-
-    }
-
-    /// <summary>
-    /// Store sourceItem in LocalData store
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    public static async Task StoreStreamAsync(this Item item, Stream? sourceItem, bool wipeOld = true)
-    {
-        var file = item.File();
-        if (!file.WritePossible(wipeOld))
-            throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
-
-        await LocalData.Semaphore.WaitAsync();
-
-        try
-        {
-            if (file.Exists && wipeOld)
-                file.Delete();
-
-            if (sourceItem is null)
-                return;
-
-            item.AssureExistsParentDirectory();
-            await using var fileStream = file.OpenWrite();
-            await sourceItem.CopyToAsync(fileStream);
-        }
-        finally
-        {
-            LocalData.Semaphore.Release();
-        }
-
-    }
-
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <returns>true on success</returns>
-    public static bool TryStoreStream(this Item item, Stream sourceItem, bool wipeOld = true)
-    {
-        try
-        {
-            item.StoreStream(sourceItem, wipeOld);
-            return true;
-        }
-        catch (Exception) 
-        { 
-            return false;
-        }
-
-    }
-
-
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <returns>true on success</returns>
-    public static async Task<bool> TryStoreStreamAsync(this Item item, Stream sourceItem, bool wipeOld = true)
-    {
-        try
-        {
-            await item.StoreStreamAsync(sourceItem, wipeOld);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-
     }
 
     #endregion

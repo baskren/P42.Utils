@@ -7,7 +7,7 @@ using P42.Serilog.QuickLog;
 namespace P42.Utils.Uno;
 
 /// <summary>
-/// 
+/// Alternative Binding (in case something wierd is going on with Uno Binding)
 /// </summary>
 public static class AltBindingExtensions
 {
@@ -17,48 +17,51 @@ public static class AltBindingExtensions
     private static readonly DependencyProperty P42BindingsProperty = DependencyProperty.RegisterAttached("P42Bindings", typeof(AltBindingCollection), typeof(AltBindingExtensions), new PropertyMetadata(null));
 
     // ReSharper disable once UnusedMember.Local
-    private static DependencyObject SetAltBindings(this DependencyObject dependencyObject, AltBindingCollection value)
+    extension(DependencyObject dependencyObject)
     {
-        dependencyObject.SetValue(P42BindingsProperty, value);
-        return dependencyObject;
-    }
+        private DependencyObject SetAltBindings(AltBindingCollection value)
+        {
+            dependencyObject.SetValue(P42BindingsProperty, value);
+            return dependencyObject;
+        }
 
-    private static AltBindingCollection GetAltBindings(this DependencyObject dependencyObject)
-    {
-        if ((AltBindingCollection)dependencyObject.GetValue(P42BindingsProperty) is { } bindingCollection)
+        private AltBindingCollection GetAltBindings()
+        {
+            if ((AltBindingCollection)dependencyObject.GetValue(P42BindingsProperty) is { } bindingCollection)
+                return bindingCollection;
+
+            bindingCollection = [];
+            dependencyObject.SetValue(P42BindingsProperty, bindingCollection);
             return bindingCollection;
-
-        bindingCollection = [];
-        dependencyObject.SetValue(P42BindingsProperty, bindingCollection);
-        return bindingCollection;
+        }
     }
 
-    private static void CheckArguments<TBindable>(
-        this TBindable target, 
-        DependencyProperty targetProperty, 
-        object? source, 
-        string? sourcePropertyName, 
-        IValueConverter? converter, 
-        object? converterParameter, 
-        string? converterLanguage, 
-        string filePath, 
-        int lineNumber) where TBindable : DependencyObject
+    extension<TBindable>(TBindable target) where TBindable : DependencyObject
     {
-        try
+        private void CheckArguments(DependencyProperty targetProperty, 
+            object? source, 
+            string? sourcePropertyName, 
+            IValueConverter? converter, 
+            object? converterParameter, 
+            string? converterLanguage, 
+            string filePath, 
+            int lineNumber)
         {
-            CheckProperty(target, targetProperty, filePath, lineNumber);
-
-
-            if (source is null)
+            try
             {
-                //var msg = $"BIND: Source is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
-                //Console.WriteLine(msg);
-                //Debug.WriteLine(msg);
-                return;
-            }
+                CheckProperty(target, targetProperty, filePath, lineNumber);
 
-            var targetPropertyType = target.GetValue(targetProperty)?.GetType();
-            /*    
+
+                if (source is null)
+                {
+                    //var msg = $"BIND: Source is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
+                    //Console.WriteLine(msg);
+                    //Debug.WriteLine(msg);
+                    return;
+                }
+
+                var targetPropertyType = target.GetValue(targetProperty)?.GetType();
+                /*    
 #if HAS_UNO
             var dependencyPropertyType = typeof(DependencyProperty);
             //var targetPropertyNameField = dependencyPropertyType.GetField("_name", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -70,61 +73,59 @@ public static class AltBindingExtensions
             var targetPropertyType = target.GetValue(targetProperty)?.GetType();
 #endif
             */
-            if (targetPropertyType is null)
-            {
-                //var msg = $"BIND: Target Property is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
-                //Console.WriteLine(msg);
-                //Debug.WriteLine(msg);
-                return;
-            }
+                if (targetPropertyType is null)
+                {
+                    //var msg = $"BIND: Target Property is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
+                    //Console.WriteLine(msg);
+                    //Debug.WriteLine(msg);
+                    return;
+                }
 
-            var sourceClassType = source.GetType();
-            var sourceValueType = sourceClassType;
-            var sourceLabel = sourceClassType.ToString();
-            if (sourcePropertyName is not null)
-            {
-                sourceValueType = sourceClassType.GetProperties().FirstOrDefault(p => p.Name == sourcePropertyName)?.PropertyType;
-                if (sourceValueType is null)
-                    throw new ArgumentNullException($"No property found at {sourceClassType}.{sourcePropertyName}.  {filePath}:{lineNumber}");
-                sourceLabel = $"{sourceClassType}.{sourcePropertyName}";
-            }
+                var sourceClassType = source.GetType();
+                var sourceValueType = sourceClassType;
+                var sourceLabel = sourceClassType.ToString();
+                if (sourcePropertyName is not null)
+                {
+                    sourceValueType = sourceClassType.GetProperties().FirstOrDefault(p => p.Name == sourcePropertyName)?.PropertyType;
+                    if (sourceValueType is null)
+                        throw new ArgumentNullException($"No property found at {sourceClassType}.{sourcePropertyName}.  {filePath}:{lineNumber}");
+                    sourceLabel = $"{sourceClassType}.{sourcePropertyName}";
+                }
 
-            if (converter is not null)
-            {
-                var sourceDefaultValue = sourceValueType.IsValueType
-                    ? Activator.CreateInstance(sourceValueType)
-                    : null;
+                if (converter is not null)
+                {
+                    var sourceDefaultValue = sourceValueType.IsValueType
+                        ? Activator.CreateInstance(sourceValueType)
+                        : null;
 
-                var converterDefaultValue = converter.Convert(sourceDefaultValue, targetPropertyType, converterParameter, converterLanguage);
-                CheckTypeMatch(targetPropertyType, converterDefaultValue.GetType(), "TargetProperty", "Converter result", filePath, lineNumber);
+                    var converterDefaultValue = converter.Convert(sourceDefaultValue, targetPropertyType, converterParameter, converterLanguage);
+                    CheckTypeMatch(targetPropertyType, converterDefaultValue.GetType(), "TargetProperty", "Converter result", filePath, lineNumber);
+                }
+                else
+                    CheckTypeMatch(targetPropertyType, sourceValueType, "TargetProperty", sourceLabel, filePath, lineNumber);
             }
-            else
-                CheckTypeMatch(targetPropertyType, sourceValueType, "TargetProperty", sourceLabel, filePath, lineNumber);
+            catch (Exception ex)
+            {
+                QLog.Debug(ex);
+            }
         }
-        catch (Exception ex)
-        {
-            QLog.Debug(ex);
-        }
-    }
 
-    private static void CheckArguments<TBindable>(
-        this TBindable target, 
-        DependencyProperty targetProperty, 
-        DependencyObject source, 
-        DependencyProperty sourceProperty, 
-        IValueConverter? converter, 
-        object? converterParameter, 
-        string? converterLanguage, 
-        string filePath, 
-        int lineNumber) where TBindable : DependencyObject
-    {
-        try
+        private void CheckArguments(DependencyProperty targetProperty, 
+            DependencyObject source, 
+            DependencyProperty sourceProperty, 
+            IValueConverter? converter, 
+            object? converterParameter, 
+            string? converterLanguage, 
+            string filePath, 
+            int lineNumber)
         {
-            CheckProperty(target, targetProperty, filePath, lineNumber);
-            CheckProperty(source, sourceProperty, filePath, lineNumber);
+            try
+            {
+                CheckProperty(target, targetProperty, filePath, lineNumber);
+                CheckProperty(source, sourceProperty, filePath, lineNumber);
 
-            var targetPropertyType = target.GetValue(targetProperty)?.GetType();
-            /*    
+                var targetPropertyType = target.GetValue(targetProperty)?.GetType();
+                /*    
 #if HAS_UNO
             var dependencyPropertyType = typeof(DependencyProperty);
             //var targetPropertyNameField = dependencyPropertyType.GetField("_name", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -136,40 +137,41 @@ public static class AltBindingExtensions
             var targetPropertyType = target.GetValue(targetProperty)?.GetType();
 #endif
             */
-            if (targetPropertyType is null)
-            {
-                //var msg = $"BIND: Target Property is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
-                //Console.WriteLine(msg);
-                //Debug.WriteLine(msg);
-                return;
-            }
+                if (targetPropertyType is null)
+                {
+                    //var msg = $"BIND: Target Property is null when Bind() is called.  Cannot check if Target Property type matches Source Property type.";
+                    //Console.WriteLine(msg);
+                    //Debug.WriteLine(msg);
+                    return;
+                }
 
-            var sourceClassType = source.GetType();
-            var sourceValueType = sourceClassType;
-            var sourceLabel = sourceClassType.ToString();
+                var sourceClassType = source.GetType();
+                var sourceValueType = sourceClassType;
+                var sourceLabel = sourceClassType.ToString();
             
-            var sourcePropertyType = source.GetValue(sourceProperty)?.GetType();
-            if (sourcePropertyType is null)
-                return;
+                var sourcePropertyType = source.GetValue(sourceProperty)?.GetType();
+                if (sourcePropertyType is null)
+                    return;
             
-            if (converter is not null)
-            {
-                var sourceDefaultValue = sourcePropertyType.IsValueType
-                    ? Activator.CreateInstance(sourceValueType)
-                    : null;
+                if (converter is not null)
+                {
+                    var sourceDefaultValue = sourcePropertyType.IsValueType
+                        ? Activator.CreateInstance(sourceValueType)
+                        : null;
 
-                var converterDefaultValue = converter.Convert(sourceDefaultValue, targetPropertyType, converterParameter, converterLanguage);
-                CheckTypeMatch(targetPropertyType, converterDefaultValue.GetType(), "TargetProperty", "Converter result", filePath, lineNumber);
+                    var converterDefaultValue = converter.Convert(sourceDefaultValue, targetPropertyType, converterParameter, converterLanguage);
+                    CheckTypeMatch(targetPropertyType, converterDefaultValue.GetType(), "TargetProperty", "Converter result", filePath, lineNumber);
+                }
+                else
+                    CheckTypeMatch(targetPropertyType, sourcePropertyType, "TargetProperty", sourceLabel, filePath, lineNumber);
             }
-            else
-                CheckTypeMatch(targetPropertyType, sourcePropertyType, "TargetProperty", sourceLabel, filePath, lineNumber);
-        }
-        catch (Exception ex)
-        {
-            QLog.Debug(ex);
+            catch (Exception ex)
+            {
+                QLog.Debug(ex);
+            }
         }
     }
-    
+
 #if !WINDOWS
     private static FieldInfo? _flagsAttachedField;
 #endif
@@ -279,216 +281,202 @@ public static class AltBindingExtensions
     }
 
 
+    /// <param name="target"></param>
+    /// <typeparam name="TBindable"></typeparam>
+    extension<TBindable>(TBindable target) where TBindable : DependencyObject
+    {
+        /// <summary>
+        /// Unbind AltBinding
+        /// </summary>
+        /// <param name="targetProperty"></param>
+        /// <returns></returns>
+        // ReSharper disable once UnusedMethodReturnValue.Global
+        public TBindable AltUnbind(DependencyProperty targetProperty )
+        {
+            target.GetAltBindings().RemoveIf(b => b.TargetProperty == targetProperty);
+            return target;
+        }
+
+        /// <summary>
+        /// Work-around binding of a property of a DependencyObject to a property of a INotifiableProperty that is not a FrameworkElement
+        /// </summary>
+        /// <param name="targetProperty"></param>
+        /// <param name="source"></param>
+        /// <param name="sourcePropertyName"></param>
+        /// <param name="mode"></param>
+        /// <param name="converter"></param>
+        /// <param name="converterParameter"></param>
+        /// <param name="converterLanguage"></param>
+        /// <param name="updateSourceTrigger"></param>
+        /// <param name="targetNullValue"></param>
+        /// <param name="fallbackValue"></param>
+        /// <param name="filePath"></param>
+        /// <param name="lineNumber"></param>
+        /// <returns></returns>
+        public TBindable AltBind(DependencyProperty targetProperty,
+            INotifyPropertyChanged source,
+            string sourcePropertyName,
+            BindingMode mode = BindingMode.OneWay,
+            IValueConverter? converter = null,
+            object? converterParameter = null,
+            string? converterLanguage = null,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
+            object? targetNullValue = null,
+            object? fallbackValue = null, 
+            [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
+        )
+        {
+            CheckArguments(target, targetProperty, source, sourcePropertyName, converter, converterParameter, converterLanguage, filePath, lineNumber);
         
-    /// <summary>
-    /// Unbind AltBinding
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="targetProperty"></param>
-    /// <typeparam name="TBindable"></typeparam>
-    /// <returns></returns>
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public static TBindable AltUnbind<TBindable>(this TBindable target, DependencyProperty targetProperty ) where TBindable : DependencyObject
-    {
-        target.GetAltBindings().RemoveIf(b => b.TargetProperty == targetProperty);
-        return target;
-    }
+            var bindings = target.GetAltBindings();
+            if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
+                bindings.Remove(oldBinding);
 
-    /// <summary>
-    /// Work-around binding of a property of a DependencyObject to a property of a INotifiableProperty that is not a FrameworkElement
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="targetProperty"></param>
-    /// <param name="source"></param>
-    /// <param name="sourcePropertyName"></param>
-    /// <param name="mode"></param>
-    /// <param name="converter"></param>
-    /// <param name="converterParameter"></param>
-    /// <param name="converterLanguage"></param>
-    /// <param name="updateSourceTrigger"></param>
-    /// <param name="targetNullValue"></param>
-    /// <param name="fallbackValue"></param>
-    /// <param name="filePath"></param>
-    /// <param name="lineNumber"></param>
-    /// <typeparam name="TBindable"></typeparam>
-    /// <returns></returns>
-    public static TBindable AltBind<TBindable>(
-        this TBindable target,
-        DependencyProperty targetProperty,
-        INotifyPropertyChanged source,
-        string sourcePropertyName,
-        BindingMode mode = BindingMode.OneWay,
-        IValueConverter? converter = null,
-        object? converterParameter = null,
-        string? converterLanguage = null,
-        UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
-        object? targetNullValue = null,
-        object? fallbackValue = null, 
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
-    ) where TBindable : DependencyObject
-    {
-        CheckArguments(target, targetProperty, source, sourcePropertyName, converter, converterParameter, converterLanguage, filePath, lineNumber);
+            var binding = new AltBinding
+            (
+                target, targetProperty,
+                source, sourcePropertyName,
+                mode,
+                converter, converterParameter, converterLanguage,
+                updateSourceTrigger,
+                targetNullValue, fallbackValue,
+                filePath, lineNumber
+            );
+
+            bindings.Add(binding);
+            return target;
+
+        }
+
+        /// <summary>
+        /// Work-around binding of a property of a DependencyObject to a property of another DependencyObject
+        /// </summary>
+        /// <param name="targetProperty"></param>
+        /// <param name="source"></param>
+        /// <param name="sourceProperty"></param>
+        /// <param name="mode"></param>
+        /// <param name="converter"></param>
+        /// <param name="converterParameter"></param>
+        /// <param name="converterLanguage"></param>
+        /// <param name="updateSourceTrigger"></param>
+        /// <param name="targetNullValue"></param>
+        /// <param name="fallbackValue"></param>
+        /// <param name="filePath"></param>
+        /// <param name="lineNumber"></param>
+        /// <returns></returns>
+        public TBindable AltBind(DependencyProperty targetProperty,
+            DependencyObject source,
+            DependencyProperty sourceProperty,
+            BindingMode mode = BindingMode.OneWay,
+            IValueConverter? converter = null,
+            object? converterParameter = null,
+            string? converterLanguage = null,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
+            object? targetNullValue = null,
+            object? fallbackValue = null, 
+            [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
+        )
+        {
+            CheckArguments(target, targetProperty, source, sourceProperty, converter, converterParameter, converterLanguage, filePath, lineNumber);
         
-        var bindings = target.GetAltBindings();
-        if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
-            bindings.Remove(oldBinding);
+            var bindings = target.GetAltBindings();
+            if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
+                bindings.Remove(oldBinding);
 
-        var binding = new AltBinding
-        (
-            target, targetProperty,
-            source, sourcePropertyName,
-            mode,
-            converter, converterParameter, converterLanguage,
-            updateSourceTrigger,
-            targetNullValue, fallbackValue,
-            filePath, lineNumber
-        );
+            var binding = new AltBinding
+            (
+                target, targetProperty,
+                source, sourceProperty,
+                mode,
+                converter, converterParameter, converterLanguage,
+                updateSourceTrigger,
+                targetNullValue, fallbackValue,
+                filePath, lineNumber
+            );
 
-        bindings.Add(binding);
-        return target;
+            bindings.Add(binding);
+            return target;
+        }
 
-    }
+        /// <summary>
+        /// Work-around binding of a property of a DependencyObject to a property of another DependencyObject
+        /// </summary>
+        /// <param name="targetProperty"></param>
+        /// <param name="source"></param>
+        /// <param name="sourceProperty"></param>
+        /// <param name="mode"></param>
+        /// <param name="convert"></param>
+        /// <param name="convertBack"></param>
+        /// <param name="converterParameter"></param>
+        /// <param name="converterLanguage"></param>
+        /// <param name="updateSourceTrigger"></param>
+        /// <param name="targetNullValue"></param>
+        /// <param name="fallbackValue"></param>
+        /// <param name="filePath"></param>
+        /// <param name="lineNumber"></param>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDest"></typeparam>
+        /// <returns></returns>
+        // ReSharper disable once UnusedMethodReturnValue.Global
+        public TBindable AltBind<TSource, TDest>(DependencyProperty targetProperty,
+            DependencyObject source,
+            DependencyProperty sourceProperty,
+            BindingMode mode = BindingMode.OneWay,
+            Func<TSource?, TDest?>? convert = null,
+            Func<TDest?, TSource?>? convertBack = null,
+            object? converterParameter = null,
+            string? converterLanguage = null,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
+            object? targetNullValue = null,
+            object? fallbackValue = null, 
+            [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
+        )
+        {
+            IValueConverter? converter = null;
+            if (convert is not null || convertBack is not null)
+                converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
+            return AltBind(target, targetProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        }
 
-    /// <summary>
-    /// Work-around binding of a property of a DependencyObject to a property of another DependencyObject
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="targetProperty"></param>
-    /// <param name="source"></param>
-    /// <param name="sourceProperty"></param>
-    /// <param name="mode"></param>
-    /// <param name="converter"></param>
-    /// <param name="converterParameter"></param>
-    /// <param name="converterLanguage"></param>
-    /// <param name="updateSourceTrigger"></param>
-    /// <param name="targetNullValue"></param>
-    /// <param name="fallbackValue"></param>
-    /// <param name="filePath"></param>
-    /// <param name="lineNumber"></param>
-    /// <typeparam name="TBindable"></typeparam>
-    /// <returns></returns>
-    public static TBindable AltBind<TBindable>(
-        this TBindable target,
-        DependencyProperty targetProperty,
-        DependencyObject source,
-        DependencyProperty sourceProperty,
-        BindingMode mode = BindingMode.OneWay,
-        IValueConverter? converter = null,
-        object? converterParameter = null,
-        string? converterLanguage = null,
-        UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
-        object? targetNullValue = null,
-        object? fallbackValue = null, 
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
-    ) where TBindable : DependencyObject
-    {
-        CheckArguments(target, targetProperty, source, sourceProperty, converter, converterParameter, converterLanguage, filePath, lineNumber);
-        
-        var bindings = target.GetAltBindings();
-        if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
-            bindings.Remove(oldBinding);
-
-        var binding = new AltBinding
-        (
-            target, targetProperty,
-            source, sourceProperty,
-            mode,
-            converter, converterParameter, converterLanguage,
-            updateSourceTrigger,
-            targetNullValue, fallbackValue,
-            filePath, lineNumber
-        );
-
-        bindings.Add(binding);
-        return target;
-    }
-
-    /// <summary>
-    /// Work-around binding of a property of a DependencyObject to a property of another DependencyObject
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="targetProperty"></param>
-    /// <param name="source"></param>
-    /// <param name="sourceProperty"></param>
-    /// <param name="mode"></param>
-    /// <param name="convert"></param>
-    /// <param name="convertBack"></param>
-    /// <param name="converterParameter"></param>
-    /// <param name="converterLanguage"></param>
-    /// <param name="updateSourceTrigger"></param>
-    /// <param name="targetNullValue"></param>
-    /// <param name="fallbackValue"></param>
-    /// <param name="filePath"></param>
-    /// <param name="lineNumber"></param>
-    /// <typeparam name="TBindable"></typeparam>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDest"></typeparam>
-    /// <returns></returns>
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public static TBindable AltBind<TBindable, TSource, TDest>(
-        this TBindable target,
-        DependencyProperty targetProperty,
-        DependencyObject source,
-        DependencyProperty sourceProperty,
-        BindingMode mode = BindingMode.OneWay,
-        Func<TSource?, TDest?>? convert = null,
-        Func<TDest?, TSource?>? convertBack = null,
-        object? converterParameter = null,
-        string? converterLanguage = null,
-        UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
-        object? targetNullValue = null,
-        object? fallbackValue = null, 
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
-    ) where TBindable : DependencyObject
-    {
-        IValueConverter? converter = null;
-        if (convert is not null || convertBack is not null)
-            converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
-        return AltBind(target, targetProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
-    }
-
-    /// <summary>
-    /// Work-around binding of a property of a DependencyObject to a property of a INotifiableProperty that is not a FrameworkElement
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="targetProperty"></param>
-    /// <param name="source"></param>
-    /// <param name="sourcePropertyName"></param>
-    /// <param name="mode"></param>
-    /// <param name="convert"></param>
-    /// <param name="convertBack"></param>
-    /// <param name="converterParameter"></param>
-    /// <param name="converterLanguage"></param>
-    /// <param name="updateSourceTrigger"></param>
-    /// <param name="targetNullValue"></param>
-    /// <param name="fallbackValue"></param>
-    /// <param name="filePath"></param>
-    /// <param name="lineNumber"></param>
-    /// <typeparam name="TBindable"></typeparam>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDest"></typeparam>
-    /// <returns></returns>
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public static TBindable AltBind<TBindable, TSource, TDest>(
-        this TBindable target,
-        DependencyProperty targetProperty,
-        INotifyPropertyChanged source,
-        string sourcePropertyName,
-        BindingMode mode = BindingMode.OneWay,
-        Func<TSource?, TDest?>? convert = null,
-        Func<TDest?, TSource?>? convertBack = null,
-        object? converterParameter = null,
-        string? converterLanguage = null,
-        UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
-        object? targetNullValue = null,
-        object? fallbackValue = null, 
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
-    ) where TBindable : DependencyObject
-    {
-        IValueConverter? converter = null;
-        if (convert is not null || convertBack is not null)
-            converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
-        return AltBind(target, targetProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        /// <summary>
+        /// Work-around binding of a property of a DependencyObject to a property of a INotifiableProperty that is not a FrameworkElement
+        /// </summary>
+        /// <param name="targetProperty"></param>
+        /// <param name="source"></param>
+        /// <param name="sourcePropertyName"></param>
+        /// <param name="mode"></param>
+        /// <param name="convert"></param>
+        /// <param name="convertBack"></param>
+        /// <param name="converterParameter"></param>
+        /// <param name="converterLanguage"></param>
+        /// <param name="updateSourceTrigger"></param>
+        /// <param name="targetNullValue"></param>
+        /// <param name="fallbackValue"></param>
+        /// <param name="filePath"></param>
+        /// <param name="lineNumber"></param>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDest"></typeparam>
+        /// <returns></returns>
+        // ReSharper disable once UnusedMethodReturnValue.Global
+        public TBindable AltBind<TSource, TDest>(DependencyProperty targetProperty,
+            INotifyPropertyChanged source,
+            string sourcePropertyName,
+            BindingMode mode = BindingMode.OneWay,
+            Func<TSource?, TDest?>? convert = null,
+            Func<TDest?, TSource?>? convertBack = null,
+            object? converterParameter = null,
+            string? converterLanguage = null,
+            UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.Default,
+            object? targetNullValue = null,
+            object? fallbackValue = null, 
+            [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
+        )
+        {
+            IValueConverter? converter = null;
+            if (convert is not null || convertBack is not null)
+                converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
+            return AltBind(target, targetProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+        }
     }
 
     #endregion

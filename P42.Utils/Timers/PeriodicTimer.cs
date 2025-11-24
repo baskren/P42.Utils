@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace P42.Utils;
 
 // ReSharper disable once UnusedType.Global
@@ -11,6 +8,7 @@ public sealed class PeriodicTimer
     /// </summary>
     /// <param name="period">The time between invocation of callback</param>
     /// <param name="callback">returns false when you wish timer to stop.</param>
+    /// <param name="token"></param>
     public static void StartTimer(TimeSpan period, Func<bool> callback, CancellationToken token = default)
     {
         if (period <= TimeSpan.Zero)
@@ -24,6 +22,7 @@ public sealed class PeriodicTimer
     /// </summary>
     /// <param name="period">The time between invocation of callback</param>
     /// <param name="callback">returns false when you wish timer to stop.</param>
+    /// <param name="token"></param>
     public static void StartTimer(TimeSpan period, Func<Task<bool>> callback, CancellationToken token = default)
     {
         if (period <= TimeSpan.Zero)

@@ -12,97 +12,82 @@ public static class EmbeddedResourceExtensions
     private static readonly Dictionary<Assembly, string[]> EmbeddedResourceNames = new();
 
     /// <summary>
-    /// Does EmbeddedResource Exist?
-    /// </summary>
-    /// <param name="resourceId">ResourceId</param>
-    /// <returns>true on success</returns>
-    public static bool EmbeddedResourceExists(string resourceId)
-        => FindAssembly(resourceId) is not null;
-
-    /// <summary>
-    /// Does EmbeddedResource Exist?
-    /// </summary>
-    /// <param name="assembly">target assembly</param>
-    /// <param name="resourceId">ResourceId</param>
-    /// <returns>true on success</returns>
-    public static bool Exists(this Assembly assembly, string resourceId)
-        => FindAssembly(resourceId, assembly) is not null;
-
-    /// <summary>
     /// Test is embedded resource exists
     /// </summary>
     /// <param name="resourceId">ResourceId</param>
     /// <param name="assembly">optional, target assembly</param>
     /// <returns>true on success</returns>
-    [Obsolete("Use Exists instead.", true)]
-    public static bool EmbeddedResourceExists(string resourceId, Assembly? assembly)
+    public static bool EmbeddedResourceExists(string resourceId, Assembly? assembly = null)
         => FindAssembly(resourceId, assembly) is not null;
-    
-    
-    /// <summary>
-    /// Copy embedded resource to file at path
-    /// </summary>
+
+
     /// <param name="assembly">Source assembly</param>
-    /// <param name="resourceId"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static bool TryCopyResource(this Assembly assembly, string resourceId, string path)
+    // ReSharper disable once UnusedType.Global
+    extension(Assembly assembly)
     {
-        if (FindStream(resourceId, assembly) is not { } stream)
-            return false;
-
-        try
+        /// <summary>
+        /// Copy embedded resource to file at path
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public bool TryCopyResource(string resourceId, string path)
         {
-            using var destinationFileStream =
-                new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            if (FindStream(resourceId, assembly) is not { } stream)
+                return false;
+
+            try
+            {
+                using var destinationFileStream =
+                    new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             
-            stream.CopyTo(destinationFileStream);
-        }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-            return false;
-        }
-        finally
-        {
-            stream.Dispose();
-        }
-        return true;
+                stream.CopyTo(destinationFileStream);
+            }
+            catch (Exception ex)
+            {
+                QLog.Error(ex);
+                return false;
+            }
+            finally
+            {
+                stream.Dispose();
+            }
+            return true;
 
-    }
-    
-    
-    /// <summary>
-    /// Copy embedded resource to file at path
-    /// </summary>
-    /// <param name="assembly">Source assembly</param>
-    /// <param name="resourceId"></param>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public static async Task<bool> TryCopyResourceAsync(this Assembly assembly, string resourceId, string path)
-    {
-        if (FindStream(resourceId, assembly) is not { } stream)
-            return false;
+        }
 
-        try
+        /// <summary>
+        /// Copy embedded resource to file at path
+        /// </summary>
+        /// <param name="resourceId"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public async Task<bool> TryCopyResourceAsync(string resourceId, string path)
         {
-            await using var destinationFileStream =
-                new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            if (FindStream(resourceId, assembly) is not { } stream)
+                return false;
+
+            try
+            {
+                await using var destinationFileStream =
+                    new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             
-            await stream.CopyToAsync(destinationFileStream);
-        }
-        catch (Exception ex)
-        {
-            QLog.Error(ex);
-            return false;
-        }
-        finally
-        {
-            await stream.DisposeAsync();
-        }
-        return true;
+                await stream.CopyToAsync(destinationFileStream);
+            }
+            catch (Exception ex)
+            {
+                QLog.Error(ex);
+                return false;
+            }
+            finally
+            {
+                await stream.DisposeAsync();
+            }
+            return true;
 
+        }
     }
+
 
     public class EmbeddedResourceHandle(Stream stream, string resourceId, Assembly assembly) : IDisposable, IAsyncDisposable
     {

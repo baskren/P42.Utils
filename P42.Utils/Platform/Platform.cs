@@ -50,20 +50,11 @@ public static class Platform
     }
 
     */
-
-    /// <summary>
-    /// Gets the operating system.
-    /// </summary>
-    /// <returns>The operating system.</returns>
-    [Obsolete("Use .DeviceFamily, .DeviceFamilyVersion, and .DeviceForm in Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily instead.", true)]
-    public static string GetOperatingSystem()
-        => throw new NotImplementedException();
-
-    private static Action? _platformPathLoader; 
+    
     internal static Action PlatformPathLoader
     {
-        get => _platformPathLoader ?? throw new IncompleteInitialization();
-        set => _platformPathLoader = value;
+        get => field ?? throw new IncompleteInitialization();
+        set;
     }
 
     /*
@@ -83,7 +74,6 @@ public static class Platform
     }
     */
 
-    private static string? _applicationDataPath;
     /// <summary>
     /// Where is app data stored?
     /// </summary>
@@ -92,18 +82,17 @@ public static class Platform
     {
         get
         {
-            if (_applicationDataPath == null)
+            if (field == null)
                 PlatformPathLoader.Invoke();
-            return _applicationDataPath ?? throw new IncompleteInitialization();
+            return field ?? throw new IncompleteInitialization();
         }
         set
         {
-            _applicationDataPath = value;
+            field = value;
             DirectoryExtensions.GetOrCreateDirectory(value);
         }
     }
 
-    private static string? _applicationCachePath;
     /// <summary>
     /// Where is app data cached?
     /// </summary>
@@ -112,18 +101,17 @@ public static class Platform
     {
         get
         {
-            if (_applicationCachePath == null)
+            if (field == null)
                 PlatformPathLoader.Invoke();
-            return _applicationCachePath ?? throw new IncompleteInitialization();
+            return field ?? throw new IncompleteInitialization();
         }
         set
         {
-            _applicationCachePath = value;
+            field = value;
             DirectoryExtensions.GetOrCreateDirectory(value);
         }
     }
 
-    private static string? _temporaryStoragePath;
     /// <summary>
     /// Where is temp storage?
     /// </summary>
@@ -132,13 +120,13 @@ public static class Platform
     {
         get
         {
-            if (_temporaryStoragePath == null)
+            if (field == null)
                 PlatformPathLoader.Invoke();
-            return _temporaryStoragePath ?? throw new IncompleteInitialization();
+            return field ?? throw new IncompleteInitialization();
         }
         set
         {
-            _temporaryStoragePath = value;
+            field = value;
             DirectoryExtensions.GetOrCreateDirectory(value);
         }
     }

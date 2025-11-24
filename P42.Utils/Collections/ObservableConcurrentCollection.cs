@@ -247,6 +247,7 @@ public class ObservableConcurrentCollection<T> :
     /// </summary>
     /// <param name="conditional"></param>
     /// <typeparam name="T"></typeparam>
+    // ReSharper disable once UnusedMethodReturnValue.Global
     public  ObservableConcurrentCollection<T> RemoveIf(Func<T, bool> conditional)
     {
         lock (_lock)

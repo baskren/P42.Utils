@@ -1,9 +1,9 @@
-using System.Reflection;
-
 namespace P42.Utils;
 
+// ReSharper disable once UnusedType.Global
 internal static class AssemblyBuildTimeExtensions
 {
+    // ReSharper disable once UnusedMember.Local
     private static DateTime WasmFakeDate 
     {
         get

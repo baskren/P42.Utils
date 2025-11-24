@@ -8,8 +8,6 @@ public static class Recursion
 {
     private const string RecursionFolderName = "P42.Utils.RecursionStackTraces";
 
-    private static string? _folderPath;
-
     /// <summary>
     /// Where to store the recursion log
     /// </summary>
@@ -17,37 +15,35 @@ public static class Recursion
     {
         get
         {
-            if (_folderPath != null)
-                return _folderPath;
+            if (field != null)
+                return field;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             DirectoryExtensions.GetOrCreateDirectory(Platform.ApplicationLocalCacheFolderPath);
             var folderPath = Path.Combine(Platform.ApplicationLocalCacheFolderPath, RecursionFolderName);
 #pragma warning restore CS0618 // Type or member is obsolete
             DirectoryExtensions.GetOrCreateDirectory(folderPath);
-            _folderPath = folderPath;
-            return _folderPath;
+            field = folderPath;
+            return field;
         }
     }
 
 
-    private static bool _enabled;
     /// <summary>
     /// Is recursion logging enabled?
     /// </summary>
     public static bool IsEnabled
     {
-        get => _enabled;
+        get;
         set
         {
-            if (_enabled == value)
+            if (field == value)
                 return;
 
-            _enabled = value;
+            field = value;
             //_monitoringCount = 0;
             RecursionCount.Clear();
             IsMonitoringChanged?.Invoke(null, IsEnabled);
-
         }
     }
 

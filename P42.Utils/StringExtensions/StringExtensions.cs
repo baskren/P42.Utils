@@ -4,93 +4,6 @@ namespace P42.Utils;
 
 public static class StringExtensions
 {
-
-    /// <summary>
-    /// Convert unicode characters to HTML escape codes
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    public static string UnicodeToHtmlEscapes(this string text)
-    {
-        var chars = text.ToCharArray();
-        var result = new StringBuilder(text.Length + (int)(text.Length * 0.1));
-
-        foreach (var c in chars)
-        {
-            var value = Convert.ToInt32(c);
-            if (value > 127)
-                result.Append($"&#{value};");
-            else
-                result.Append(c);
-        }
-        return result.ToString();
-    }
-
-
-    /// <summary>
-    /// Remove whitespace from string
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    public static string RemoveWhitespace(this string input)
-    {
-        return new string(input.ToCharArray()
-            .Where(c => !Char.IsWhiteSpace(c))
-            .ToArray());
-    }
-
-    private static System.Security.Cryptography.MD5? _md5;
-    private static System.Security.Cryptography.MD5 Md5 => _md5 ??= System.Security.Cryptography.MD5.Create();
-    
-    internal static string ToMd5HashString(this string source)
-    {
-        var hash = Md5.ComputeHash(Encoding.UTF8.GetBytes(source));
-        var sBuilder = new StringBuilder();
-
-        foreach (var t in hash)
-            sBuilder.Append(t.ToString("x2"));
-
-        return sBuilder.ToString();
-    }
-    
-
-    /// <summary>
-    /// Safe substring of everything but last `count` characters
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
-    public static string RemoveLast(this string s, int count = 1)
-        => count <= 0 
-            ? s
-            : s.Length > count 
-                ? s[..^count] 
-                : string.Empty;
-    
-    /// <summary>
-    /// Safe substring of last `count` characters
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
-    public static string SubstringLast(this string s, int count = 1)
-        => count <= 0
-           ? string.Empty
-           : s.Length > count 
-               ? s[^count..] 
-               : s;    
-
-    public static string SubstringRange(this string s, int startIndex, int length = 1)
-    {
-        if (s.Length <= startIndex)
-            return string.Empty;
-
-        if (s.Length > startIndex + length)
-            return s.Substring(startIndex, length);
-
-        return s[startIndex..];
-    }
-
     /// <summary>
     /// Replacement characters to for smooth serialization
     /// </summary>
@@ -128,64 +41,142 @@ public static class StringExtensions
     
     public static readonly Dictionary<char, char> SafeToIllegalCharacters = IllegalToSafeCharacters.ToDictionary(c => c.Value, c => c.Key);
 
-
-    /// <summary>
-    /// Does the string contain any illegal characters?
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public static bool HasIllegalCharacter(this string s)
-        => s.Any(c => IllegalToSafeCharacters.ContainsKey(c));
-    
+    private static System.Security.Cryptography.MD5? _md5;
+    private static System.Security.Cryptography.MD5 Md5 => _md5 ??= System.Security.Cryptography.MD5.Create();
 
 
-    /// <summary>
-    /// Replace any illegal characters
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public static string ReplaceIllegalCharacters(this string s)
+    /// <param name="text"></param>
+    extension(string text)
     {
-        //if (Equals(s, "$type"))
-        //    return " ＄type";  // used to get $type to be the first key
-
-        var c = s.ToCharArray();
-        for (var i = 0; i < c.Length; i++)
+        /// <summary>
+        /// Convert unicode characters to HTML escape codes
+        /// </summary>
+        /// <returns></returns>
+        public string UnicodeToHtmlEscapes()
         {
-            //if (result[i] == '．')
-            //    result[i] = 'ᆞ';
+            var chars = text.ToCharArray();
+            var result = new StringBuilder(text.Length + (int)(text.Length * 0.1));
 
-            // Tested the following against TryGetValue(key, out var value)
-            // Was faster on every platform but WASM
-            if (IllegalToSafeCharacters.ContainsKey(c[i]) )
-                c[i] = IllegalToSafeCharacters[c[i]];
+            foreach (var c in chars)
+            {
+                var value = Convert.ToInt32(c);
+                if (value > 127)
+                    result.Append($"&#{value};");
+                else
+                    result.Append(c);
+            }
+            return result.ToString();
         }
-        return new string(c);
-    }
 
-    /// <summary>
-    /// Reverse of ReplaceIllegalCharacters
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public static string ReplaceSafeCharacters(this string s)
-    {
-        if (Equals(s, " ＄type"))
-            return "$type";
-
-        var result = s.ToCharArray();
-        for (var i = 0; i < result.Length; i++)
+        /// <summary>
+        /// Remove whitespace from string
+        /// </summary>
+        /// <returns></returns>
+        public string RemoveWhitespace()
         {
-            //if (result[i] == '．')
-            //    result[i] = 'ᆞ';
+            return new string(text.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
+        }
+
+        internal string ToMd5HashString()
+        {
+            var hash = Md5.ComputeHash(Encoding.UTF8.GetBytes(text));
+            var sBuilder = new StringBuilder();
+
+            foreach (var t in hash)
+                sBuilder.Append(t.ToString("x2"));
+
+            return sBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Safe substring of everything but last `count` characters
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public string RemoveLast(int count = 1)
+            => count <= 0 
+                ? text
+                : text.Length > count 
+                    ? text[..^count] 
+                    : string.Empty;
+
+        /// <summary>
+        /// Safe substring of last `count` characters
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public string SubstringLast(int count = 1)
+            => count <= 0
+                ? string.Empty
+                : text.Length > count 
+                    ? text[^count..] 
+                    : text;
+
+        public string SubstringRange(int startIndex, int length = 1)
+        {
+            if (text.Length <= startIndex)
+                return string.Empty;
+
+            return text.Length > startIndex + length 
+                ? text.Substring(startIndex, length) 
+                : text[startIndex..];
+        }
+
+        /// <summary>
+        /// Does the string contain any illegal characters?
+        /// </summary>
+        /// <returns></returns>
+        public bool HasIllegalCharacter()
+            => text.Any(c => IllegalToSafeCharacters.ContainsKey(c));
+
+        /// <summary>
+        /// Replace any illegal characters
+        /// </summary>
+        /// <returns></returns>
+        public string ReplaceIllegalCharacters()
+        {
+            //if (Equals(s, "$type"))
+            //    return " ＄type";  // used to get $type to be the first key
+
+            var c = text.ToCharArray();
+            for (var i = 0; i < c.Length; i++)
+            {
+                //if (result[i] == '．')
+                //    result[i] = 'ᆞ';
+
+                // Tested the following against TryGetValue(key, out var value)
+                // Was faster on every platform but WASM
+                if (IllegalToSafeCharacters.ContainsKey(c[i]) )
+                    c[i] = IllegalToSafeCharacters[c[i]];
+            }
+            return new string(c);
+        }
+
+        /// <summary>
+        /// Reverse of ReplaceIllegalCharacters
+        /// </summary>
+        /// <returns></returns>
+        public string ReplaceSafeCharacters()
+        {
+            if (Equals(text, " ＄type"))
+                return "$type";
+
+            var result = text.ToCharArray();
+            for (var i = 0; i < result.Length; i++)
+            {
+                //if (result[i] == '．')
+                //    result[i] = 'ᆞ';
             
-            // Tested to be 1/10 the time as IllegalCharacters.TryGetKey
-            foreach (var kvp in SafeToIllegalCharacters)
-                if (result[i] == kvp.Key)
+                // Tested to be 1/10 the time as IllegalCharacters.TryGetKey
+                foreach (var kvp in SafeToIllegalCharacters.Where(kvp => result[i] == kvp.Key))
                     result[i] = kvp.Value;
+            }
+            return new string(result);
         }
-        return new string(result);
     }
+
 
     /// <summary>
     /// Convert char to hexadecimal (uint) value
@@ -280,7 +271,7 @@ public static class StringExtensions
     public static string RemoveExtraWhitespace(this string str)
     {
         var sb = new StringBuilder();
-        bool lastCharIsWhitespace = false;
+        var lastCharIsWhitespace = false;
         foreach (var c in str)
         {
             if (char.IsWhiteSpace(c))

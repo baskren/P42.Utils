@@ -5,6 +5,7 @@ namespace P42.Utils;
 /// <summary>
 /// IEnumerable Extensions
 /// </summary>
+// ReSharper disable once UnusedType.Global
 public static class IEnumerableExtensions
 {
     

@@ -5,191 +5,191 @@ namespace P42.Utils;
 
 public static class LocalDataFileInfoExtensions
 {
+    
     #region FileInfo
-    /// <summary>
-    /// Returns the FileInfo for a LocalData.Item
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static FileInfo File(this Item item) => !item.IsDirectory ? new FileInfo(item.FullPath) : throw new Exception($"Item [{item}] is a Directory");
 
-    /// <summary>
-    /// Tries to get FileInfo for LocalData.Item
-    /// </summary>
     /// <param name="item"></param>
-    /// <param name="fileInfo"></param>
-    /// <returns>true if exists</returns>
-    public static bool TryFile(this Item item, [MaybeNullWhen(false)] out FileInfo fileInfo)
+    extension(Item item)
     {
-        try
+        /// <summary>
+        /// Returns the FileInfo for a LocalData.Item
+        /// </summary>
+        /// <returns></returns>
+        public FileInfo File() => !item.IsDirectory ? new FileInfo(item.FullPath) : throw new Exception($"Item [{item}] is a Directory");
+
+        /// <summary>
+        /// Tries to get FileInfo for LocalData.Item
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns>true if exists</returns>
+        public bool TryFile([MaybeNullWhen(false)] out FileInfo fileInfo)
         {
-            fileInfo = item.File();
-            return true;
+            try
+            {
+                fileInfo = item.File();
+                return true;
+            }
+            catch (Exception)
+            {
+                fileInfo = null;
+                return false;
+            }
         }
-        catch (Exception)
+
+        /// <summary>
+        /// Stores sourceItem to LocalData.Item 
+        /// </summary>
+        /// <param name="sourceItem"></param>
+        /// <param name="wipeOld"></param>
+        /// <exception cref="IOException"></exception>
+        public void StoreFile(FileInfo? sourceItem, bool wipeOld = true)
         {
-            fileInfo = null;
-            return false;
+            var file = new FileInfo(item.FullPath);
+            if (!file.WritePossible(wipeOld))
+                throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
+
+            LocalData.Semaphore.Wait();
+
+            try
+            {
+                if (file.Exists && wipeOld)
+                    file.Delete();
+
+                item.AssureExistsParentDirectory();
+                sourceItem?.CopyTo(item.FullPath, wipeOld);
+            }
+            finally { LocalData.Semaphore.Release(); }
+
+        }
+
+        /// <summary>
+        /// Stores sourceItem to LocalData.Item 
+        /// </summary>
+        /// <param name="sourceItem"></param>
+        /// <param name="wipeOld"></param>
+        public async Task StoreFileAsync(FileInfo? sourceItem, bool wipeOld = true)
+        {
+            var file = new FileInfo(item.FullPath);
+            if (!file.WritePossible(wipeOld))
+                throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
+
+            await LocalData.Semaphore.WaitAsync();
+
+            try
+            {
+                if (file.Exists && wipeOld)
+                    file.Delete();
+
+                item.AssureExistsParentDirectory();
+                sourceItem?.CopyTo(item.FullPath, wipeOld);
+            }
+            finally { LocalData.Semaphore.Release(); }
+
+        }
+
+        /// <summary>
+        /// Puts an sourceItem in local data store (null clears out the sourceItem)
+        /// </summary>
+        /// <param name="sourceItem">null to clear</param>
+        /// <param name="wipeOld"></param>
+        /// <returns>true on success</returns>
+        public bool TryStoreFile(FileInfo sourceItem, bool wipeOld = true)
+        {
+            try
+            {
+                item.StoreFile(sourceItem, wipeOld);
+                return true;
+            }
+            catch (Exception) 
+            { 
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Puts an sourceItem in local data store (null clears out the sourceItem)
+        /// </summary>
+        /// <param name="sourceItem">null to clear</param>
+        /// <param name="wipeOld"></param>
+        /// <returns>true on success</returns>
+        public async Task<bool> TryStoreFileAsync(FileInfo sourceItem, bool wipeOld = true)
+        {
+            try
+            {
+                await item.StoreFileAsync(sourceItem, wipeOld);
+                return true;
+            }
+            catch (Exception) 
+            { 
+                return false;
+            }
+
         }
     }
-
-    /// <summary>
-    /// Get FileInfo, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<FileInfo> AssureExistsFileAsync(this AsynchronousSourcedItem item)
-    {
-        await item.AssureExistsAsync();
-        return item.File();
-    }
-
-    /// <summary>
-    /// Get FileInfo, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static FileInfo AssureExistsFile(this SynchronousSourcedItem item)
-    {
-        item.AssureExists();
-        return item.File();
-    }
-
-
-    /// <summary>
-    /// Try to get FileInfo, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static async Task<FileInfo?> TryAssureExistsFileAsync(this AsynchronousSourcedItem item)
-    {
-        try
-        {
-            return await item.AssureExistsFileAsync();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-        
-    }
-
-    /// <summary>
-    /// Try to get FileInfo, pulling from source if not stored locally
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    public static FileInfo? TryAssureExistsFile(this SynchronousSourcedItem item)
-    {
-        try
-        {
-            return item.AssureExistsFile();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-        
-    }
-
-    /// <summary>
-    /// Stores sourceItem to LocalData.Item 
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <exception cref="IOException"></exception>
-    public static void StoreFile(this Item item, FileInfo? sourceItem, bool wipeOld = true)
-    {
-        var file = new FileInfo(item.FullPath);
-        if (!file.WritePossible(wipeOld))
-            throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
-
-        LocalData.Semaphore.Wait();
-
-        try
-        {
-            if (file.Exists && wipeOld)
-                file.Delete();
-
-            item.AssureExistsParentDirectory();
-            sourceItem?.CopyTo(item.FullPath, wipeOld);
-        }
-        finally { LocalData.Semaphore.Release(); }
-
-    }
-
-    /// <summary>
-    /// Stores sourceItem to LocalData.Item 
-    /// </summary>
-    /// <param name="sourceItem"></param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    public static async Task StoreFileAsync(this Item item, FileInfo? sourceItem, bool wipeOld = true)
-    {
-        var file = new FileInfo(item.FullPath);
-        if (!file.WritePossible(wipeOld))
-            throw new IOException($"DirectoryInfo [{file.FullName}] exists but is not writable.  WipeOld=[{wipeOld}]]");
-
-        await LocalData.Semaphore.WaitAsync();
-
-        try
-        {
-            if (file.Exists && wipeOld)
-                file.Delete();
-
-            item.AssureExistsParentDirectory();
-            sourceItem?.CopyTo(item.FullPath, wipeOld);
-        }
-        finally { LocalData.Semaphore.Release(); }
-
-    }
-
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <returns>true on success</returns>
-    public static bool TryStoreFile(this Item item, FileInfo sourceItem, bool wipeOld = true)
-    {
-        try
-        {
-            item.StoreFile(sourceItem, wipeOld);
-            return true;
-        }
-        catch (Exception) 
-        { 
-            return false;
-        }
-
-    }
-
-    /// <summary>
-    /// Puts an sourceItem in local data store (null clears out the sourceItem)
-    /// </summary>
-    /// <param name="sourceItem">null to clear</param>
-    /// <param name="item"></param>
-    /// <param name="wipeOld"></param>
-    /// <returns>true on success</returns>
-    public static async Task<bool> TryStoreFileAsync(this Item item, FileInfo sourceItem, bool wipeOld = true)
-    {
-        try
-        {
-            await item.StoreFileAsync(sourceItem, wipeOld);
-            return true;
-        }
-        catch (Exception) 
-        { 
-            return false;
-        }
-
-    }
-
 
     #endregion
 
 
+    /// <param name="item"></param>
+    extension(AsynchronousSourcedItem item)
+    {
+        /// <summary>
+        /// Get FileInfo, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public async Task<FileInfo> AssureExistsFileAsync()
+        {
+            await item.AssureExistsAsync();
+            return item.File();
+        }
 
+        /// <summary>
+        /// Try to get FileInfo, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public async Task<FileInfo?> TryAssureExistsFileAsync()
+        {
+            try
+            {
+                return await item.AssureExistsFileAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        
+        }
+    }
+
+    /// <param name="item"></param>
+    extension(SynchronousSourcedItem item)
+    {
+        /// <summary>
+        /// Get FileInfo, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public FileInfo AssureExistsFile()
+        {
+            item.AssureExists();
+            return item.File();
+        }
+
+        /// <summary>
+        /// Try to get FileInfo, pulling from source if not stored locally
+        /// </summary>
+        /// <returns></returns>
+        public FileInfo? TryAssureExistsFile()
+        {
+            try
+            {
+                return item.AssureExistsFile();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        
+        }
+    }
 }

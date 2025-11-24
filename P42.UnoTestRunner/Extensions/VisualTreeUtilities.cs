@@ -8,30 +8,32 @@ namespace P42.UnoTestRunner;
 
 public static class VisualTreeUtils
 {
-    public static T? FindVisualChildByType<T>(this DependencyObject element, bool includeCurrent = true)
-        where T : DependencyObject
+    extension(DependencyObject element)
     {
-        if (element == null)
+        public T? FindVisualChildByType<T>(bool includeCurrent = true)
+            where T : DependencyObject
+        {
+            if (element == null)
+                return default;
+
+            if (includeCurrent && element is T t)
+                return t;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)        
+                if (VisualTreeHelper.GetChild(element, i) is T elementAsT)
+                    return elementAsT;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+                if (VisualTreeHelper.GetChild(element, i).FindVisualChildByType<T>(true) is { } result)
+                    return result;
+
             return default;
+        }
 
-        if (includeCurrent && element is T t)
-            return t;
-
-        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)        
-            if (VisualTreeHelper.GetChild(element, i) is T elementAsT)
-                return elementAsT;
-
-        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
-            if (VisualTreeHelper.GetChild(element, i).FindVisualChildByType<T>(true) is { } result)
-                return result;
-
-        return default;
+        public T? FindElementOfTypeInSubtree<T>(bool includeCurrent = true)
+            where T : DependencyObject
+            => FindVisualChildByType<T>(element, includeCurrent) ?? default;
     }
-
-    public static T? FindElementOfTypeInSubtree<T>(this DependencyObject element, bool includeCurrent = true)
-			where T : DependencyObject
-        => FindVisualChildByType<T>(element, includeCurrent) ?? default;
-    
 
 
     public static DependencyObject? FindVisualChildByName(this FrameworkElement parent, string name)

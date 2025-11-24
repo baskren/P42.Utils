@@ -8,26 +8,27 @@ namespace P42.Utils.Uno;
 /// </summary>
 public static class ColorExtensions
 {
-    /// <summary>
-    /// Given a background color, return a high contrast foreground color
-    /// </summary>
     /// <param name="background"></param>
-    /// <returns></returns>
-    [Obsolete("Use GetHighContrastColor instead", true)]
-    public static Color GetForegroundColor(this Color background)
-        => background.GetHighContrastColor();
-
-    /// <summary>
-    /// Get the high contrast color for a given color
-    /// </summary>
-    /// <param name="color"></param>
-    /// <returns></returns>
-    public static Color GetHighContrastColor(this Color color)
+    extension(Color background)
     {
-        var yiq = (color.R * 299 + color.G * 587 + color.B * 114) / 1000;
-        return yiq < 128 ? Colors.White : Colors.Black;
+        /// <summary>
+        /// Given a background color, return a high contrast foreground color
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Use GetHighContrastColor instead", true)]
+        public Color GetForegroundColor()
+            => background.GetHighContrastColor();
+
+        /// <summary>
+        /// Get the high contrast color for a given color
+        /// </summary>
+        /// <returns></returns>
+        public Color GetHighContrastColor()
+        {
+            var yiq = (background.R * 299 + background.G * 587 + background.B * 114) / 1000;
+            return yiq < 128 ? Colors.White : Colors.Black;
+        }
     }
-    
 
 
     #region Tranlators
@@ -81,64 +82,64 @@ public static class ColorExtensions
 
 
     #region Modifiers
-    /// <summary>
-    /// Interpolates between two colors - keeping the Alpha of the first (unless it's transparent ... then its white with alpha 0);
-    /// </summary>
-    /// <returns>The blend.</returns>
+
     /// <param name="c">C.</param>
-    /// <param name="c2">C2.</param>
-    /// <param name="percent">Percent.</param>
-    public static Color RgbHybridBlend(this Color c, Color c2, double percent)
+    extension(Color c)
     {
-        var c1 = new Color { R = c.R, G = c.G, B = c.B, A = c.A };
-        if (c1 == Colors.Transparent)
-            c1 = new Color { R = 255, G = 255, B = 255, A = 0 };
-        var a = c1.A;
-        var r = (byte)(c1.R + (c2.R - c1.R) * percent).Clamp(0, 255);
-        var g = (byte)(c1.G + (c2.G - c1.G) * percent).Clamp(0, 255);
-        var b = (byte)(c1.B + (c2.B - c1.B) * percent).Clamp(0, 255);
-        return new Color { R = r, G = g, B = b, A = a };
+        /// <summary>
+        /// Interpolates between two colors - keeping the Alpha of the first (unless it's transparent ... then its white with alpha 0);
+        /// </summary>
+        /// <returns>The blend.</returns>
+        /// <param name="c2">C2.</param>
+        /// <param name="percent">Percent.</param>
+        public Color RgbHybridBlend(Color c2, double percent)
+        {
+            var c1 = new Color { R = c.R, G = c.G, B = c.B, A = c.A };
+            if (c1 == Colors.Transparent)
+                c1 = new Color { R = 255, G = 255, B = 255, A = 0 };
+            var a = c1.A;
+            var r = (byte)(c1.R + (c2.R - c1.R) * percent).Clamp(0, 255);
+            var g = (byte)(c1.G + (c2.G - c1.G) * percent).Clamp(0, 255);
+            var b = (byte)(c1.B + (c2.B - c1.B) * percent).Clamp(0, 255);
+            return new Color { R = r, G = g, B = b, A = a };
+        }
+
+        /// <summary>
+        /// Interpolates between two colors
+        /// </summary>
+        /// <param name="c2"></param>
+        /// <param name="percent"></param>
+        /// <returns></returns>
+        public Color RgbaBlend(Color c2, double percent)
+        {
+            var a = (byte)(c.A + (c2.A - c.A) * percent).Clamp(0, 255);
+            var r = (byte)(c.R + (c2.R - c.R) * percent).Clamp(0, 255);
+            var g = (byte)(c.G + (c2.G - c.G) * percent).Clamp(0, 255);
+            var b = (byte)(c.B + (c2.B - c.B) * percent).Clamp(0, 255);
+            return new Color { R = r, G = g, B = b, A = a };
+        }
+
+        /// <summary>
+        /// Changes the alpha value.
+        /// </summary>
+        /// <returns>The alpha.</returns>
+        /// <param name="alpha">Alpha.</param>
+        public Color WithAlpha(double alpha)
+            => new() { R = c.R, G = c.G, B = c.B, A = (byte)(alpha*255).Clamp(0, 255) };
+
+        /// <summary>
+        /// Changes the alpha value.
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <returns></returns>
+        public Color WithAlpha(byte alpha) => new() { R = c.R, G = c.G, B = c.B, A = byte.Clamp(alpha, 0, 255) };
+
+        /// <summary>
+        /// Adjust color so it will be opaque to gestures
+        /// </summary>
+        /// <returns></returns>
+        public Color AssureGesturable() => new() { R = c.R, G = c.G, B = c.B, A = Math.Max((byte)0x1,c.A) };
     }
-
-    /// <summary>
-    /// Interpolates between two colors
-    /// </summary>
-    /// <param name="c1"></param>
-    /// <param name="c2"></param>
-    /// <param name="percent"></param>
-    /// <returns></returns>
-    public static Color RgbaBlend(this Color c1, Color c2, double percent)
-    {
-        var a = (byte)(c1.A + (c2.A - c1.A) * percent).Clamp(0, 255);
-        var r = (byte)(c1.R + (c2.R - c1.R) * percent).Clamp(0, 255);
-        var g = (byte)(c1.G + (c2.G - c1.G) * percent).Clamp(0, 255);
-        var b = (byte)(c1.B + (c2.B - c1.B) * percent).Clamp(0, 255);
-        return new Color { R = r, G = g, B = b, A = a };
-    }
-
-    /// <summary>
-    /// Changes the alpha value.
-    /// </summary>
-    /// <returns>The alpha.</returns>
-    /// <param name="c">C.</param>
-    /// <param name="alpha">Alpha.</param>
-    public static Color WithAlpha(this Color c, double alpha)
-        => new() { R = c.R, G = c.G, B = c.B, A = (byte)(alpha*255).Clamp(0, 255) };
-
-    /// <summary>
-    /// Changes the alpha value.
-    /// </summary>
-    /// <param name="c"></param>
-    /// <param name="alpha"></param>
-    /// <returns></returns>
-    public static Color WithAlpha(this Color c, byte alpha) => new() { R = c.R, G = c.G, B = c.B, A = byte.Clamp(alpha, 0, 255) };
-
-    /// <summary>
-    /// Adjust color so it will be opaque to gestures
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    public static Color AssureGesturable(this Color c) => new() { R = c.R, G = c.G, B = c.B, A = Math.Max((byte)0x1,c.A) };
 
     /// <summary>
     /// Adjust brush so it will be opaque to gestures
@@ -586,164 +587,168 @@ public static class ColorExtensions
     #endregion
 
 
-    #region HSL 
-    /// <summary>
-    /// Create HSL tuple from Windows.UI.Color
-    /// </summary>
+    #region HSL
+
     /// <param name="color"></param>
-    /// <returns></returns>
-    public static (float Hue, float Saturation, float Luminosity) ToHsl(this Color color)
+    extension(Color color)
     {
-        ToHsl(color, out var h, out var s, out var l);
-        return (h, s, l);
+        /// <summary>
+        /// Create HSL tuple from Windows.UI.Color
+        /// </summary>
+        /// <returns></returns>
+        public (float Hue, float Saturation, float Luminosity) ToHsl()
+        {
+            color.ToHsl(out var h, out var s, out var l);
+            return (h, s, l);
+        }
+
+        /// <summary>
+        /// Get HSL values from a color
+        /// </summary>
+        /// <param name="hue"></param>
+        /// <param name="saturation"></param>
+        /// <param name="luminosity"></param>
+        // ReSharper disable twice OutParameterValueIsAlwaysDiscarded.Global
+        public void ToHsl(out float hue, out float saturation, out float luminosity)
+        {
+            var r = color.R / 255;
+            var g = color.G / 255;
+            var b = color.B / 255;
+
+            float v = Math.Max(r, g);
+            v = Math.Max(v, b);
+
+            float m = Math.Min(r, g);
+            m = Math.Min(m, b);
+
+            luminosity = (m + v) / 2.0f;
+            if (luminosity <= 0.0)
+            {
+                hue = saturation = luminosity = 0;
+                return;
+            }
+            var vm = v - m;
+            saturation = vm;
+
+            if (saturation > 0.0)
+            {
+                saturation /= luminosity <= 0.5f ? v + m : 2.0f - v - m;
+            }
+            else
+            {
+                hue = 0;
+                saturation = 0;
+                return;
+            }
+
+            var r2 = (v - r) / vm;
+            var g2 = (v - g) / vm;
+            var b2 = (v - b) / vm;
+
+            const float tolerance = 0.001f;
+            if (Math.Abs(r - v) < tolerance)
+                hue = Math.Abs(g - m) < tolerance ? 5.0f + b2 : 1.0f - g2;
+            else if (Math.Abs(g - v) < tolerance)
+                hue = Math.Abs(b - m) < tolerance ? 1.0f + r2 : 3.0f - b2;
+            else
+                hue = Math.Abs(r - m) < tolerance ? 3.0f + g2 : 5.0f - r2;
+
+            hue /= 6.0f;
+        }
     }
 
-    /// <summary>
-    /// Get HSL values from a color
-    /// </summary>
-    /// <param name="color"></param>
-    /// <param name="hue"></param>
-    /// <param name="saturation"></param>
-    /// <param name="luminosity"></param>
-    public static void ToHsl(this Color color, out float hue, out float saturation, out float luminosity)
-    {
-        var r = color.R / 255;
-        var g = color.G / 255;
-        var b = color.B / 255;
-
-        float v = Math.Max(r, g);
-        v = Math.Max(v, b);
-
-        float m = Math.Min(r, g);
-        m = Math.Min(m, b);
-
-        luminosity = (m + v) / 2.0f;
-        if (luminosity <= 0.0)
-        {
-            hue = saturation = luminosity = 0;
-            return;
-        }
-        var vm = v - m;
-        saturation = vm;
-
-        if (saturation > 0.0)
-        {
-            saturation /= luminosity <= 0.5f ? v + m : 2.0f - v - m;
-        }
-        else
-        {
-            hue = 0;
-            saturation = 0;
-            return;
-        }
-
-        var r2 = (v - r) / vm;
-        var g2 = (v - g) / vm;
-        var b2 = (v - b) / vm;
-
-        const float tolerance = 0.001f;
-        if (Math.Abs(r - v) < tolerance)
-            hue = Math.Abs(g - m) < tolerance ? 5.0f + b2 : 1.0f - g2;
-        else if (Math.Abs(g - v) < tolerance)
-            hue = Math.Abs(b - m) < tolerance ? 1.0f + r2 : 3.0f - b2;
-        else
-            hue = Math.Abs(r - m) < tolerance ? 3.0f + g2 : 5.0f - r2;
-
-        hue /= 6.0f;
-    }
     #endregion
 
 
     #region Is Default
-    /// <summary>
-    /// Tests if the color is one of the default values
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    public static bool IsDefault(this Color c)
-        => c == default || c is { R: 0, G: 0, B: 0, A: 0 };
 
-
-    /// <summary>
-    /// Tests if the color is a default or is transparent
-    /// </summary>
     /// <param name="c"></param>
-    /// <returns></returns>
-    public static bool IsDefaultOrTransparent(this Color c)
-        => IsDefault(c) || c.A == 0;
+    extension(Color c)
+    {
+        /// <summary>
+        /// Tests if the color is one of the default values
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDefault()
+            => c == default || c is { R: 0, G: 0, B: 0, A: 0 };
+
+        /// <summary>
+        /// Tests if the color is a default or is transparent
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDefaultOrTransparent()
+            => IsDefault(c) || c.A == 0;
+    }
+
     #endregion
 
 
     #region ToString
-    /// <summary>
-    /// Returns a string with comma separated, 0-255, integer values for color's RGB
-    /// </summary>
-    /// <returns>The int rgb color string.</returns>
-    /// <param name="color">Color.</param>
-    public static string ToIntRgbColorString(this Color color)
-        => $"{color.R},{color.G},{color.B}";
 
-    /// <summary>
-    /// Returns a string with comma separated, 0-255, integer values for color's RGBA
-    /// </summary>
-    /// <param name="color"></param>
-    /// <returns></returns>
-    public static string ToIntRgbaColorString(this Color color)
-        => $"{color.R},{color.G},{color.B},{color.A}";
-
-    /// <summary>
-    /// Returns a string with comma separated, 0-255, integer values for color's RGBA
-    /// </summary>
-    /// <returns>The int rgb color string.</returns>
     /// <param name="color">Color.</param>
-    public static string ToRgbaColorString(this Color color)
-        => $"{color.ToIntRgbColorString()},{color.A}";
-    
-
-    /// <summary>
-    /// Returns a 3 character hexadecimal string of a color's RGB value
-    /// </summary>
-    /// <returns>The hex rgb color string.</returns>
-    /// <param name="color">Color.</param>
-    public static string ToHexRgbColorString(this Color color)
+    extension(Color color)
     {
-        var r = color.R >> 4;
-        var g = color.G >> 4;
-        var b = color.B >> 4;
-        var rr = r.ToString("x1");
-        var gg = g.ToString("x1");
-        var bb = b.ToString("x1");
-        return rr + gg + bb;
+        /// <summary>
+        /// Returns a string with comma separated, 0-255, integer values for color's RGB
+        /// </summary>
+        /// <returns>The int rgb color string.</returns>
+        public string ToIntRgbColorString()
+            => $"{color.R},{color.G},{color.B}";
+
+        /// <summary>
+        /// Returns a string with comma separated, 0-255, integer values for color's RGBA
+        /// </summary>
+        /// <returns></returns>
+        public string ToIntRgbaColorString()
+            => $"{color.R},{color.G},{color.B},{color.A}";
+
+        /// <summary>
+        /// Returns a string with comma separated, 0-255, integer values for color's RGBA
+        /// </summary>
+        /// <returns>The int rgb color string.</returns>
+        public string ToRgbaColorString()
+            => $"{color.ToIntRgbColorString()},{color.A}";
+
+        /// <summary>
+        /// Returns a 3 character hexadecimal string of a color's RGB value
+        /// </summary>
+        /// <returns>The hex rgb color string.</returns>
+        public string ToHexRgbColorString()
+        {
+            var r = color.R >> 4;
+            var g = color.G >> 4;
+            var b = color.B >> 4;
+            var rr = r.ToString("x1");
+            var gg = g.ToString("x1");
+            var bb = b.ToString("x1");
+            return rr + gg + bb;
+        }
+
+        /// <summary>
+        /// Returns a 4 character hexadecimal string of a color's ARGB value
+        /// </summary>
+        /// <returns>The hex rgb color string.</returns>
+        public string ToHexArgbColorString()
+        {
+            var a = color.A >> 4;
+            return a.ToString("x1") + color.ToHexRgbColorString();
+        }
+
+        /// <summary>
+        /// Returns a 6 character hexadecimal string of a color's RRGGBB value
+        /// </summary>
+        /// <returns>The hex rgb color string.</returns>
+        public string ToHexRrggbbColorString()
+            => color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
+
+        /// <summary>
+        /// Returns an eight character hexadecimal string of a color's AARRGGBB value
+        /// </summary>
+        /// <returns>The hex rgb color string.</returns>
+        public string ToHexAarrggbbColorString()
+            => color.A.ToString("x2") + color.ToHexRrggbbColorString();
     }
 
-    /// <summary>
-    /// Returns a 4 character hexadecimal string of a color's ARGB value
-    /// </summary>
-    /// <returns>The hex rgb color string.</returns>
-    /// <param name="color">Color.</param>
-    public static string ToHexArgbColorString(this Color color)
-    {
-        var a = color.A >> 4;
-        return a.ToString("x1") + color.ToHexRgbColorString();
-    }
-
-    /// <summary>
-    /// Returns a 6 character hexadecimal string of a color's RRGGBB value
-    /// </summary>
-    /// <returns>The hex rgb color string.</returns>
-    /// <param name="color">Color.</param>
-    public static string ToHexRrggbbColorString(this Color color)
-        => color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
-    
-
-    /// <summary>
-    /// Returns an eight character hexadecimal string of a color's AARRGGBB value
-    /// </summary>
-    /// <returns>The hex rgb color string.</returns>
-    /// <param name="color">Color.</param>
-    public static string ToHexAarrggbbColorString(this Color color)
-        => color.A.ToString("x2") + color.ToHexRrggbbColorString();
-    
     #endregion
 
 

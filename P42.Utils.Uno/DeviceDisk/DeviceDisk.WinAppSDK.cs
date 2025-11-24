@@ -15,8 +15,8 @@ public partial class DeviceDisk
             {
                 result[prop] = prop switch
                 {
-                    DeviceDisk.Capacity => (ulong)dict[DeviceDisk.Capacity],
-                    DeviceDisk.FreeSpace => (ulong)dict[DeviceDisk.FreeSpace],
+                    Capacity => (ulong)dict[Capacity],
+                    FreeSpace => (ulong)dict[FreeSpace],
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
@@ -25,8 +25,9 @@ public partial class DeviceDisk
         }
         catch (Exception)
         {
+            // ignored
         }
-        
+
         return result;
     }
     

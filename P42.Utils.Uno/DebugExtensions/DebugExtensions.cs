@@ -70,7 +70,7 @@ public static class DebugExtensions
         writer.WriteLine($"\t DefaultStyleResourceUri: {control.DefaultStyleResourceUri}");
         writer.WriteLine($"\t CornerRadius: {control.CornerRadius}");
         writer.WriteLine($"\t BackgroundSizing: {control.BackgroundSizing}");
-        
+    
         return LogProperties((FrameworkElement)control, writer);
     }
 
@@ -115,10 +115,9 @@ public static class DebugExtensions
         //writer.WriteLine($"\t Triggers: {element.Triggers}");
         writer.WriteLine($"\t VerticalAlignment: {element.VerticalAlignment}");
         writer.WriteLine($"\t Width: {element.Width}");
-        
+    
         return LogProperties((UIElement)element, writer);
     }
-
 
     /// <summary>
     /// Write UIElement properties to a StringWriter
@@ -172,7 +171,8 @@ public static class DebugExtensions
         writer.WriteLine($"\t UseLayoutRounding: {element.UseLayoutRounding}");
         writer.WriteLine($"\t Visibility: {element.Visibility}");
         writer.WriteLine($"\t XamlRoot: {element.XamlRoot}");
-        
+    
         return writer;
     }
+
 }

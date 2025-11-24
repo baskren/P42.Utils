@@ -1,5 +1,6 @@
 namespace P42.Utils.Uno;
 
+// ReSharper disable once UnusedType.Global
 public static class VisibilityExtensions
 {
     /// <summary>

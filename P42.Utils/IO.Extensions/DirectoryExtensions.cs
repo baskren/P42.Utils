@@ -9,18 +9,6 @@ namespace P42.Utils;
 public static class DirectoryExtensions
 {
     /// <summary>
-    /// Assure DirectoryInfo exists
-    /// </summary>
-    /// <param name="fullPath"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="Exception">Failure to assure directory existence</exception>
-    [Obsolete("Use GetOrCreate or TryGetOrCreate instead.", true)]
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public static DirectoryInfo AssureExists(string fullPath)
-        => GetOrCreateDirectory(fullPath);
-
-    /// <summary>
     /// Return DirectoryInfo Info for path, creating if it doesn't exist
     /// </summary>
     /// <param name="fullPath"></param>
@@ -153,7 +141,7 @@ public static class DirectoryExtensions
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public static DirectoryInfo GetOrCreateParentDirectory(string filePath) => DirectoryExtensions.GetOrCreateDirectory(filePath, true);
+    public static DirectoryInfo GetOrCreateParentDirectory(string filePath) => GetOrCreateDirectory(filePath, true);
 
     /// <summary>
     /// Attempt to get or create a directory
@@ -170,7 +158,7 @@ public static class DirectoryExtensions
     /// <param name="filePath"></param>
     /// <param name="parentDirectory"></param>
     /// <returns></returns>
-    public static bool TryGetOrCreateParentDirectory(string filePath, out DirectoryInfo parentDirectory) => DirectoryExtensions.TryGetOrCreateDirectory(filePath, out parentDirectory, true);
+    public static bool TryGetOrCreateParentDirectory(string filePath, out DirectoryInfo parentDirectory) => TryGetOrCreateDirectory(filePath, out parentDirectory, true);
 
     /// <summary>
     /// Tries to get or create director for file at path
@@ -182,72 +170,74 @@ public static class DirectoryExtensions
         => TryGetOrCreateParentDirectory(fileInfo.FullName, out parentDirectory);
 
 
-    /// <summary>
-    /// Recursively copy directory
-    /// </summary>
     /// <param name="source"></param>
-    /// <param name="destination"></param>
-    /// <param name="overwrite"></param>
-    /// <param name="wipe">delete destination before writing</param>
-    /// <exception cref="DirectoryNotFoundException"></exception>
-    public static void Copy(this DirectoryInfo source, DirectoryInfo destination, bool overwrite = false, bool wipe = false)
+    extension(DirectoryInfo source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(destination);
-
-        if (!source.Exists)
-            throw new DirectoryNotFoundException($"Source directory [{source.FullName}] does not exist.");
-
-        if (wipe)
-            destination.Delete(true);
-
-        if (!destination.WritePossible(overwrite))
-            throw new IOException($"FileInfo [{destination.FullName}] exists at destination directory and overwrite is false.");
-        
-        if (!destination.Exists)
-            destination.Create();
-        
-        var files = source.GetFiles();
-        foreach (var file in files)
-            file.CopyTo(Path.Combine(destination.FullName, file.Name), overwrite);
-
-        var directories = source.GetDirectories();
-        foreach (var directory in directories)
+        /// <summary>
+        /// Recursively copy directory
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="overwrite"></param>
+        /// <param name="wipe">delete destination before writing</param>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        public void Copy(DirectoryInfo destination, bool overwrite = false, bool wipe = false)
         {
-            var newDirectory = Directory.CreateDirectory(Path.Combine(destination.FullName, directory.Name));
-            directory.Copy(newDirectory, overwrite);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+
+            if (!source.Exists)
+                throw new DirectoryNotFoundException($"Source directory [{source.FullName}] does not exist.");
+
+            if (wipe)
+                destination.Delete(true);
+
+            if (!destination.WritePossible(overwrite))
+                throw new IOException($"FileInfo [{destination.FullName}] exists at destination directory and overwrite is false.");
+        
+            if (!destination.Exists)
+                destination.Create();
+        
+            var files = source.GetFiles();
+            foreach (var file in files)
+                file.CopyTo(Path.Combine(destination.FullName, file.Name), overwrite);
+
+            var directories = source.GetDirectories();
+            foreach (var directory in directories)
+            {
+                var newDirectory = Directory.CreateDirectory(Path.Combine(destination.FullName, directory.Name));
+                directory.Copy(newDirectory, overwrite);
+            }
         }
-    }
-    
-    public static async Task CopyAsync(this DirectoryInfo source, DirectoryInfo destination, bool overwrite = false, bool wipe = false)
-        => await Task.Run(() => Copy(source, destination, overwrite, wipe));
-    
-    /// <summary>
-    /// Recursively copy directory
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="destination"></param>
-    /// <param name="overwrite"></param>
-    /// <param name="wipe">delete destination before writing</param>
-    /// <returns>true on success</returns>
-    public static bool TryCopy(this DirectoryInfo source, DirectoryInfo destination, bool overwrite = false, bool wipe = false)
-    {
-        if (!source.Exists)
+
+        public async Task CopyAsync(DirectoryInfo destination, bool overwrite = false, bool wipe = false)
+            => await Task.Run(() => Copy(source, destination, overwrite, wipe));
+
+        /// <summary>
+        /// Recursively copy directory
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="overwrite"></param>
+        /// <param name="wipe">delete destination before writing</param>
+        /// <returns>true on success</returns>
+        public bool TryCopy(DirectoryInfo destination, bool overwrite = false, bool wipe = false)
+        {
+            if (!source.Exists)
+                return false;
+
+            try
+            {
+                source.Copy(destination, overwrite, wipe);
+                return true;
+            }
+            catch (Exception e)
+            {
+                QLog.Error(e);
+            }
+        
             return false;
-
-        try
-        {
-            source.Copy(destination, overwrite, wipe);
-            return true;
         }
-        catch (Exception e)
-        {
-            QLog.Error(e);
-        }
-        
-        return false;
     }
-    
+
     /// <summary>
     /// Store of Unpackager functions
     /// </summary>
@@ -290,7 +280,7 @@ public static class DirectoryExtensions
         if (!Directory.Exists(destPath))
             Directory.CreateDirectory(destPath);
         
-        System.IO.Compression.ZipFile.ExtractToDirectory(sourcePath, destPath, overwriteFiles);
+        await System.IO.Compression.ZipFile.ExtractToDirectoryAsync(sourcePath, destPath, overwriteFiles);
         await Task.CompletedTask;
         return destPath;
     }
@@ -412,25 +402,24 @@ public static class DirectoryExtensions
     /// <returns></returns>
     public static string FolderTree(string path)
         => FolderTree(path, new StringWriter()).ToString();
-    
-    /// <summary>
-    /// Human-readable folder tree
-    /// </summary>
-    /// <param name="directoryInfo"></param>
-    /// <returns></returns>
-    public static string FolderTree(this DirectoryInfo directoryInfo)
-        => FolderTree(directoryInfo.FullName);
-    
-    /// <summary>
-    /// Human-readable folder tree
-    /// </summary>
-    /// <param name="directoryInfo"></param>
-    /// <param name="writer"></param>
-    /// <param name="depth"></param>
-    /// <returns></returns>
-    public static StringWriter FolderTree(this DirectoryInfo directoryInfo, StringWriter writer, int depth = 1)
-        => FolderTree(directoryInfo.FullName, writer, depth);
 
- 
-    
+    /// <param name="directoryInfo"></param>
+    extension(DirectoryInfo directoryInfo)
+    {
+        /// <summary>
+        /// Human-readable folder tree
+        /// </summary>
+        /// <returns></returns>
+        public string FolderTree()
+            => FolderTree(directoryInfo.FullName);
+
+        /// <summary>
+        /// Human-readable folder tree
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="depth"></param>
+        /// <returns></returns>
+        public StringWriter FolderTree(StringWriter writer, int depth = 1)
+            => FolderTree(directoryInfo.FullName, writer, depth);
+    }
 }

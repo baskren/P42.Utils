@@ -61,78 +61,77 @@ public static class ListViewExtensions
         return null;
     }
 
-    /// <summary>
-    /// Gets the Offset of an item within a ListView
-    /// </summary>
     /// <param name="listView"></param>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public static Point GetOffsetForItem(this ListView listView, object item)
+    extension(ListView listView)
     {
-        if (listView.ContainerFromItem(item) is not UIElement element)
-            throw new Exception("Item is not visible in ListView");
-
-        if (GetScrollViewer(listView) is not { } viewer)
-            throw new Exception("ScrollViewer is not found in ListView");
-
-        var transform = element.TransformToVisual(viewer);
-        var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
-        return positionInScrollViewer;
-    }
-
-    /// <summary>
-    /// Tries to get offset for item
-    /// </summary>
-    /// <param name="listView"></param>
-    /// <param name="item"></param>
-    /// <param name="offset"></param>
-    /// <returns>false when cannot get offset</returns>
-    public static bool TryGetOffsetOfItem(this ListView listView, object item, out Point offset)
-    {
-        try
+        /// <summary>
+        /// Gets the Offset of an item within a ListView
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Point GetOffsetForItem(object item)
         {
-            offset = GetOffsetForItem(listView, item);
-            return true;
+            if (listView.ContainerFromItem(item) is not UIElement element)
+                throw new Exception("Item is not visible in ListView");
+
+            if (GetScrollViewer(listView) is not { } viewer)
+                throw new Exception("ScrollViewer is not found in ListView");
+
+            var transform = element.TransformToVisual(viewer);
+            var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
+            return positionInScrollViewer;
         }
-        catch (Exception)
-        {
-            offset = default;
-            return false;
-        }
-    }
 
-    /// <summary>
-    /// Scrolls ListView to item to bottom of current ListView's bounds
-    /// </summary>
-    /// <param name="listView"></param>
-    /// <param name="item"></param>
-    public static async Task ScrollToBottom(this ListView listView, object item)
-    {
-        if (GetScrollViewer(listView) is { } viewer)
+        /// <summary>
+        /// Tries to get offset for item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="offset"></param>
+        /// <returns>false when cannot get offset</returns>
+        public bool TryGetOffsetOfItem(object item, out Point offset)
         {
-            var container = listView.ContainerFromItem(item);
-            if (container is FrameworkElement element)
+            try
             {
-                var transform = element.TransformToVisual(viewer);
-                var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
-                var offset = Math.Max(0, positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight);
-                viewer.ChangeView(null, offset, null);
-                await Task.Delay(1000);
+                offset = GetOffsetForItem(listView, item);
+                return true;
+            }
+            catch (Exception)
+            {
+                offset = default;
+                return false;
             }
         }
-    }
 
-    /// <summary>
-    /// Scrolls ListView to item
-    /// </summary>
-    /// <param name="list"></param>
-    /// <param name="item"></param>
-    /// <param name="toPosition"></param>
-    /// <param name="shouldAnimate"></param>
-    public static async Task ScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate = true)
-    {
-        /*
+        /// <summary>
+        /// Scrolls ListView to item to bottom of current ListView's bounds
+        /// </summary>
+        /// <param name="item"></param>
+        public async Task ScrollToBottom(object item)
+        {
+            if (GetScrollViewer(listView) is { } viewer)
+            {
+                var container = listView.ContainerFromItem(item);
+                if (container is FrameworkElement element)
+                {
+                    var transform = element.TransformToVisual(viewer);
+                    var positionInScrollViewer = transform.TransformPoint(new Point(0, 0));
+                    var offset = Math.Max(0, positionInScrollViewer.Y + element.ActualHeight - listView.ActualHeight);
+                    viewer.ChangeView(null, offset, null);
+                    await Task.Delay(1000);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Scrolls ListView to item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="toPosition"></param>
+        /// <param name="shouldAnimate"></param>
+        public async Task ScrollToAsync(object item, ScrollToPosition toPosition, bool shouldAnimate = true)
+        {
+            /*
 #if __WASM__
         if (list.ContainerFromItem(item) is Microsoft.UI.Xaml.Controls.Primitives.SelectorItem selectorItem)
         {
@@ -143,11 +142,12 @@ public static class ListViewExtensions
         }
 #else
         */
-        await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
+            await InternalScrollToAsync(listView, item, toPosition, shouldAnimate, false);
 //#endif
-        await Task.Delay(500);
+            await Task.Delay(500);
+        }
     }
-		
+
 
     private static bool TryInternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 	{

@@ -137,8 +137,8 @@ public partial class DeviceDisk
 
                 var values = lines[1].RemoveExtraWhitespace().Split(' ');
 
-                result[FreeSpace] = ulong.Parse(values[freeColumn]) * blockSize;
-                result[Capacity] = ulong.Parse(values[capacityColumn]) * blockSize;
+                result[DeviceDisk.FreeSpace] = ulong.Parse(values[freeColumn]) * blockSize;
+                result[DeviceDisk.Capacity] = ulong.Parse(values[capacityColumn]) * blockSize;
                 
                 return result;
             }

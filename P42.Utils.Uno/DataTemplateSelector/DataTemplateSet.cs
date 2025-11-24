@@ -35,11 +35,11 @@ public class DataTemplateSet(Type dataType, Type templateType, Func<UIElement?> 
     /// </summary>
     public Func<UIElement?> Constructor { get; } = constructor;
 
-    private DataTemplate? _dataTemplate;
     public DataTemplate Template
     {
-        get => _dataTemplate ??= TemplateType.AsDataTemplate() ?? throw new Exception("Cannot generate data template for " + TemplateType);
-        internal set => _dataTemplate = value;
+        get => field ??= TemplateType.AsDataTemplate() ??
+                         throw new Exception("Cannot generate data template for " + TemplateType);
+        internal set;
     }
 }
 

@@ -4,6 +4,7 @@ using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
+// ReSharper disable once UnusedType.Global
 public class TtfAnalyzer
 {
 

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+// ReSharper disable InconsistentNaming
 
 namespace P42.Utils;
 
@@ -20,6 +21,12 @@ public partial class Serializer : Dictionary<Type, JsonSerializerContext>
 
     public static Serializer Default { get; } = new ();
 
+    /// <summary>
+    /// Checks if Serializer already has SerializationContext for type T
+    /// </summary>
+    /// <param name="showWarnings"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     public bool CheckForSerializationContext<T>(bool showWarnings)
     {
@@ -38,6 +45,9 @@ public partial class Serializer : Dictionary<Type, JsonSerializerContext>
     }
 
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public Serializer()
     {
         Add(typeof(string), String_SerializerContext.Default);
@@ -46,6 +56,13 @@ public partial class Serializer : Dictionary<Type, JsonSerializerContext>
         Add(typeof(Dictionary<string, Dictionary<string, Dictionary<string, string>>>), Dictionary_string_Dictionary_string_Dictionary_string_string_SerializerContext.Default);
     }
     
+    /// <summary>
+    /// Deserialize JSON to type T
+    /// </summary>
+    /// <param name="json"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="UnregisteredJsonSerializerContextException"></exception>
     public T? Deserialize<T>(string json) //where T : class
     {
         if (!TryGetValue(typeof(T), out var context))
@@ -59,7 +76,13 @@ public partial class Serializer : Dictionary<Type, JsonSerializerContext>
     }
     
     
-
+    /// <summary>
+    /// Try to deserialize JSON to type T
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="result"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public bool TryDeserialize<T>(string json, [MaybeNullWhen(false)] out T result) 
     {
         #if DEBUG

@@ -25,7 +25,7 @@
     <PackageReference Include="AsyncAwaitBestPractices" />
     <PackageReference Include="UAParser" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
     <!--
     <PackageReference Include="Xamarin.GooglePlayServices.Ads.Identifier" />
     -->

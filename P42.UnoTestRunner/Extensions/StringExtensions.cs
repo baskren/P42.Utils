@@ -71,14 +71,17 @@ internal static partial class StringExtensions
         return new LineSplitEnumerator(instance);
     }
 
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this string instance)
+    extension([NotNullWhen(false)] string instance)
     {
-        return string.IsNullOrEmpty(instance);
-    }
+        public bool IsNullOrEmpty()
+        {
+            return string.IsNullOrEmpty(instance);
+        }
 
-    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string instance)
-    {
-        return string.IsNullOrWhiteSpace(instance);
+        public bool IsNullOrWhiteSpace()
+        {
+            return string.IsNullOrWhiteSpace(instance);
+        }
     }
 
     /// <summary>
@@ -98,32 +101,35 @@ internal static partial class StringExtensions
         return string.Join(joinBy, items);
     }
 
-    public static string InvariantCultureFormat(this string instance, params object[] array)
+    extension(string instance)
     {
-        return string.Format(CultureInfo.InvariantCulture, instance, array);
-    }
+        public string InvariantCultureFormat(params object[] array)
+        {
+            return string.Format(CultureInfo.InvariantCulture, instance, array);
+        }
 
-    public static string TrimStart(this string source, string trimText, bool ignoreCase = false)
-    {
-        if (!string.IsNullOrEmpty(trimText) && source.StartsWith(trimText, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+        public string TrimStart(string trimText, bool ignoreCase = false)
         {
-            return source.Substring(trimText.Length);
+            if (!string.IsNullOrEmpty(trimText) && instance.StartsWith(trimText, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+            {
+                return instance.Substring(trimText.Length);
+            }
+            else
+            {
+                return instance;
+            }
         }
-        else
-        {
-            return source;
-        }
-    }
 
-    public static string TrimEnd(this string source, string trimText)
-    {
-        if (!string.IsNullOrEmpty(trimText) && source.EndsWith(trimText, StringComparison.Ordinal))
+        public string TrimEnd(string trimText)
         {
-            return source.Substring(0, source.Length - trimText.Length);
-        }
-        else
-        {
-            return source;
+            if (!string.IsNullOrEmpty(trimText) && instance.EndsWith(trimText, StringComparison.Ordinal))
+            {
+                return instance.Substring(0, instance.Length - trimText.Length);
+            }
+            else
+            {
+                return instance;
+            }
         }
     }
 

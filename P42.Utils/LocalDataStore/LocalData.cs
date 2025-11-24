@@ -89,10 +89,9 @@ public abstract class LocalData
         if (File.Exists(key.FullPath))
             return [key.FullPath];
 
-        if (Directory.Exists(key.FullPath))
-            return Directory.EnumerateFiles(key.FullPath, "*", SearchOption.AllDirectories).ToList();
-        
-        return [];
+        return Directory.Exists(key.FullPath) 
+            ? Directory.EnumerateFiles(key.FullPath, "*", SearchOption.AllDirectories).ToList() 
+            : [];
     }
 
     #endregion
@@ -181,12 +180,13 @@ public abstract class LocalData
     /// <param name="assembly"></param>
     public abstract class Item(string fullPath, string? folderPath, Assembly? assembly) : IEquatable<Item>
     {
-        private Assembly? _assembly = assembly;
-
         /// <summary>
         /// Used to compartmentalize items by assembly (default: current application assembly)
         /// </summary>
-        protected Assembly Assembly => _assembly ??= AssemblyExtensions.GetApplicationAssembly();
+        protected Assembly Assembly
+        {
+            get => field ??= AssemblyExtensions.GetApplicationAssembly();
+        } = assembly;
 
         /// <summary>
         /// FolderPath (used to further compartmentalize items (default: null)
@@ -215,7 +215,6 @@ public abstract class LocalData
 
                 var localPathFragment = FullPath[PlatformFolder.Length..].Replace('\\', '/').Trim('/');
                 return $"ms-appdata:///local/{localPathFragment}";
-
             }
         }
 
@@ -544,17 +543,20 @@ public abstract class LocalData
         /// <returns>true on success</returns>
         public void StoreValue<T>(T? obj)
         {
-            if (obj is Item)
-                throw new ArgumentException("Cannot serialize a LocalData.Item");
-
-            if (obj is string text)
+            switch (obj)
             {
-                this.StoreText(text);
-                return;
+                case Item:
+                    throw new ArgumentException("Cannot serialize a LocalData.Item");
+                case string text:
+                    this.StoreText(text);
+                    return;
+                default:
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(obj);
+                    this.StoreText(json);
+                    break;
+                }
             }
-
-            var json = System.Text.Json.JsonSerializer.Serialize(obj);
-            this.StoreText(json);
         }
 
         /// <summary>
@@ -565,17 +567,20 @@ public abstract class LocalData
         /// <returns></returns>
         public async Task StoreValueAsync<T>(T? obj)
         {
-            if (obj is Item)
-                throw new ArgumentException("Cannot serialize a LocalData.Item");
-
-            if (obj is string text)
+            switch (obj)
             {
-                await this.StoreTextAsync(text);
-                return;
+                case Item:
+                    throw new ArgumentException("Cannot serialize a LocalData.Item");
+                case string text:
+                    await this.StoreTextAsync(text);
+                    return;
+                default:
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(obj);
+                    await this.StoreTextAsync(json);
+                    break;
+                }
             }
-
-            var json = System.Text.Json.JsonSerializer.Serialize(obj);
-            await this.StoreTextAsync(json);
         }
 
         /// <summary>

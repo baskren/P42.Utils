@@ -39,7 +39,7 @@ public static partial class DeviceBeep
         if (_queue != null)
             return;
 
-        _queue = new();
+        _queue = new ConcurrentQueue<(int Frequency, int Duration, TaskCompletionSource<bool> Tcs)>();
 
 
         // Start a consumer task

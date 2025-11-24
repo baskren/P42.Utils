@@ -9,8 +9,14 @@ namespace P42.UnoTestRunner;
 
 static class ReflectionExtentions
 {
-    public static List<MethodInfo> GetMethodsWithAttribute(this Type type, Type attributeType)
-        => type.GetMethods().Where(m => m.GetCustomAttribute(attributeType) != null).ToList();
+    extension(Type type)
+    {
+        public List<MethodInfo> GetMethodsWithAttribute(Type attributeType)
+            => type.GetMethods().Where(m => m.GetCustomAttribute(attributeType) != null).ToList();
+
+        public List<MethodInfo> GetMethodsWithAttribute<T>()
+            => GetMethodsWithAttribute(type, typeof(T));
+    }
     /*
         => (
             from method in type.GetMethods()
@@ -19,11 +25,14 @@ static class ReflectionExtentions
         ).ToList();
         */
 
-    public static List<MethodInfo> GetMethodsWithAttribute<T>(this Type type)
-        => GetMethodsWithAttribute(type, typeof(T));
+    extension(Assembly assembly)
+    {
+        public List<Type> GetTypesWithAttribute(Type attributeType)
+            => assembly.GetTypes().Where(t => t.GetCustomAttribute((attributeType)) != null).ToList();
 
-    public static List<Type> GetTypesWithAttribute(this Assembly assembly, Type attributeType)
-        => assembly.GetTypes().Where(t => t.GetCustomAttribute((attributeType)) != null).ToList();
+        public List<Type> GetTypesWithAttribute<T>()
+            => GetTypesWithAttribute((Assembly)assembly, typeof(T));
+    }
         /*
         =>
         (from type in assembly.GetTypes()
@@ -31,7 +40,4 @@ static class ReflectionExtentions
          select type)
         .ToList();
         */
-
-    public static List<Type> GetTypesWithAttribute<T>(this Assembly asm)
-        => GetTypesWithAttribute((Assembly)asm, typeof(T));
 }

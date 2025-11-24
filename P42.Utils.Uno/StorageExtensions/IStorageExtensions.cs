@@ -2,23 +2,25 @@ namespace P42.Utils.Uno;
 
 public static class IStorageExtensions
 {
-    /// <summary>
-    /// Human-readable folder tree
-    /// </summary>
     /// <param name="folder"></param>
-    /// <returns></returns>
-    public static string FolderTree(this IStorageFolder folder)
-        => DirectoryExtensions.FolderTree(folder.Path);
-    
-    /// <summary>
-    /// Clear the contents of an IStorageFolder
-    /// </summary>
-    /// <param name="parentFolder"></param>
-    /// <returns></returns>
-    public static async Task DeleteChildrenAsync(this IStorageFolder parentFolder)
+    extension(IStorageFolder folder)
     {
-        var items = await parentFolder.GetItemsAsync();
-        foreach (var child in items)
-            await child.DeleteAsync();
+        /// <summary>
+        /// Human-readable folder tree
+        /// </summary>
+        /// <returns></returns>
+        public string FolderTree()
+            => DirectoryExtensions.FolderTree(folder.Path);
+
+        /// <summary>
+        /// Clear the contents of an IStorageFolder
+        /// </summary>
+        /// <returns></returns>
+        public async Task DeleteChildrenAsync()
+        {
+            var items = await folder.GetItemsAsync();
+            foreach (var child in items)
+                await child.DeleteAsync();
+        }
     }
 }

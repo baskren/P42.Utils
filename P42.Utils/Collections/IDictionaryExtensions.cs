@@ -7,93 +7,89 @@ namespace P42.Utils;
 /// </summary>
 public static class IDictionaryExtensions
 {
-    /// <summary>
-    /// Add range to IDictionary
-    /// </summary>
     /// <param name="dictionary"></param>
-    /// <param name="range"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="Tq"></typeparam>
-    /// <returns></returns>
-    public static IDictionary<T,Tq> AddRange<T,Tq>(this IDictionary<T,Tq> dictionary, IDictionary<T,Tq> range)
+    /// <typeparam name="TValue"></typeparam>
+    // ReSharper disable once UnusedType.Global
+    extension<TValue>(IDictionary<string, TValue> dictionary)
     {
-        foreach (var item in range)
-            dictionary[item.Key] = item.Value;
-        
-        return dictionary;
+        /// <summary>
+        /// does a dictionary contain a key that contains a subkey
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <returns></returns>
+        [Obsolete("Use LINQ instead?")]
+        public bool ContainsKeyThatContains(string subkey)
+            => dictionary.Keys.Any(key => key.Contains(subkey));
+
+        /// <summary>
+        /// Find keys in dictionary that contain subkey
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <returns></returns>
+        [Obsolete("Use LINQ instead?")]
+        public List<string> KeysThatContain(string subkey)
+            => dictionary.Keys.Where(key => key.Contains(subkey)).ToList();
+
+        /// <summary>
+        /// Find items in dictionary whose keys contain subkey 
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <returns></returns>
+        [Obsolete("Use LINQ instead?")]
+        public List<TValue> ItemsWithKeysThatContain(string subkey)
+            => (from key in dictionary.Keys where key.Contains(subkey) select dictionary[key]).ToList();
     }
 
-    /// <summary>
-    /// does a dictionary contain a key that contains a subkey
-    /// </summary>
-    /// <param name="dictionary"></param>
-    /// <param name="subkey"></param>
-    /// <typeparam name="TValue"></typeparam>
-    /// <returns></returns>
-    [Obsolete("Use LINQ instead?")]
-    public static bool ContainsKeyThatContains<TValue>(this IDictionary<string, TValue> dictionary, string subkey)
-        => dictionary.Keys.Any(key => key.Contains(subkey));
-    
-    /// <summary>
-    /// Find keys in dictionary that contain subkey
-    /// </summary>
-    /// <param name="dictionary"></param>
-    /// <param name="subkey"></param>
-    /// <typeparam name="TValue"></typeparam>
-    /// <returns></returns>
-    [Obsolete("Use LINQ instead?")]
-    public static List<string> KeysThatContain<TValue>(this IDictionary<string, TValue> dictionary, string subkey)
-        => dictionary.Keys.Where(key => key.Contains(subkey)).ToList();
-        
 
-    /// <summary>
-    /// Find items in dictionary whose keys contain subkey 
-    /// </summary>
     /// <param name="dictionary"></param>
-    /// <param name="subkey"></param>
-    /// <typeparam name="TValue"></typeparam>
-    /// <returns></returns>
-    [Obsolete("Use LINQ instead?")]
-    public static List<TValue> ItemsWithKeysThatContain<TValue>(this IDictionary<string, TValue> dictionary, string subkey)
-        => (from key in dictionary.Keys where key.Contains(subkey) select dictionary[key]).ToList();
-        
-
-    /// <summary>
-    /// Try to get a Key from a dictionary
-    /// </summary>
-    /// <param name="dictionary"></param>
-    /// <param name="value"></param>
-    /// <param name="key"></param>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    /// <returns></returns>
-    public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, [MaybeNullWhen(false)] out TKey key)
+    extension<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
     {
-        foreach (var kvp in dictionary)
+        /// <summary>
+        /// Try to get a Key from a dictionary
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool TryGetKey(TValue value, [MaybeNullWhen(false)] out TKey key)
         {
-            if (!Equals(value, kvp.Value))
-                continue;
+            foreach (var kvp in dictionary)
+            {
+                if (!Equals(value, kvp.Value))
+                    continue;
 
-            key = kvp.Key;
-            return true;
-        }
+                key = kvp.Key;
+                return true;
+            }
         
-        key = default;
-        return false;
-    }
+            key = default;
+            return false;
+        }
 
-    /// <summary>
-    /// Add item to dictionary in Fluent style
-    /// </summary>
-    /// <param name="dict"></param>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    /// <typeparam name="TKey"></typeparam>
-    /// <typeparam name="TValue"></typeparam>
-    /// <returns></returns>
-    public static IDictionary<TKey, TValue> FluentAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
-    {
-        dict.Add(key, value); 
-        return dict;
+        /// <summary>
+        /// Add item to dictionary in Fluent style
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public IDictionary<TKey, TValue> FluentAdd(TKey key, TValue value)
+        {
+            dictionary.Add(key, value); 
+            return dictionary;
+        }
+
+        /// <summary>
+        /// Add range to IDictionary
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public IDictionary<TKey,TValue> AddRange(IDictionary<TKey,TValue> range)
+        {
+            foreach (var item in range)
+                dictionary[item.Key] = item.Value;
+        
+            return dictionary;
+        }
     }
 }

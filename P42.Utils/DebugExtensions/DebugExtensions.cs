@@ -253,51 +253,47 @@ public static class DebugExtensions
     /// </summary>
     public static readonly ConcurrentDictionary<Type, long> Census = new();
 
-    /// <summary>
-    /// Add an object to the Census
-    /// </summary>
     /// <param name="obj"></param>
-    public static void AddToCensus(this object obj)
+    // ReSharper disable once UnusedType.Global
+    extension(object obj)
     {
-        if (!IsCensusEnabled)
-            return;
-
-        var type = obj.GetType();
-        if (!Census.TryAdd(type, 1))
-            Census[type] += 1;
-    }
-
-    /// <summary>
-    /// Remove an object from the census
-    /// </summary>
-    /// <param name="obj"></param>
-    public static void RemoveFromCensus(this object obj)
-    {
-        if (!IsCensusEnabled)
-            return;
-
-        var type = obj.GetType();
-        if (Census.ContainsKey(type))
-            Census[type] -= 1;
-        else
+        /// <summary>
+        /// Add an object to the Census
+        /// </summary>
+        public void AddToCensus()
         {
-            var msg = $"Debug.{CurrentCodeWaypoint()}:TYPE NOT FOUND!!!! [{type}]";
-            Debug.WriteLine(msg);
-            Console.WriteLine(msg);
+            if (!IsCensusEnabled)
+                return;
+
+            var type = obj.GetType();
+            if (!Census.TryAdd(type, 1))
+                Census[type] += 1;
+        }
+
+        /// <summary>
+        /// Remove an object from the census
+        /// </summary>
+        public void RemoveFromCensus()
+        {
+            if (!IsCensusEnabled)
+                return;
+
+            var type = obj.GetType();
+            if (Census.ContainsKey(type))
+                Census[type] -= 1;
+            else
+            {
+                var msg = $"Debug.{CurrentCodeWaypoint()}:TYPE NOT FOUND!!!! [{type}]";
+                Debug.WriteLine(msg);
+                Console.WriteLine(msg);
+            }
         }
     }
 
     /// <summary>
     /// How many objects are in Census?
     /// </summary>
-    public static long CensusActiveCount
-    {
-        get
-        {
-            var actives = Census.Values.ToArray();
-            return actives.Sum();
-        }
-    }
+    public static long CensusActiveCount => Census.Values.Count;
 
     /// <summary>
     /// Enable ability to email user for help when unusual crash is encountered

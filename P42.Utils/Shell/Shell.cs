@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace P42.Utils;
 
 public static class Shell
