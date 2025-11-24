@@ -237,6 +237,7 @@ public static class TextBlockExtensions
 
     #endregion
 
+
     #region Html Property
     /// <summary>
     /// HTML Attached Dependency Property

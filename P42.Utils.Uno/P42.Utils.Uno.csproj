@@ -33,10 +33,4 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Mono.Android">
-      <HintPath>..\..\..\..\..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.Android.Ref.36\36.1.2\ref\net10.0\Mono.Android.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

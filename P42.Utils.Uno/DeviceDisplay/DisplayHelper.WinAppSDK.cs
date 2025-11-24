@@ -5,7 +5,7 @@ namespace P42.Utils.Uno;
 
 public static partial class DisplayHelper
 {
-    public static DisplayMetrics? GetDisplayMetricsForWindow( Window window)
+    public static DisplayMetrics? GetDisplayMetricsForWindow(Window window)
     {
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
         var monitor = MonitorFromWindow(hwnd, 2); // MonitorFromWindow flags: 2 = MONITOR_DEFAULTTONEAREST
