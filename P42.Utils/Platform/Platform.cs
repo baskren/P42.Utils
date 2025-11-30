@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.VisualBasic.CompilerServices;
+using P42.Serilog.QuickLog;
 
 namespace P42.Utils;
 
@@ -40,17 +41,20 @@ public static class Platform
     [Obsolete("Use P42.Uno/AppResources/EmbeddedResourceExtensions.FindAssembly instead.", true)]
     public static Func<string, Assembly, Assembly>? EmbeddedResourceAssemblyResolver { get; }
    
+    */
+
 
     /// <summary>
     /// Initialization
     /// </summary>
     public static void Init()
     {
-        MainThreadId = System.Environment.CurrentManagedThreadId;
+        AsyncAwaitBestPractices.SafeFireAndForgetExtensions.SetDefaultExceptionHandling((ex) =>
+        {
+            QLog.Error(ex);
+        });
     }
 
-    */
-    
     internal static Action PlatformPathLoader
     {
         get => field ?? throw new IncompleteInitialization();

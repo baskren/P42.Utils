@@ -89,6 +89,8 @@ public static class Platform
     static bool _hasBeenInit;
     public static void Init(Application application, Window window)
     {
+        P42.Utils.Platform.Init();
+
         if (_hasBeenInit)
             return;
         _hasBeenInit = true;
