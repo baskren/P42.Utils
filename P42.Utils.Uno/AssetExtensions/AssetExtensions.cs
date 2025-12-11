@@ -3,9 +3,17 @@ namespace P42.Utils.Uno;
 // ReSharper disable once UnusedType.Global
 public static class AssetExtensions
 {
+    /// <summary>
+    /// Edit path to asset (particularly library assets) so that it works across all platforms
+    /// </summary>
+    /// <param name="uri">The URI from which to extract the asset path. Cannot be null.</param>
+    /// <returns>A string containing the asset path extracted from the URI. Returns an empty string if the URI does not contain
+    /// an asset path.</returns>
+    public static string AssetPath(this Uri uri)
+        => AssetPath(uri.ToString());
 
     // TODO: Has the reason for this method been fixed in UNO?
-    
+
     /// <summary>
     /// Edit path to asset (particularly library assets) so that it works across all platforms
     /// </summary>

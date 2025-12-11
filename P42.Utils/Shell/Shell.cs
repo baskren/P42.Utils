@@ -14,16 +14,8 @@ public static class Shell
         // Create a new process
         using var process = new System.Diagnostics.Process();
         // Configure the process
-        if (OperatingSystem.IsWindows())
-        {
-            process.StartInfo.FileName = command;
-            process.StartInfo.Arguments = arguments;
-        }
-        else
-        {
-            process.StartInfo.FileName = command;
-            process.StartInfo.Arguments = arguments;
-        }
+        process.StartInfo.FileName = command;
+        process.StartInfo.Arguments = arguments;
         process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.RedirectStandardError = true;
@@ -31,7 +23,16 @@ public static class Shell
         process.StartInfo.UseShellExecute = false;
 
         // Start the process
-        process.Start();
+        try
+        {
+            process.Start();
+        }
+        catch (Exception ex)
+        {
+            output = string.Empty;
+            error = ex.Message;
+            return -1;
+        }
 
         // Capture output
         output = process.StandardOutput.ReadToEnd();
@@ -41,4 +42,51 @@ public static class Shell
         
         return process.ExitCode;
     }
+
+
+    public static async Task<(int code, string output, string error)> ExecuteCommandAsync(string command, string arguments, CancellationToken token = default)
+    {
+        var output = string.Empty;
+        var error = string.Empty;
+        if (OperatingSystem.IsIOS() || OperatingSystem.IsBrowser())
+        {
+            error = "Unsupported operating system";
+            return (-1, output, error);
+        }
+        // Create a new process
+        using var process = new System.Diagnostics.Process();
+        // Configure the process
+        process.StartInfo.FileName = command;
+        process.StartInfo.Arguments = arguments;
+        process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.UseShellExecute = false;
+
+        // Start the process
+        try
+        {
+            process.Start();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            return (-1, output, error);
+        }
+
+        await Task.Run(() =>
+        {
+            process.WaitForExit();
+        }, token);
+
+        output = process.StandardOutput.ReadToEnd();
+        error = process.StandardError.ReadToEnd();
+
+        if (process.HasExited)
+            return (process.ExitCode, output, error);
+
+        return (-1, output, $"process was cancelled : [{error}]");
+    }
+
 }

@@ -41,5 +41,6 @@ public static class ICollectionExtensions
         /// No members?
         /// </summary>
         public bool IsEmpty => collection.Count == 0;
+
     }
 }
