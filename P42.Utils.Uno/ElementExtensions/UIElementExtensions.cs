@@ -80,7 +80,7 @@ public static class UIElementExtensions
         /// <returns></returns>
         // ReSharper disable once InconsistentNaming
         // ReSharper disable once UnusedMember.Local
-        private Rect GetBounds(UIElement? relativeTo = null)
+        public Rect GetBounds(UIElement? relativeTo = null)
         {
             if (element is FrameworkElement fe)
                 return GetBounds(fe, relativeTo);
@@ -118,11 +118,6 @@ public static class UIElementExtensions
             return new Rect(location, new Size(width, height));
         }
 
-    }
-
-    /// <param name="element"></param>
-    extension(UIElement element)
-    {
         /// <summary>
         /// Find first ancestor of type T
         /// </summary>
@@ -155,114 +150,7 @@ public static class UIElementExtensions
         }
     }
 
-    /// <param name="templateType"></param>
-    extension(Type templateType)
-    {
-        /// <summary>
-        /// Convert a type into a DataTemplate Xaml string
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public string AsDataTemplateXaml()
-        {
-            if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))
-                throw new Exception($"Cannot convert type [{templateType}] into DataTemplate");
 
-            var markup = $"<DataTemplate \n\t xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:local=\"using:{templateType.Namespace}\"> \n\t\t<local:{templateType.Name} /> \n</DataTemplate>";
-            //if (dataType.Namespace == typeof(Type).Namespace)
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" xmlns:tlocal=\"using:{templateType.Namespace}\" xmlns:system=\"using:System\" x:DataType=\"system:{dataType.Name}\"><tlocal:{templateType.Name} /></DataTemplate>";
-            //else
-            //    markup = $"<DataTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" \n\t xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" \n\t xmlns:tlocal=\"using:{templateType.Namespace}\" \n\t xmlns:dlocal=\"using:{dataType.Namespace}\" \n\t x:DataType=\"dlocal:{dataType.Name}\"> \n\t\t<tlocal:{templateType.Name} /> \n</DataTemplate>";
-            // System.Diagnostics.Debug.WriteLine("BcGroupView.GenerateDataTemplate: markup: " + markup);
-            //template.
-            return markup;
-        }
 
-        /// <summary>
-        /// Convert type to a DataTemplate
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="lineNumber"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public DataTemplate? AsDataTemplate([CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
-        {
-            try
-            {
-                var markup = templateType.AsDataTemplateXaml();
-                return (DataTemplate)XamlReader.Load(markup);
-            }
-            catch (Exception e)
-            {
-                QLog.Error(e, $"{filePath}:{lineNumber}");
-            }
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Gets the first descendent of a FrameworkElement
-    /// </summary>
-    /// <param name="element"></param>
-    /// <returns></returns>
-    public static UIElement? GetFirstDescendent(this FrameworkElement element)
-        => element.FindChildren<UIElement>().FirstOrDefault();
-
-    /// <param name="parent"></param>
-    extension(DependencyObject parent)
-    {
-        /// <summary>
-        /// Find's child of a FrameworkElement by name
-        /// </summary>
-        /// <param name="controlName"></param>
-        /// <returns></returns>
-        public DependencyObject? FindChildByName(string controlName)
-        {
-            var count = VisualTreeHelper.GetChildrenCount(parent);
-
-            for (var i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is FrameworkElement element && element.Name == controlName)
-                    return element;
-
-                var findResult = FindChildByName(child, controlName);
-                if (findResult != null)
-                    return findResult;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the Children of a DependencyObject
-        /// </summary>
-        /// <param name="strictTypeCheck">true: will not check for derived classes</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public List<T> FindChildren<T>(bool strictTypeCheck = true) where T : DependencyObject
-        {
-            var results = new List<T>();
-            FindChildrenInternal(results, parent, strictTypeCheck);
-            return results;
-        }
-    }
-
-    internal static void FindChildrenInternal<T>(List<T> results, DependencyObject? startNode, bool strictTypeCheck) where T : DependencyObject
-    {
-        startNode ??= Platform.MainWindow.Content;
-
-        var count = VisualTreeHelper.GetChildrenCount(startNode);
-        for (var i = 0; i < count; i++)
-        {
-            var current = VisualTreeHelper.GetChild(startNode, i);
-            if (current is T || (!strictTypeCheck && current.GetType().GetTypeInfo().IsSubclassOf(typeof(T))))
-            {
-                var asType = (T)current;
-                results.Add(asType);
-            }
-            FindChildrenInternal(results, current, strictTypeCheck);
-        }
-    }
 
 }
