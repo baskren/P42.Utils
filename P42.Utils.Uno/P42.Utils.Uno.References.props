@@ -7,13 +7,14 @@
   
   <!-- SHARED ITEMS -->
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.0.9" />
     <!--
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
     -->
+
   </ItemGroup>
 
 
