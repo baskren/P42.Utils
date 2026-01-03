@@ -71,12 +71,26 @@ public static class TextBlockExtensions
         var markdown = (string)e.NewValue ?? string.Empty;
 
         var html = Markdig.Markdown.ToHtml(markdown, Pipeline);
-        textBlock.Html(html);
+        textBlock.Html = html;
     }
+
+
 
     /// <param name="textBlock"></param>
     extension(ElementType textBlock)
     {
+        /// <summary>
+        /// Gets or sets the Markdown-formatted text content to display.
+        /// </summary>
+        /// <remarks>Setting this property updates the displayed content to reflect the specified
+        /// Markdown. If the value is null, the content is cleared.</remarks>
+        public string Markdown
+        {
+            get => (string)textBlock.GetValue(MarkdownProperty) ?? string.Empty;
+            set => textBlock.SetValue(MarkdownProperty, value);
+        }
+
+
         /// <summary>
         /// HTML Setter
         /// </summary>
@@ -85,24 +99,10 @@ public static class TextBlockExtensions
         // ReSharper disable once UnusedMethodReturnValue.Global
         public ElementType SetMarkdown(string? value)
         {
-            textBlock.SetValue(MarkdownProperty, value ?? string.Empty);
+            textBlock.Markdown = value ?? string.Empty;
             return textBlock;
         }
 
-        /// <summary>
-        /// Markdown Getter
-        /// </summary>
-        /// <returns></returns>
-        public string GetMarkdown()
-            => (string)textBlock.GetValue(MarkdownProperty);
-
-        /// <summary>
-        /// Markdown Setter Extension Method
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public ElementType Markdown(string value)
-        { textBlock.SetMarkdown(value); return textBlock; }
 
         /// <summary>
         /// Markdown Work-around Binding 
@@ -285,25 +285,15 @@ public static class TextBlockExtensions
         // ReSharper disable once UnusedMethodReturnValue.Global
         public ElementType SetHtml(string? value)
         {
-            textBlock.SetValue(HtmlProperty, value ?? string.Empty);
+            textBlock.Html = value ?? string.Empty;
             return textBlock;
         }
 
-        /// <summary>
-        /// HTML Getter
-        /// </summary>
-        /// <returns></returns>
-        public string GetHtml()
-            => (string)textBlock.GetValue(HtmlProperty);
-
-        /// <summary>
-        /// HTML Setter Extension Method
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        // ReSharper disable once UnusedMethodReturnValue.Global
-        public ElementType Html(string value)
-        { textBlock.SetHtml(value); return textBlock; }
+        public string Html
+        {
+            get => (string)textBlock.GetValue(HtmlProperty) ?? string.Empty;
+            set => textBlock.SetValue(HtmlProperty, value);
+        }
 
         /// <summary>
         /// HTML Work-around Binding 

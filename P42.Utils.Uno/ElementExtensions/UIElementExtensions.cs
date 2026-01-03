@@ -10,44 +10,54 @@ namespace P42.Utils.Uno;
 // ReSharper disable once InconsistentNaming
 public static class UIElementExtensions
 {
+    private static MethodInfo? GetActualWidthMethod
+        => field ??= typeof(FrameworkElement).GetMethod("GetActualWidth", BindingFlags.NonPublic | BindingFlags.Instance);
+
+    private static MethodInfo? GetActualHeightMethod
+        => field ??= typeof(FrameworkElement).GetMethod("GetActualHeight", BindingFlags.NonPublic | BindingFlags.Instance);
+
     /// <param name="element"></param>
     extension(FrameworkElement element)
     {
+        public bool IsVisible => element.Visibility == Microsoft.UI.Xaml.Visibility.Visible;
+
+        public bool IsEnabled => element.IsEnabled;
+
         /// <summary>
         /// Does the element have a prescribed width
         /// </summary>
         /// <returns></returns>
-        public bool HasPrescribedWidth() => !double.IsNaN(element.Width) && element.Width >= 0;
+        public bool HasPrescribedWidth => !double.IsNaN(element.Width) && element.Width >= 0;
 
         /// <summary>
         /// Does the element have a prescrib`ed height
         /// </summary>
         /// <returns></returns>
-        public bool HasPrescribedHeight() => !double.IsNaN(element.Height) && element.Height >= 0;
+        public bool HasPrescribedHeight => !double.IsNaN(element.Height) && element.Height >= 0;
 
         /// <summary>
         /// Does the element have a prescribed minimum width
         /// </summary>
         /// <returns></returns>
-        public bool HasMinWidth() => !double.IsNaN(element.MinWidth) && element.MinWidth >= 0;
+        public bool HasMinWidth => !double.IsNaN(element.MinWidth) && element.MinWidth >= 0;
 
         /// <summary>
         /// Does the element have a prescribed minimum height
         /// </summary>
         /// <returns></returns>
-        public bool HasMinHeight() => !double.IsNaN(element.MinHeight) && element.MinHeight >= 0;
+        public bool HasMinHeight => !double.IsNaN(element.MinHeight) && element.MinHeight >= 0;
 
         /// <summary>
         /// Does the element have a prescribed maximum width
         /// </summary>
         /// <returns></returns>
-        public bool HasMaxWidth() => !double.IsNaN(element.MaxWidth) && element.MaxWidth >= 0;
+        public bool HasMaxWidth => !double.IsNaN(element.MaxWidth) && element.MaxWidth >= 0;
 
         /// <summary>
         /// Does the element have a prescribed maximum height
         /// </summary>
         /// <returns></returns>
-        public bool HasMaxHeight() => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
+        public bool HasMaxHeight => !double.IsNaN(element.MaxHeight) && element.MaxHeight >= 0;
 
         /// <summary>
         /// Get Bounds of FrameworkElement
@@ -63,12 +73,6 @@ public static class UIElementExtensions
             return new Rect(location, new Size(element.ActualWidth, element.ActualHeight));
         }
     }
-
-    private static MethodInfo? GetActualWidthMethod 
-        => field ??= typeof(FrameworkElement).GetMethod("GetActualWidth", BindingFlags.NonPublic | BindingFlags.Instance);
-            
-    private static MethodInfo? GetActualHeightMethod
-        => field ??= typeof(FrameworkElement).GetMethod("GetActualHeight", BindingFlags.NonPublic | BindingFlags.Instance);
 
     /// <param name="element"></param>
     extension(UIElement element)
