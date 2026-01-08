@@ -402,3 +402,4 @@ solution-config.props
 # Publish Profiles
 !**/Properties/PublishProfiles/*.pubxml
 .idea/
+P42.Utils.AppTest/Resources/sampledoc.pdf
