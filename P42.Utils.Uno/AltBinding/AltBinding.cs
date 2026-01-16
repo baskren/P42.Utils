@@ -9,7 +9,10 @@ namespace P42.Utils.Uno;
 
 internal class AltBinding : IDisposable
 {
+
+
     private WeakReference<DependencyObject>? _targetWeakReference;
+
     /// <summary>
     /// Dependency object to which the binding is attached
     /// </summary>

@@ -12,6 +12,19 @@ namespace P42.Utils.Uno;
 public static class AltBindingExtensions
 {
     
+    
+    public static List<string>? GetExcepts(object? except)
+    {
+        return except switch
+        {
+            null => null,
+            string str => [str],
+            IEnumerable<string> enumerable => [.. enumerable],
+            _ => throw new Exception("GetTextExcepts: argument must be null, string, or IEnumerable<string>")
+        };
+    }
+
+
         #region Workaround Binding
 
     private static readonly DependencyProperty P42BindingsProperty = DependencyProperty.RegisterAttached("P42Bindings", typeof(AltBindingCollection), typeof(AltBindingExtensions), new PropertyMetadata(null));
