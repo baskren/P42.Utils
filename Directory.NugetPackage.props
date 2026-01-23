@@ -1,8 +1,10 @@
 <Project ToolsVersion="15.0">
 
-  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != '' ">
+  <PropertyGroup Condition="  $(P42_LocalNuGetFolderPath) != '' AND '$(Configuration)' == 'Release'">
 
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
+    <CharsToTrim>\/</CharsToTrim>
+    <P42_RepoName>$( [System.IO.Path]::GetFileName($(MSBuildThisFileDirectory.TrimEnd($(CharsToTrim)))) )</P42_RepoName>
 
   	<PublishRepositoryUrl>true</PublishRepositoryUrl>
   	<EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -13,9 +15,9 @@
     <Authors>Ben Askren</Authors>
     <Company>42nd Parallel</Company>
     <Description Condition=" '$(Description)' == '' ">.Net Utilities</Description>
-    <Copyright>2025, 42nd Parallel</Copyright>
-    <PackageProjectUrl>https://github.com/baskren/P42.Utils</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/baskren/P42.Utils</RepositoryUrl>
+    <Copyright>2026, 42nd Parallel</Copyright>
+    <PackageProjectUrl>https://github.com/baskren/$(P42_RepoName)</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/baskren/$(P42_RepoName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
