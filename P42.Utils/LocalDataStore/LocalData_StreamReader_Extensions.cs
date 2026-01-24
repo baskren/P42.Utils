@@ -58,10 +58,11 @@ public static class LocalDataStreamReaderExtensions
         /// Get StreamReader, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<StreamReader> AssureExistsStreamReaderAsync()
         {
             await item.AssureExistsAsync();
-            return StreamReader(item);
+            return item.StreamReader();
         }
 
         /// <summary>
@@ -89,10 +90,11 @@ public static class LocalDataStreamReaderExtensions
         /// Get StreamReader, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public StreamReader AssureExistsStreamReader()
         {
             item.AssureExists();
-            return StreamReader(item);
+            return item.StreamReader();
         }
 
         /// <summary>

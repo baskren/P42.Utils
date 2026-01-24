@@ -42,6 +42,7 @@ public static class LocalDataFileInfoExtensions
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
         /// <exception cref="IOException"></exception>
+        [JetBrains.Annotations.PublicAPI]
         public void StoreFile(FileInfo? sourceItem, bool wipeOld = true)
         {
             var file = new FileInfo(item.FullPath);
@@ -67,6 +68,7 @@ public static class LocalDataFileInfoExtensions
         /// </summary>
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
+        [JetBrains.Annotations.PublicAPI]
         public async Task StoreFileAsync(FileInfo? sourceItem, bool wipeOld = true)
         {
             var file = new FileInfo(item.FullPath);
@@ -138,6 +140,7 @@ public static class LocalDataFileInfoExtensions
         /// Get FileInfo, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<FileInfo> AssureExistsFileAsync()
         {
             await item.AssureExistsAsync();
@@ -169,6 +172,7 @@ public static class LocalDataFileInfoExtensions
         /// Get FileInfo, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public FileInfo AssureExistsFile()
         {
             item.AssureExists();

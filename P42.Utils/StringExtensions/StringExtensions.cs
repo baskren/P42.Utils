@@ -7,6 +7,7 @@ public static class StringExtensions
     /// <summary>
     /// Replacement characters to for smooth serialization
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public static readonly Dictionary<char, char> IllegalToSafeCharacters = new()
     {
         //{'.', 'ᆞ'},
@@ -39,6 +40,7 @@ public static class StringExtensions
         {']', '］'}
     };
     
+    [JetBrains.Annotations.PublicAPI]
     public static readonly Dictionary<char, char> SafeToIllegalCharacters = IllegalToSafeCharacters.ToDictionary(c => c.Value, c => c.Key);
 
     private static System.Security.Cryptography.MD5? _md5;
@@ -199,7 +201,7 @@ public static class StringExtensions
 
     [Obsolete("OBSOLETE: Use byte.Parse(), instead.", true)]
     public static uint ToHex(string str)
-        => str.Aggregate<char, uint>(0, (current, c) => (current << 4) + ToHex(c));
+        => str.Aggregate<char, uint>(0, (current, c) => (current << 4) + c.ToHex());
     
 
     private static readonly string[] Suffixes = [" B", " KB", " MB", " GB", " TB", " PB"];
@@ -241,7 +243,8 @@ public static class StringExtensions
     /// <param name="thouSeparators"></param>
     /// <returns></returns>
     public static string HumanReadableBytes(this ulong num, int precision = 2, bool si = false, bool thouSeparators = true)
-        => HumanReadableBytes((double)num, precision, si, thouSeparators);
+        =>
+            ((double)num).HumanReadableBytes(precision, si, thouSeparators);
 
     /// <summary>
     /// Convert number of bytes to human-readable value
@@ -252,7 +255,8 @@ public static class StringExtensions
     /// <param name="thouSeparators"></param>
     /// <returns></returns>
     public static string HumanReadableBytes(this long num, int precision = 2, bool si = false, bool thouSeparators = true)
-        => HumanReadableBytes((double)num, precision, si, thouSeparators);
+        =>
+            ((double)num).HumanReadableBytes(precision, si, thouSeparators);
 
     /// <summary>
     /// Gets the first non-null or whitespace entry from an IEnumerable

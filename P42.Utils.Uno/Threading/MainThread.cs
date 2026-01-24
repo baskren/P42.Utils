@@ -116,6 +116,7 @@ public static class MainThread
     /// </summary>
     /// <param name="func"></param>
     /// <exception cref="InvalidOperationException"></exception>
+    [JetBrains.Annotations.PublicAPI]
     public static Task<T> InvokeAsync<T>(Func<T> func)
     {
         if (IsMainThread)
@@ -183,6 +184,7 @@ public static class MainThread
         return result;
     }
 
+    [JetBrains.Annotations.PublicAPI]
     public static Task<T> InvokeAsync<T>(Func<Task<T>> funcTask)
     {
         if (IsMainThread)

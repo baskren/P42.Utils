@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace P42.Utils;
 
@@ -54,6 +55,7 @@ public static class DebugExtensions
     /// <param name="callerPath">optional, file path of caller</param>
     /// <param name="lineNumber">optional, line number of caller</param>
     /// <returns>[file path][line number] : [assembly]:[type.method]</returns>
+    [PublicAPI]
     public static string CurrentCodeWaypoint([CallerFilePath] string? callerPath = null, [CallerLineNumber] int lineNumber = -1)
         => CodeWaypointAtDepth(2, callerPath, lineNumber);
     
@@ -73,6 +75,7 @@ public static class DebugExtensions
     /// <param name="callerPath">optional, file path of caller</param>
     /// <param name="lineNumber">optional, line number of caller</param>
     /// <returns>[file path][line number] : [assembly]:[type.method]</returns>
+    [PublicAPI]
     public static string CodeWaypointAtDepth(int depth, [CallerFilePath] string? callerPath = null, [CallerLineNumber] int lineNumber = -1)
     {
         if (new StackTrace().GetFrame(depth) is not { } frame 
@@ -97,13 +100,15 @@ public static class DebugExtensions
     /// Toggles on/off DebugExtensions messaging
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public static bool IsMessagesEnabled { get; set; } = false;
+    [PublicAPI]
+    public static bool IsMessagesEnabled { get; set; }
 
     /// <summary>
     /// Is Census (tracking) enabled
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public static bool IsCensusEnabled { get; set; } = false;
+    [PublicAPI]
+    public static bool IsCensusEnabled { get; set; }
 
     private static readonly ConcurrentDictionary<Guid, (string message, DateTime dateTime)> OpenTracks = new();
 
@@ -166,6 +171,7 @@ public static class DebugExtensions
     /// <param name="callingMethod"></param>
     /// <returns></returns>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+    [PublicAPI]
     public static Guid? Message(string message, Guid? guid = null, string callingMethod = "")
     {
         if (!IsMessagesEnabled)
@@ -251,6 +257,7 @@ public static class DebugExtensions
     /// <summary>
     /// Tracking object
     /// </summary>
+    [PublicAPI]
     public static readonly ConcurrentDictionary<Type, long> Census = new();
 
     /// <param name="obj"></param>

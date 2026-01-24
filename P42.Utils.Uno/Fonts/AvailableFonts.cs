@@ -1,5 +1,8 @@
 using Windows.UI.Text;
+
+#if DESKTOP
 using P42.Serilog.QuickLog;
+#endif
 
 namespace P42.Utils.Uno;
 
@@ -7,8 +10,12 @@ public static class AvailableFonts
 {
 
     
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private static string[] _systemFonts = [];
+    
+    #if __ANDROID__ || __IOS__
     private const string AndroidFontsFolder = "/system/fonts";
+    #endif
     
     public static string[] GetSystemFontNames()
     {
@@ -20,7 +27,7 @@ public static class AvailableFonts
             return _systemFonts;
 
         var fontFiles = Directory.GetFiles(AndroidFontsFolder, "*.ttf");
-        _systemFonts = fontFiles.Select(System.IO.Path.GetFileNameWithoutExtension).ToArray()!;
+        _systemFonts = fontFiles.Select(Path.GetFileNameWithoutExtension).ToArray()!;
         #elif __IOS__
         _systemFonts = UIKit.UIFont.FamilyNames;
         #elif DESKTOP
@@ -75,7 +82,7 @@ public static class AvailableFonts
     private static System.Reflection.MethodInfo? _fontDictionaryAddMethod;
     private static object? _fontCacheDict;
     private static System.Reflection.MethodInfo? _fontDictionaryContainsKeyMethod;
-    
+
     private static async Task<bool> GetPrivateFontRegistrationItemsAsync()
     {
         while (_tryingToGetPrivateFontRegistrationItems)
@@ -143,6 +150,7 @@ public static class AvailableFonts
     public static Task<FontFamily> GetSystemFontAsync(string systemFontName, TextBlock textBlock)
         => GetSystemFontAsync(systemFontName, textBlock.FontWeight, textBlock.FontStretch, textBlock.FontStyle);
 
+    [JetBrains.Annotations.PublicAPI]
     public static async Task<FontFamily> GetSystemFontAsync(string systemFontName, FontWeight fontWeight, FontStretch fontStretch, FontStyle fontStyle)
     {
         
@@ -160,7 +168,7 @@ public static class AvailableFonts
             return new FontFamily(systemFontName);
         
         var task = OperatingSystem.IsAndroid()
-            ? Task.Run(() => SkiaSharp.SKTypeface.FromFile(System.IO.Path.Combine(AndroidFontsFolder, systemFontName + ".ttf")))
+            ? Task.Run(() => SkiaSharp.SKTypeface.FromFile(Path.Combine(AndroidFontsFolder, systemFontName + ".ttf")))
             : Task.Run(() => SkiaSharp.SKTypeface.FromFamilyName(systemFontName));
         _fontDictionaryAddMethod!.Invoke(_fontCacheDict, [entry, task]);
         #else
@@ -171,6 +179,7 @@ public static class AvailableFonts
     }
 
     
+    // ReSharper disable once UnusedMember.Local
     private static string[] GetWindowsSystemFonts()
     {
         #if WindowsBaseOs

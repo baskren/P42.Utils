@@ -62,6 +62,7 @@ public class DataTemplateSetSelector : DataTemplateSelector, IDictionary<Type, I
 
     private readonly Dictionary<Type, IDataTemplateSet?> _cachedTemplates;
 
+    [JetBrains.Annotations.PublicAPI]
     protected readonly Dictionary<Type, IDataTemplateSet?> ItemTemplateSets;
 
     #endregion
@@ -190,6 +191,7 @@ public class DataTemplateSetSelector : DataTemplateSelector, IDictionary<Type, I
     /// </summary>
     /// <param name="set"></param>
     // ReSharper disable once UnusedMethodReturnValue.Global
+    [JetBrains.Annotations.PublicAPI]
     public DataTemplateSetSelector Add(IDataTemplateSet set)
     { Add(set.DataType, set); return this; }
 

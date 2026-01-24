@@ -34,9 +34,9 @@ public class ThicknessConverter : IValueConverter
             {
                 var parts = s.Split(',');
                 List<double> values = [];
-                for (var i = 0; i < parts.Length; i++)
+                foreach (var t in parts)
                 {
-                    var part = parts[i];
+                    var part = t;
                     if (string.IsNullOrWhiteSpace(part))
                         continue;
                     if (part.Contains('"'))

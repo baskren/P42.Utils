@@ -35,7 +35,7 @@ public static partial class DeviceBeep
                         Android.Media.Stream.Music,
                         sampleRate,
                         ChannelOut.Mono,
-                        Android.Media.Encoding.Pcm16bit,
+                        Encoding.Pcm16bit,
                         numSamples * 2, // Two bytes per sample for PCM16BIT
                         AudioTrackMode.Static);
 #pragma warning restore CA1422 // Validate platform compatibility

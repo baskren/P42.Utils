@@ -14,6 +14,7 @@ public static class DataTemplateExtensions
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+        [JetBrains.Annotations.PublicAPI]
         public string AsDataTemplateXaml()
         {
             if (templateType == null || !typeof(FrameworkElement).IsAssignableFrom(templateType))

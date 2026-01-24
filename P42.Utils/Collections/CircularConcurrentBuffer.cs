@@ -12,6 +12,7 @@ public class CircularConcurrentBuffer<T> : ICollection<T?>
     /// <summary>
     /// Next index
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public int NextIndex { get; private set; }
 
     /// <summary>
@@ -27,6 +28,7 @@ public class CircularConcurrentBuffer<T> : ICollection<T?>
     /// <summary>
     /// Capacity (set on instantiation)
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public readonly int Capacity;
 
     private readonly T?[] _buffer;

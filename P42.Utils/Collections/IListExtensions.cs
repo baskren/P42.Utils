@@ -99,6 +99,7 @@ public static class IListExtensions
         /// </summary>
         /// <param name="last"></param>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public bool TryRemoveLast([MaybeNullWhen(false)] out T last)
         {
             try

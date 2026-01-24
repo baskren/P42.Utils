@@ -18,26 +18,31 @@ public class NormalizedActionAnimator(
     /// <summary>
     /// How long should the animation last?
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public TimeSpan TimeSpan { get; } = timeSpan;
 
     /// <summary>
     /// What form should the animation path take
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public EasingFunctionBase? EasingFunction { get; } = easingFunction;
 
     /// <summary>
     /// Where the animation is applied
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public Action<double> Action { get; } = action;
 
     /// <summary>
     /// Time stamp of animation start
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     protected DateTime StartTime;
 
     /// <summary>
     /// true: pass change in easing function value to action(); false: pass current easing function value to action()
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public bool Delta { get; } = delta;
 
     /// <summary>

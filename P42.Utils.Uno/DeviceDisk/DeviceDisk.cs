@@ -5,7 +5,9 @@ namespace P42.Utils.Uno;
 public partial class DeviceDisk : IDiskSpace
 {
 
+    [JetBrains.Annotations.PublicAPI]
     internal const string FreeSpace = "System.FreeSpace";
+    [JetBrains.Annotations.PublicAPI]
     internal const string Capacity = "System.Capacity";
 
 

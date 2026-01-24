@@ -1,10 +1,4 @@
-using System;
-using System.Diagnostics;
-using Microsoft.UI.Xaml.Media.Animation;
 using P42.Serilog.QuickLog;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using Windows.System.Profile;
-using Windows.UI.ViewManagement;
 
 namespace P42.Utils.Uno;
 
@@ -16,7 +10,7 @@ public static partial class DeviceInfo
     {
         try
         {
-            var data = Shell.ExecuteCommand("wmic" ,"computersystem get model", out var output, out var error);
+            Shell.ExecuteCommand("wmic" ,"computersystem get model", out var output, out var _);
             return output.Replace("\r", "").Replace("\n", "").Replace("Model", "").Trim();
         }
         catch (Exception ex)
@@ -31,7 +25,7 @@ public static partial class DeviceInfo
     {
         try
         {
-            var data = Shell.ExecuteCommand("wmic", "computersystem get name", out var output, out var error);
+            Shell.ExecuteCommand("wmic", "computersystem get name", out var output, out var _);
             return output.Replace("\r", "").Replace("\n", "").Replace("Name", "").Trim();
         }
         catch (Exception ex)
@@ -46,7 +40,7 @@ public static partial class DeviceInfo
     {
         try
         {
-            var data = Shell.ExecuteCommand("wmic", "csproduct get uuid", out var output, out var error);
+            Shell.ExecuteCommand("wmic", "csproduct get uuid", out var output, out var _);
             output = output.Replace("\r", "").Replace("\n", "").Replace("UUID", "").Trim();
             if (IsValidId(output)) 
                 return output;

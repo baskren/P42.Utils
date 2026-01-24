@@ -7,6 +7,7 @@ using P42.Serilog.QuickLog;
 
 namespace P42.Utils.Uno;
 
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 internal class AltBinding : IDisposable
 {
 
@@ -16,6 +17,7 @@ internal class AltBinding : IDisposable
     /// <summary>
     /// Dependency object to which the binding is attached
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public DependencyObject? TargetDependencyObject
     {
         get

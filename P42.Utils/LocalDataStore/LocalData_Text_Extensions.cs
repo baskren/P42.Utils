@@ -200,7 +200,7 @@ public static class LocalDataTextExtensions
         public async Task<string?> AssureExistsTextAsync()
         {
             await item.AssureExistsAsync();
-            return await RecallTextAsync(item);
+            return await item.RecallTextAsync();
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ public static class LocalDataTextExtensions
         public string? AssureExistsText()
         {
             item.AssureExists();
-            return RecallText(item);
+            return item.RecallText();
         }
 
         /// <summary>

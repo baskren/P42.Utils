@@ -78,6 +78,7 @@ public class TtfAnalyzer
     /// </summary>
     /// <param name="fontFileStream"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static string FontFamily(Stream fontFileStream)
     {
         try
@@ -216,6 +217,7 @@ public class TtfAnalyzer
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static string FontAttributes(Stream stream)
     {
         try

@@ -22,13 +22,17 @@ public abstract class LocalData
     
 
     protected static readonly ConcurrentDictionary<string, TaskCompletionSource<string>> ItemLoadingTasks = new();
+    [JetBrains.Annotations.PublicAPI]
     protected static readonly HttpClient HttpClient = new();
     // ReSharper restore StaticMemberInGenericType
 
+    [JetBrains.Annotations.PublicAPI]
     protected static DateTime SessionDateTime = DateTime.Now;
 
     
+    [JetBrains.Annotations.PublicAPI]
     internal static string PlatformFolder => Platform.ApplicationLocalFolderPath;
+    [JetBrains.Annotations.PublicAPI]
     internal static readonly string StorePath = Path.Combine(PlatformFolder, "P42.Utils.LocalData");
     #endregion
 
@@ -123,6 +127,7 @@ public abstract class LocalData
     /// <param name="dateTime">only items equal to or older than</param>
     /// <param name="key">omit to clear all</param>
     /// <returns>true if any items cleared</returns>
+    [JetBrains.Annotations.PublicAPI]
     public static bool Clear(DateTime dateTime, Item? key = null)
     {
         key ??= TagItem.InternalFor(string.Empty, string.Empty);
@@ -191,6 +196,7 @@ public abstract class LocalData
         /// <summary>
         /// FolderPath (used to further compartmentalize items (default: null)
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public string FolderPath { get; } = folderPath?.Trim('/').Trim('\\') ?? string.Empty;
 
         /// <summary>
@@ -206,6 +212,7 @@ public abstract class LocalData
         /// <summary>
         /// "ms-appdata://" path to item
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public string AppDataUrl
         {
             get
@@ -565,6 +572,7 @@ public abstract class LocalData
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task StoreValueAsync<T>(T? obj)
         {
             switch (obj)
@@ -641,6 +649,7 @@ public abstract class LocalData
         /// <summary>
         /// Tag (or key) for item reference
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public string Tag { get; }
 
         /// <summary>
@@ -739,6 +748,7 @@ public abstract class LocalData
         /// Is newer source available?
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<bool> IsFresherSourceAvailableAsync()
         {
             var result = await TrySourceDateTimeAsync();
@@ -753,6 +763,7 @@ public abstract class LocalData
         /// <summary>
         /// Overwrite local value with source's value
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public async Task ResetFromSourceAsync()
         {
             var result = await TrySourceDateTimeAsync();
@@ -778,6 +789,7 @@ public abstract class LocalData
         /// Try to overwrite local value with source's value
         /// </summary>
         /// <returns>false upon fail</returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<bool> TryResetFromSourceAsync()
         {
             var result = await TrySourceDateTimeAsync();
@@ -982,6 +994,7 @@ public abstract class LocalData
         /// Is newer source available?
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public bool IsFresherSourceAvailable()
         {
             if (!TrySourceDateTime(out DateTime sourceDate))
@@ -996,6 +1009,7 @@ public abstract class LocalData
         /// <summary>
         /// Overwrite local value with source's value
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public void ResetFromSource()
         {
             if (!TrySourceDateTime(out DateTime buildDate))
@@ -1020,6 +1034,7 @@ public abstract class LocalData
         /// Try to overwrite local value with source's value
         /// </summary>
         /// <returns>false upon fail</returns>
+        [JetBrains.Annotations.PublicAPI]
         public bool TryResetFromSource()
         {
             if (!TrySourceDateTime(out _))
@@ -1058,6 +1073,7 @@ public abstract class LocalData
         /// </summary>
         /// <returns></returns>
         // ReSharper disable once UnusedMethodReturnValue.Global
+        [JetBrains.Annotations.PublicAPI]
         public bool TryRefresh()
         {
             if (!IsFresherSourceAvailable())
@@ -1345,16 +1361,19 @@ public abstract class LocalData
         /// <summary>
         /// Uri for Source
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public Uri SourceUri { get; }
 
         /// <summary>
         /// Root uri for source (in the case of directory sources)
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public Uri? RootUri { get; }
 
         /// <summary>
         /// ???
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string LocalPath { get; }
 
         /// <summary>
@@ -1530,6 +1549,7 @@ public abstract class LocalData
         /// <summary>
         /// ResourceId for Embedded Resource Source
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public string ResourceId { get; }
         
         /// <summary>

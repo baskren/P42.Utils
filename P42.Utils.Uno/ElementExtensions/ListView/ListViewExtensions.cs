@@ -46,6 +46,7 @@ public static class ListViewExtensions
     /// </summary>
     /// <param name="depObj"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static ScrollViewer? GetScrollViewer(this DependencyObject depObj)
     {
         if (depObj is ScrollViewer obj) return obj;
@@ -55,7 +56,7 @@ public static class ListViewExtensions
             if (VisualTreeHelper.GetChild(depObj, i) is not { } child)
                 continue;
 
-            if (GetScrollViewer(child) is { } result)
+            if (child.GetScrollViewer() is { } result)
                 return result;
             
         }
@@ -71,12 +72,13 @@ public static class ListViewExtensions
         /// <param name="item"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+        [JetBrains.Annotations.PublicAPI]
         public Point GetOffsetForItem(object item)
         {
             if (listView.ContainerFromItem(item) is not UIElement element)
                 throw new Exception("Item is not visible in ListView");
 
-            if (GetScrollViewer(listView) is not { } viewer)
+            if (listView.GetScrollViewer() is not { } viewer)
                 throw new Exception("ScrollViewer is not found in ListView");
 
             var transform = element.TransformToVisual(viewer);
@@ -94,7 +96,7 @@ public static class ListViewExtensions
         {
             try
             {
-                offset = GetOffsetForItem(listView, item);
+                offset = listView.GetOffsetForItem(item);
                 return true;
             }
             catch (Exception)
@@ -110,7 +112,7 @@ public static class ListViewExtensions
         /// <param name="item"></param>
         public async Task ScrollToBottom(object item)
         {
-            if (GetScrollViewer(listView) is { } viewer)
+            if (listView.GetScrollViewer() is { } viewer)
             {
                 var container = listView.ContainerFromItem(item);
                 if (container is FrameworkElement element)
@@ -143,7 +145,7 @@ public static class ListViewExtensions
         }
 #else
         */
-            await InternalScrollToAsync(listView, item, toPosition, shouldAnimate, false);
+            await listView.InternalScrollToAsync(item, toPosition, shouldAnimate, false);
 //#endif
             await Task.Delay(500);
         }
@@ -152,7 +154,7 @@ public static class ListViewExtensions
 
     private static bool TryInternalScrollToItemWithAnimation(ListView list, object item, ScrollToPosition toPosition)
 	{
-        if (GetScrollViewer(list) is not { } viewer)
+        if (list.GetScrollViewer() is not { } viewer)
             return false;
 
         if (list.ContainerFromItem(item) is not SelectorItem selectorItem)
@@ -178,7 +180,7 @@ public static class ListViewExtensions
 
     private static async Task InternalScrollToAsync(this ListView list, object item, ScrollToPosition toPosition, bool shouldAnimate, bool previouslyFailed)
 	{
-		if (GetScrollViewer(list) is { } viewer)
+		if (list.GetScrollViewer() is { } viewer)
 		{ 
 			// scroll to desired item with animation
 			if (shouldAnimate && TryInternalScrollToItemWithAnimation(list, item, toPosition))
@@ -235,7 +237,7 @@ public static class ListViewExtensions
 
                 await Task.Delay(10);
 				Task.Delay(1).ContinueWith(async _ => 
-                    { await InternalScrollToAsync(list, item, toPosition, shouldAnimate, true); }
+                    { await list.InternalScrollToAsync(item, toPosition, shouldAnimate, true); }
                     , TaskScheduler.FromCurrentSynchronizationContext()).WatchForError();
 			}
 
@@ -254,7 +256,7 @@ public static class ListViewExtensions
                     {
                         try
                         {
-                            await InternalScrollToAsync(list, item, toPosition, shouldAnimate, false);
+                            await list.InternalScrollToAsync(item, toPosition, shouldAnimate, false);
                         }
                         catch (Exception ex)
                         {

@@ -98,6 +98,7 @@ public static class DeviceDisplay
     /// <summary>
     /// Is the MainDisplayInfo to be trusted?
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public static bool IsMainDisplayInfoTrusted { get; private set; }
 
     public static DisplayMetrics MainDisplayInfo

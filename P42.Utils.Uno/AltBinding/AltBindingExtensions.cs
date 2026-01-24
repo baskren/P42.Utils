@@ -62,7 +62,7 @@ public static class AltBindingExtensions
         {
             try
             {
-                CheckProperty(target, targetProperty, filePath, lineNumber);
+                target.CheckProperty(targetProperty, filePath, lineNumber);
 
 
                 if (source is null)
@@ -134,8 +134,8 @@ public static class AltBindingExtensions
         {
             try
             {
-                CheckProperty(target, targetProperty, filePath, lineNumber);
-                CheckProperty(source, sourceProperty, filePath, lineNumber);
+                target.CheckProperty(targetProperty, filePath, lineNumber);
+                source.CheckProperty(sourceProperty, filePath, lineNumber);
 
                 var targetPropertyType = target.GetValue(targetProperty)?.GetType();
                 /*    
@@ -339,7 +339,7 @@ public static class AltBindingExtensions
             [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
         )
         {
-            CheckArguments(target, targetProperty, source, sourcePropertyName, converter, converterParameter, converterLanguage, filePath, lineNumber);
+            target.CheckArguments(targetProperty, source, sourcePropertyName, converter, converterParameter, converterLanguage, filePath, lineNumber);
         
             var bindings = target.GetAltBindings();
             if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
@@ -390,7 +390,7 @@ public static class AltBindingExtensions
             [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = -1
         )
         {
-            CheckArguments(target, targetProperty, source, sourceProperty, converter, converterParameter, converterLanguage, filePath, lineNumber);
+            target.CheckArguments(targetProperty, source, sourceProperty, converter, converterParameter, converterLanguage, filePath, lineNumber);
         
             var bindings = target.GetAltBindings();
             if (bindings.FirstOrDefault(b => b.TargetProperty == targetProperty) is { } oldBinding)
@@ -448,7 +448,7 @@ public static class AltBindingExtensions
             IValueConverter? converter = null;
             if (convert is not null || convertBack is not null)
                 converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
-            return AltBind(target, targetProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+            return target.AltBind(targetProperty, source, sourceProperty, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         }
 
         /// <summary>
@@ -488,7 +488,7 @@ public static class AltBindingExtensions
             IValueConverter? converter = null;
             if (convert is not null || convertBack is not null)
                 converter = new FuncConverter<TSource, TDest, object>(convert, convertBack, filePath, lineNumber);
-            return AltBind(target, targetProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
+            return target.AltBind(targetProperty, source, sourcePropertyName, mode, converter, converterParameter, converterLanguage, updateSourceTrigger, targetNullValue, fallbackValue, filePath, lineNumber);
         }
     }
 

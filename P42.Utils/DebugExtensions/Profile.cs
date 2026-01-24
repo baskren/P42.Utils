@@ -15,6 +15,7 @@ public static class Profile
     /// <summary>
     /// Stopwatch used by profiler
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public static readonly Stopwatch Stopwatch = new();
     
     private static readonly Dictionary<Thread, Stack<(string key, long start, long wait)>> LastTimeStamp = new();
@@ -24,6 +25,7 @@ public static class Profile
     /// </summary>
     /// <param name="callerName"></param>
     /// <param name="className"></param>
+    [JetBrains.Annotations.PublicAPI]
     public static void Enter([CallerMemberName] string callerName = "", string? className = null)
     {
         if (!Enabled)
@@ -44,6 +46,7 @@ public static class Profile
     /// <param name="callerName"></param>
     /// <param name="className"></param>
     /// <exception cref="Exception"></exception>
+    [JetBrains.Annotations.PublicAPI]
     public static void Exit(string mark = "EXIT", [CallerMemberName] string callerName = "", string? className = null)
     {
         if (!Enabled)

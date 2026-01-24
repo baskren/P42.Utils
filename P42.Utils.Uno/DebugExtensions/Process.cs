@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Windows.System.Diagnostics;
 
 namespace P42.Utils.Uno;
 
@@ -9,9 +7,9 @@ public class Process : IProcess
     public ulong Memory( [CallerMemberName] string caller = "", [CallerFilePath] string callerFile = "", [CallerLineNumber] int callerLineNumber = 0)
     {
         #if WINDOWS
-        var process = ProcessDiagnosticInfo.GetForCurrentProcess();
+        var process = Windows.System.Diagnostics.ProcessDiagnosticInfo.GetForCurrentProcess();
         var memoryReport = process.MemoryUsage.GetReport();
-        Debug.WriteLine(
+        System.Diagnostics.Debug.WriteLine(
             $"""
              {caller}:{callerFile}:{callerLineNumber} 
              NonPagedPoolSizeInBytes: {memoryReport.NonPagedPoolSizeInBytes.HumanReadableBytes()} 

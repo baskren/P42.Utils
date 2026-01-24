@@ -13,8 +13,9 @@ public static class PropertyExtensions
     /// <param name="propertyName">Property Name</param>
     /// <returns>null if no match found</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
+    [JetBrains.Annotations.PublicAPI]
     public static PropertyInfo? GetPropertyInfo(this Type type, string propertyName)
     {
         if (string.IsNullOrEmpty(propertyName))
@@ -41,12 +42,12 @@ public static class PropertyExtensions
     /// <param name="propertyName">Property Name</param>
     /// <returns>null if not found</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static PropertyInfo? GetProperty(this object obj, string propertyName)
         => string.IsNullOrWhiteSpace(propertyName) 
             ? null 
-            : GetPropertyInfo(obj.GetType(), propertyName);
+            : obj.GetType().GetPropertyInfo(propertyName);
         
     /// <summary>
     /// Gets all properties for class instance
@@ -54,8 +55,9 @@ public static class PropertyExtensions
     /// <param name="obj">Class instance</param>
     /// <returns>Properties</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
+    [JetBrains.Annotations.PublicAPI]
     public static IEnumerable<PropertyInfo> GetProperties(this object obj)
         => obj.GetType().GetRuntimeProperties();
 
@@ -65,7 +67,7 @@ public static class PropertyExtensions
     /// <param name="obj">Names</param>
     /// <returns>Property Names</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static IEnumerable<string> GetPropertyNames(this object obj)
         => obj.GetProperties().Select(property => property.Name);
@@ -77,10 +79,11 @@ public static class PropertyExtensions
     /// <param name="propertyName">Property Name</param>
     /// <returns>true/false</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool PropertyExists(this object obj, string propertyName)
-        => GetProperty(obj, propertyName) != null;
+        =>
+            obj.GetProperty(propertyName) != null;
         
     /// <summary>
     /// Get property value
@@ -90,7 +93,7 @@ public static class PropertyExtensions
     /// <param name="value">Value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TryGetPropertyValue(this object obj, string propertyName, out object? value)
     {
@@ -99,7 +102,7 @@ public static class PropertyExtensions
         if (string.IsNullOrWhiteSpace(propertyName))
             return false;
 
-        if (GetProperty(obj, propertyName) is not { CanRead: true } propInfo)
+        if (obj.GetProperty(propertyName) is not { CanRead: true } propInfo)
             return false;
 
         value = propInfo.GetValue(obj, null);
@@ -114,14 +117,14 @@ public static class PropertyExtensions
     /// <param name="value">Value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TrySetPropertyValue(this object obj, string propertyName, object? value)
     {
         if (string.IsNullOrWhiteSpace(propertyName))
             return false;
 
-        if (GetPropertyInfo(obj.GetType(), propertyName) is not { CanWrite: true } propInfo)
+        if (obj.GetType().GetPropertyInfo(propertyName) is not { CanWrite: true } propInfo)
             return false;
         
         propInfo.SetValue(obj, value, null);
@@ -136,12 +139,12 @@ public static class PropertyExtensions
     /// <param name="value">value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TryGetStaticPropertyValue(this Type type, string propertyName, out object? value)
     {
         value = null;
-        if (GetPropertyInfo(type, propertyName) is not { CanRead:true } propInfo)
+        if (type.GetPropertyInfo(propertyName) is not { CanRead:true } propInfo)
             return false;
 
         try
@@ -164,11 +167,11 @@ public static class PropertyExtensions
     /// <param name="value">value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TrySetStaticPropertyValue(this Type type, string propertyName, object? value)
     {
-        if (GetPropertyInfo(type, propertyName) is not { CanWrite:true } propInfo)
+        if (type.GetPropertyInfo(propertyName) is not { CanWrite:true } propInfo)
             return false;
 
         try

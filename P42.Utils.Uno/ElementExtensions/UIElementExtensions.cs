@@ -1,8 +1,5 @@
 using Windows.Foundation;
-using Microsoft.UI.Xaml.Markup;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using P42.Serilog.QuickLog;
 
 namespace P42.Utils.Uno;
 
@@ -19,7 +16,7 @@ public static class UIElementExtensions
     /// <param name="element"></param>
     extension(FrameworkElement element)
     {
-        public bool IsVisible => element.Visibility == Microsoft.UI.Xaml.Visibility.Visible;
+        public bool IsVisible => element.Visibility == Visibility.Visible;
 
         public bool IsEnabled => element.IsEnabled;
 
@@ -87,7 +84,7 @@ public static class UIElementExtensions
         public Rect GetBounds(UIElement? relativeTo = null)
         {
             if (element is FrameworkElement fe)
-                return GetBounds(fe, relativeTo);
+                return fe.GetBounds(relativeTo);
         
             relativeTo ??= Platform.Frame;
             var ttv = element.TransformToVisual(relativeTo);
@@ -127,6 +124,7 @@ public static class UIElementExtensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public T? FindAncestor<T>() where T : UIElement
         {
             var parent = VisualTreeHelper.GetParent(element); // as FrameworkElement;

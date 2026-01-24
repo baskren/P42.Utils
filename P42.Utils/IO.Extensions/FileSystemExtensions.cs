@@ -16,6 +16,7 @@ public static class FileSystemExtensions
         /// Checks if the FileSystemItem has write permission
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public bool HasWritePermission
             => OperatingSystem.IsWindows()
                 ? fileSystemInfo.HasWindowsWriteAccessControl()
@@ -201,6 +202,7 @@ public static class FileSystemExtensions
         /// <summary>
         /// Get parent for FileSystemInfo item
         /// </summary>
+        [JetBrains.Annotations.PublicAPI]
         public DirectoryInfo? Parent
             => fileSystemInfo switch
             {
@@ -236,7 +238,7 @@ public static class FileSystemExtensions
             }
 
             if (file.Parent is { } parentDir) 
-                return WritePossible(parentDir, tryForceOverwrite);
+                return parentDir.WritePossible(tryForceOverwrite);
 
         }
         catch (Exception e)
@@ -264,7 +266,7 @@ public static class FileSystemExtensions
             }
 
             if (dir.Parent is { } parentDir)
-                return WritePossible(parentDir, tryForceOverwrite);
+                return parentDir.WritePossible(tryForceOverwrite);
 
         }
         catch (Exception e)

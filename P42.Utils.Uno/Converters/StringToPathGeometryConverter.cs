@@ -40,6 +40,7 @@ public class StringToPathGeometryConverter : IValueConverter
     /// </summary>
     /// <param name="path">String with path data definition</param>
     /// <returns>PathGeometry object created from string definition</returns>
+    [JetBrains.Annotations.PublicAPI]
     public PathGeometry Convert(string path)
         => string.IsNullOrWhiteSpace(path) 
             ? new PathGeometry() 
@@ -52,6 +53,7 @@ public class StringToPathGeometryConverter : IValueConverter
     /// <param name="geometry">Path Geometry object</param>
     /// <returns>String equivalent to PathGeometry contents</returns>
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
+    [JetBrains.Annotations.PublicAPI]
     public string ConvertBack(PathGeometry geometry)
         => null == geometry ? throw new ArgumentException("Path Geometry cannot be null!") : string.Empty;
     
@@ -628,6 +630,7 @@ public class StringToPathGeometryConverter : IValueConverter
     #region IValueConverter Members
     // ReSharper disable UnusedParameter.Global
 
+    [JetBrains.Annotations.PublicAPI]
     public object Convert(object value)
     {
         if (value is not string path)
@@ -638,6 +641,7 @@ public class StringToPathGeometryConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         => Convert(value);
     
+    [JetBrains.Annotations.PublicAPI]
     public object ConvertBack(object value)
     {
         if (value is not PathGeometry geometry)

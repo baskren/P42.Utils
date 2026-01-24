@@ -16,7 +16,8 @@ public static class  LocalData_ImageSource_Extensions
         /// </summary>
         /// <returns></returns>
         public ImageSource? RecallImageSource()
-            => GetItemImageSource(item);
+            =>
+                item.GetItemImageSource();
 
         /// <summary>
         /// Get ImageSource from item in local data store
@@ -27,7 +28,7 @@ public static class  LocalData_ImageSource_Extensions
         {
             try
             {
-                source = GetItemImageSource(item);
+                source = item.GetItemImageSource();
                 return source != null;
             }
             catch (Exception)
@@ -37,8 +38,10 @@ public static class  LocalData_ImageSource_Extensions
             }
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public ImageSource? GetImageSource()
-            => GetItemImageSource(item);
+            =>
+                item.GetItemImageSource();
 
         private async Task<ImageSource?> GetImageSourceAsync()
         {
@@ -63,7 +66,7 @@ public static class  LocalData_ImageSource_Extensions
         }
         
         private ImageSource? GetItemImageSource()
-            => MainThread.Invoke(async () => await GetImageSourceAsync(item));
+            => MainThread.Invoke(async () => await item.GetImageSourceAsync());
 
     }
 
@@ -75,6 +78,7 @@ public static class  LocalData_ImageSource_Extensions
         /// Get ImageSource from item in local data store
         /// </summary>
         /// <returns></returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         public async Task<ImageSource?> AssureExistsImageSourceAsync()
         {
             await item.AssureExistsAsync();
@@ -108,6 +112,7 @@ public static class  LocalData_ImageSource_Extensions
         /// Get ImageSource from item in local data store
         /// </summary>
         /// <returns></returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         public ImageSource? AssureExistsImageSource()
         {
             item.AssureExists();

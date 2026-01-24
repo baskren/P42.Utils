@@ -47,7 +47,7 @@ public static class Shell
     public static async Task<(int code, string output, string error)> ExecuteCommandAsync(string command, string arguments, CancellationToken token = default)
     {
         var output = string.Empty;
-        var error = string.Empty;
+        string error;
         if (OperatingSystem.IsIOS() || OperatingSystem.IsBrowser())
         {
             error = "Unsupported operating system";
@@ -80,8 +80,8 @@ public static class Shell
             process.WaitForExit();
         }, token);
 
-        output = process.StandardOutput.ReadToEnd();
-        error = process.StandardError.ReadToEnd();
+        output = await process.StandardOutput.ReadToEndAsync(token);
+        error = await process.StandardError.ReadToEndAsync(token);
 
         if (process.HasExited)
             return (process.ExitCode, output, error);

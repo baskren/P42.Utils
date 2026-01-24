@@ -124,6 +124,7 @@ public class CacheableNotifiablePropertyObject : SelfBackedNotifiablePropertyObj
 
     }
     
+    [JetBrains.Annotations.PublicAPI]
     internal static string NameOfCallingClass()
     {
         string fullName;

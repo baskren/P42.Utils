@@ -15,6 +15,7 @@ public static class LocalDataDirectoryInfoExtensions
         /// Returns the FileInfo for a LocalData.Item
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public DirectoryInfo Directory() 
             => !item.IsFile 
                 ? new DirectoryInfo(item.FullPath) 
@@ -76,6 +77,7 @@ public static class LocalDataDirectoryInfoExtensions
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
         /// <exception cref="IOException"></exception>
+        [JetBrains.Annotations.PublicAPI]
         public void StoreDirectory(DirectoryInfo? sourceItem, bool wipeOld = true)
         {
             var dir = new DirectoryInfo(item.FullPath);
@@ -101,6 +103,7 @@ public static class LocalDataDirectoryInfoExtensions
         /// </summary>
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
+        [JetBrains.Annotations.PublicAPI]
         public async Task StoreDirectoryAsync(DirectoryInfo? sourceItem, bool wipeOld = true)
         {
             var dir = new DirectoryInfo(item.FullPath);
@@ -169,6 +172,7 @@ public static class LocalDataDirectoryInfoExtensions
         /// Get DirectoryInfo, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<DirectoryInfo> AssureExistsDirectoryAsync()
         {
             if (item is { Exists: true, IsDirectory: true })
@@ -234,6 +238,7 @@ public static class LocalDataDirectoryInfoExtensions
         /// Get DirectoryInfo, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public DirectoryInfo AssureExistsDirectory()
         {
             if (item is { Exists: true, IsDirectory: true })

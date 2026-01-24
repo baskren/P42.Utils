@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace P42.Utils.Uno;
 
@@ -15,6 +12,7 @@ public static class DependencyObjectExtensions
         /// </summary>
         /// <param name="controlName"></param>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public DependencyObject? FindChildByName(string controlName)
         {
             var count = VisualTreeHelper.GetChildrenCount(parent);
@@ -25,7 +23,7 @@ public static class DependencyObjectExtensions
                 if (child is FrameworkElement element && element.Name == controlName)
                     return element;
 
-                var findResult = FindChildByName(child, controlName);
+                var findResult = child.FindChildByName(controlName);
                 if (findResult != null)
                     return findResult;
             }

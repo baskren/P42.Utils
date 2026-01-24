@@ -1,8 +1,7 @@
-using JetBrains.Annotations;
 
 namespace P42.Utils.Uno;
 
-[UsedImplicitly]
+[JetBrains.Annotations.UsedImplicitly]
 public static class UriExtensions
 {
     /// <param name="uri"></param>
@@ -28,6 +27,7 @@ public static class UriExtensions
         /// Converts most local uris ("file:/", "ms-appdata:/", "ms-appx:" uris to a StorageFile
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<StorageFile> GetStorageFileAsync()
         {
             if (uri.Scheme.StartsWith("file", StringComparison.OrdinalIgnoreCase)) 
@@ -40,6 +40,7 @@ public static class UriExtensions
         /// NOTE: Use TryAsStorageFileAsync when possible
         /// </summary>
         /// <returns>null on failure</returns>
+        [JetBrains.Annotations.PublicAPI]
         public StorageFile GetStorageFile()
             => uri.GetStorageFileAsync().GetAwaiter().GetResult();
 

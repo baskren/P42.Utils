@@ -1,6 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System;
 using Windows.Foundation;
 
 namespace P42.Utils.Uno;

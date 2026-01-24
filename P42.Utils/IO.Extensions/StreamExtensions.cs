@@ -147,6 +147,7 @@ public static class StreamExtensions
         /// Convert stream to MemoryStream
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public MemoryStream ToMemoryStream()
         {
             var memoryStream = new MemoryStream();
@@ -156,7 +157,7 @@ public static class StreamExtensions
         }
 
         /// <summary>
-        /// If stream is not seekable, convert it to Memeory Stream
+        /// If stream is not seekable, convert it to Memory Stream
         /// </summary>
         /// <returns></returns>
         public Stream ToSeekable()

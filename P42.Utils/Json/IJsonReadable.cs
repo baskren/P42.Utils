@@ -17,5 +17,6 @@ public interface IJsonReadable
 /// <summary>
 /// Interface for IJsonReadable
 /// </summary>
-// ReSharper disable once UnusedType.Global
+[JetBrains.Annotations.PublicAPI]
+// ReSharper disable once TypeParameterCanBeVariant
 public interface IJsonReadable<T> : IJsonReadable, ICopiable<T>;

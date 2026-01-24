@@ -25,7 +25,7 @@ public static class DebugExtensions
         writer.WriteLine($"\t ContentTemplate: {control.ContentTemplate}");
         writer.WriteLine($"\t Content: {control.Content}");
         writer.WriteLine($"\t ContentTemplateRoot: {control.ContentTemplateRoot}");
-        return LogProperties((Control)control, writer);
+        return ((Control)control).LogProperties(writer);
     }
 
     /// <summary>
@@ -34,6 +34,7 @@ public static class DebugExtensions
     /// <param name="control"></param>
     /// <param name="writer"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static StringWriter LogProperties(this Control control, StringWriter? writer = null)
     {
         writer ??= new StringWriter();
@@ -71,7 +72,7 @@ public static class DebugExtensions
         writer.WriteLine($"\t CornerRadius: {control.CornerRadius}");
         writer.WriteLine($"\t BackgroundSizing: {control.BackgroundSizing}");
     
-        return LogProperties((FrameworkElement)control, writer);
+        return ((FrameworkElement)control).LogProperties(writer);
     }
 
     /// <summary>
@@ -80,6 +81,7 @@ public static class DebugExtensions
     /// <param name="element"></param>
     /// <param name="writer"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static StringWriter LogProperties(this FrameworkElement element, StringWriter? writer = null)
     {
         writer ??= new StringWriter();
@@ -116,7 +118,7 @@ public static class DebugExtensions
         writer.WriteLine($"\t VerticalAlignment: {element.VerticalAlignment}");
         writer.WriteLine($"\t Width: {element.Width}");
     
-        return LogProperties((UIElement)element, writer);
+        return ((UIElement)element).LogProperties(writer);
     }
 
     /// <summary>
@@ -125,6 +127,7 @@ public static class DebugExtensions
     /// <param name="element"></param>
     /// <param name="writer"></param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static StringWriter LogProperties(this UIElement element, StringWriter? writer = null)
     {
         writer ??= new StringWriter();

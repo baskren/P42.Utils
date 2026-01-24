@@ -62,13 +62,14 @@ public static class TypeExtensions
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public bool IsCastableTo<T>()
-            => IsCastableTo(from, typeof(T));
+            => from.IsCastableTo(typeof(T));
 
         /// <summary>
         /// A qualified class name, consistent between platforms
         /// </summary>
         /// <returns></returns>
         [Obsolete("This should be obsolete in newer versions of .NET.  ")]
+        [JetBrains.Annotations.PublicAPI]
         public string SimpleQualifiedTypeName()
         {
             var result = new StringBuilder($"{from.Namespace}.{from.Name}");
@@ -82,7 +83,7 @@ public static class TypeExtensions
                     var parameter = genericParameters[i];
                     if (i > 0)
                         result.Append(',');
-                    result.Append($"[{SimpleQualifiedTypeName(parameter)}]");
+                    result.Append($"[{parameter.SimpleQualifiedTypeName()}]");
                 }
                 result.Append(']');
             }

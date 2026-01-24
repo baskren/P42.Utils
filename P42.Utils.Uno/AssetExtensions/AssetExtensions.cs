@@ -19,6 +19,7 @@ public static class AssetExtensions
     /// </summary>
     /// <param name="path"></param>
     /// <returns>Asset path for current platform</returns>
+    [JetBrains.Annotations.PublicAPI]
     public static string AssetPath(string path)
     {
 
@@ -55,21 +56,20 @@ public static class AssetExtensions
 
         
         // TODO: Is this still necessary in the latest versions of UNO?
-        
-        var useProjectPath = false;
-
 #if ANDROID
-        useProjectPath = true;
+        var useProjectPath = true;
 #elif BROWSERWASM
-        useProjectPath = true;
+        var useProjectPath = true;
 #elif !RELEASE && DESKTOP
-        useProjectPath = true;
+        var useProjectPath = true;
 #elif IOS
-        useProjectPath = true;
+        var useProjectPath = true;
 #elif MACCATALYST
-        useProjectPath = true;
+        var useProjectPath = true;
 #elif !RELEASE && WINDOWS
-        useProjectPath = true;
+        var useProjectPath = true; 
+#else
+        var useProjectPath = false;
 #endif
 
         var assetPath = useProjectPath && !string.IsNullOrWhiteSpace(projectName)

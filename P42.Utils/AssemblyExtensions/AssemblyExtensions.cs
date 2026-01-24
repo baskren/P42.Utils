@@ -107,7 +107,7 @@ public static class AssemblyExtensions
         public DateTime GetBuildTime()
             => BuildDateTimes.TryGetValue(assembly, out var result)
                 ? result 
-                : Task.Run(async () => await GetBuildTimeAsync(assembly)).Result;
+                : Task.Run(async () => await assembly.GetBuildTimeAsync()).Result;
 
         /// <summary>
         /// Gets time at which assembly was built
@@ -118,7 +118,7 @@ public static class AssemblyExtensions
             if (BuildDateTimes.TryGetValue(assembly, out var result))
                 return result;
 
-            result = await InnerGetBuildTimeAsync(assembly);
+            result = await assembly.InnerGetBuildTimeAsync();
             BuildDateTimes.Add(assembly, result);
             return result;
         }

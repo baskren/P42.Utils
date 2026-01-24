@@ -80,6 +80,7 @@ public static class Recursion
     /// <param name="instanceId"></param>
     /// <param name="method"></param>
     /// <param name="path"></param>
+    [JetBrains.Annotations.PublicAPI]
     public static void Enter(string className, string instanceId, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
     {
         if (!IsEnabled)
@@ -123,6 +124,7 @@ public static class Recursion
     /// <param name="instanceId"></param>
     /// <param name="method"></param>
     /// <param name="path"></param>
+    [JetBrains.Annotations.PublicAPI]
     public static void Exit(string className, string instanceId, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
     {
         if (!IsEnabled)
@@ -185,6 +187,7 @@ public static class Recursion
     /// </summary>
     /// <param name="dateTime">Newest log entry DateTime to remove</param>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static bool Clear(DateTime dateTime)
     {
         // complete clear

@@ -45,6 +45,7 @@ public static class FileExtensions
     /// <param name="filePath"></param>
     /// <param name="requiredConsecutiveNul"></param>
     /// <returns>true if binary</returns>
+    [JetBrains.Annotations.PublicAPI]
     public static bool IsBinary(string filePath, int requiredConsecutiveNul = 1)
     {
         const int charsToCheck = 8000;

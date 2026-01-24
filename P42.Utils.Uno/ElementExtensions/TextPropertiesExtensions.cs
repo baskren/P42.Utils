@@ -10,6 +10,7 @@ public static class TextPropertiesExtensions
     /// </summary>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
+    [JetBrains.Annotations.PublicAPI]
     public static double DefaultFontSize<T>() where T : new()
     {
         var type = typeof(T);

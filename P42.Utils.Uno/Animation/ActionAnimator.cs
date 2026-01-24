@@ -24,12 +24,14 @@ public class ActionAnimator(
     /// <summary>
     /// Start value
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public double From { get; } = from;
 
     
     /// <summary>
     /// End value
     /// </summary>
+    [JetBrains.Annotations.PublicAPI]
     public double To { get; } = to;
 
 

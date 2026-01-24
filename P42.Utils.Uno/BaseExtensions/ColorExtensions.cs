@@ -23,6 +23,7 @@ public static class ColorExtensions
         /// Get the high contrast color for a given color
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public Color GetHighContrastColor()
         {
             var yiq = (background.R * 299 + background.G * 587 + background.B * 114) / 1000;
@@ -138,6 +139,7 @@ public static class ColorExtensions
         /// Adjust color so it will be opaque to gestures
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public Color AssureGesturable() => new() { R = c.R, G = c.G, B = c.B, A = Math.Max((byte)0x1,c.A) };
     }
 
@@ -609,6 +611,7 @@ public static class ColorExtensions
         /// <param name="saturation"></param>
         /// <param name="luminosity"></param>
         // ReSharper disable twice OutParameterValueIsAlwaysDiscarded.Global
+        [JetBrains.Annotations.PublicAPI]
         public void ToHsl(out float hue, out float saturation, out float luminosity)
         {
             var r = color.R / 255;
@@ -669,6 +672,7 @@ public static class ColorExtensions
         /// Tests if the color is one of the default values
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public bool IsDefault()
             => c == default || c is { R: 0, G: 0, B: 0, A: 0 };
 
@@ -677,7 +681,7 @@ public static class ColorExtensions
         /// </summary>
         /// <returns></returns>
         public bool IsDefaultOrTransparent()
-            => IsDefault(c) || c.A == 0;
+            => c.IsDefault() || c.A == 0;
     }
 
     #endregion
@@ -692,6 +696,7 @@ public static class ColorExtensions
         /// Returns a string with comma separated, 0-255, integer values for color's RGB
         /// </summary>
         /// <returns>The int rgb color string.</returns>
+        [JetBrains.Annotations.PublicAPI]
         public string ToIntRgbColorString()
             => $"{color.R},{color.G},{color.B}";
 
@@ -713,6 +718,7 @@ public static class ColorExtensions
         /// Returns a 3 character hexadecimal string of a color's RGB value
         /// </summary>
         /// <returns>The hex rgb color string.</returns>
+        [JetBrains.Annotations.PublicAPI]
         public string ToHexRgbColorString()
         {
             var r = color.R >> 4;
@@ -738,6 +744,7 @@ public static class ColorExtensions
         /// Returns a 6 character hexadecimal string of a color's RRGGBB value
         /// </summary>
         /// <returns>The hex rgb color string.</returns>
+        [JetBrains.Annotations.PublicAPI]
         public string ToHexRrggbbColorString()
             => color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
 

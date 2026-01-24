@@ -12,8 +12,9 @@ public static class FieldExtensions
     /// <param name="fieldName">Field Name</param>
     /// <returns>null of no match found</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
+    [JetBrains.Annotations.PublicAPI]
     public static FieldInfo? GetFieldInfo(this Type type, string fieldName)
     {
         if (string.IsNullOrEmpty(fieldName))
@@ -42,7 +43,7 @@ public static class FieldExtensions
     /// <param name="value">Value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TryGetFieldValue(this object obj, string fieldName, out object? value)
     {
@@ -51,7 +52,7 @@ public static class FieldExtensions
         if (string.IsNullOrWhiteSpace(fieldName))
             return false;
         
-        if (GetFieldInfo(obj.GetType(), fieldName) is not { } fieldInfo)
+        if (obj.GetType().GetFieldInfo(fieldName) is not { } fieldInfo)
             return false;
         
         value = fieldInfo.GetValue(obj);
@@ -66,14 +67,14 @@ public static class FieldExtensions
     /// <param name="value">value to set</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TrySetFieldValue(this object obj, string fieldName, object value)
     {
         if (string.IsNullOrWhiteSpace(fieldName))
             return false;
         
-        if (GetFieldInfo(obj.GetType(), fieldName) is not { } fieldInfo)
+        if (obj.GetType().GetFieldInfo(fieldName) is not { } fieldInfo)
             return false;
 
         fieldInfo.SetValue(obj, value);
@@ -88,12 +89,12 @@ public static class FieldExtensions
     /// <param name="value">value</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TryGetStaticFieldValue(this Type type, string fieldName, out object? value)
     {
         value = null;
-        if (GetFieldInfo(type, fieldName) is not { IsStatic: true } fieldInfo)
+        if (type.GetFieldInfo(fieldName) is not { IsStatic: true } fieldInfo)
             return false;
 
         try

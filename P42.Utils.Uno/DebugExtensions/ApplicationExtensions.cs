@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-
 namespace P42.Utils.Uno;
+
 // ReSharper disable once UnusedType.Global
 public static class ApplicationExtensions
 {
@@ -27,8 +20,8 @@ public static class ApplicationExtensions
 
 
 #if WINDOWS
-    [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
     private static extern bool AllocConsole();
 
     [System.Runtime.InteropServices.DllImport("kernel32.dll")]

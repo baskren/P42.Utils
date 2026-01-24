@@ -19,6 +19,7 @@ public static class CopyingExtensions
     /// <param name="source"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
+    [JetBrains.Annotations.PublicAPI]
     public static T Copy<T>(this T source) where T : ICopiable<T>, new()
     {
         if (new T() is not { } result)

@@ -15,6 +15,8 @@ public static class MethodExtensions
 #if RELEASE
   [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
+
+    [JetBrains.Annotations.PublicAPI]
     public static MethodInfo? GetMethodInfo(this Type type, string methodName, Type[]? parameterTypes = null)
     {
         if (string.IsNullOrEmpty(methodName))
@@ -49,10 +51,10 @@ public static class MethodExtensions
     /// <param name="result">result</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
     public static bool TryCallMethod(this object obj, string methodName, out object? result)
-        => TryCallMethod(obj.GetType(), methodName, null, out result);
+        => obj.GetType().TryCallMethod(methodName, null, out result);
     
     /// <summary>
     /// Call method
@@ -63,18 +65,19 @@ public static class MethodExtensions
     /// <param name="result">result</param>
     /// <returns>true on success</returns>
 #if RELEASE
-  [Obsolete("NOT FOR RELEASE BUILDS")]
+    [Obsolete("NOT FOR RELEASE BUILDS")]
 #endif
+    [JetBrains.Annotations.PublicAPI]
     public static bool TryCallMethod(this object obj, string methodName, object[]? parameters, out object? result)
     {
         result = null;
         MethodInfo? methodInfo;
         if (parameters == null || parameters.Length == 0)
-            methodInfo = GetMethodInfo(obj.GetType(), methodName);
+            methodInfo = obj.GetType().GetMethodInfo(methodName);
         else
         {
             var parameterTypes = parameters.Select(p => p.GetType()).ToArray();
-            methodInfo = GetMethodInfo(obj.GetType(), methodName, parameterTypes);
+            methodInfo = obj.GetType().GetMethodInfo(methodName, parameterTypes);
         }
 
         if (methodInfo == null)

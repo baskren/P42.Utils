@@ -210,7 +210,7 @@ public static class DirectoryExtensions
         }
 
         public async Task CopyAsync(DirectoryInfo destination, bool overwrite = false, bool wipe = false)
-            => await Task.Run(() => Copy(source, destination, overwrite, wipe));
+            => await Task.Run(() => source.Copy(destination, overwrite, wipe));
 
         /// <summary>
         /// Recursively copy directory

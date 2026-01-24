@@ -6,7 +6,7 @@ namespace P42.Utils.Uno;
 public static partial class DeviceBeep
 {
 
-    static bool PlatformCanBeep() => true;
+    private static bool PlatformCanBeep() => true;
 
 
     private static readonly AVAudioEngine AudioEngine;

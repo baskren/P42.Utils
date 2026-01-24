@@ -193,6 +193,7 @@ public static class Platform
 
 
 #if __IOS__
+    [JetBrains.Annotations.PublicAPI]
     public class SettingsObserver
     {
         
@@ -200,7 +201,7 @@ public static class Platform
         {
             Foundation.NSNotificationCenter.DefaultCenter.AddObserver(
                 Foundation.NSUserDefaults.DidChangeNotification,
-                (notification) =>
+                (_) =>
                 {
                     if (Foundation.NSUserDefaults.StandardUserDefaults.BoolForKey(nameof(ResetAppStorage)))
                         ResetAppStorage().Wait();

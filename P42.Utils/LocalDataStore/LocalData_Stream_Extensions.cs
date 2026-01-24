@@ -55,6 +55,7 @@ public static class LocalDataStreamExtensions
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
         /// <exception cref="IOException"></exception>
+        [JetBrains.Annotations.PublicAPI]
         public void StoreStream(Stream? sourceItem, bool wipeOld = true)
         {
             var file = item.File();
@@ -87,6 +88,7 @@ public static class LocalDataStreamExtensions
         /// </summary>
         /// <param name="sourceItem"></param>
         /// <param name="wipeOld"></param>
+        [JetBrains.Annotations.PublicAPI]
         public async Task StoreStreamAsync(Stream? sourceItem, bool wipeOld = true)
         {
             var file = item.File();
@@ -162,6 +164,7 @@ public static class LocalDataStreamExtensions
         /// Get Stream, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public async Task<Stream> AssureExistsStreamAsync()
         {
             await item.AssureExistsAsync();
@@ -193,6 +196,7 @@ public static class LocalDataStreamExtensions
         /// Get Stream, pulling from source if not stored locally
         /// </summary>
         /// <returns></returns>
+        [JetBrains.Annotations.PublicAPI]
         public Stream AssureExistsStream()
         {
             item.AssureExists();
