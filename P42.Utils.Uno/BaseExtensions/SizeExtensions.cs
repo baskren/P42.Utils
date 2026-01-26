@@ -5,6 +5,7 @@ namespace P42.Utils.Uno;
 // ReSharper disable once UnusedType.Global
 public static class SizeExtensions
 {
+    // ReSharper disable once UnusedType.Global
     extension(Size size)
     {
         /// <summary>

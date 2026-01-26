@@ -49,7 +49,7 @@ public static class Platform
     /// </summary>
     public static void Init()
     {
-        AsyncAwaitBestPractices.SafeFireAndForgetExtensions.SetDefaultExceptionHandling((ex) =>
+        AsyncAwaitBestPractices.SafeFireAndForgetExtensions.SetDefaultExceptionHandling(ex =>
         {
             QLog.Error(ex);
         });

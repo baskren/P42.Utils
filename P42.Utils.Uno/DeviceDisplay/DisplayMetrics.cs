@@ -1,10 +1,9 @@
-using Uno;
 using Windows.Graphics.Display;
 
 namespace P42.Utils.Uno;
 
 #if HAS_UNO
-[Preserve(AllMembers = true)]
+[global::Uno.Preserve(AllMembers = true)]
 #endif
 public readonly struct DisplayMetrics(
     double width,

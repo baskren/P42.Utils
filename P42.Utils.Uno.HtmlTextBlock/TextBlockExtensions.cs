@@ -70,7 +70,7 @@ public static class TextBlockExtensions
 
         var markdown = (string)e.NewValue ?? string.Empty;
 
-        var html = Markdig.Markdown.ToHtml(markdown, Pipeline);
+        var html = Markdown.ToHtml(markdown, Pipeline);
         textBlock.Html = html;
     }
 

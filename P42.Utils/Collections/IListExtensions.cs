@@ -118,7 +118,8 @@ public static class IListExtensions
         /// Try to remove last item in list
         /// </summary>
         /// <returns></returns>
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public bool TryRemoveLast()
-            => iList.TryRemoveLast(out var _);
+            => iList.TryRemoveLast(out  _);
     }
 }

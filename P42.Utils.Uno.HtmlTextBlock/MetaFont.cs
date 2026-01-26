@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Windows.UI;
 
 namespace P42.Utils.Uno;
@@ -85,6 +86,7 @@ internal class MetaFont(FontFamily? family, double size, short fontWeight = 400,
         return Strikethrough == other.Strikethrough;
     }
 
+    [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
     public override int GetHashCode()
     {
         var hash = HashCode.Combine(Family, Size, FontWeight, Italic, Baseline, Action, TextColor, BackgroundColor);

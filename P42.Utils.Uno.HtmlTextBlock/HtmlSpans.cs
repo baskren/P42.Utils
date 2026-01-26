@@ -51,17 +51,12 @@ internal class HtmlSpans : List<Span>
     /// <param name="formatted">Formatted.</param>
     public static explicit operator string(HtmlSpans? formatted)
         => formatted?.Text ?? string.Empty;
-    
-    private record struct Attribute(string Name, string Value)
-    {
-        public readonly string Name = Name;
-        public readonly string Value = Value;
-    }
+
+    private record Attribute(string Name, string Value);
 
     private record struct Tag(string Name, int Start)
     {
-        public readonly string Name = Name;
-        public readonly int Start = Start;
+        // ReSharper disable once TypeWithSuspiciousEqualityIsUsedInRecord.Local
         public readonly List<Attribute> Attributes = new() { Capacity = 10 };
     }
 
@@ -690,7 +685,7 @@ internal class HtmlSpans : List<Span>
                 break;
             case "strong":
             case "b":
-                Add(new FontWeightSpan(tag.Start, index - 1, Microsoft.UI.Text.FontWeights.Bold));
+                Add(new FontWeightSpan(tag.Start, index - 1, (short)Microsoft.UI.Text.FontWeights.Bold.Weight));
                 Add(new FontWeightSpan(tag.Start, index - 1, 100, true));
                 break;
             case "em":
@@ -785,7 +780,7 @@ internal class HtmlSpans : List<Span>
                 break;
             case "dt":
                 Add(new ItalicsSpan(tag.Start, index - 1));
-                Add(new FontWeightSpan(tag.Start, index - 1, Microsoft.UI.Text.FontWeights.Bold));
+                Add(new FontWeightSpan(tag.Start, index - 1, (short)Microsoft.UI.Text.FontWeights.Bold.Weight));
                 break;
             case "p":
                 break;

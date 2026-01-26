@@ -1103,6 +1103,7 @@ public abstract class LocalData
         /// use local value, if exists, else use source value
         /// </summary>
         /// <returns>true on success</returns>
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public bool TryAssureExists()
             => IsFile || TryResetFromSource();
         
