@@ -8,6 +8,7 @@ using Microsoft.UI.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Reflection.Metadata.Ecma335.MethodBodyStreamEncoder;
 
+
 namespace P42.UnoTestRunner;
 
 public record UnitTestMethodInfo
@@ -31,10 +32,10 @@ public record UnitTestMethodInfo
         PassFiltersAsFirstParameter =
             HasCustomAttribute<FiltersAttribute>(method) ||
             HasCustomAttribute<FiltersAttribute>(method.DeclaringType);
-        ExpectedException = method
-            .GetCustomAttributes<ExpectedExceptionAttribute>()
-            .SingleOrDefault()
-            ?.ExceptionType;
+        ExpectedException = null; // method
+            //.GetCustomAttributes<ExpectedExceptionAttribute>()
+            //.SingleOrDefault()
+            //?.ExceptionType;
 
         _ignoredBecauseOfConditionalTestAttribute = method
             .GetCustomAttributes<ConditionalTestAttribute>()

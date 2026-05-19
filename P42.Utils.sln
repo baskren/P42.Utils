@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32210.308
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11806.211
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BADA71DC-7FFD-4EDC-9F28-FB74AEADC713}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,8 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.vsconfig = .vsconfig
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
-		Directory.Packages.props = Directory.Packages.props
 		Directory.NugetPackage.props = Directory.NugetPackage.props
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 	EndProjectSection
 EndProject
@@ -18,11 +18,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.Uno", "P42.Utils.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.UnoTestRunner", "P42.UnoTestRunner\P42.UnoTestRunner.csproj", "{1D6D0948-8DDA-D8CC-54C5-AD95D58FB123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.AppTest", "P42.Utils.AppTest\P42.Utils.AppTest.csproj", "{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils", "P42.Utils\P42.Utils.csproj", "{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.Uno.HtmlTextBlock", "P42.Utils.Uno.HtmlTextBlock\P42.Utils.Uno.HtmlTextBlock.csproj", "{C941B8B6-1EA4-40DA-AA65-24766950FADA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P42.Utils.AppTest", "P42.Utils.AppTest\P42.Utils.AppTest.csproj", "{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,11 +38,6 @@ Global
 		{1D6D0948-8DDA-D8CC-54C5-AD95D58FB123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D6D0948-8DDA-D8CC-54C5-AD95D58FB123}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D6D0948-8DDA-D8CC-54C5-AD95D58FB123}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7638AA5-F6C2-4181-A2E0-390FD0A5992D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +46,10 @@ Global
 		{C941B8B6-1EA4-40DA-AA65-24766950FADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C941B8B6-1EA4-40DA-AA65-24766950FADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C941B8B6-1EA4-40DA-AA65-24766950FADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9A8E16-EE16-94F8-26D4-95D31435F7E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
