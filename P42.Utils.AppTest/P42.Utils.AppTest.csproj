@@ -65,10 +65,11 @@
     <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils.Uno\P42.Utils.Uno.csproj" />
     <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils.Uno" />
 
+  </ItemGroup>
 
-    <!-- FIX : Build failure -->
-    <PackageReference Include="SkiaSharp.Skottie" />
-
+  <!-- Uno.Sdk 6.5.36 Warning fix -->
+  <ItemGroup>
+    <PackageReference Include="Tmds.DBus.Protocol" />
   </ItemGroup>
 
 

@@ -9,6 +9,25 @@
       PRI257: Ignore default language (en) not being one of the included resources (eg en-us, en-uk)
     -->
     <NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
+    <!-- ADDITIONAL IGNORED WARNINGS 
+    Uno0001: x is not implemented in Uno
+    NU5123:  The file x path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.
+    NU5118: File x is not added because the package already contains file x.
+    CS0618: X is obsolete
+    CS0162: Unreachable code detected
+    MT7156: The BundleResource item x was ignored, because there's another item with the same LogicalName
+    -->
+    <NoWarn>$(NoWarn);NU5118;NU5123;Uno0001;CS0162;CS0618;MT7156;</NoWarn>
+
+    <!-- Dynamic Allocation Warnings 
+    IL2026
+    IL2070
+    IL2072
+    IL2075
+    IL2077
+    -->
+    <NoWarn>$(NoWarn);IL2026;IL2070;IL2072;IL2075;IL2077</NoWarn>
+    
     <NoWarn Condition=" $(Configuration) != 'Release' ">$(NoWarn);Uno0001;NU1603</NoWarn>
     <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>

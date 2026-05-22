@@ -33,6 +33,7 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
   </ItemGroup>
 
+  <!-- Uno.Sdk 6.5.36 Warning fix -->
   <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
