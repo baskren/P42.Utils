@@ -76,6 +76,30 @@ namespace P42.Utils.Uno
         #endregion HtmlDependencyObject Property
 
 
+        // Recycled list cells re-set the same handful of html strings while scrolling; parsing each time is costly.
+        // HtmlSpans is never mutated after construction, so parsed instances can be shared between TextBlocks.
+        const int HtmlSpansCacheLimit = 1024;
+        static readonly System.Collections.Generic.Dictionary<string, HtmlSpans> HtmlSpansCache = new();
+
+        static HtmlSpans GetHtmlSpans(string text)
+        {
+            lock (HtmlSpansCache)
+            {
+                if (HtmlSpansCache.TryGetValue(text, out var cached))
+                    return cached;
+            }
+
+            var htmlSpans = new HtmlSpans(text);
+
+            lock (HtmlSpansCache)
+            {
+                if (HtmlSpansCache.Count >= HtmlSpansCacheLimit)
+                    HtmlSpansCache.Clear();
+                HtmlSpansCache[text] = htmlSpans;
+            }
+            return htmlSpans;
+        }
+
         private static void HtmlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not TextBlock textBlock)
@@ -84,7 +108,7 @@ namespace P42.Utils.Uno
             var text = (string)e.NewValue ?? string.Empty;
             try
             {
-                var htmlSpans = new HtmlSpans(text);
+                var htmlSpans = GetHtmlSpans(text);
                 if (textBlock.GetHtmlDependencyObject() is HtmlDependencyObject html)
                 {
                     html.HtmlSpans = htmlSpans;
