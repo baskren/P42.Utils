@@ -221,8 +221,29 @@ namespace P42.Utils.Uno
 
         private static void OnFontPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is HtmlDependencyObject html)
-                SetAndFormatText(html.targetTextBlock, html.HtmlSpans);
+            if (d is not HtmlDependencyObject html)
+                return;
+
+            if (html.targetTextBlock is { } textBlock && TextBlockExtensions.IsHtmlFormattingDeferred(textBlock))
+            {
+                html._formatPending = true;
+                return;
+            }
+
+            SetAndFormatText(html.targetTextBlock, html.HtmlSpans);
+        }
+
+        bool _formatPending;
+
+        /// <summary>
+        /// Called when the last deferral on the target TextBlock ends: formats once if anything changed while deferred.
+        /// </summary>
+        internal void FlushPendingFormat()
+        {
+            if (!_formatPending)
+                return;
+            _formatPending = false;
+            SetAndFormatText(targetTextBlock, HtmlSpans);
         }
 
 

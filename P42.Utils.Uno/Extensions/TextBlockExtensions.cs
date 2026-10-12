@@ -62,6 +62,51 @@ namespace P42.Utils.Uno
         #endregion
 
         
+        #region Html Formatting Deferral
+        internal static readonly DependencyProperty HtmlFormattingDeferralCountProperty = DependencyProperty.RegisterAttached(
+            "HtmlFormattingDeferralCount",
+            typeof(int),
+            typeof(TextBlockExtensions),
+            new PropertyMetadata(0)
+        );
+
+        internal static bool IsHtmlFormattingDeferred(TextBlock textBlock)
+            => (int)textBlock.GetValue(HtmlFormattingDeferralCountProperty) > 0;
+
+        /// <summary>
+        /// Every Html, font or foreground change re-builds the TextBlock's Inlines.  Within this scope those
+        /// re-builds are held back and done once, when the (outermost) scope is disposed.
+        /// </summary>
+        public static HtmlFormattingDeferral DeferHtmlFormatting(this TextBlock textBlock)
+        {
+            textBlock.SetValue(HtmlFormattingDeferralCountProperty, (int)textBlock.GetValue(HtmlFormattingDeferralCountProperty) + 1);
+            return new HtmlFormattingDeferral(textBlock);
+        }
+
+        internal static void EndHtmlFormattingDeferral(TextBlock textBlock)
+        {
+            var count = (int)textBlock.GetValue(HtmlFormattingDeferralCountProperty) - 1;
+            textBlock.SetValue(HtmlFormattingDeferralCountProperty, Math.Max(count, 0));
+            if (count <= 0)
+                textBlock.GetHtmlDependencyObject()?.FlushPendingFormat();
+        }
+
+        public readonly struct HtmlFormattingDeferral : IDisposable
+        {
+            readonly TextBlock _textBlock;
+
+            internal HtmlFormattingDeferral(TextBlock textBlock)
+                => _textBlock = textBlock;
+
+            public void Dispose()
+            {
+                if (_textBlock is not null)
+                    EndHtmlFormattingDeferral(_textBlock);
+            }
+        }
+        #endregion
+
+
         #region HtmlDependencyObject Property
         internal static readonly DependencyProperty HtmlDependencyObjectProperty = DependencyProperty.RegisterAttached(
             nameof(HtmlDependencyObject),
