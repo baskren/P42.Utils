@@ -7,8 +7,8 @@
   
   <!-- SHARED ITEMS -->
   <ItemGroup>
-    <ProjectReference Condition=" '$(Configuration)' != 'Release' OR $(TargetFramework.Contains('android')) " Include="..\P42.Utils\P42.Utils.csproj" />
-    <PackageReference Condition=" '$(Configuration)' == 'Release' AND !$(TargetFramework.Contains('android')) " Include="P42.Utils" Version="1.0.9" />
+    <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\P42.Utils\P42.Utils.csproj" />
+    <PackageReference Condition=" '$(Configuration)' == 'Release' " Include="P42.Utils" Version="1.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!--
     <ProjectReference Include="..\P42.Utils\P42.Utils.csproj" />
