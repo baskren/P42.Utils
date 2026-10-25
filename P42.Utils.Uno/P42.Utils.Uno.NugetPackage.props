@@ -2,8 +2,8 @@
 
 
   <!-- NUGET PACKAGE GENERATION -->
-  <PropertyGroup>  
-    
+  <PropertyGroup>
+
     <Version>$(UnoVersion)</Version>
     <PackageOutputPath>$(P42_LocalNuGetFolderPath)</PackageOutputPath>
 
@@ -27,12 +27,12 @@
     <PackageTags>P42.Utils Uno.Platform</PackageTags>
 
   </PropertyGroup>
-  
+
   <ItemGroup>
   	<None Include="..\icon.png" Pack="true" PackagePath="\" />
   	<None Include="..\README.md" Pack="true" PackagePath="\" />
   	<None Include="..\LICENSE" Pack="true" PackagePath="\" />
-  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All"/>
+  	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402" PrivateAssets="All"/>
   </ItemGroup>
 
 
